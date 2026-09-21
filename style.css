@@ -1,7 +1,7 @@
 /* ============================================================
    style.css · Portfolio Gabriel Vidal Badia
-   Tema claro/oscuro con toggle · acento teal/cyan · animaciones
-   + cursor personalizado (dot + aro con inercia y click)
+   Tema claro/oscuro · cursor mano · barra de escalada con
+   escalador SVG (visible siempre, también en móvil)
    ============================================================ */
 
 /* ---- Variables de diseño ---- */
@@ -243,7 +243,13 @@ button { font: inherit; cursor: pointer; }
   font-size: clamp(2.4rem, 6vw, 4.6rem);
   line-height: 1.05; margin: 1.25rem 0 .75rem;
   letter-spacing: -.03em; font-weight: 800;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  transition: transform .35s var(--ease);
+  display: inline-block;
 }
+.hero-title.is-hovered { transition: transform .08s linear; }
+
 .hero-subtitle {
   font-family: var(--mono); font-size: clamp(1rem, 1.6vw, 1.25rem);
   color: var(--muted); margin: 0 0 1rem; min-height: 1.6em;
@@ -268,6 +274,33 @@ button { font: inherit; cursor: pointer; }
 .btn-ghost { background: transparent; color: var(--text); border-color: var(--line); }
 .btn-ghost:hover { background: var(--panel-soft); border-color: var(--accent); color: var(--accent); }
 .btn-lg { padding: 1rem 1.75rem; font-size: 1.05rem; }
+
+/* ---- Botón que cambia de texto al hover ---- */
+.btn-swap {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-swap__a,
+.btn-swap__b {
+  display: inline-block;
+  transition: transform .35s var(--ease), opacity .35s var(--ease);
+  will-change: transform, opacity;
+}
+.btn-swap__a { transform: translateY(0); }
+.btn-swap__b {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform: translateY(110%);
+  opacity: 0;
+}
+.btn-swap:hover .btn-swap__a { transform: translateY(-110%); opacity: 0; }
+.btn-swap:hover .btn-swap__b { transform: translateY(0);    opacity: 1; }
+.btn-lg.btn-swap { min-width: 11rem; }
 
 .hero-stats {
   display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
@@ -321,6 +354,31 @@ button { font: inherit; cursor: pointer; }
 .kv dt { color: var(--muted-2); font-size: .85rem; }
 .kv dd { margin: 0; font-weight: 500; font-size: .95rem; }
 
+/* ---- Terminal (Sobre mí) ---- */
+.terminal {
+  margin: 1.5rem 0 0;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: .85rem;
+  line-height: 1.7;
+  color: var(--muted);
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+.terminal code { font-family: inherit; }
+.term-prompt { color: var(--accent); margin-right: .4rem; }
+.term-var { color: var(--accent-2); }
+.term-fn { color: var(--accent-3); }
+.term-cursor {
+  display: inline-block;
+  color: var(--accent);
+  animation: caret 1s steps(2) infinite;
+}
+
 /* ---- Tarjetas (Lo que he hecho) ---- */
 .cards-grid {
   display: grid; gap: 1.25rem;
@@ -354,6 +412,94 @@ button { font: inherit; cursor: pointer; }
 }
 .card-list li.highlight { color: var(--text); font-weight: 600; }
 .card-list li.highlight::before { background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2); }
+
+/* ---- Badge de grado + tooltip ---- */
+.card-grade {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-family: var(--mono);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: .25rem .55rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: var(--surface-2);
+  color: var(--muted);
+  cursor: help;
+}
+.card-grade[data-grade="V0"] { color: #22c55e; }
+.card-grade[data-grade="V1"] { color: #84cc16; }
+.card-grade[data-grade="V2"] { color: #eab308; }
+.card-grade[data-grade="V3"] { color: #f59e0b; }
+.card-grade[data-grade="V4"] { color: #f97316; }
+.card-grade[data-grade="V5"] { color: #ef4444; }
+.card-grade[data-grade="V6"] { color: #a855f7; }
+
+.card-grade::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  white-space: nowrap;
+  font-family: var(--font);
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: .35rem .6rem;
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity .2s var(--ease), transform .2s var(--ease);
+  z-index: 5;
+}
+.card-grade:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Leyenda de grados ---- */
+.grades-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .75rem;
+  margin: 1.5rem 0 0;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.grades-legend__title {
+  font-family: var(--mono);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-right: .25rem;
+}
+.grades-legend__scale { display: inline-flex; gap: .3rem; }
+.grades-legend .chip {
+  display: inline-grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: .7rem;
+  font-weight: 700;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: var(--surface-2);
+}
+.grades-legend .v0 { color: #22c55e; }
+.grades-legend .v1 { color: #84cc16; }
+.grades-legend .v2 { color: #eab308; }
+.grades-legend .v3 { color: #f59e0b; }
+.grades-legend .v4 { color: #f97316; }
+.grades-legend .v5 { color: #ef4444; }
+.grades-legend .v6 { color: #a855f7; }
 
 /* ---- Timeline ---- */
 .timeline { margin-top: 3.5rem; }
@@ -466,135 +612,18 @@ button { font: inherit; cursor: pointer; }
 .reveal:nth-child(5) { transition-delay: .32s; }
 
 /* ============================================================
-   CURSOR PERSONALIZADO · estilo dot + aro (minimalista)
-   ============================================================ */
-
-@media (hover: hover) and (pointer: fine) {
-  html, body, a, button, .btn, .nav-link, .social-link, .to-top { cursor: none; }
-}
-
-.cursor {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  display: none;
-}
-
-/* Punto pequeño · sólido · lo mueve JS con translate + scale */
-.cursor__dot {
-  position: fixed;
-  top: 0; left: 0;
-  width: 6px; height: 6px;
-  margin: -3px 0 0 -3px;
-  border-radius: 50%;
-  background: var(--text);
-  will-change: transform, opacity;
-  transition: opacity .2s var(--ease), background .25s var(--ease);
-}
-
-/* Aro · borde fino · persigue al punto */
-.cursor__ring {
-  position: fixed;
-  top: 0; left: 0;
-  width: 34px; height: 34px;
-  margin: -17px 0 0 -17px;
-  border-radius: 50%;
-  border: 1px solid var(--text);
-  background: transparent;
-  opacity: .6;
-  will-change: transform, width, height, margin, opacity, border-color, background;
-  transition:
-    width .3s var(--ease),
-    height .3s var(--ease),
-    margin .3s var(--ease),
-    border-color .3s var(--ease),
-    opacity .3s var(--ease),
-    background .3s var(--ease);
-}
-
-/* Hover sobre elementos clicables: el aro crece */
-.cursor.is-hovering .cursor__ring {
-  width: 52px; height: 52px;
-  margin: -26px 0 0 -26px;
-  opacity: 1;
-  background: rgba(var(--accent-rgb), .08);
-  border-color: var(--accent);
-}
-
-/* Click: el aro se encoge */
-.cursor.is-clicking .cursor__ring {
-  width: 20px; height: 20px;
-  margin: -10px 0 0 -10px;
-  opacity: 1;
-  border-color: var(--accent);
-  background: rgba(var(--accent-rgb), .18);
-}
-
-/* ---- Accesibilidad: movimiento reducido ---- */
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation-duration: .001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .001ms !important;
-  }
-  .reveal { opacity: 1; transform: none; }
-  .cursor { display: none !important; }
-  html, body { cursor: auto; }
-}
-
-/* ---- Responsive ---- */
-@media (max-width: 900px) {
-  .about-grid { grid-template-columns: 1fr; }
-  .about-card { position: static; }
-  .footer-grid { grid-template-columns: 1fr; }
-  .hero-stats { grid-template-columns: 1fr; max-width: 320px; }
-}
-
-@media (max-width: 720px) {
-  .nav-toggle { display: block; }
-  .main-nav {
-    position: fixed; inset: 64px 1rem auto 1rem; z-index: 40;
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--radius); box-shadow: var(--shadow);
-    padding: .75rem; transform: translateY(-10px); opacity: 0; pointer-events: none;
-    transition: opacity .25s var(--ease), transform .25s var(--ease);
-  }
-  .main-nav.is-open { opacity: 1; transform: translateY(0); pointer-events: auto; }
-  .nav-list { flex-direction: column; align-items: stretch; }
-  .nav-link { display: block; padding: .8rem 1rem; }
-  .section { padding: 4rem 0; }
-}
-/* ============================================================
-   Efecto magnético/parallax en el título del hero
-   ============================================================ */
-
-.hero-title {
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  transition: transform .35s var(--ease);
-  display: inline-block; /* para que el transform no afecte al layout */
-}
-
-/* Mientras el cursor está encima, quitamos la transición para que siga
-   al ratón de forma fluida (sin retardo) */
-.hero-title.is-hovered {
-  transition: transform .08s linear;
-}
-/* ============================================================
-   Barra lateral de escalada · cuerda + presas + escalador
+   Barra lateral de escalada · SIEMPRE VISIBLE (también móvil)
    ============================================================ */
 
 .climb-rail {
   position: fixed;
   top: 0;
-  left: 18px;
+  left: 8px;
   height: 100vh;
-  width: 60px;
+  width: 48px;
   z-index: 45;
-  pointer-events: none; /* la cuerda no bloquea clics; las presas sí */
-  display: none;        /* se activa en pantallas grandes desde media query */
+  pointer-events: none;
+  display: block;
 }
 
 .climb-rope {
@@ -602,42 +631,27 @@ button { font: inherit; cursor: pointer; }
   top: 8vh;
   left: 50%;
   transform: translateX(-50%);
-  width: 24px;
+  width: 20px;
   height: 84vh;
-  color: var(--line);
-  opacity: .8;
+  color: var(--accent);
+  opacity: .5;
 }
 
-/* Escalador: sube por la cuerda según el scroll */
 .climb-climber {
   position: absolute;
   left: 50%;
-  top: 8vh;
-  transform: translate(-50%, 0);
-  width: 18px;
-  height: 18px;
-  z-index: 2;
-  transition: top .15s linear;
+  top: 0;
+  transform: translate(-50%, -50%);
+  width: 26px;
+  height: 32px;
+  z-index: 3;
+  transition: top .2s linear;
+  pointer-events: none;
+  color: var(--accent);
+  filter: drop-shadow(0 0 6px rgba(var(--accent-rgb), .9));
 }
-.climb-climber__dot {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 12px rgba(var(--accent-rgb), .8);
-}
-.climb-climber__glow {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 1px solid rgba(var(--accent-rgb), .45);
-  animation: pulse 2.4s infinite;
-}
+.climb-climber svg { width: 100%; height: 100%; display: block; }
 
-/* Presas distribuidas verticalmente */
 .climb-holds {
   position: absolute;
   top: 10vh;
@@ -648,21 +662,20 @@ button { font: inherit; cursor: pointer; }
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  pointer-events: auto; /* aquí sí queremos clics */
+  pointer-events: auto;
 }
 
 .climb-hold {
   position: relative;
   display: block;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--surface);
   border: 1.5px solid var(--line);
   transition: transform .3s var(--ease), border-color .3s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease);
 }
 .climb-hold::before {
-  /* forma de "presa" sutil: un óvalo interno */
   content: "";
   position: absolute;
   inset: 6px;
@@ -677,7 +690,6 @@ button { font: inherit; cursor: pointer; }
 }
 .climb-hold:hover::before { background: var(--accent); opacity: 1; }
 
-/* Presa activa (su sección está visible) */
 .climb-hold.is-active {
   border-color: var(--accent);
   background: rgba(var(--accent-rgb), .12);
@@ -689,19 +701,18 @@ button { font: inherit; cursor: pointer; }
   transform: scale(1.1);
 }
 
-/* Etiqueta que aparece al lado de la presa */
 .climb-hold__label {
   position: absolute;
-  left: 36px;
+  left: 32px;
   top: 50%;
   transform: translateY(-50%) translateX(-6px);
   white-space: nowrap;
-  font-size: .75rem;
+  font-size: .72rem;
   font-family: var(--mono);
   color: var(--muted);
   background: var(--surface);
   border: 1px solid var(--line);
-  padding: .25rem .55rem;
+  padding: .22rem .5rem;
   border-radius: 999px;
   opacity: 0;
   pointer-events: none;
@@ -715,7 +726,82 @@ button { font: inherit; cursor: pointer; }
   border-color: rgba(var(--accent-rgb), .4);
 }
 
-/* Solo mostrar en pantallas grandes (donde no molesta) */
-@media (min-width: 1100px) {
-  .climb-rail { display: block; }
+/* ---- En móvil la barra se estrecha y no muestra etiquetas ---- */
+@media (max-width: 720px) {
+  .climb-rail {
+    left: 2px;
+    width: 34px;
+  }
+  .climb-rope { width: 16px; }
+  .climb-climber { width: 22px; height: 28px; }
+  .climb-hold { width: 20px; height: 20px; }
+  .climb-hold::before { inset: 5px; }
+  .climb-hold__label { display: none; }
 }
+
+/* ============================================================
+   CURSOR PERSONALIZADO · mano abierta / cerrada
+   Ocultamos SIEMPRE el cursor nativo. La mano solo se muestra
+   si JS detecta ratón real (no emulación táctil, no móvil).
+   ============================================================ */
+
+html,
+body,
+a,
+button,
+.btn,
+.nav-link,
+.social-link,
+.to-top,
+.climb-hold,
+.card-grade,
+input,
+textarea,
+select,
+[role="button"] {
+  cursor: none;
+}
+
+/* Excepción: si el navegador no soporta cursores custom (muy raro),
+   devolvemos el nativo. También si el usuario prefiere menos movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .card-grade {
+    cursor: auto;
+  }
+}
+
+.cursor {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  display: none; /* JS lo activa si detecta ratón real */
+}
+
+.cursor__hand {
+  position: fixed;
+  top: 0; left: 0;
+  width: 28px; height: 28px;
+  margin: -14px 0 0 -14px;
+  color: var(--text);
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.5));
+  transition: transform .15s var(--ease), color .2s var(--ease), opacity .2s var(--ease);
+  will-change: transform;
+}
+.cursor__hand svg { width: 100%; height: 100%; display: block; }
+
+.cursor__hand .hand-open,
+.cursor__hand .hand-closed {
+  transition: opacity .12s linear, transform .15s var(--ease);
+  transform-origin: center;
+}
+.cursor__hand .hand-closed { opacity: 0; transform: scale(.85); }
+.cursor__hand .hand-open   { opacity: 1; }
+
+.cursor.is-hovering .hand-open   { opacity: 0; transform: scale(.85); }
+.cursor.is-hovering .hand-closed { opacity: 1; transform: scale(1); }
+
+.cursor.is-clicking .hand-open   { opacity: 0; transform: scale(.85); }
+.cursor.is-clicking .hand-closed { opacity: 1; transform: scale(.9); }
+
+.cursor.is-hovering .cursor__hand { color: var(--accent); }

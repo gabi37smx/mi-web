@@ -18,6 +18,8 @@
 
   <!-- SEO -->
   <title>Gabriel Vidal Badia · Desarrollador | 1º DAM · IES Simarro</title>
+    <!-- Favicon SVG inline (iniciales GV con degradado de la marca) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='0.5' stop-color='%2338bdf8'/%3E%3Cstop offset='1' stop-color='%23a78bfa'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Inter,Segoe UI,Roboto,sans-serif' font-size='30' font-weight='800' fill='%2306131a'%3EGV%3C/text%3E%3C/svg%3E" />
   <meta name="description" content="Portfolio de Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro. Técnico superior en Electrónica e Informática. Programación, IA, agentes y desarrollo web. Busco oportunidades como programador." />
   <meta name="keywords" content="programador, desarrollador, DAM, IES Simarro, Xàtiva, Valencia, Java, Python, JavaScript, HTML, CSS, Inteligencia Artificial, agentes, portfolio, Gabriel Vidal Badia" />
   <meta name="author" content="Gabriel Vidal Badia" />
@@ -73,6 +75,40 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- ===== Barra lateral de escalada ===== -->
+  <aside class="climb-rail" aria-label="Progreso de la vía">
+    <!-- Cuerda SVG (trenzada) -->
+    <svg class="climb-rope" viewBox="0 0 24 100" preserveAspectRatio="none" aria-hidden="true">
+      <!-- Base / sombra -->
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+            vector-effect="non-scaling-stroke" opacity="0.35" />
+      <!-- Trenzado diagonal 1 -->
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-dasharray="3 4" vector-effect="non-scaling-stroke" opacity="0.9" />
+      <!-- Trenzado diagonal 2 (desfasado) -->
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-dasharray="3 4" stroke-dashoffset="3.5"
+            vector-effect="non-scaling-stroke" opacity="0.5" />
+    </svg>
+
+    <!-- Escalador (punto que sube) -->
+    <div class="climb-climber" id="climber">
+      <span class="climb-climber__dot"></span>
+      <span class="climb-climber__glow"></span>
+    </div>
+
+    <!-- Presas (cada una enlaza a una sección) -->
+    <ul class="climb-holds">
+      <li><a href="#sobre-mi" class="climb-hold" data-section="sobre-mi" aria-label="Ir a Sobre mí"><span class="climb-hold__label">Sobre mí</span></a></li>
+      <li><a href="#hecho"    class="climb-hold" data-section="hecho"    aria-label="Ir a Experiencia"><span class="climb-hold__label">Experiencia</span></a></li>
+      <li><a href="#gusta"    class="climb-hold" data-section="gusta"    aria-label="Ir a Me gusta"><span class="climb-hold__label">Me gusta</span></a></li>
+      <li><a href="#contacto" class="climb-hold" data-section="contacto" aria-label="Ir a Contacto"><span class="climb-hold__label">Contacto</span></a></li>
+    </ul>
+  </aside>
 
   <!-- Enlace de salto (accesibilidad) -->
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -131,12 +167,15 @@
           <span class="typing" data-words="Desarrollador en formación,Estudiante de 1º DAM,Técnico superior en Electrónica,Técnico superior en Informática" data-delay="2400"></span>
         </p>
         <p class="hero-desc">
-          Técnico superior en Hilatura y Tejido de calada,tècnico superior en Electrónica y técnico electricista, experiencia como mecánico
-          en una hilatura y oficial de mantenimiento el ayuntamiento. Ahora estudio 1º DAM en el IES Simarro para dar el
-          salto a la programación con la ayuda de la inteligencia artificial.
+          Técnico superior en Hilatura y Tejido y en Electrónica, con 11 años de experiencia como mecánico
+          en una hilatura y oficial de mantenimiento. Ahora estudio 1º DAM en el IES Simarro para dar el
+          salto a la programación, la inteligencia artificial y los agentes.
         </p>
         <div class="hero-actions">
-          <a href="#contacto" class="btn btn-primary">Hablemos</a>
+          <a href="#contacto" class="btn btn-primary btn-swap">
+            <span class="btn-swap__a">Móntame una vía</span>
+            <span class="btn-swap__b">Hablemos</span>
+          </a>
           <a href="#hecho" class="btn btn-ghost">Ver experiencia</a>
         </div>
         <div class="hero-stats">
@@ -169,9 +208,18 @@
               He trabajado como mecánico en una hilatura durante 11 años y, actualmente, como oficial de
               mantenimiento en el Ayuntamiento de Ollería, con tareas de jardinería, obra, electricidad,
               grúa y cementerio. Ahora quiero orientar mi carrera hacia la <strong>programación</strong>,
-              con la ayuda de la <strong>inteligencia artificial</strong> y con los <strong>agentes</strong>, porque me interesa y creo que es
-              el futuro del software, y nunca es tarde para aprender nuevas habilidades y reinventarse.
+              la <strong>inteligencia artificial</strong> y los <strong>agentes</strong>, porque me interesa
+              el futuro del software y busco un trabajo con más reto técnico.
             </p>
+
+            <!-- Bloque terminal: la vía como código -->
+            <pre class="terminal" aria-label="Bucle de aprendizaje"><code><span class="term-prompt">$</span> while (<span class="term-var">no_llegue_a_la_cima</span>) {
+  <span class="term-fn">resolver_problema</span>();
+  <span class="term-fn">aprender</span>();
+  <span class="term-fn">subir</span>();
+}
+<span class="term-cursor">▊</span></code></pre>
+
             <div class="about-cta">
               <a href="#contacto" class="btn btn-primary">Contactar</a>
             </div>
@@ -203,6 +251,7 @@
         <div class="cards-grid">
           <!-- Tarjeta: formación -->
           <article class="card reveal">
+            <span class="card-grade" data-grade="V4" data-tip="Dificultad · Escala V4 (5.11)">V4</span>
             <div class="card-icon" aria-hidden="true">🎓</div>
             <h3>Formación</h3>
             <ul class="card-list">
@@ -216,6 +265,7 @@
 
           <!-- Tarjeta: experiencia -->
           <article class="card reveal">
+            <span class="card-grade" data-grade="V5" data-tip="Dificultad · Escala V5 (5.12)">V5</span>
             <div class="card-icon" aria-hidden="true">🔧</div>
             <h3>Experiencia</h3>
             <ul class="card-list">
@@ -228,6 +278,7 @@
 
           <!-- Tarjeta: técnica -->
           <article class="card reveal">
+            <span class="card-grade" data-grade="V3" data-tip="Dificultad · Escala V3 (5.10)">V3</span>
             <div class="card-icon" aria-hidden="true">🛠️</div>
             <h3>Proyectos y aficiones técnicas</h3>
             <ul class="card-list">
@@ -239,29 +290,44 @@
           </article>
         </div>
 
-        <!-- Timeline -->
-        <div class="timeline reveal" aria-label="Trayectoria">
-          <h3 class="timeline-title">Trayectoria</h3>
+        <!-- Leyenda de grados (escala V de escalada) -->
+        <p class="grades-legend reveal">
+          <span class="grades-legend__title">Grados de dificultad</span>
+          Escala <strong>V</strong> (boulder, EE.&nbsp;UU.): cuanto más alto, más difícil.
+          <span class="grades-legend__scale">
+            <span class="chip v0">V0</span>
+            <span class="chip v1">V1</span>
+            <span class="chip v2">V2</span>
+            <span class="chip v3">V3</span>
+            <span class="chip v4">V4</span>
+            <span class="chip v5">V5</span>
+            <span class="chip v6">V6</span>
+          </span>
+        </p>
+
+        <!-- Timeline → Movimientos de la vía -->
+        <div class="timeline reveal" aria-label="Movimientos de la vía">
+          <h3 class="timeline-title">La vía · movimientos clave</h3>
           <ol class="timeline-list">
             <li class="timeline-item">
-              <span class="timeline-year">2004–2015</span>
+              <span class="timeline-year">Movimiento 01 · Reposo</span>
               <h4>Mecánico en hilatura</h4>
-              <p>11 años de mantenimiento industrial, resolución de averías y mejora continua.</p>
+              <p>11 años de mantenimiento industrial. Aprendí a leer una máquina como se lee una vía: por donde va a romper.</p>
             </li>
             <li class="timeline-item">
-              <span class="timeline-year">2015–2023</span>
+              <span class="timeline-year">Movimiento 02 · Travesía</span>
               <h4>Oficial de mantenimiento · Ayuntamiento de Ollería</h4>
-              <p>Jardinería, obra, electricidad, manejo de grúa y cementerio.</p>
+              <p>Jardinería, obra, electricidad, grúa y cementerio. Cambio de terreno sin perder el ritmo.</p>
             </li>
             <li class="timeline-item">
-              <span class="timeline-year">2023–hoy</span>
+              <span class="timeline-year">Movimiento 03 · Crux</span>
               <h4>1º DAM · IES Simarro</h4>
-              <p>Programación, bases de datos, entornos de desarrollo y lenguajes de marcado.</p>
+              <p>El paso duro. Programación, bases de datos, entornos y lenguajes de marcado. Aquí es donde aprieto.</p>
             </li>
             <li class="timeline-item">
-              <span class="timeline-year">Próximo paso</span>
+              <span class="timeline-year">Movimiento 04 · Reunión</span>
               <h4>Programador con IA y agentes</h4>
-              <p>Busco prácticas y primeras oportunidades en desarrollo de software.</p>
+              <p>Busco prácticas y primeras oportunidades. La cima aún no se ve, pero la vía está montada.</p>
             </li>
           </ol>
         </div>
@@ -327,7 +393,10 @@
       <div class="container cta-inner reveal">
         <h2>¿Buscas un <span class="gradient-text">programador</span> con base técnica sólida?</h2>
         <p>Soy Gabriel, estudio 1º DAM en el IES Simarro. Vengo del mantenimiento industrial y quiero aportar rigor, constancia y ganas de aprender.</p>
-        <a href="#contacto" class="btn btn-primary btn-lg">Escríbeme</a>
+        <a href="#contacto" class="btn btn-primary btn-lg btn-swap">
+          <span class="btn-swap__a">Asegúrame</span>
+          <span class="btn-swap__b">Escríbeme</span>
+        </a>
       </div>
     </section>
   </main>

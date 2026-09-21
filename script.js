@@ -121,10 +121,10 @@ if ("IntersectionObserver" in window) {
 
 /* ---- Resaltar enlace activo del menú ---- */
 const navLinks = [...document.querySelectorAll(".main-nav a[href^='#']")];
-const sectionIds = navLinks.map((l) => l.getAttribute("href")).filter((h) => h.length > 1);
-const sections = sectionIds.map((id) => document.querySelector(id)).filter(Boolean);
+const navSectionIds = navLinks.map((l) => l.getAttribute("href")).filter((h) => h.length > 1);
+const navSections = navSectionIds.map((id) => document.querySelector(id)).filter(Boolean);
 
-if ("IntersectionObserver" in window && sections.length) {
+if ("IntersectionObserver" in window && navSections.length) {
   const navIO = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -138,7 +138,7 @@ if ("IntersectionObserver" in window && sections.length) {
     },
     { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
   );
-  sections.forEach((s) => navIO.observe(s));
+  navSections.forEach((s) => navIO.observe(s));
 }
 
 /* ---- Brillo que sigue al cursor en las tarjetas ---- */
@@ -188,145 +188,132 @@ if (toTop) {
 }
 
 /* ============================================================
-   Cursor personalizado · dot + aro con inercia y feedback de click
+   Cursor personalizado · mano abierta / cerrada
+   Se activa/desactiva en vivo si cambia el tipo de puntero
+   (por ejemplo, al activar/desactivar la emulación de móvil en F12).
    ============================================================ */
 
 (function customCursor() {
-  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!finePointer || reduceMotion) return;
+  if (reduceMotion) return;
 
+  // Creamos la mano una sola vez
   const wrap = document.createElement("div");
   wrap.className = "cursor";
   wrap.setAttribute("aria-hidden", "true");
 
-  const dot = document.createElement("div");
-  dot.className = "cursor__dot";
+  const hand = document.createElement("div");
+  hand.className = "cursor__hand";
+  hand.innerHTML = `
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <g class="hand-open">
+        <path d="M9 14V7a2 2 0 1 1 4 0v6"/>
+        <path d="M13 13V5a2 2 0 1 1 4 0v8"/>
+        <path d="M17 13V6a2 2 0 1 1 4 0v8"/>
+        <path d="M21 14V9a2 2 0 1 1 4 0v9a9 9 0 0 1-9 9h-1a8 8 0 0 1-8-8v-5a2 2 0 1 1 4 0"/>
+      </g>
+      <g class="hand-closed">
+        <path d="M8 15v-3a2 2 0 1 1 4 0"/>
+        <path d="M12 14V8a2 2 0 1 1 4 0v5"/>
+        <path d="M16 13V7a2 2 0 1 1 4 0v6"/>
+        <path d="M20 13v-2a2 2 0 1 1 4 0v7a9 9 0 0 1-9 9h-1a8 8 0 0 1-8-8v-4a2 2 0 1 1 4 0v2"/>
+      </g>
+    </svg>
+  `;
 
-  const ring = document.createElement("div");
-  ring.className = "cursor__ring";
-
-  wrap.append(dot, ring);
+  wrap.appendChild(hand);
   document.body.appendChild(wrap);
-  wrap.style.display = "block";
 
-  // Posiciones reales del ratón
+  // --- Lógica de "¿hay ratón real?" ---
+  const mqFine = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+  function applyMode() {
+    const hasMouse = mqFine.matches;
+    wrap.style.display = hasMouse ? "block" : "none";
+    // Marcamos el <html> para que el CSS pueda adaptar otras cosas si quieres
+    document.documentElement.classList.toggle("has-fine-pointer", hasMouse);
+  }
+
+  applyMode();
+  // Escuchamos cambios de emulación en vivo (sin recargar)
+  if (mqFine.addEventListener) mqFine.addEventListener("change", applyMode);
+  else if (mqFine.addListener) mqFine.addListener(applyMode); // fallback antiguo
+
+  // --- Movimiento ---
   let mouseX = window.innerWidth / 2;
   let mouseY = window.innerHeight / 2;
+  let x = mouseX, y = mouseY;
+  const EASE = 0.35;
 
-  // Posiciones interpoladas (inercia)
-  let dotX = mouseX, dotY = mouseY;       // el punto: rápido
-  let ringX = mouseX, ringY = mouseY;     // el aro: más lento
-
-  // Suavizados (0 = no se mueve, 1 = instantáneo)
-  const DOT_EASE  = 0.35;
-  const RING_EASE = 0.15;
-
-  // Escala del punto (para el click)
-  let dotScale = 1;
-  let dotScaleTarget = 1;
-
-  // Movimiento del ratón
   window.addEventListener("pointermove", (e) => {
     if (e.pointerType !== "mouse") return;
     mouseX = e.clientX;
     mouseY = e.clientY;
   }, { passive: true });
 
-  // Click: encoge aro y punto
   window.addEventListener("pointerdown", () => {
     wrap.classList.add("is-clicking");
-    dotScaleTarget = 0.5;
   });
   window.addEventListener("pointerup", () => {
     wrap.classList.remove("is-clicking");
-    dotScaleTarget = 1;
   });
 
-  // Hover sobre elementos clicables
-  const interactive = "a, button, .btn, .nav-link, .social-link, .to-top, input, textarea, select, [role='button']";
+  const interactive = "a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .card-grade, input, textarea, select, [role='button']";
   document.querySelectorAll(interactive).forEach((el) => {
     el.addEventListener("pointerenter", () => wrap.classList.add("is-hovering"));
     el.addEventListener("pointerleave", () => wrap.classList.remove("is-hovering"));
   });
 
-  // Ocultar si el ratón sale de la ventana
   document.addEventListener("mouseleave", () => { wrap.style.opacity = "0"; });
   document.addEventListener("mouseenter", () => { wrap.style.opacity = "1"; });
 
-  // Bucle de animación
   function loop() {
-    dotX += (mouseX - dotX) * DOT_EASE;
-    dotY += (mouseY - dotY) * DOT_EASE;
-
-    ringX += (mouseX - ringX) * RING_EASE;
-    ringY += (mouseY - ringY) * RING_EASE;
-
-    dotScale += (dotScaleTarget - dotScale) * 0.25;
-
-    dot.style.transform  = `translate3d(${dotX}px, ${dotY}px, 0) scale(${dotScale})`;
-    ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
-
+    x += (mouseX - x) * EASE;
+    y += (mouseY - y) * EASE;
+    hand.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
 })();
+
 /* ============================================================
    Efecto magnético en el título del hero
-   El texto se desplaza ligeramente siguiendo al cursor,
-   pero se queda anclado a su posición.
    ============================================================ */
 
 (function magneticTitle() {
   const title = document.querySelector(".hero-title");
   if (!title) return;
 
-  // Desactivar en táctil y con prefers-reduced-motion
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!finePointer || reduceMotion) return;
 
-  // Cuánto se puede desplazar como máximo (en px).
-  // 5-6 px ≈ medio centímetro en pantalla. Súbelo si lo quieres más exagerado.
-  const MAX_SHIFT = 8;
+  const MAX_SHIFT = 6;
 
-  // Posición actual (interpolada) para que el movimiento sea suave
   let currentX = 0, currentY = 0;
   let targetX = 0,  targetY = 0;
+  const EASE = 0.12;
 
-  // Suavizado (0 = no se mueve, 1 = instantáneo)
-  const EASE = 0.08;
-
-  // Al entrar en el título, activamos la clase para quitar el retardo
   title.addEventListener("pointerenter", () => {
     title.classList.add("is-hovered");
   });
 
-  // Mientras el ratón se mueve dentro del título, calculamos el desplazamiento
   title.addEventListener("pointermove", (e) => {
     const rect = title.getBoundingClientRect();
-
-    // Posición del ratón normalizada dentro del título: de -1 a 1
-    const relX = (e.clientX - rect.left) / rect.width;   // 0..1
-    const relY = (e.clientY - rect.top) / rect.height;   // 0..1
-
-    // Convertimos a -1..1 (centro = 0)
+    const relX = (e.clientX - rect.left) / rect.width;
+    const relY = (e.clientY - rect.top) / rect.height;
     const nx = (relX - 0.5) * 2;
     const ny = (relY - 0.5) * 2;
-
-    // Desplazamiento objetivo (máx MAX_SHIFT px)
     targetX = nx * MAX_SHIFT;
     targetY = ny * MAX_SHIFT;
   });
 
-  // Al salir, volvemos a la posición original con transición suave
   title.addEventListener("pointerleave", () => {
     title.classList.remove("is-hovered");
     targetX = 0;
     targetY = 0;
   });
 
-  // Bucle de animación con interpolación (lerp)
   function loop() {
     currentX += (targetX - currentX) * EASE;
     currentY += (targetY - currentY) * EASE;
@@ -334,4 +321,83 @@ if (toTop) {
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
+})();
+
+/* ============================================================
+   Barra lateral de escalada · escalador SVG + presas activas
+   ============================================================ */
+
+(function climbingRail() {
+  const rail = document.querySelector(".climb-rail");
+  const climber = document.getElementById("climber");
+  const holds = [...document.querySelectorAll(".climb-hold")];
+  const rope = document.querySelector(".climb-rope");
+  if (!rail || !climber || !holds.length || !rope) return;
+
+  // Inyectamos el SVG del escalador (silueta humana trepando)
+  climber.innerHTML = `
+    <svg viewBox="0 0 24 30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="5" r="2.4"/>
+      <path d="M12 7.4 V17"/>
+      <path d="M12 10 L7 6"/>
+      <path d="M12 11 L17 8"/>
+      <path d="M12 17 L8 22 L9 27"/>
+      <path d="M12 17 L16 22 L15 27"/>
+    </svg>
+  `;
+
+  // Posiciones Y (en px, relativas al rail) de cada presa
+  let holdPositions = [];
+
+  function getHoldPositions() {
+    const railRect = rail.getBoundingClientRect();
+    return holds.map((h) => {
+      const r = h.getBoundingClientRect();
+      return r.top - railRect.top + r.height / 2;
+    });
+  }
+
+  function refreshPositions() {
+    holdPositions = getHoldPositions();
+  }
+
+  function updateClimber() {
+    if (holdPositions.length < 2) return;
+
+    const scrollY = window.scrollY;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+
+    const first = holdPositions[0];
+    const last  = holdPositions[holdPositions.length - 1];
+    const y = first + (last - first) * progress;
+
+    climber.style.top = `${y}px`;
+  }
+
+  // Presas activas
+  const railSectionIds = holds.map((h) => h.dataset.section);
+  const railSections = railSectionIds.map((id) => document.getElementById(id)).filter(Boolean);
+
+  const setActive = (id) => {
+    holds.forEach((h) => h.classList.toggle("is-active", h.dataset.section === id));
+  };
+
+  if ("IntersectionObserver" in window && railSections.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+    );
+    railSections.forEach((s) => io.observe(s));
+  }
+
+  window.addEventListener("scroll", updateClimber, { passive: true });
+  window.addEventListener("resize", () => { refreshPositions(); updateClimber(); });
+
+  // Esperamos a que el navegador mida todo
+  requestAnimationFrame(() => { refreshPositions(); updateClimber(); });
 })();
