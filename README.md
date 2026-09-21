@@ -44,8 +44,8 @@ Portfolio personal con temática de escalada. Estudiante de **1º DAM** en el **
 | v2 | Cursor personalizado con dos círculos | [`bf4be4f`](../../commit/bf4be4f) |
 | v3 | Efecto magnético en el título del hero | [`7ecccf`](../../commit/7ecccf) |
 | v4 | Barra de escalada, cursor mano y grados V de la vía | [`8bced2e`](../../commit/8bced2e) |
-| v5 (en curso) | Formulario de contacto |  [`fc03900`](../../commit/fc03900) |
-| v6 (en curso) | Seccion de certificaciones Cisco y titulos oficiales |  [`6c398ed`](../../commit/6c398ed) |
+| v5 | Formulario de contacto |  [`fc03900`](../../commit/fc03900) |
+| v6 | Seccion de certificaciones Cisco y titulos oficiales |  [`6c398ed`](../../commit/6c398ed) |
 
 ---
 
