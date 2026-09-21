@@ -18,7 +18,7 @@
 
   <!-- SEO -->
   <title>Gabriel Vidal Badia · Desarrollador | 1º DAM · IES Simarro</title>
-  <meta name="description" content="Portfolio de Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro. Técnico superior en Electrónica e Informática. Programación, IA, agentes y desarrollo web. Busco oportunidades como programador." />
+  <meta name="description" content="Portfolio de Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro. Técnico superior en Electrónica e Informática. Proyectos con Java, Python, JavaScript y IA. Busco oportunidades como programador." />
   <meta name="keywords" content="programador, desarrollador, DAM, IES Simarro, Xàtiva, Valencia, Java, Python, JavaScript, HTML, CSS, Inteligencia Artificial, agentes, portfolio, Gabriel Vidal Badia" />
   <meta name="author" content="Gabriel Vidal Badia" />
   <meta name="robots" content="index, follow" />
@@ -27,7 +27,7 @@
   <!-- Open Graph -->
   <meta property="og:type" content="profile" />
   <meta property="og:title" content="Gabriel Vidal Badia · Desarrollador" />
-  <meta property="og:description" content="Estudiante de 1º DAM. Técnico superior en Electrónica e Informática. Programación, IA y agentes." />
+  <meta property="og:description" content="Estudiante de 1º DAM. Técnico superior en Electrónica e Informática. Proyectos con Java, Python, JS e IA." />
   <meta property="og:url" content="https://gabrielvidal.dev/" />
   <meta property="og:locale" content="es_ES" />
   <meta property="og:image" content="https://gabrielvidal.dev/og-image.jpg" />
@@ -35,7 +35,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Gabriel Vidal Badia · Desarrollador" />
-  <meta name="twitter:description" content="Estudiante de 1º DAM. Técnico superior en Electrónica e Informática. Programación, IA y agentes." />
+  <meta name="twitter:description" content="Estudiante de 1º DAM. Técnico superior en Electrónica e Informática. Proyectos con Java, Python, JS e IA." />
 
   <!-- Datos estructurados (JSON-LD) -->
   <script type="application/ld+json">
@@ -46,18 +46,9 @@
     "jobTitle": "Desarrollador en formación",
     "description": "Estudiante de 1º DAM en el IES Simarro. Técnico superior en Electrónica e Informática. Interesado en programación, inteligencia artificial y agentes.",
     "url": "https://gabrielvidal.dev",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Xàtiva",
-      "addressRegion": "Valencia",
-      "addressCountry": "ES"
-    },
+    "address": { "@type": "PostalAddress", "addressLocality": "Xàtiva", "addressRegion": "Valencia", "addressCountry": "ES" },
     "alumniOf": [
-      {
-        "@type": "EducationalOrganization",
-        "name": "IES Simarro",
-        "address": { "@type": "PostalAddress", "addressLocality": "Xàtiva", "addressRegion": "Valencia", "addressCountry": "ES" }
-      }
+      { "@type": "EducationalOrganization", "name": "IES Simarro", "address": { "@type": "PostalAddress", "addressLocality": "Xàtiva", "addressRegion": "Valencia", "addressCountry": "ES" } }
     ],
     "knowsAbout": ["Java", "Python", "JavaScript", "HTML", "CSS", "Programación orientada a objetos", "Inteligencia artificial", "Agentes", "Desarrollo web", "Mantenimiento electrónico"],
     "sameAs": ["https://github.com/tu-usuario", "https://www.linkedin.com/in/tu-usuario"]
@@ -77,6 +68,10 @@
   <!-- Enlace de salto (accesibilidad) -->
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
+  <!-- Cursor personalizado (decorativo, oculto en táctil) -->
+  <div class="cursor__ring" aria-hidden="true"><span class="cursor__label"></span></div>
+  <div class="cursor__dot" aria-hidden="true"></div>
+
   <!-- Cabecera fija con navegación -->
   <header class="site-header" id="inicio">
     <div class="container header-inner">
@@ -89,15 +84,23 @@
       <!-- Navegación principal -->
       <nav class="main-nav" aria-label="Navegación principal">
         <ul class="nav-list">
+          <li><a href="#proyectos" class="nav-link">Proyectos</a></li>
           <li><a href="#sobre-mi" class="nav-link">Sobre mí</a></li>
           <li><a href="#hecho" class="nav-link">Experiencia</a></li>
           <li><a href="#gusta" class="nav-link">Me gusta</a></li>
           <li><a href="#contacto" class="nav-link nav-cta">Contacto</a></li>
+          <!-- CV solo visible en móvil (en desktop está en header-actions) -->
+          <li class="nav-cv"><a href="assets/CV-Gabriel-Vidal-Badia.pdf" download class="btn btn-cv" data-cursor="PDF">↓ CV</a></li>
         </ul>
       </nav>
 
-      <!-- Acciones: tema + hamburguesa -->
+      <!-- Acciones: CV + tema + hamburguesa -->
       <div class="header-actions">
+        <a href="assets/CV-Gabriel-Vidal-Badia.pdf" download class="btn btn-cv" data-cursor="PDF">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>CV</span>
+        </a>
+
         <!-- Botón de tema claro/oscuro -->
         <button id="themeToggle" class="theme-toggle" aria-label="Cambiar a modo claro" aria-pressed="false" title="Cambiar tema">
           <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -122,8 +125,9 @@
     <!-- Hero -->
     <section class="hero" aria-label="Presentación">
       <div class="hero-bg" aria-hidden="true"></div>
+      <div class="hero-spot" aria-hidden="true"></div>
       <div class="container hero-inner">
-        <p class="hero-eyebrow"><span class="dot"></span> Disponible para oportunidades</p>
+        <p class="hero-eyebrow"><span class="dot"></span> Abierto a prácticas · Valencia (CET)</p>
         <h1 class="hero-title">
           Hola, soy <span class="gradient-text">Gabriel Vidal Badia</span>
         </h1>
@@ -136,8 +140,8 @@
           salto a la programación, la inteligencia artificial y los agentes.
         </p>
         <div class="hero-actions">
-          <a href="#contacto" class="btn btn-primary">Hablemos</a>
-          <a href="#hecho" class="btn btn-ghost">Ver experiencia</a>
+          <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
+          <a href="assets/CV-Gabriel-Vidal-Badia.pdf" download class="btn btn-ghost" data-cursor="PDF">Descargar CV</a>
         </div>
         <div class="hero-stats">
           <div class="stat"><strong>11</strong><span>años de experiencia técnica</span></div>
@@ -145,16 +149,141 @@
           <div class="stat"><strong>1º</strong><span>DAM en el IES Simarro</span></div>
         </div>
       </div>
-      <a href="#sobre-mi" class="scroll-hint" aria-label="Bajar a la siguiente sección">
+      <a href="#proyectos" class="scroll-hint" aria-label="Bajar a la siguiente sección">
         <span class="mouse"><span class="wheel"></span></span>
       </a>
+    </section>
+
+    <!-- Proyectos (destacado + casos de estudio) -->
+    <section id="proyectos" class="section section-alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">01 · Proyectos</span>
+          <h2>Casos reales de <span class="gradient-text">problema a solución</span></h2>
+          <p class="section-lead">Cada proyecto parte de un problema concreto. Aquí va qué construí, con qué y por qué.</p>
+        </div>
+
+        <!-- Proyecto destacado -->
+        <div class="featured reveal">
+          <!-- Destacado principal -->
+          <article class="project-card card featured-main" data-cursor="Ver">
+            <figure class="project-media">
+              <!-- Sustituir este <div class="thumb"> por <img loading="lazy" width="900" height="560" src="..." alt="..."> cuando tenga capturas -->
+              <div class="thumb" style="--g1:#0d9488;--g2:#0284c7">
+                <span class="thumb-tag">JAVA · MySQL · JDBC</span>
+                <span class="thumb-mono">01</span>
+              </div>
+              <figcaption class="visually-hidden">Gestor de Mantenimiento Industrial</figcaption>
+            </figure>
+            <div class="project-body">
+              <h3 class="project-title">Gestor de Mantenimiento Industrial</h3>
+              <p class="project-desc">
+                <strong>Problema:</strong> los partes de averías se llevaban en papel y se perdía historial.
+                <strong>Solución:</strong> una app de escritorio en Java con base de datos MySQL para registrar, filtrar y consultar partes de trabajo, con exportación a PDF.
+              </p>
+              <ul class="chips"><li>Java</li><li>Swing</li><li>MySQL</li><li>JDBC</li><li>MVC</li></ul>
+              <div class="project-links">
+                <a href="https://github.com/tu-usuario" target="_blank" rel="noopener noreferrer">Código ↗</a>
+                <a href="#proyectos">Ver caso ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Destacados secundarios -->
+          <div class="featured-side">
+            <article class="project-card card" data-cursor="Ver">
+              <figure class="project-media">
+                <div class="thumb" style="--g1:#7c3aed;--g2:#0284c7">
+                  <span class="thumb-tag">HTML · CSS · JS</span>
+                  <span class="thumb-mono">02</span>
+                </div>
+                <figcaption class="visually-hidden">Este portfolio</figcaption>
+              </figure>
+              <div class="project-body">
+                <h3 class="project-title">Portfolio personal (esta web)</h3>
+                <p class="project-desc">Sin frameworks: HTML semántico, CSS con variables y JS puro. Modo claro/oscuro, accesible y SEO.</p>
+                <ul class="chips"><li>HTML5</li><li>CSS3</li><li>JavaScript</li></ul>
+                <div class="project-links"><a href="https://github.com/tu-usuario" target="_blank" rel="noopener noreferrer">Código ↗</a></div>
+              </div>
+            </article>
+
+            <article class="project-card card" data-cursor="Ver">
+              <figure class="project-media">
+                <div class="thumb" style="--g1:#0ea5e9;--g2:#22d3ee">
+                  <span class="thumb-tag">PYTHON · IA</span>
+                  <span class="thumb-mono">03</span>
+                </div>
+                <figcaption class="visually-hidden">Asistente con agentes</figcaption>
+              </figure>
+              <div class="project-body">
+                <h3 class="project-title">Asistente con agentes</h3>
+                <p class="project-desc">Agente conversacional en Python que consulta una base de conocimiento y resuelve dudas de mantenimiento.</p>
+                <ul class="chips"><li>Python</li><li>API</li><li>Agentes</li></ul>
+                <div class="project-links"><a href="https://github.com/tu-usuario" target="_blank" rel="noopener noreferrer">Código ↗</a></div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Más proyectos -->
+        <h3 class="subhead reveal">Otros proyectos</h3>
+        <div class="projects-grid">
+          <article class="project-card card reveal" data-cursor="Ver">
+            <figure class="project-media">
+              <div class="thumb" style="--g1:#f59e0b;--g2:#ef4444">
+                <span class="thumb-tag">JAVA · ANDROID</span>
+                <span class="thumb-mono">04</span>
+              </div>
+              <figcaption class="visually-hidden">Rutas de escalada</figcaption>
+            </figure>
+            <div class="project-body">
+              <h3 class="project-title">Rutas de Escalada</h3>
+              <p class="project-desc">App para registrar vías, grado y sensaciones, con filtro por sector. Nace de mi afición.</p>
+              <ul class="chips"><li>Java</li><li>Android</li><li>SQLite</li></ul>
+              <div class="project-links"><a href="https://github.com/tu-usuario" target="_blank" rel="noopener noreferrer">Código ↗</a></div>
+            </div>
+          </article>
+
+          <article class="project-card card reveal" data-cursor="Ver">
+            <figure class="project-media">
+              <div class="thumb" style="--g1:#16a34a;--g2:#0d9488">
+                <span class="thumb-tag">PYTHON</span>
+                <span class="thumb-mono">05</span>
+              </div>
+              <figcaption class="visually-hidden">Automatización de partes</figcaption>
+            </figure>
+            <div class="project-body">
+              <h3 class="project-title">Automatización de partes</h3>
+              <p class="project-desc">Script que genera partes de trabajo y envía avisos, reduciendo el trabajo manual del taller.</p>
+              <ul class="chips"><li>Python</li><li>CSV</li><li>Automatización</li></ul>
+              <div class="project-links"><a href="https://github.com/tu-usuario" target="_blank" rel="noopener noreferrer">Código ↗</a></div>
+            </div>
+          </article>
+
+          <article class="project-card card reveal" data-cursor="Ver">
+            <figure class="project-media">
+              <div class="thumb" style="--g1:#6366f1;--g2:#0284c7">
+                <span class="thumb-tag">SPRING · REST</span>
+                <span class="thumb-mono">06</span>
+              </div>
+              <figcaption class="visually-hidden">API REST de inventario</figcaption>
+            </figure>
+            <div class="project-body">
+              <h3 class="project-title">API REST de Inventario</h3>
+              <p class="project-desc">Backend con Spring Boot y JPA para gestionar stock de material, con endpoints CRUD y validación.</p>
+              <ul class="chips"><li>Spring Boot</li><li>JPA</li><li>MySQL</li><li>REST</li></ul>
+              <div class="project-links"><a href="https://github.com/tu-usuario" target="_blank" rel="noopener noreferrer">Código ↗</a></div>
+            </div>
+          </article>
+        </div>
+      </div>
     </section>
 
     <!-- Sobre mí -->
     <section id="sobre-mi" class="section">
       <div class="container">
         <div class="section-head reveal">
-          <span class="section-tag">01 · Sobre mí</span>
+          <span class="section-tag">02 · Sobre mí</span>
           <h2>Perfil técnico con vocación de <span class="gradient-text">programador</span></h2>
         </div>
 
@@ -196,12 +325,11 @@
     <section id="hecho" class="section section-alt">
       <div class="container">
         <div class="section-head reveal">
-          <span class="section-tag">02 · Lo que he hecho</span>
-          <h2>Formación, experiencia y <span class="gradient-text">proyectos</span></h2>
+          <span class="section-tag">03 · Experiencia</span>
+          <h2>Formación, experiencia y <span class="gradient-text">trayectoria</span></h2>
         </div>
 
         <div class="cards-grid">
-          <!-- Tarjeta: formación -->
           <article class="card reveal">
             <div class="card-icon" aria-hidden="true">🎓</div>
             <h3>Formación</h3>
@@ -214,7 +342,6 @@
             </ul>
           </article>
 
-          <!-- Tarjeta: experiencia -->
           <article class="card reveal">
             <div class="card-icon" aria-hidden="true">🔧</div>
             <h3>Experiencia</h3>
@@ -226,10 +353,9 @@
             </ul>
           </article>
 
-          <!-- Tarjeta: técnica -->
           <article class="card reveal">
             <div class="card-icon" aria-hidden="true">🛠️</div>
-            <h3>Proyectos y aficiones técnicas</h3>
+            <h3>Aficiones técnicas</h3>
             <ul class="card-list">
               <li>Alta montaña, senderismo y BTT</li>
               <li>Escalada (principal pasión)</li>
@@ -239,7 +365,6 @@
           </article>
         </div>
 
-        <!-- Timeline -->
         <div class="timeline reveal" aria-label="Trayectoria">
           <h3 class="timeline-title">Trayectoria</h3>
           <ol class="timeline-list">
@@ -266,19 +391,12 @@
           </ol>
         </div>
 
-        <!-- Stack / tecnologías -->
         <div class="stack reveal" aria-label="Tecnologías">
           <h3 class="stack-title">Stack en aprendizaje</h3>
           <ul class="stack-list">
-            <li><span>Java</span></li>
-            <li><span>Python</span></li>
-            <li><span>JavaScript</span></li>
-            <li><span>HTML5</span></li>
-            <li><span>CSS3</span></li>
-            <li><span>SQL</span></li>
-            <li><span>Git</span></li>
-            <li><span>IA</span></li>
-            <li><span>Agentes</span></li>
+            <li><span>Java</span></li><li><span>Python</span></li><li><span>JavaScript</span></li>
+            <li><span>HTML5</span></li><li><span>CSS3</span></li><li><span>SQL</span></li>
+            <li><span>Git</span></li><li><span>Spring</span></li><li><span>IA</span></li><li><span>Agentes</span></li>
           </ul>
         </div>
       </div>
@@ -288,36 +406,16 @@
     <section id="gusta" class="section">
       <div class="container">
         <div class="section-head reveal">
-          <span class="section-tag">03 · Me gusta</span>
+          <span class="section-tag">04 · Me gusta</span>
           <h2>Lo que me <span class="gradient-text">motiva</span></h2>
         </div>
 
         <div class="likes-grid">
-          <article class="like-card reveal">
-            <div class="like-icon" aria-hidden="true">⛰️</div>
-            <h3>Montaña</h3>
-            <p>Alta montaña, senderismo y algo de ciclismo de montaña.</p>
-          </article>
-          <article class="like-card reveal">
-            <div class="like-icon" aria-hidden="true">🧗</div>
-            <h3>Escalada</h3>
-            <p>Mi principal pasión: resolver problemas con el cuerpo, igual que con el código.</p>
-          </article>
-          <article class="like-card reveal">
-            <div class="like-icon" aria-hidden="true">💻</div>
-            <h3>Tecnología</h3>
-            <p>Desmontar aparatos, repararlos y entender cómo funcionan por dentro.</p>
-          </article>
-          <article class="like-card reveal">
-            <div class="like-icon" aria-hidden="true">🤖</div>
-            <h3>IA y agentes</h3>
-            <p>Me interesa el futuro del software: modelos, automatización y agentes.</p>
-          </article>
-          <article class="like-card reveal">
-            <div class="like-icon" aria-hidden="true">🎵</div>
-            <h3>Música</h3>
-            <p>Pop inglés y Remember como banda sonora de estudio.</p>
-          </article>
+          <article class="like-card reveal"><div class="like-icon" aria-hidden="true">⛰️</div><h3>Montaña</h3><p>Alta montaña, senderismo y algo de ciclismo de montaña.</p></article>
+          <article class="like-card reveal"><div class="like-icon" aria-hidden="true">🧗</div><h3>Escalada</h3><p>Mi principal pasión: resolver problemas con el cuerpo, igual que con el código.</p></article>
+          <article class="like-card reveal"><div class="like-icon" aria-hidden="true">💻</div><h3>Tecnología</h3><p>Desmontar aparatos, repararlos y entender cómo funcionan por dentro.</p></article>
+          <article class="like-card reveal"><div class="like-icon" aria-hidden="true">🤖</div><h3>IA y agentes</h3><p>Me interesa el futuro del software: modelos, automatización y agentes.</p></article>
+          <article class="like-card reveal"><div class="like-icon" aria-hidden="true">🎵</div><h3>Música</h3><p>Pop inglés y Remember como banda sonora de estudio.</p></article>
         </div>
       </div>
     </section>
@@ -327,7 +425,10 @@
       <div class="container cta-inner reveal">
         <h2>¿Buscas un <span class="gradient-text">programador</span> con base técnica sólida?</h2>
         <p>Soy Gabriel, estudio 1º DAM en el IES Simarro. Vengo del mantenimiento industrial y quiero aportar rigor, constancia y ganas de aprender.</p>
-        <a href="#contacto" class="btn btn-primary btn-lg">Escríbeme</a>
+        <div class="cta-actions">
+          <a href="#contacto" class="btn btn-primary btn-lg">Escríbeme</a>
+          <a href="assets/CV-Gabriel-Vidal-Badia.pdf" download class="btn btn-ghost btn-lg" data-cursor="PDF">Descargar CV</a>
+        </div>
       </div>
     </section>
   </main>
@@ -354,10 +455,10 @@
       <div class="footer-col reveal">
         <h3>Enlaces rápidos</h3>
         <ul class="footer-links">
+          <li><a href="#proyectos">Proyectos</a></li>
           <li><a href="#sobre-mi">Sobre mí</a></li>
-          <li><a href="#hecho">Lo que he hecho</a></li>
+          <li><a href="#hecho">Experiencia</a></li>
           <li><a href="#gusta">Me gusta</a></li>
-          <li><a href="#inicio">Volver arriba</a></li>
         </ul>
       </div>
 
@@ -367,6 +468,7 @@
           <li><a href="mailto:gabriel.vidal@ejemplo.com">gabriel.vidal@ejemplo.com</a></li>
           <li><a href="https://github.com/tu-usuario" target="_blank" rel="noopener noreferrer">github.com/tu-usuario</a></li>
           <li><a href="https://www.linkedin.com/in/tu-usuario" target="_blank" rel="noopener noreferrer">linkedin.com/in/tu-usuario</a></li>
+          <li><a href="assets/CV-Gabriel-Vidal-Badia.pdf" download>Descargar CV (PDF)</a></li>
         </ul>
       </div>
     </div>
