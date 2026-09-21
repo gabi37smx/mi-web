@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0f14" id="metaTheme" />
+
+  <!-- Evita el parpadeo del tema al cargar -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- SEO -->
+  <title>Gabriel Vidal Badia · Desarrollador | 1º DAM · IES Simarro</title>
+  <meta name="description" content="Portfolio de Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro. Técnico superior en Electrónica e Informática. Programación, IA, agentes y desarrollo web. Busco oportunidades como programador." />
+  <meta name="keywords" content="programador, desarrollador, DAM, IES Simarro, Xàtiva, Valencia, Java, Python, JavaScript, HTML, CSS, Inteligencia Artificial, agentes, portfolio, Gabriel Vidal Badia" />
+  <meta name="author" content="Gabriel Vidal Badia" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://gabrielvidal.dev/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="Gabriel Vidal Badia · Desarrollador" />
+  <meta property="og:description" content="Estudiante de 1º DAM. Técnico superior en Electrónica e Informática. Programación, IA y agentes." />
+  <meta property="og:url" content="https://gabrielvidal.dev/" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:image" content="https://gabrielvidal.dev/og-image.jpg" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Gabriel Vidal Badia · Desarrollador" />
+  <meta name="twitter:description" content="Estudiante de 1º DAM. Técnico superior en Electrónica e Informática. Programación, IA y agentes." />
+
+  <!-- Datos estructurados (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Gabriel Vidal Badia",
+    "jobTitle": "Desarrollador en formación",
+    "description": "Estudiante de 1º DAM en el IES Simarro. Técnico superior en Electrónica e Informática. Interesado en programación, inteligencia artificial y agentes.",
+    "url": "https://gabrielvidal.dev",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Xàtiva",
+      "addressRegion": "Valencia",
+      "addressCountry": "ES"
+    },
+    "alumniOf": [
+      {
+        "@type": "EducationalOrganization",
+        "name": "IES Simarro",
+        "address": { "@type": "PostalAddress", "addressLocality": "Xàtiva", "addressRegion": "Valencia", "addressCountry": "ES" }
+      }
+    ],
+    "knowsAbout": ["Java", "Python", "JavaScript", "HTML", "CSS", "Programación orientada a objetos", "Inteligencia artificial", "Agentes", "Desarrollo web", "Mantenimiento electrónico"],
+    "sameAs": ["https://github.com/tu-usuario", "https://www.linkedin.com/in/tu-usuario"]
+  }
+  </script>
+
+  <!-- Tipografías -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Hoja de estilos -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Enlace de salto (accesibilidad) -->
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <!-- Cabecera fija con navegación -->
+  <header class="site-header" id="inicio">
+    <div class="container header-inner">
+      <!-- Logo / marca personal -->
+      <a href="#inicio" class="logo" aria-label="Inicio">
+        <span class="logo-mark">GV</span>
+        <span class="logo-text">Gabriel Vidal</span>
+      </a>
+
+      <!-- Navegación principal -->
+      <nav class="main-nav" aria-label="Navegación principal">
+        <ul class="nav-list">
+          <li><a href="#sobre-mi" class="nav-link">Sobre mí</a></li>
+          <li><a href="#hecho" class="nav-link">Experiencia</a></li>
+          <li><a href="#gusta" class="nav-link">Me gusta</a></li>
+          <li><a href="#contacto" class="nav-link nav-cta">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <!-- Acciones: tema + hamburguesa -->
+      <div class="header-actions">
+        <!-- Botón de tema claro/oscuro -->
+        <button id="themeToggle" class="theme-toggle" aria-label="Cambiar a modo claro" aria-pressed="false" title="Cambiar tema">
+          <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <!-- Botón hamburguesa (móvil) -->
+        <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-list">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main id="contenido">
+
+    <!-- Hero -->
+    <section class="hero" aria-label="Presentación">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <p class="hero-eyebrow"><span class="dot"></span> Disponible para oportunidades</p>
+        <h1 class="hero-title">
+          Hola, soy <span class="gradient-text">Gabriel Vidal Badia</span>
+        </h1>
+        <p class="hero-subtitle">
+          <span class="typing" data-words="Desarrollador en formación,Estudiante de 1º DAM,Técnico superior en Electrónica,Técnico superior en Informática" data-delay="2400"></span>
+        </p>
+        <p class="hero-desc">
+          Técnico superior en Hilatura y Tejido y en Electrónica, con 11 años de experiencia como mecánico
+          en una hilatura y oficial de mantenimiento. Ahora estudio 1º DAM en el IES Simarro para dar el
+          salto a la programación, la inteligencia artificial y los agentes.
+        </p>
+        <div class="hero-actions">
+          <a href="#contacto" class="btn btn-primary">Hablemos</a>
+          <a href="#hecho" class="btn btn-ghost">Ver experiencia</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><strong>11</strong><span>años de experiencia técnica</span></div>
+          <div class="stat"><strong>4</strong><span>títulos técnicos</span></div>
+          <div class="stat"><strong>1º</strong><span>DAM en el IES Simarro</span></div>
+        </div>
+      </div>
+      <a href="#sobre-mi" class="scroll-hint" aria-label="Bajar a la siguiente sección">
+        <span class="mouse"><span class="wheel"></span></span>
+      </a>
+    </section>
+
+    <!-- Sobre mí -->
+    <section id="sobre-mi" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">01 · Sobre mí</span>
+          <h2>Perfil técnico con vocación de <span class="gradient-text">programador</span></h2>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-text reveal">
+            <p>
+              Soy <strong>Gabriel Vidal Badia</strong>, del ciclo de <strong>1º DAM</strong> del <strong>IES Simarro</strong>.
+              Tengo una formación técnica amplia y una trayectoria basada en el mantenimiento, la resolución
+              de problemas y el aprendizaje continuo.
+            </p>
+            <p>
+              He trabajado como mecánico en una hilatura durante 11 años y, actualmente, como oficial de
+              mantenimiento en el Ayuntamiento de Ollería, con tareas de jardinería, obra, electricidad,
+              grúa y cementerio. Ahora quiero orientar mi carrera hacia la <strong>programación</strong>,
+              la <strong>inteligencia artificial</strong> y los <strong>agentes</strong>, porque me interesa
+              el futuro del software y busco un trabajo con más reto técnico.
+            </p>
+            <div class="about-cta">
+              <a href="#contacto" class="btn btn-primary">Contactar</a>
+            </div>
+          </div>
+
+          <aside class="about-card reveal" aria-label="Datos clave">
+            <h3>Datos clave</h3>
+            <dl class="kv">
+              <div><dt>Nombre</dt><dd>Gabriel Vidal Badia</dd></div>
+              <div><dt>Estudios</dt><dd>1º DAM · IES Simarro</dd></div>
+              <div><dt>Formación previa</dt><dd>TS Electrónica · TS Hilatura · TM Electricidad · TM Informática</dd></div>
+              <div><dt>Experiencia</dt><dd>Mecánico (11 años) · Oficial de mantenimiento</dd></div>
+              <div><dt>Enfoque</dt><dd>Programación, IA y agentes</dd></div>
+              <div><dt>Ubicación</dt><dd>Valencia (España)</dd></div>
+            </dl>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lo que he hecho -->
+    <section id="hecho" class="section section-alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">02 · Lo que he hecho</span>
+          <h2>Formación, experiencia y <span class="gradient-text">proyectos</span></h2>
+        </div>
+
+        <div class="cards-grid">
+          <!-- Tarjeta: formación -->
+          <article class="card reveal">
+            <div class="card-icon" aria-hidden="true">🎓</div>
+            <h3>Formación</h3>
+            <ul class="card-list">
+              <li>Técnico superior de Hilatura y Tejido</li>
+              <li>Técnico superior de Electrónica</li>
+              <li>Técnico medio de Electricidad</li>
+              <li>Técnico medio de Informática</li>
+              <li class="highlight">Técnico superior de Programación · 1º DAM (IES Simarro)</li>
+            </ul>
+          </article>
+
+          <!-- Tarjeta: experiencia -->
+          <article class="card reveal">
+            <div class="card-icon" aria-hidden="true">🔧</div>
+            <h3>Experiencia</h3>
+            <ul class="card-list">
+              <li>Mecánico en una hilatura durante 11 años</li>
+              <li>Oficial de mantenimiento en el Ayuntamiento de Ollería</li>
+              <li>Jardinería, obra, electricidad, grúa y cementerio</li>
+              <li class="highlight">Mantenimiento preventivo y correctivo</li>
+            </ul>
+          </article>
+
+          <!-- Tarjeta: técnica -->
+          <article class="card reveal">
+            <div class="card-icon" aria-hidden="true">🛠️</div>
+            <h3>Proyectos y aficiones técnicas</h3>
+            <ul class="card-list">
+              <li>Alta montaña, senderismo y BTT</li>
+              <li>Escalada (principal pasión)</li>
+              <li>Desmontar, reparar y entender aparatos</li>
+              <li class="highlight">Aprendiendo Java, Python y JavaScript</li>
+            </ul>
+          </article>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline reveal" aria-label="Trayectoria">
+          <h3 class="timeline-title">Trayectoria</h3>
+          <ol class="timeline-list">
+            <li class="timeline-item">
+              <span class="timeline-year">2004–2015</span>
+              <h4>Mecánico en hilatura</h4>
+              <p>11 años de mantenimiento industrial, resolución de averías y mejora continua.</p>
+            </li>
+            <li class="timeline-item">
+              <span class="timeline-year">2015–2023</span>
+              <h4>Oficial de mantenimiento · Ayuntamiento de Ollería</h4>
+              <p>Jardinería, obra, electricidad, manejo de grúa y cementerio.</p>
+            </li>
+            <li class="timeline-item">
+              <span class="timeline-year">2023–hoy</span>
+              <h4>1º DAM · IES Simarro</h4>
+              <p>Programación, bases de datos, entornos de desarrollo y lenguajes de marcado.</p>
+            </li>
+            <li class="timeline-item">
+              <span class="timeline-year">Próximo paso</span>
+              <h4>Programador con IA y agentes</h4>
+              <p>Busco prácticas y primeras oportunidades en desarrollo de software.</p>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Stack / tecnologías -->
+        <div class="stack reveal" aria-label="Tecnologías">
+          <h3 class="stack-title">Stack en aprendizaje</h3>
+          <ul class="stack-list">
+            <li><span>Java</span></li>
+            <li><span>Python</span></li>
+            <li><span>JavaScript</span></li>
+            <li><span>HTML5</span></li>
+            <li><span>CSS3</span></li>
+            <li><span>SQL</span></li>
+            <li><span>Git</span></li>
+            <li><span>IA</span></li>
+            <li><span>Agentes</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Me gusta -->
+    <section id="gusta" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">03 · Me gusta</span>
+          <h2>Lo que me <span class="gradient-text">motiva</span></h2>
+        </div>
+
+        <div class="likes-grid">
+          <article class="like-card reveal">
+            <div class="like-icon" aria-hidden="true">⛰️</div>
+            <h3>Montaña</h3>
+            <p>Alta montaña, senderismo y algo de ciclismo de montaña.</p>
+          </article>
+          <article class="like-card reveal">
+            <div class="like-icon" aria-hidden="true">🧗</div>
+            <h3>Escalada</h3>
+            <p>Mi principal pasión: resolver problemas con el cuerpo, igual que con el código.</p>
+          </article>
+          <article class="like-card reveal">
+            <div class="like-icon" aria-hidden="true">💻</div>
+            <h3>Tecnología</h3>
+            <p>Desmontar aparatos, repararlos y entender cómo funcionan por dentro.</p>
+          </article>
+          <article class="like-card reveal">
+            <div class="like-icon" aria-hidden="true">🤖</div>
+            <h3>IA y agentes</h3>
+            <p>Me interesa el futuro del software: modelos, automatización y agentes.</p>
+          </article>
+          <article class="like-card reveal">
+            <div class="like-icon" aria-hidden="true">🎵</div>
+            <h3>Música</h3>
+            <p>Pop inglés y Remember como banda sonora de estudio.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA final -->
+    <section class="cta-band">
+      <div class="container cta-inner reveal">
+        <h2>¿Buscas un <span class="gradient-text">programador</span> con base técnica sólida?</h2>
+        <p>Soy Gabriel, estudio 1º DAM en el IES Simarro. Vengo del mantenimiento industrial y quiero aportar rigor, constancia y ganas de aprender.</p>
+        <a href="#contacto" class="btn btn-primary btn-lg">Escríbeme</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Pie de página con contacto -->
+  <footer id="contacto" class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col reveal">
+        <h2>Contacto</h2>
+        <p>Disponible para aprender, colaborar y dar el salto al desarrollo de software. Escríbeme para temas de programación, mantenimiento, montaña o aprendizaje.</p>
+        <div class="social">
+          <a href="mailto:gabriel.vidal@ejemplo.com" aria-label="Email" class="social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+          </a>
+          <a href="https://github.com/tu-usuario" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-1.8c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.7.2 2.9.1 3.2.7.9 1.2 1.9 1.2 3.2 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/tu-usuario" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8.02h4.56V24H.22zM8.02 8.02h4.37v2.18h.06c.61-1.16 2.1-2.38 4.32-2.38 4.62 0 5.47 3.04 5.47 7v8.18h-4.56v-7.25c0-1.73-.03-3.96-2.41-3.96-2.41 0-2.78 1.88-2.78 3.83v7.38H8.02z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col reveal">
+        <h3>Enlaces rápidos</h3>
+        <ul class="footer-links">
+          <li><a href="#sobre-mi">Sobre mí</a></li>
+          <li><a href="#hecho">Lo que he hecho</a></li>
+          <li><a href="#gusta">Me gusta</a></li>
+          <li><a href="#inicio">Volver arriba</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col reveal">
+        <h3>Directo</h3>
+        <ul class="footer-links">
+          <li><a href="mailto:gabriel.vidal@ejemplo.com">gabriel.vidal@ejemplo.com</a></li>
+          <li><a href="https://github.com/tu-usuario" target="_blank" rel="noopener noreferrer">github.com/tu-usuario</a></li>
+          <li><a href="https://www.linkedin.com/in/tu-usuario" target="_blank" rel="noopener noreferrer">linkedin.com/in/tu-usuario</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p><small>© <span id="year"></span> Gabriel Vidal Badia · Web personal con HTML, CSS y JS puros.</small></p>
+      <button id="toTop" class="to-top" aria-label="Volver arriba">↑</button>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
