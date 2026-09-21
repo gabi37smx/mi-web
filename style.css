@@ -805,3 +805,150 @@ select,
 .cursor.is-clicking .hand-closed { opacity: 1; transform: scale(.9); }
 
 .cursor.is-hovering .cursor__hand { color: var(--accent); }
+
+/* ============================================================
+   Certificaciones · títulos oficiales + Cisco
+   ============================================================ */
+
+.certs-counter {
+  display: inline-block;
+  margin: .75rem 0 0;
+  padding: .5rem .9rem;
+  background: rgba(var(--accent-rgb), .08);
+  border: 1px solid rgba(var(--accent-rgb), .25);
+  border-radius: 999px;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.certs-counter strong { color: var(--accent); font-weight: 700; }
+
+.certs-group {
+  margin-top: 2.5rem;
+}
+.certs-group:first-of-type { margin-top: 2rem; }
+
+.certs-group__title {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: 1.1rem;
+  font-family: var(--mono);
+  letter-spacing: .04em;
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px dashed var(--line);
+}
+.certs-group__icon { font-size: 1.25rem; }
+
+.certs-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.certs-grid--cisco {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+/* Tarjeta de certificado */
+.cert-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.25rem 1.25rem;
+  transition: transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease);
+  overflow: hidden;
+}
+.cert-card::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: var(--grad);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .4s var(--ease);
+}
+.cert-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(var(--accent-rgb), .4);
+  box-shadow: var(--shadow-sm);
+}
+.cert-card:hover::after { transform: scaleX(1); }
+
+.cert-card__icon {
+  font-size: 1.75rem;
+  margin-bottom: .6rem;
+}
+
+.cert-card__badge {
+  position: absolute;
+  top: .9rem;
+  right: .9rem;
+  font-family: var(--mono);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: .2rem .5rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.cert-card__badge--cisco { color: #38bdf8; }
+.cert-card__badge--degree { color: var(--accent-2); }
+.cert-card__badge--award { color: #f59e0b; }
+
+.cert-card__title {
+  font-size: 1rem;
+  line-height: 1.3;
+  margin: 0 0 .5rem;
+  color: var(--text);
+  padding-right: 4.5rem; /* deja hueco al badge */
+}
+.cert-card__issuer {
+  font-size: .82rem;
+  color: var(--muted);
+  margin: 0 0 .35rem;
+}
+.cert-card__date {
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--accent);
+  margin: 0;
+  letter-spacing: .02em;
+}
+
+/* Destacada (premio) */
+.cert-card--featured {
+  border-color: rgba(245, 158, 11, .45);
+  background: linear-gradient(180deg, rgba(245, 158, 11, .06), transparent 60%), var(--surface);
+}
+.cert-card--featured::after { background: linear-gradient(120deg, #f59e0b, #f97316); }
+
+/* Estrella (Career Path) */
+.cert-card--star {
+  border-color: rgba(56, 189, 248, .5);
+  background: linear-gradient(180deg, rgba(56, 189, 248, .07), transparent 60%), var(--surface);
+}
+.cert-card--star::after { background: linear-gradient(120deg, #38bdf8, #a78bfa); }
+
+/* Botón pequeño */
+.btn-sm {
+  padding: .55rem 1rem;
+  font-size: .88rem;
+}
+
+.certs-footer {
+  margin: 1.5rem 0 0;
+  text-align: center;
+}
+
+/* Responsive de la sección */
+@media (max-width: 720px) {
+  .certs-grid { grid-template-columns: 1fr; }
+  .cert-card { padding: 1.25rem 1rem 1rem; }
+  .cert-card__title { padding-right: 0; padding-top: .35rem; }
+  .cert-card__badge { position: static; display: inline-block; margin-bottom: .6rem; }
+}
