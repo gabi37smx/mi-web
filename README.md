@@ -48,6 +48,8 @@ Portfolio personal con temática de escalada. Estudiante de **1º DAM** en el **
 | v6 | Seccion de certificaciones Cisco y titulos oficiales |  [`6c398ed`](../../commit/6c398ed) |
 | v7 | Rediseno del formulario de contacto y opcion de llamada |  [`c089be6
 `](../../commit/c089be6) |
+| v8 | Añado foto personal en Sobre mí con layout de dos columnas [`d198653`](../../commit/d198653)|
+ 
  
 
 ---
