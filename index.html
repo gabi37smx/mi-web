@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0a0f14" id="metaTheme" />
 
-  <!-- Evita el parpadeo del tema al cargar -->
   <script>
     (function () {
       try {
@@ -16,10 +15,8 @@
     })();
   </script>
 
-  <!-- Favicon SVG inline (iniciales GV con degradado de la marca) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='0.5' stop-color='%2338bdf8'/%3E%3Cstop offset='1' stop-color='%23a78bfa'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Inter,Segoe UI,Roboto,sans-serif' font-size='30' font-weight='800' fill='%2306131a'%3EGV%3C/text%3E%3C/svg%3E" />
 
-  <!-- SEO -->
   <title>Gabriel Vidal Badia · Desarrollador | 1º DAM · IES Simarro</title>
   <meta name="description" content="Portfolio de Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro. Técnico en Sistemas Microinformáticos y Redes, con certificaciones Cisco en redes y ciberseguridad. Programación, IA y agentes." />
   <meta name="keywords" content="programador, desarrollador, DAM, IES Simarro, Xàtiva, Valencia, Java, Python, JavaScript, HTML, CSS, Ciberseguridad, Redes, Cisco, CCNA, portfolio, Gabriel Vidal Badia" />
@@ -27,20 +24,17 @@
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://gabrielvidal.dev/" />
 
-  <!-- Open Graph -->
   <meta property="og:type" content="profile" />
   <meta property="og:title" content="Gabriel Vidal Badia · Desarrollador" />
   <meta property="og:description" content="Estudiante de 1º DAM. Técnico en Sistemas Microinformáticos y Redes. Certificaciones Cisco en redes y ciberseguridad." />
   <meta property="og:url" content="https://gabrielvidal.dev/" />
   <meta property="og:locale" content="es_ES" />
-  <meta property="og:image" content="https://gabrielvidal.dev/og-image.jpg" />
+  <meta property="og:image" content="https://gabrielvidal.dev/image/gabriel.webp" />
 
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Gabriel Vidal Badia · Desarrollador" />
   <meta name="twitter:description" content="Estudiante de 1º DAM. Técnico en SMR. Certificaciones Cisco en redes y ciberseguridad." />
 
-  <!-- Datos estructurados (JSON-LD) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -49,6 +43,7 @@
     "jobTitle": "Desarrollador en formación",
     "description": "Estudiante de 1º DAM en el IES Simarro. Técnico en Sistemas Microinformáticos y Redes, con certificaciones Cisco en redes y ciberseguridad. Interesado en programación, inteligencia artificial y agentes.",
     "url": "https://gabrielvidal.dev",
+    "image": "https://gabrielvidal.dev/image/gabriel.webp",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Xàtiva",
@@ -117,17 +112,14 @@
   }
   </script>
 
-  <!-- Tipografías -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
-  <!-- Hoja de estilos -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ===== Barra lateral de escalada ===== -->
   <aside class="climb-rail" aria-label="Progreso de la vía">
     <svg class="climb-rope" viewBox="0 0 24 100" preserveAspectRatio="none" aria-hidden="true">
       <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
@@ -155,7 +147,6 @@
 
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
-  <!-- Cabecera fija con navegación -->
   <header class="site-header" id="inicio">
     <div class="container header-inner">
       <a href="#inicio" class="logo" aria-label="Inicio">
@@ -234,7 +225,11 @@
           <h2>Perfil técnico con vocación de <span class="gradient-text">programador</span></h2>
         </div>
 
-        <div class="about-grid">
+        <div class="about-layout">
+          <figure class="about-photo reveal">
+            <img src="image/gabriel.webp" alt="Retrato de Gabriel Vidal Badia" width="800" height="993" loading="lazy" />
+          </figure>
+
           <div class="about-text reveal">
             <p>
               Soy <strong>Gabriel Vidal Badia</strong>, del ciclo de <strong>1º DAM</strong> del <strong>IES Simarro</strong>.
@@ -260,19 +255,19 @@
               <a href="contacto.html" class="btn btn-primary">Contactar</a>
             </div>
           </div>
-
-          <aside class="about-card reveal" aria-label="Datos clave">
-            <h3>Datos clave</h3>
-            <dl class="kv">
-              <div><dt>Nombre</dt><dd>Gabriel Vidal Badia</dd></div>
-              <div><dt>Estudios</dt><dd>1º DAM · IES Simarro</dd></div>
-              <div><dt>Formación previa</dt><dd>TS Electrónica · TS Hilatura · TM Electricidad · CFGM SMR</dd></div>
-              <div><dt>Experiencia</dt><dd>Mecánico (11 años) · Oficial de mantenimiento</dd></div>
-              <div><dt>Enfoque</dt><dd>Programación, IA y agentes</dd></div>
-              <div><dt>Ubicación</dt><dd>Valencia (España)</dd></div>
-            </dl>
-          </aside>
         </div>
+
+        <aside class="about-card about-card--wide reveal" aria-label="Datos clave">
+          <h3>Datos clave</h3>
+          <dl class="kv kv--grid">
+            <div><dt>Nombre</dt><dd>Gabriel Vidal Badia</dd></div>
+            <div><dt>Estudios</dt><dd>1º DAM · IES Simarro</dd></div>
+            <div><dt>Formación previa</dt><dd>TS Electrónica · TS Hilatura · TM Electricidad · CFGM SMR</dd></div>
+            <div><dt>Experiencia</dt><dd>Mecánico (11 años) · Oficial de mantenimiento</dd></div>
+            <div><dt>Enfoque</dt><dd>Programación, IA y agentes</dd></div>
+            <div><dt>Ubicación</dt><dd>Valencia (España)</dd></div>
+          </dl>
+        </aside>
       </div>
     </section>
 
@@ -393,7 +388,6 @@
           </p>
         </div>
 
-        <!-- Bloque 1: Títulos oficiales -->
         <div class="certs-group reveal">
           <h3 class="certs-group__title">
             <span class="certs-group__icon" aria-hidden="true">🎓</span>
@@ -418,7 +412,6 @@
           </div>
         </div>
 
-        <!-- Bloque 2: Cisco -->
         <div class="certs-group reveal">
           <h3 class="certs-group__title">
             <span class="certs-group__icon" aria-hidden="true">🌐</span>
@@ -526,7 +519,6 @@
     </section>
   </main>
 
-  <!-- Pie de página -->
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-col reveal">

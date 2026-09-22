@@ -1218,3 +1218,76 @@ select,
   .nav-link { display: block; padding: .8rem 1rem; }
   .section { padding: 4rem 0; }
 }
+
+/* ============================================================
+   Foto personal en "Sobre mí" · layout con foto a la izquierda
+   ============================================================ */
+
+.about-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-bottom: 2.5rem;
+}
+
+.about-photo {
+  margin: 0;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(var(--accent-rgb), .35);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, .35),
+    0 0 0 1px rgba(var(--accent-rgb), .1);
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease);
+}
+.about-photo:hover {
+  transform: translateY(-4px);
+  border-color: rgba(var(--accent-rgb), .6);
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, .45),
+    0 0 0 1px rgba(var(--accent-rgb), .2);
+}
+.about-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+/* Panel de datos clave a lo ancho */
+.about-card--wide {
+  margin-top: 0;
+  position: static;
+  padding: 1.5rem 1.75rem;
+}
+.kv--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0 2rem;
+}
+.kv--grid > div {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: .5rem;
+  padding: .65rem 0;
+  border-bottom: 1px dashed var(--line);
+  align-items: center;
+}
+
+/* Responsive: en móvil, foto arriba centrada, texto debajo */
+@media (max-width: 900px) {
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .about-photo {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .kv--grid > div {
+    grid-template-columns: 120px 1fr;
+  }
+}
