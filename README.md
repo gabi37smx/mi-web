@@ -46,8 +46,7 @@ Portfolio personal con temática de escalada. Estudiante de **1º DAM** en el **
 | v4 | Barra de escalada, cursor mano y grados V de la vía | [`8bced2e`](../../commit/8bced2e) |
 | v5 | Formulario de contacto |  [`fc03900`](../../commit/fc03900) |
 | v6 | Seccion de certificaciones Cisco y titulos oficiales |  [`6c398ed`](../../commit/6c398ed) |
-| v7 | Rediseno del formulario de contacto y opcion de llamada |  [`c089be6
-`](../../commit/c089be6) |
+| v7 | Rediseno del formulario de contacto y opcion de llamada |  [`c089be6`](../../commit/c089be6) |
 | v8 | Añado foto personal en Sobre mí con layout de dos columnas [`d198653`](../../commit/d198653)|
  
  
