@@ -189,15 +189,12 @@ if (toTop) {
 
 /* ============================================================
    Cursor personalizado · mano abierta / cerrada
-   Se activa/desactiva en vivo si cambia el tipo de puntero
-   (por ejemplo, al activar/desactivar la emulación de móvil en F12).
    ============================================================ */
 
 (function customCursor() {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduceMotion) return;
 
-  // Creamos la mano una sola vez
   const wrap = document.createElement("div");
   wrap.className = "cursor";
   wrap.setAttribute("aria-hidden", "true");
@@ -224,22 +221,18 @@ if (toTop) {
   wrap.appendChild(hand);
   document.body.appendChild(wrap);
 
-  // --- Lógica de "¿hay ratón real?" ---
   const mqFine = window.matchMedia("(hover: hover) and (pointer: fine)");
 
   function applyMode() {
     const hasMouse = mqFine.matches;
     wrap.style.display = hasMouse ? "block" : "none";
-    // Marcamos el <html> para que el CSS pueda adaptar otras cosas si quieres
     document.documentElement.classList.toggle("has-fine-pointer", hasMouse);
   }
 
   applyMode();
-  // Escuchamos cambios de emulación en vivo (sin recargar)
   if (mqFine.addEventListener) mqFine.addEventListener("change", applyMode);
-  else if (mqFine.addListener) mqFine.addListener(applyMode); // fallback antiguo
+  else if (mqFine.addListener) mqFine.addListener(applyMode);
 
-  // --- Movimiento ---
   let mouseX = window.innerWidth / 2;
   let mouseY = window.innerHeight / 2;
   let x = mouseX, y = mouseY;
@@ -334,7 +327,6 @@ if (toTop) {
   const rope = document.querySelector(".climb-rope");
   if (!rail || !climber || !holds.length || !rope) return;
 
-  // Inyectamos el SVG del escalador (silueta humana trepando)
   climber.innerHTML = `
     <svg viewBox="0 0 24 30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <circle cx="12" cy="5" r="2.4"/>
@@ -346,7 +338,6 @@ if (toTop) {
     </svg>
   `;
 
-  // Posiciones Y (en px, relativas al rail) de cada presa
   let holdPositions = [];
 
   function getHoldPositions() {
@@ -375,7 +366,6 @@ if (toTop) {
     climber.style.top = `${y}px`;
   }
 
-  // Presas activas
   const railSectionIds = holds.map((h) => h.dataset.section);
   const railSections = railSectionIds.map((id) => document.getElementById(id)).filter(Boolean);
 
@@ -398,6 +388,125 @@ if (toTop) {
   window.addEventListener("scroll", updateClimber, { passive: true });
   window.addEventListener("resize", () => { refreshPositions(); updateClimber(); });
 
-  // Esperamos a que el navegador mida todo
   requestAnimationFrame(() => { refreshPositions(); updateClimber(); });
+})();
+
+/* ============================================================
+   Formulario de contacto · validación + envío simulado
+   ============================================================ */
+
+(function contactForm() {
+  const form = document.getElementById("contactForm");
+  if (!form) return;
+
+  const success = document.getElementById("formSuccess");
+
+  const showError = (field, message) => {
+    const wrap = field.closest(".form-field");
+    if (!wrap) return;
+    wrap.classList.add("has-error");
+    const err = wrap.querySelector(".form-error");
+    if (err) err.textContent = message;
+  };
+
+  const clearError = (field) => {
+    const wrap = field.closest(".form-field");
+    if (!wrap) return;
+    wrap.classList.remove("has-error");
+    const err = wrap.querySelector(".form-error");
+    if (err) err.textContent = "";
+  };
+
+  // --- Lógica del checkbox "Quiero que me llames" ---
+  const checkLlamada = document.getElementById("quiero-llamada");
+  const campoTelefono = document.getElementById("campo-telefono");
+  const inputTelefono = document.getElementById("telefono");
+
+  if (checkLlamada && campoTelefono && inputTelefono) {
+    checkLlamada.addEventListener("change", () => {
+      if (checkLlamada.checked) {
+        campoTelefono.style.display = "flex";
+        inputTelefono.required = true;
+        setTimeout(() => inputTelefono.focus(), 50);
+      } else {
+        campoTelefono.style.display = "none";
+        inputTelefono.required = false;
+        inputTelefono.value = "";
+        clearError(inputTelefono);
+      }
+    });
+  }
+
+  // --- Validación por campo ---
+  const validate = (field) => {
+    const value = field.value.trim();
+    const name = field.name;
+
+    if (name === "nombre") {
+      if (!value) { showError(field, "Escribe tu nombre."); return false; }
+      if (value.length < 2) { showError(field, "Mínimo 2 caracteres."); return false; }
+    }
+    if (name === "email") {
+      if (!value) { showError(field, "Escribe tu email."); return false; }
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      if (!ok) { showError(field, "Email no válido."); return false; }
+    }
+    if (name === "asunto") {
+      if (!value) { showError(field, "Elige un asunto."); return false; }
+    }
+    if (name === "mensaje") {
+      if (!value) { showError(field, "Escribe un mensaje."); return false; }
+      if (value.length < 10) { showError(field, "Mínimo 10 caracteres."); return false; }
+    }
+    if (name === "telefono" && inputTelefono && inputTelefono.required) {
+      if (!value) { showError(field, "Escribe tu número de teléfono."); return false; }
+      const ok = /^[+\d\s()-]{7,}$/.test(value);
+      if (!ok) { showError(field, "Teléfono no válido."); return false; }
+    }
+    clearError(field);
+    return true;
+  };
+
+  form.querySelectorAll("input, select, textarea").forEach((field) => {
+    field.addEventListener("blur", () => {
+      if (field.value.trim() !== "") validate(field);
+    });
+    field.addEventListener("input", () => {
+      if (field.closest(".form-field")?.classList.contains("has-error")) validate(field);
+    });
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const fields = form.querySelectorAll("input, select, textarea");
+    let allOk = true;
+    let firstBad = null;
+
+    fields.forEach((f) => {
+      if (f.name === "telefono" && (!inputTelefono || !inputTelefono.required)) return;
+
+      const ok = validate(f);
+      if (!ok) {
+        allOk = false;
+        if (!firstBad) firstBad = f;
+      }
+    });
+
+    if (!allOk) {
+      firstBad && firstBad.focus();
+      return;
+    }
+
+    // Envío simulado
+    form.reset();
+    if (campoTelefono) campoTelefono.style.display = "none";
+    if (inputTelefono) inputTelefono.required = false;
+
+    if (success) {
+      success.hidden = false;
+      success.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => { success.hidden = true; }, 6000);
+    }
+  });
 })();
