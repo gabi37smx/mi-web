@@ -510,3 +510,30 @@ if (toTop) {
     }
   });
 })();
+
+/* ============================================================
+   Filtros de la página de proyectos
+   ============================================================ */
+
+(function projectFilters() {
+  const buttons = document.querySelectorAll(".filter-btn");
+  const cards = document.querySelectorAll("#projectsGrid .project-card");
+  if (!buttons.length || !cards.length) return;
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter;
+
+      buttons.forEach((b) => b.classList.toggle("is-active", b === btn));
+
+      cards.forEach((card) => {
+        if (filter === "all") {
+          card.classList.remove("is-hidden");
+          return;
+        }
+        const types = (card.dataset.type || "").split(/\s+/);
+        card.classList.toggle("is-hidden", !types.includes(filter));
+      });
+    });
+  });
+})();

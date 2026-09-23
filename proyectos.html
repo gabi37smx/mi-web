@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f2ede3" id="metaTheme" />
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='6' fill='%23c1272d'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-size='32' font-weight='900' fill='%23f2ede3'%3EGV%3C/text%3E%3C/svg%3E" />
+
+  <title>Proyectos · Gabriel Vidal Badia</title>
+  <meta name="description" content="Proyectos en curso de Gabriel Vidal Badia: portfolio personal, app de gestión de cementerio, app de aprendizaje de valenciano con IA, y proyectos por definir del ciclo DAM." />
+  <meta name="author" content="Gabriel Vidal Badia" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://gabrielvidal.dev/proyectos.html" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <aside class="climb-rail" aria-label="Progreso de la vía">
+    <svg class="climb-rope" viewBox="0 0 24 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+            vector-effect="non-scaling-stroke" opacity="0.4" />
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-dasharray="3 4" vector-effect="non-scaling-stroke" opacity="1" />
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-dasharray="3 4" stroke-dashoffset="3.5"
+            vector-effect="non-scaling-stroke" opacity="0.6" />
+    </svg>
+
+    <div class="climb-climber" id="climber"></div>
+
+    <ul class="climb-holds">
+      <li><a href="index.html#sobre-mi" class="climb-hold" data-section="sobre-mi" aria-label="Ir a Sobre mí"><span class="climb-hold__label">Sobre mí</span></a></li>
+      <li><a href="index.html#hecho"    class="climb-hold" data-section="hecho"    aria-label="Ir a Experiencia"><span class="climb-hold__label">Experiencia</span></a></li>
+      <li><a href="proyectos.html"      class="climb-hold is-active" data-section="proyectos" aria-label="Proyectos"><span class="climb-hold__label">Proyectos</span></a></li>
+      <li><a href="index.html#certs"    class="climb-hold" data-section="certs"    aria-label="Ir a Certificaciones"><span class="climb-hold__label">Certificaciones</span></a></li>
+      <li><a href="index.html#gusta"    class="climb-hold" data-section="gusta"    aria-label="Ir a Me gusta"><span class="climb-hold__label">Me gusta</span></a></li>
+      <li><a href="contacto.html"       class="climb-hold" data-section="contacto" aria-label="Contacto"><span class="climb-hold__label">Contacto</span></a></li>
+    </ul>
+  </aside>
+
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="site-header" id="inicio">
+    <div class="container header-inner">
+      <a href="index.html" class="logo" aria-label="Inicio">
+        <span class="logo-mark">GV</span>
+        <span class="logo-text">Gabriel Vidal</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <ul class="nav-list">
+          <li><a href="index.html#sobre-mi" class="nav-link">Sobre mí</a></li>
+          <li><a href="index.html#hecho" class="nav-link">Experiencia</a></li>
+          <li><a href="proyectos.html" class="nav-link" aria-current="page">Proyectos</a></li>
+          <li><a href="index.html#certs" class="nav-link">Certificaciones</a></li>
+          <li><a href="contacto.html" class="nav-link nav-cta">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button id="themeToggle" class="theme-toggle" aria-label="Cambiar a modo oscuro" aria-pressed="false" title="Cambiar tema">
+          <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-list">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+
+    <section class="projects-hero">
+      <div class="container">
+        <p class="hero-eyebrow"><span class="dot"></span> En construcción</p>
+        <h1 class="projects-title">
+          Proyectos del <span class="accent-text">curso</span>
+        </h1>
+        <p class="projects-subtitle">
+          Lo que estoy construyendo durante 1º DAM. Cada proyecto es una vía: unos son individuales, otros en grupo,
+          algunos ya en marcha y otros aún por montar. Aquí va todo, con su grado de dificultad.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+
+        <!-- Filtros -->
+        <div class="projects-filters" role="tablist" aria-label="Filtrar proyectos">
+          <button class="filter-btn is-active" data-filter="all">Todos</button>
+          <button class="filter-btn" data-filter="individual">Individual</button>
+          <button class="filter-btn" data-filter="grupo">En grupo</button>
+          <button class="filter-btn" data-filter="curso">En curso</button>
+          <button class="filter-btn" data-filter="proximamente">Próximamente</button>
+        </div>
+
+        <!-- Grid de proyectos -->
+        <div class="projects-grid" id="projectsGrid">
+
+          <!-- Portfolio -->
+          <article class="project-card" data-type="individual curso">
+            <div class="project-card__head">
+              <div class="project-card__icon" aria-hidden="true">🧗</div>
+              <span class="project-card__grade">V4</span>
+            </div>
+            <h2 class="project-card__title">Portfolio personal</h2>
+            <div class="project-card__meta">
+              <span class="tag tag--individual">Individual</span>
+              <span class="tag tag--curso">En curso</span>
+            </div>
+            <p class="project-card__desc">
+              Web personal con temática de escalada. HTML, CSS y JS puros, sin frameworks.
+              La vía como metáfora: cada sección es un movimiento, cada presa un logro.
+            </p>
+            <ul class="project-card__stack">
+              <li>HTML5</li>
+              <li>CSS3</li>
+              <li>JavaScript</li>
+              <li>Git</li>
+            </ul>
+            <div class="project-card__actions">
+              <a href="https://github.com/gabi37smx/mi-web" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Ver código →</a>
+            </div>
+          </article>
+
+          <!-- App Cementerio -->
+          <article class="project-card" data-type="individual">
+            <div class="project-card__head">
+              <div class="project-card__icon" aria-hidden="true">🗂️</div>
+              <span class="project-card__grade">V5</span>
+            </div>
+            <h2 class="project-card__title">App de gestión de cementerio</h2>
+            <div class="project-card__meta">
+              <span class="tag tag--individual">Individual</span>
+              <span class="tag tag--idea">En diseño</span>
+            </div>
+            <p class="project-card__desc">
+              Aplicación multiplataforma para llevar el registro de difuntos, pabellones, zonas y
+              toda la información asociada a un cementerio municipal. Nace de mi trabajo actual
+              como oficial de mantenimiento: conozco el problema desde dentro.
+            </p>
+            <ul class="project-card__stack">
+              <li>A definir</li>
+              <li>Base de datos</li>
+              <li>Multiplataforma</li>
+            </ul>
+            <div class="project-card__actions">
+              <span class="project-card__soon">Repositorio próximamente</span>
+            </div>
+          </article>
+
+          <!-- App Valenciano IA -->
+          <article class="project-card" data-type="individual">
+            <div class="project-card__head">
+              <div class="project-card__icon" aria-hidden="true">🗣️</div>
+              <span class="project-card__grade">V5</span>
+            </div>
+            <h2 class="project-card__title">Aprender valenciano con IA</h2>
+            <div class="project-card__meta">
+              <span class="tag tag--individual">Individual</span>
+              <span class="tag tag--idea">En diseño</span>
+            </div>
+            <p class="project-card__desc">
+              App para aprender valenciano con un agente de IA entrenado: corrige textos, propone
+              ejercicios y prepara para los niveles oficiales B1, B2, C1 y C2. La idea nace porque
+              las herramientas actuales para aprender valenciano son muy limitadas.
+            </p>
+            <ul class="project-card__stack">
+              <li>IA</li>
+              <li>Agentes</li>
+              <li>NLP</li>
+              <li>A definir</li>
+            </ul>
+            <div class="project-card__actions">
+              <span class="project-card__soon">Repositorio próximamente</span>
+            </div>
+          </article>
+
+          <!-- Próximamente -->
+          <article class="project-card project-card--soon" data-type="grupo proximamente">
+            <div class="project-card__head">
+              <div class="project-card__icon" aria-hidden="true">⏳</div>
+              <span class="project-card__grade project-card__grade--soon">V0</span>
+            </div>
+            <h2 class="project-card__title">Proyecto en grupo + videojuego</h2>
+            <div class="project-card__meta">
+              <span class="tag tag--grupo">En grupo</span>
+              <span class="tag tag--proximamente">Próximamente</span>
+            </div>
+            <p class="project-card__desc">
+              Pendiente de decidir con el profesor. Aquí irán el proyecto final en grupo y, si
+              sale adelante, un pequeño videojuego. De momento toca esperar y escuchar.
+            </p>
+            <ul class="project-card__stack">
+              <li>A definir</li>
+            </ul>
+            <div class="project-card__actions">
+              <span class="project-card__soon">Por decidir</span>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Nota al pie -->
+        <p class="projects-note">
+          Los proyectos individuales se irán moviendo a <strong>En curso</strong> o <strong>Terminado</strong>
+          a medida que avance el curso. Esta página es un documento vivo.
+        </p>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="container cta-inner reveal">
+        <h2>¿Quieres ver mi <span class="accent-text">perfil completo</span>?</h2>
+        <p>Vuelve al portfolio para ver formación, experiencia y certificaciones.</p>
+        <a href="index.html" class="btn btn-primary btn-lg btn-swap">
+          <span class="btn-swap__a">Volver al inicio</span>
+          <span class="btn-swap__b">Ir al portfolio</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p><small>© <span id="year"></span> Gabriel Vidal Badia · Web personal con HTML, CSS y JS puros.</small></p>
+      <button id="toTop" class="to-top" aria-label="Volver arriba">↑</button>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
