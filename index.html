@@ -1,39 +1,39 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="dark">
+<html lang="es" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0a0f14" id="metaTheme" />
+  <meta name="theme-color" content="#f2ede3" id="metaTheme" />
 
   <script>
     (function () {
       try {
         var t = localStorage.getItem("theme");
-        if (!t) t = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        if (!t) t = "light";
         document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
     })();
   </script>
 
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232dd4bf'/%3E%3Cstop offset='0.5' stop-color='%2338bdf8'/%3E%3Cstop offset='1' stop-color='%23a78bfa'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Inter,Segoe UI,Roboto,sans-serif' font-size='30' font-weight='800' fill='%2306131a'%3EGV%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='6' fill='%23c1272d'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-size='32' font-weight='900' fill='%23f2ede3'%3EGV%3C/text%3E%3C/svg%3E" />
 
   <title>Gabriel Vidal Badia · Desarrollador | 1º DAM · IES Simarro</title>
-  <meta name="description" content="Portfolio de Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro. Técnico en Sistemas Microinformáticos y Redes, con certificaciones Cisco en redes y ciberseguridad. Programación, IA y agentes." />
-  <meta name="keywords" content="programador, desarrollador, DAM, IES Simarro, Xàtiva, Valencia, Java, Python, JavaScript, HTML, CSS, Ciberseguridad, Redes, Cisco, CCNA, portfolio, Gabriel Vidal Badia" />
+  <meta name="description" content="Portfolio de Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro. Técnico Superior en Sistemas de Telecomunicación, CFGM en Sistemas Microinformáticos y Redes, y certificaciones Cisco en redes y ciberseguridad." />
+  <meta name="keywords" content="programador, desarrollador, DAM, IES Simarro, Xàtiva, Valencia, Java, Python, JavaScript, HTML, CSS, Ciberseguridad, Redes, Cisco, CCNA, portfolio, Gabriel Vidal Badia, escalada" />
   <meta name="author" content="Gabriel Vidal Badia" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://gabrielvidal.dev/" />
 
   <meta property="og:type" content="profile" />
   <meta property="og:title" content="Gabriel Vidal Badia · Desarrollador" />
-  <meta property="og:description" content="Estudiante de 1º DAM. Técnico en Sistemas Microinformáticos y Redes. Certificaciones Cisco en redes y ciberseguridad." />
+  <meta property="og:description" content="Estudiante de 1º DAM. Técnico Superior en Sistemas de Telecomunicación, CFGM SMR y certificaciones Cisco." />
   <meta property="og:url" content="https://gabrielvidal.dev/" />
   <meta property="og:locale" content="es_ES" />
   <meta property="og:image" content="https://gabrielvidal.dev/image/gabriel.webp" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Gabriel Vidal Badia · Desarrollador" />
-  <meta name="twitter:description" content="Estudiante de 1º DAM. Técnico en SMR. Certificaciones Cisco en redes y ciberseguridad." />
+  <meta name="twitter:description" content="Estudiante de 1º DAM. Técnico Superior en Sistemas de Telecomunicación. Certificaciones Cisco." />
 
   <script type="application/ld+json">
   {
@@ -41,7 +41,7 @@
     "@type": "Person",
     "name": "Gabriel Vidal Badia",
     "jobTitle": "Desarrollador en formación",
-    "description": "Estudiante de 1º DAM en el IES Simarro. Técnico en Sistemas Microinformáticos y Redes, con certificaciones Cisco en redes y ciberseguridad. Interesado en programación, inteligencia artificial y agentes.",
+    "description": "Estudiante de 1º DAM en el IES Simarro. Técnico Superior en Sistemas de Telecomunicación e Informáticos, CFGM en Sistemas Microinformáticos y Redes, con certificaciones Cisco en redes y ciberseguridad.",
     "url": "https://gabrielvidal.dev",
     "image": "https://gabrielvidal.dev/image/gabriel.webp",
     "address": {
@@ -57,56 +57,18 @@
         "address": { "@type": "PostalAddress", "addressLocality": "Xàtiva", "addressRegion": "Valencia", "addressCountry": "ES" }
       }
     ],
-    "knowsAbout": ["Java", "Python", "JavaScript", "HTML", "CSS", "Ciberseguridad", "Redes", "Cisco", "Programación orientada a objetos", "Inteligencia artificial", "Agentes", "Desarrollo web", "Mantenimiento electrónico"],
+    "knowsAbout": ["Java", "Python", "JavaScript", "HTML", "CSS", "Ciberseguridad", "Redes", "Cisco", "Programación orientada a objetos", "Inteligencia artificial", "Agentes", "Desarrollo web"],
     "hasCredential": [
-      {
-        "@type": "EducationalOccupationalCredential",
-        "name": "Junior Cybersecurity Analyst Career Path",
-        "credentialCategory": "certificate",
-        "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" },
-        "dateCreated": "2026-04-27"
-      },
-      {
-        "@type": "EducationalOccupationalCredential",
-        "name": "CCNA: Introducción a las redes",
-        "credentialCategory": "certificate",
-        "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" },
-        "dateCreated": "2025-06-18"
-      },
-      {
-        "@type": "EducationalOccupationalCredential",
-        "name": "Seguridad de Terminales",
-        "credentialCategory": "certificate",
-        "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" },
-        "dateCreated": "2025-03-08"
-      },
-      {
-        "@type": "EducationalOccupationalCredential",
-        "name": "Introducción a la Ciberseguridad",
-        "credentialCategory": "certificate",
-        "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" },
-        "dateCreated": "2024-12-27"
-      },
-      {
-        "@type": "EducationalOccupationalCredential",
-        "name": "Fundamentos de Ciberseguridad",
-        "credentialCategory": "certificate",
-        "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" },
-        "dateCreated": "2026-04-27"
-      },
-      {
-        "@type": "EducationalOccupationalCredential",
-        "name": "Técnico en Sistemas Microinformáticos y Redes (CFGM)",
-        "credentialCategory": "degree",
-        "recognizedBy": { "@type": "Organization", "name": "IES Dr. Lluis Simarro Lacabra" }
-      },
-      {
-        "@type": "EducationalOccupationalCredential",
-        "name": "Diploma de Excelencia Académica · Mejor expediente CFGM",
-        "credentialCategory": "award",
-        "recognizedBy": { "@type": "Organization", "name": "IES Dr. Lluis Simarro Lacabra" },
-        "dateCreated": "2026-06-19"
-      }
+      { "@type": "EducationalOccupationalCredential", "name": "Junior Cybersecurity Analyst Career Path", "credentialCategory": "certificate", "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" }, "dateCreated": "2026-04-27" },
+      { "@type": "EducationalOccupationalCredential", "name": "CCNA: Introducción a las redes", "credentialCategory": "certificate", "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" }, "dateCreated": "2025-06-18" },
+      { "@type": "EducationalOccupationalCredential", "name": "Seguridad de Terminales", "credentialCategory": "certificate", "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" }, "dateCreated": "2025-03-08" },
+      { "@type": "EducationalOccupationalCredential", "name": "Introducción a la Ciberseguridad", "credentialCategory": "certificate", "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" }, "dateCreated": "2024-12-27" },
+      { "@type": "EducationalOccupationalCredential", "name": "Fundamentos de Ciberseguridad", "credentialCategory": "certificate", "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" }, "dateCreated": "2026-04-27" },
+      { "@type": "EducationalOccupationalCredential", "name": "Técnico Superior en Sistemas de Telecomunicación e Informáticos", "credentialCategory": "degree", "recognizedBy": { "@type": "Organization", "name": "Generalitat Valenciana" } },
+      { "@type": "EducationalOccupationalCredential", "name": "Técnico en Sistemas Microinformáticos y Redes (CFGM)", "credentialCategory": "degree", "recognizedBy": { "@type": "Organization", "name": "IES Dr. Lluis Simarro Lacabra" } },
+      { "@type": "EducationalOccupationalCredential", "name": "Técnico en Instalaciones Eléctricas y Automáticas", "credentialCategory": "degree", "recognizedBy": { "@type": "Organization", "name": "Generalitat Valenciana" } },
+      { "@type": "EducationalOccupationalCredential", "name": "Técnico Superior en Procesos Textiles de Hilatura y Tejeduría de Calada", "credentialCategory": "degree", "recognizedBy": { "@type": "Organization", "name": "Generalitat Valenciana" } },
+      { "@type": "EducationalOccupationalCredential", "name": "Diploma de Excelencia Académica · Mejor expediente CFGM", "credentialCategory": "award", "recognizedBy": { "@type": "Organization", "name": "IES Dr. Lluis Simarro Lacabra" }, "dateCreated": "2026-06-19" }
     ],
     "sameAs": ["https://github.com/gabi37smx"]
   }
@@ -114,7 +76,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -124,14 +86,14 @@
     <svg class="climb-rope" viewBox="0 0 24 100" preserveAspectRatio="none" aria-hidden="true">
       <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
             fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
-            vector-effect="non-scaling-stroke" opacity="0.35" />
+            vector-effect="non-scaling-stroke" opacity="0.4" />
       <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
             fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-            stroke-dasharray="3 4" vector-effect="non-scaling-stroke" opacity="0.9" />
+            stroke-dasharray="3 4" vector-effect="non-scaling-stroke" opacity="1" />
       <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
             fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
             stroke-dasharray="3 4" stroke-dashoffset="3.5"
-            vector-effect="non-scaling-stroke" opacity="0.5" />
+            vector-effect="non-scaling-stroke" opacity="0.6" />
     </svg>
 
     <div class="climb-climber" id="climber"></div>
@@ -165,7 +127,7 @@
       </nav>
 
       <div class="header-actions">
-        <button id="themeToggle" class="theme-toggle" aria-label="Cambiar a modo claro" aria-pressed="false" title="Cambiar tema">
+        <button id="themeToggle" class="theme-toggle" aria-label="Cambiar a modo oscuro" aria-pressed="false" title="Cambiar tema">
           <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
           </svg>
@@ -183,21 +145,20 @@
 
   <main id="contenido">
 
-    <!-- Hero -->
     <section class="hero" aria-label="Presentación">
       <div class="hero-bg" aria-hidden="true"></div>
       <div class="container hero-inner">
         <p class="hero-eyebrow"><span class="dot"></span> Disponible para oportunidades</p>
         <h1 class="hero-title">
-          Hola, soy <span class="gradient-text">Gabriel Vidal Badia</span>
+          Hola, soy <span class="accent-text">Gabriel Vidal Badia</span>
         </h1>
         <p class="hero-subtitle">
-          <span class="typing" data-words="Desarrollador en formación,Estudiante de 1º DAM,Técnico en Sistemas Microinformáticos y Redes,Cisco Certified" data-delay="2400"></span>
+          <span class="typing" data-words="Desarrollador en formación,Estudiante de 1º DAM,Técnico Superior en Telecomunicaciones,Cisco Certified" data-delay="2400"></span>
         </p>
         <p class="hero-desc">
-          Técnico en Sistemas Microinformáticos y Redes, con certificaciones Cisco en redes y ciberseguridad,
-          y experiencia previa como mecánico y oficial de mantenimiento. Ahora estudio 1º DAM en el IES Simarro
-          para dar el salto a la programación, la inteligencia artificial y los agentes.
+          Técnico Superior en Sistemas de Telecomunicación e Informáticos, con certificaciones Cisco en redes
+          y ciberseguridad y experiencia previa como mecánico y oficial de mantenimiento. Ahora estudio 1º DAM
+          en el IES Simarro para dar el salto a la programación, la inteligencia artificial y los agentes.
         </p>
         <div class="hero-actions">
           <a href="contacto.html" class="btn btn-primary btn-swap">
@@ -208,7 +169,7 @@
         </div>
         <div class="hero-stats">
           <div class="stat"><strong>7</strong><span>títulos y certificaciones</span></div>
-          <div class="stat"><strong>4</strong><span>títulos técnicos oficiales</span></div>
+          <div class="stat"><strong>5</strong><span>títulos técnicos oficiales</span></div>
           <div class="stat"><strong>1º</strong><span>DAM en el IES Simarro</span></div>
         </div>
       </div>
@@ -217,12 +178,11 @@
       </a>
     </section>
 
-    <!-- Sobre mí -->
     <section id="sobre-mi" class="section">
       <div class="container">
         <div class="section-head reveal">
           <span class="section-tag">01 · Sobre mí</span>
-          <h2>Perfil técnico con vocación de <span class="gradient-text">programador</span></h2>
+          <h2>Perfil técnico con vocación de <span class="accent-text">programador</span></h2>
         </div>
 
         <div class="about-layout">
@@ -261,8 +221,8 @@
           <h3>Datos clave</h3>
           <dl class="kv kv--grid">
             <div><dt>Nombre</dt><dd>Gabriel Vidal Badia</dd></div>
-            <div><dt>Estudios</dt><dd>1º DAM · IES Simarro</dd></div>
-            <div><dt>Formación previa</dt><dd>TS Electrónica · TS Hilatura · TM Electricidad · CFGM SMR</dd></div>
+            <div><dt>Estudios</dt><dd>1º DAM · IES Simarro (en curso)</dd></div>
+            <div><dt>Formación</dt><dd>Telecomunicaciones · SMR · Instalaciones Eléctricas · Textil</dd></div>
             <div><dt>Experiencia</dt><dd>Mecánico (11 años) · Oficial de mantenimiento</dd></div>
             <div><dt>Enfoque</dt><dd>Programación, IA y agentes</dd></div>
             <div><dt>Ubicación</dt><dd>Valencia (España)</dd></div>
@@ -271,12 +231,11 @@
       </div>
     </section>
 
-    <!-- Lo que he hecho -->
     <section id="hecho" class="section section-alt">
       <div class="container">
         <div class="section-head reveal">
           <span class="section-tag">02 · Lo que he hecho</span>
-          <h2>Formación, experiencia y <span class="gradient-text">proyectos</span></h2>
+          <h2>Formación, experiencia y <span class="accent-text">proyectos</span></h2>
         </div>
 
         <div class="cards-grid">
@@ -284,12 +243,18 @@
             <span class="card-grade" data-grade="V4" data-tip="Dificultad · Escala V4 (5.11)">V4</span>
             <div class="card-icon" aria-hidden="true">🎓</div>
             <h3>Formación</h3>
+
+            <p class="card-list__label">Ciclos superiores</p>
             <ul class="card-list">
-              <li>Técnico superior de Hilatura y Tejido</li>
-              <li>Técnico superior de Electrónica</li>
-              <li>Técnico medio de Electricidad</li>
+              <li class="highlight">Técnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM) · en curso</li>
+              <li>Técnico Superior en Sistemas de Telecomunicación e Informáticos</li>
+              <li>Técnico Superior en Procesos Textiles de Hilatura y Tejeduría de Calada</li>
+            </ul>
+
+            <p class="card-list__label">Ciclos medios</p>
+            <ul class="card-list">
               <li class="highlight">Técnico en Sistemas Microinformáticos y Redes (CFGM)</li>
-              <li class="highlight">Técnico superior de Programación · 1º DAM (IES Simarro)</li>
+              <li>Técnico en Instalaciones Eléctricas y Automáticas</li>
             </ul>
           </article>
 
@@ -377,12 +342,11 @@
       </div>
     </section>
 
-    <!-- Certificaciones -->
     <section id="certs" class="section">
       <div class="container">
         <div class="section-head reveal">
           <span class="section-tag">03 · Certificaciones</span>
-          <h2>Títulos y <span class="gradient-text">certificaciones</span> que me respaldan</h2>
+          <h2>Títulos y <span class="accent-text">certificaciones</span> que me respaldan</h2>
           <p class="certs-counter">
             <strong>2</strong> títulos oficiales · <strong>5</strong> certificaciones Cisco Networking Academy
           </p>
@@ -406,8 +370,8 @@
               <div class="cert-card__icon" aria-hidden="true">🏅</div>
               <span class="cert-card__badge cert-card__badge--award">Premio</span>
               <h4 class="cert-card__title">Diploma de Excelencia Académica</h4>
-              <p class="cert-card__issuer">Mejor expediente · CFGM Sistemas Microinformáticos y Redes</p>
-              <p class="cert-card__date">19 de junio de 2026 · IES Dr. Lluis Simarro Lacabra</p>
+              <p class="cert-card__issuer">Mejor expediente · CFGM SMR</p>
+              <p class="cert-card__date">19 de junio de 2026</p>
             </article>
           </div>
         </div>
@@ -468,12 +432,11 @@
       </div>
     </section>
 
-    <!-- Me gusta -->
     <section id="gusta" class="section section-alt">
       <div class="container">
         <div class="section-head reveal">
           <span class="section-tag">04 · Me gusta</span>
-          <h2>Lo que me <span class="gradient-text">motiva</span></h2>
+          <h2>Lo que me <span class="accent-text">motiva</span></h2>
         </div>
 
         <div class="likes-grid">
@@ -506,10 +469,9 @@
       </div>
     </section>
 
-    <!-- CTA final -->
     <section class="cta-band">
       <div class="container cta-inner reveal">
-        <h2>¿Buscas un <span class="gradient-text">programador</span> con base técnica sólida?</h2>
+        <h2>¿Buscas un <span class="accent-text">programador</span> con base técnica sólida?</h2>
         <p>Soy Gabriel, estudio 1º DAM en el IES Simarro. Vengo del mantenimiento industrial, tengo CFGM en Sistemas Microinformáticos y Redes y certificaciones Cisco en redes y ciberseguridad.</p>
         <a href="contacto.html" class="btn btn-primary btn-lg btn-swap">
           <span class="btn-swap__a">Asegúrame</span>
