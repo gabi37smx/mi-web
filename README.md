@@ -8,7 +8,7 @@ Portfolio personal con temática de escalada. Estudiante de **1º DAM** en el **
 
 ## 🚀 Demo
 
-- **Web en vivo:** *(pendiente de GitHub Pages)*
+- **Web en vivo:** https://gabi37smx.github.io/mi-web/ *(cuando actives GitHub Pages)*
 - **Repo:** https://github.com/gabi37smx/mi-web
 
 ---
@@ -31,6 +31,9 @@ Portfolio personal con temática de escalada. Estudiante de **1º DAM** en el **
 - 💻 **Terminal decorativa** con el bucle `while (no_llegue_a_la_cima)`
 - 🏔️ **Timeline temática**: los hitos son "movimientos de la vía" (Reposo, Travesía, Crux, Reunión)
 - 🏷️ **Grados de escalada V0–V6** con tooltips explicativos en las tarjetas
+- 📄 **Página de contacto** con formulario validado y opción "Quiero que me llames"
+- 📁 **Página de proyectos** con filtros (Individual / Grupo / En curso / Próximamente)
+- 🏅 **Sección de certificaciones** con títulos oficiales y certificados Cisco
 - 📱 **Diseño responsive** (móvil, tablet y escritorio)
 - ♿ **Accesibilidad**: `prefers-reduced-motion`, `aria-label`, `skip-link`, foco visible
 
@@ -44,13 +47,14 @@ Portfolio personal con temática de escalada. Estudiante de **1º DAM** en el **
 | v2 | Cursor personalizado con dos círculos | [`bf4be4f`](../../commit/bf4be4f) |
 | v3 | Efecto magnético en el título del hero | [`7ecccf`](../../commit/7ecccf) |
 | v4 | Barra de escalada, cursor mano y grados V de la vía | [`8bced2e`](../../commit/8bced2e) |
-| v5 | Formulario de contacto |  [`fc03900`](../../commit/fc03900) |
-| v6 | Seccion de certificaciones Cisco y titulos oficiales |  [`6c398ed`](../../commit/6c398ed) |
-| v7 | Rediseno del formulario de contacto y opcion de llamada |  [`c089be6`](../../commit/c089be6) |
-| v8 | Añado foto personal en Sobre mí con layout de dos columnas |  [`d198653`](../../commit/d198653) |
- 
- 
+| v5 | Formulario de contacto | [`fc03900`](../../commit/fc03900) |
+| v6 | Sección de certificaciones Cisco y títulos oficiales | [`6c398ed`](../../commit/6c398ed) |
+| v7 | Rediseño del formulario de contacto y opción de llamada | [`c089be6`](../../commit/c089be6) |
+| v8 | Foto personal en "Sobre mí" con layout de dos columnas | [`d198653`](../../commit/d198653) |
+| v9 | Nueva estética (topo/escalada), tipografía Space Grotesk y títulos actualizados | [`ed11d55`](../../commit/ed11d55) |
+| v10 | Página de proyectos con filtros y sección preview en el index | [`d0066c3`](../../commit/d0066c3) |
 
 ---
 
 ## 📁 Estructura del proyecto
+
