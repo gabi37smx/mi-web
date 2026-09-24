@@ -58,3 +58,34 @@ Portfolio personal con temática de escalada. Estudiante de **1º DAM** en el **
 
 ## 📁 Estructura del proyecto
 
+mi-web/
+├── index.html ← página principal (portfolio)
+├── contacto.html ← página de contacto con formulario
+├── proyectos.html ← página de proyectos con filtros
+├── style.css ← hoja de estilos (todo el diseño)
+├── script.js ← interacciones (tema, cursor, escalada, filtros…)
+├── image/
+│ └── gabriel.webp ← foto personal
+└── README.md ← este archivo
+
+👤 Autor
+
+Gabriel Vidal Badia
+
+    🎓 1º DAM · IES Simarro (Xàtiva, Valencia)
+
+    💼 Técnico Superior en Sistemas de Telecomunicación e Informáticos · CFGM SMR · 11 años de experiencia en mantenimiento industrial
+
+    🏅 Certificaciones Cisco: CCNA Intro, Ciberseguridad, Junior Cybersecurity Analyst Career Path
+
+    🎯 Enfoque: programación, inteligencia artificial y agentes
+
+    📫 Contacto: gabvidbad@alu.edu.gva.es
+
+    🐙 GitHub: @gabi37smx
+    
+    ✅ My site is live at https://gabi37smx.github.io/mi-web/
+
+📄 Licencia
+Proyecto personal con fines educativos. Todos los derechos reservados.
+
