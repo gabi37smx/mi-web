@@ -392,7 +392,7 @@ if (toTop) {
 })();
 
 /* ============================================================
-   Formulario de contacto · validación + envío simulado
+  Formulario de contacto · validación + envío al backend
    ============================================================ */
 
 (function contactForm() {
@@ -476,7 +476,7 @@ if (toTop) {
     });
   });
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const fields = form.querySelectorAll("input, select, textarea");
@@ -498,15 +498,41 @@ if (toTop) {
       return;
     }
 
-    // Envío simulado
-    form.reset();
-    if (campoTelefono) campoTelefono.style.display = "none";
-    if (inputTelefono) inputTelefono.required = false;
+    // Recoger datos
+    const payload = {
+      nombre: form.nombre.value.trim(),
+      email: form.email.value.trim(),
+      asunto: form.asunto.value,
+      mensaje: form.mensaje.value.trim(),
+      telefono: inputTelefono ? inputTelefono.value.trim() : null,
+      quiereLlamada: checkLlamada ? checkLlamada.checked : false,
+    };
 
-    if (success) {
-      success.hidden = false;
-      success.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(() => { success.hidden = true; }, 6000);
+    // Enviar al backend
+    const backendUrl = "https://portfolio-backend-m07q.onrender.com/api/contact";
+
+    try {
+      const res = await fetch(backendUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Error del servidor");
+
+      // Éxito
+      form.reset();
+      if (campoTelefono) campoTelefono.style.display = "none";
+      if (inputTelefono) inputTelefono.required = false;
+
+      if (success) {
+        success.hidden = false;
+        success.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => { success.hidden = true; }, 6000);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo enviar el mensaje. Inténtalo más tarde.");
     }
   });
 })();
