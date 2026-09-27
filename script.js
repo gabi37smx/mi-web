@@ -13,16 +13,22 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
   const root = document.documentElement;
   if (!btn) return;
 
-  const DARK_COLOR = "#0a0f14";
-  const LIGHT_COLOR = "#f6f8fb";
+  const DARK_COLOR = "#151310";
+  const LIGHT_COLOR = "#f2ede3";
 
   const currentTheme = () => root.getAttribute("data-theme") || "dark";
 
   const updateButton = (theme) => {
     const goingToLight = theme === "dark";
+    const language = root.lang === "ca-valencia" ? "val" : root.lang;
+    const labels = {
+      es: { light: "Cambiar a modo claro", dark: "Cambiar a modo oscuro", lightTitle: "Modo claro", darkTitle: "Modo oscuro" },
+      val: { light: "Canvia al mode clar", dark: "Canvia al mode fosc", lightTitle: "Mode clar", darkTitle: "Mode fosc" },
+      en: { light: "Switch to light mode", dark: "Switch to dark mode", lightTitle: "Light mode", darkTitle: "Dark mode" },
+    }[language] || { light: "Cambiar a modo claro", dark: "Cambiar a modo oscuro", lightTitle: "Modo claro", darkTitle: "Modo oscuro" };
     btn.setAttribute("aria-pressed", String(goingToLight));
-    btn.setAttribute("aria-label", goingToLight ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
-    btn.setAttribute("title", goingToLight ? "Modo claro" : "Modo oscuro");
+    btn.setAttribute("aria-label", goingToLight ? labels.light : labels.dark);
+    btn.setAttribute("title", goingToLight ? labels.lightTitle : labels.darkTitle);
   };
 
   const apply = (theme) => {
@@ -33,6 +39,7 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
   };
 
   apply(currentTheme());
+  document.addEventListener("portfolio:languagechange", () => updateButton(currentTheme()));
 
   btn.addEventListener("click", () => {
     const next = currentTheme() === "dark" ? "light" : "dark";
@@ -78,13 +85,28 @@ if (navToggle && mainNav) {
 (function typing() {
   const el = document.querySelector(".typing");
   if (!el) return;
-  const words = (el.dataset.words || "").split(",").map((w) => w.trim()).filter(Boolean);
+  let words = (el.dataset.words || "").split(",").map((w) => w.trim()).filter(Boolean);
   const delay = parseInt(el.dataset.delay || "2200", 10);
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!words.length) return;
 
   let i = 0, j = 0, deleting = false;
-  if (reduceMotion) { el.textContent = words[0]; return; }
+  if (reduceMotion) {
+    el.textContent = words[0];
+    document.addEventListener("portfolio:languagechange", () => {
+      words = (el.dataset.words || "").split(",").map((word) => word.trim()).filter(Boolean);
+      el.textContent = words[0] || "";
+    });
+    return;
+  }
+
+  document.addEventListener("portfolio:languagechange", () => {
+    words = (el.dataset.words || "").split(",").map((word) => word.trim()).filter(Boolean);
+    i = 0;
+    j = 0;
+    deleting = false;
+    el.textContent = "";
+  });
 
   function tick() {
     const word = words[i];
@@ -404,6 +426,7 @@ if (toTop) {
   const stateIdle = submitBtn ? submitBtn.querySelector(".btn-state--idle") : null;
   const stateLoading = submitBtn ? submitBtn.querySelector(".btn-state--loading") : null;
   const stateSuccess = submitBtn ? submitBtn.querySelector(".btn-state--success") : null;
+  const translate = (message) => window.portfolioTranslate ? window.portfolioTranslate(message) : message;
 
   const showError = (field, message) => {
     const wrap = field.closest(".form-field");
@@ -445,25 +468,25 @@ if (toTop) {
     const name = field.name;
 
     if (name === "nombre") {
-      if (!value) { showError(field, "Escribe tu nombre."); return false; }
-      if (value.length < 2) { showError(field, "Mínimo 2 caracteres."); return false; }
+      if (!value) { showError(field, translate("Escribe tu nombre.")); return false; }
+      if (value.length < 2) { showError(field, translate("Mínimo 2 caracteres.")); return false; }
     }
     if (name === "email") {
-      if (!value) { showError(field, "Escribe tu email."); return false; }
+      if (!value) { showError(field, translate("Escribe tu email.")); return false; }
       const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-      if (!ok) { showError(field, "Email no válido."); return false; }
+      if (!ok) { showError(field, translate("Email no válido.")); return false; }
     }
     if (name === "asunto") {
-      if (!value) { showError(field, "Elige un asunto."); return false; }
+      if (!value) { showError(field, translate("Elige un asunto.")); return false; }
     }
     if (name === "mensaje") {
-      if (!value) { showError(field, "Escribe un mensaje."); return false; }
-      if (value.length < 10) { showError(field, "Mínimo 10 caracteres."); return false; }
+      if (!value) { showError(field, translate("Escribe un mensaje.")); return false; }
+      if (value.length < 10) { showError(field, translate("Mínimo 10 caracteres.")); return false; }
     }
     if (name === "telefono" && inputTelefono && inputTelefono.required) {
-      if (!value) { showError(field, "Escribe tu número de teléfono."); return false; }
+      if (!value) { showError(field, translate("Escribe tu número de teléfono.")); return false; }
       const ok = /^[+\d\s()-]{7,}$/.test(value);
-      if (!ok) { showError(field, "Teléfono no válido."); return false; }
+      if (!ok) { showError(field, translate("Teléfono no válido.")); return false; }
     }
     clearError(field);
     return true;
@@ -549,7 +572,7 @@ if (toTop) {
       }
     } catch (err) {
       console.error(err);
-      alert("No se pudo enviar el mensaje. Inténtalo más tarde.");
+      alert(translate("No se pudo enviar el mensaje. Inténtalo más tarde."));
       showState("idle");
       setDisabled(false);
     }

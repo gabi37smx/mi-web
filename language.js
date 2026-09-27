@@ -1,0 +1,321 @@
+/* ============================================================
+   language.js · Textos del portfolio en español, valenciano e inglés
+   ============================================================ */
+(function siteLanguage() {
+  const translations = [
+    ["Sobre mí", "Sobre mi", "About me"],
+    ["Experiencia", "Experiència", "Experience"],
+    ["Proyectos", "Projectes", "Projects"],
+    ["Certificaciones", "Certificacions", "Certifications"],
+    ["Me gusta", "M'agrada", "Interests"],
+    ["Contacto", "Contacte", "Contact"],
+    ["Saltar al contenido", "Ves al contingut", "Skip to content"],
+    ["Inicio", "Inici", "Home"],
+    ["Progreso de la vía", "Progrés de la via", "Route progress"],
+    ["Ir a Sobre mí", "Ves a Sobre mi", "Go to About me"],
+    ["Ir a Experiencia", "Ves a Experiència", "Go to Experience"],
+    ["Ir a Proyectos", "Ves a Projectes", "Go to Projects"],
+    ["Ir a Certificaciones", "Ves a Certificacions", "Go to Certifications"],
+    ["Ir a Me gusta", "Ves a M'agrada", "Go to Interests"],
+    ["Cambiar a modo oscuro", "Canvia al mode fosc", "Switch to dark mode"],
+    ["Cambiar a modo claro", "Canvia al mode clar", "Switch to light mode"],
+    ["Cambiar tema", "Canvia el tema", "Change theme"],
+    ["Modo claro", "Mode clar", "Light mode"],
+    ["Modo oscuro", "Mode fosc", "Dark mode"],
+    ["Abrir menú", "Obri el menú", "Open menu"],
+    ["Idioma", "Idioma", "Language"],
+    ["Navegación principal", "Navegació principal", "Main navigation"],
+    ["Filtrar proyectos", "Filtra els projectes", "Filter projects"],
+    ["Datos de contacto", "Dades de contacte", "Contact details"],
+    ["Presentación", "Presentació", "Introduction"],
+    ["Disponible para oportunidades", "Disponible per a oportunitats", "Available for opportunities"],
+    ["Hola, soy", "Hola, soc", "Hi, I'm"],
+    ["Desarrollador en formación", "Desenvolupador en formació", "Developer in training"],
+    ["Estudiante de 1º DAM", "Estudiant de 1r DAM", "First-year DAM student"],
+    ["Técnico Superior en Telecomunicaciones", "Tècnic Superior en Telecomunicacions", "Telecommunications technician"],
+    ["Cisco Certified", "Certificat per Cisco", "Cisco Certified"],
+    ["Móntame una vía", "Muntem una via", "Let's build something"],
+    ["Hablemos", "Parlem", "Let's talk"],
+    ["Ver experiencia", "Ves l'experiència", "View experience"],
+    ["títulos y certificaciones", "títols i certificacions", "degrees and certificates"],
+    ["títulos técnicos oficiales", "títols tècnics oficials", "official technical qualifications"],
+    ["DAM en el IES Simarro", "DAM a l'IES Simarro", "Multiplatform App Development at IES Simarro"],
+    ["Técnico Superior en Sistemas de Telecomunicación e Informáticos, con certificaciones Cisco en redes y ciberseguridad y experiencia previa como mecánico y oficial de mantenimiento. Ahora estudio 1º DAM en el IES Simarro para dar el salto a la programación, la inteligencia artificial y los agentes.", "Tècnic Superior en Sistemes de Telecomunicació i Informàtics, amb certificacions Cisco en xarxes i ciberseguretat i experiència prèvia com a mecànic i oficial de manteniment. Ara estudie 1r de DAM a l'IES Simarro per a fer el pas cap a la programació, la intel·ligència artificial i els agents.", "Advanced Technician in Telecommunications and Computer Systems, with Cisco networking and cybersecurity certifications and previous experience as a mechanic and maintenance technician. I am now studying multiplatform app development at IES Simarro to move into programming, artificial intelligence and agents."],
+    ["01 · Sobre mí", "01 · Sobre mi", "01 · About me"],
+    ["Perfil técnico con vocación de", "Perfil tècnic amb vocació de", "A technical background with a drive to become a"],
+    ["programador", "programador", "software developer"],
+    ["Soy", "Soc", "I'm"],
+    [", del ciclo de", ", del cicle de", ", studying"],
+    ["del", "de l'", "at"],
+    ["Tengo una formación técnica amplia y una trayectoria basada en el mantenimiento, la resolución de problemas y el aprendizaje continuo.", "Tinc una formació tècnica àmplia i una trajectòria basada en el manteniment, la resolució de problemes i l'aprenentatge continu.", "I have a broad technical background and a career built on maintenance, problem-solving and continuous learning."],
+    ["He trabajado como mecánico en una hilatura durante 11 años y, actualmente, como oficial de mantenimiento en el Ayuntamiento de Ollería, con tareas de jardinería, obra, electricidad, grúa y cementerio. Ahora quiero orientar mi carrera hacia la", "He treballat durant 11 anys com a mecànic en una filatura i, actualment, com a oficial de manteniment a l'Ajuntament d'Olleria, amb tasques de jardineria, obra, electricitat, grua i cementeri. Ara vull orientar la meua carrera cap a la", "I worked as a mechanic in a textile mill for 11 years and now work as a maintenance technician for Ollería Town Council, handling gardening, construction, electrical work, cranes and cemetery maintenance. I now want to focus my career on"],
+    ["programación", "programació", "programming"],
+    ["inteligencia artificial", "intel·ligència artificial", "artificial intelligence"],
+    ["agentes", "agents", "AI agents"],
+    [", porque me interesa el futuro del software y busco un trabajo con más reto técnico.", ", perquè m'interessa el futur del programari i busque una faena amb més repte tècnic.", ", because I am interested in the future of software and want a more technically challenging role."],
+    ["$", "$", "$"],
+    ["Contactar", "Contactar", "Get in touch"],
+    ["Datos clave", "Dades clau", "Key facts"],
+    ["Nombre", "Nom", "Name"],
+    ["Estudios", "Estudis", "Education"],
+    ["1º DAM · IES Simarro (en curso)", "1r DAM · IES Simarro (en curs)", "Year 1 · Multiplatform App Development, IES Simarro (ongoing)"],
+    ["Formación", "Formació", "Qualifications"],
+    ["Telecomunicaciones · SMR · Instalaciones Eléctricas · Textil", "Telecomunicacions · SMR · Instal·lacions Elèctriques · Tèxtil", "Telecommunications · IT Systems · Electrical Installations · Textile"],
+    ["Mecánico (11 años) · Oficial de mantenimiento", "Mecànic (11 anys) · Oficial de manteniment", "Mechanic (11 years) · Maintenance technician"],
+    ["Enfoque", "Objectiu", "Focus"],
+    ["Programación, IA y agentes", "Programació, IA i agents", "Programming, AI and agents"],
+    ["Ubicación", "Ubicació", "Location"],
+    ["Valencia (España)", "València (Espanya)", "Valencia, Spain"],
+    ["02 · Lo que he hecho", "02 · El que he fet", "02 · Experience"],
+    ["Formación, experiencia y", "Formació, experiència i", "Qualifications, experience and"],
+    ["proyectos", "projectes", "projects"],
+    ["Ciclos superiores", "Cicles superiors", "Higher-level vocational training"],
+    ["Técnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM) · en curso", "Tècnic Superior en Desenvolupament d'Aplicacions Multiplataforma (DAM) · en curs", "Advanced Technician in Multiplatform App Development · in progress"],
+    ["Técnico Superior en Sistemas de Telecomunicación e Informáticos", "Tècnic Superior en Sistemes de Telecomunicació i Informàtics", "Advanced Technician in Telecommunications and Computer Systems"],
+    ["Técnico Superior en Procesos Textiles de Hilatura y Tejeduría de Calada", "Tècnic Superior en Processos Tèxtils de Filatura i Teixiduria de Calada", "Advanced Technician in Spinning and Weaving Processes"],
+    ["Ciclos medios", "Cicles mitjans", "Intermediate-level vocational training"],
+    ["Técnico en Sistemas Microinformáticos y Redes (CFGM)", "Tècnic en Sistemes Microinformàtics i Xarxes (CFGM)", "IT Systems and Networks Technician"],
+    ["Técnico en Sistemas Microinformáticos y Redes", "Tècnic en Sistemes Microinformàtics i Xarxes", "IT Systems and Networks Technician"],
+    ["Técnico en Instalaciones Eléctricas y Automáticas", "Tècnic en Instal·lacions Elèctriques i Automàtiques", "Electrical and Automation Installation Technician"],
+    ["Experiencia", "Experiència", "Experience"],
+    ["Mecánico en una hilatura durante 11 años", "Mecànic en una filatura durant 11 anys", "Mechanic at a textile mill for 11 years"],
+    ["Oficial de mantenimiento en el Ayuntamiento de Ollería", "Oficial de manteniment a l'Ajuntament d'Olleria", "Maintenance technician at Ollería Town Council"],
+    ["Jardinería, obra, electricidad, grúa y cementerio", "Jardineria, obra, electricitat, grua i cementeri", "Gardening, construction, electrical work, cranes and cemetery maintenance"],
+    ["Mantenimiento preventivo y correctivo", "Manteniment preventiu i correctiu", "Preventive and corrective maintenance"],
+    ["Proyectos y aficiones técnicas", "Projectes i aficions tècniques", "Projects and technical interests"],
+    ["Alta montaña, senderismo y BTT", "Alta muntanya, senderisme i BTT", "Mountaineering, hiking and mountain biking"],
+    ["Escalada (principal pasión)", "Escalada (passió principal)", "Climbing (my main passion)"],
+    ["Desmontar, reparar y entender aparatos", "Desmuntar, reparar i entendre aparells", "Taking devices apart, repairing them and understanding how they work"],
+    ["Aprendiendo Java, Python y JavaScript", "Aprenent Java, Python i JavaScript", "Learning Java, Python and JavaScript"],
+    ["Grados de dificultad", "Graus de dificultat", "Difficulty grades"],
+    ["Escala", "Escala", "Scale"],
+    ["(boulder, EE. UU.): cuanto más alto, más difícil.", "(boulder, EUA): com més alt, més difícil.", "(US bouldering): higher means more difficult."],
+    ["La vía · movimientos clave", "La via · moviments clau", "The route · key moves"],
+    ["Movimiento 01 · Reposo", "Moviment 01 · Repòs", "Move 01 · Rest"],
+    ["Mecánico en hilatura", "Mecànic en filatura", "Textile mill mechanic"],
+    ["11 años de mantenimiento industrial. Aprendí a leer una máquina como se lee una vía: por donde va a romper.", "11 anys de manteniment industrial. Vaig aprendre a llegir una màquina com es llig una via: per on està a punt de fallar.", "Eleven years in industrial maintenance taught me to read a machine like a climbing route: looking for where it might fail."],
+    ["Movimiento 02 · Travesía", "Moviment 02 · Travessia", "Move 02 · Traverse"],
+    ["Oficial de mantenimiento · Ayuntamiento de Ollería", "Oficial de manteniment · Ajuntament d'Olleria", "Maintenance technician · Ollería Town Council"],
+    ["Jardinería, obra, electricidad, grúa y cementerio. Cambio de terreno sin perder el ritmo.", "Jardineria, obra, electricitat, grua i cementeri. Canvie de terreny sense perdre el ritme.", "Gardening, construction, electrical work, cranes and cemetery maintenance. I changed terrain without losing momentum."],
+    ["Movimiento 03 · Crux", "Moviment 03 · Pas clau", "Move 03 · Crux"],
+    ["1º DAM · IES Simarro", "1r DAM · IES Simarro", "Year 1 · IES Simarro"],
+    ["El paso duro. Programación, bases de datos, entornos y lenguajes de marcado. Aquí es donde aprieto.", "El pas difícil. Programació, bases de dades, entorns i llenguatges de marques. Ací és on m'esforce.", "The crux. Programming, databases, development environments and markup languages. This is where I push myself."],
+    ["Movimiento 04 · Reunión", "Moviment 04 · Reunió", "Move 04 · Belay"],
+    ["Programador con IA y agentes", "Programador amb IA i agents", "Developer working with AI and agents"],
+    ["Busco prácticas y primeras oportunidades. La cima aún no se ve, pero la vía está montada.", "Busque pràctiques i les primeres oportunitats. Encara no es veu el cim, però la via ja està muntada.", "I am looking for internships and my first opportunities. The summit is still out of sight, but the route is set."],
+    ["Stack en aprendizaje", "Tecnologies que estic aprenent", "Currently learning"],
+    ["03 · Proyectos", "03 · Projectes", "03 · Projects"],
+    ["Lo que estoy", "El que estic", "What I'm"],
+    ["construyendo", "construint", "building"],
+    ["este curso", "este curs", "this year"],
+    ["3 proyectos individuales en marcha · 1 en grupo por decidir", "3 projectes individuals en marxa · 1 en grup per decidir", "3 individual projects underway · 1 group project to be decided"],
+    ["Portfolio personal", "Portafolis personal", "Personal portfolio"],
+    ["Esta web. HTML, CSS y JS puros, con temática de escalada.", "Aquesta web. HTML, CSS i JS sense frameworks, amb temàtica d'escalada.", "This website. Built with plain HTML, CSS and JavaScript around a climbing theme."],
+    ["En curso · V4", "En curs · V4", "In progress · V4"],
+    ["Gestión de cementerio", "Gestió de cementeri", "Cemetery management"],
+    ["App multiplataforma para registros de difuntos, pabellones y zonas.", "Aplicació multiplataforma per a registrar difunts, pavellons i zones.", "A multiplatform app for records of deceased people, mausoleums and cemetery areas."],
+    ["En diseño · V5", "En disseny · V5", "In design · V5"],
+    ["Aprender valenciano con IA", "Aprendre valencià amb IA", "Learn Valencian with AI"],
+    ["Agente entrenado para corregir textos y preparar B1–C2.", "Agent entrenat per a corregir textos i preparar els nivells B1–C2.", "An AI agent for correcting writing and preparing for B1–C2 exams."],
+    ["Ver todos los proyectos →", "Ves tots els projectes →", "View all projects →"],
+    ["04 · Certificaciones", "04 · Certificacions", "04 · Certifications"],
+    ["Títulos y", "Títols i", "Qualifications and"],
+    ["certificaciones", "certificacions", "certifications"],
+    ["que me respaldan", "que avalen la meua trajectòria", "that back up my experience"],
+    ["títulos oficiales ·", "títols oficials ·", "official qualifications ·"],
+    ["certificaciones Cisco Networking Academy", "certificacions de Cisco Networking Academy", "Cisco Networking Academy certifications"],
+    ["Títulos oficiales", "Títols oficials", "Official qualifications"],
+    ["Título", "Títol", "Qualification"],
+    ["IES Dr. Lluis Simarro Lacabra · CFGM", "IES Dr. Lluis Simarro Lacabra · CFGM", "IES Dr. Lluis Simarro Lacabra · intermediate vocational training"],
+    ["Curso 2024–2026", "Curs 2024–2026", "Academic years 2024–2026"],
+    ["Premio", "Premi", "Award"],
+    ["Diploma de Excelencia Académica", "Diploma d'Excel·lència Acadèmica", "Academic Excellence Diploma"],
+    ["Mejor expediente · CFGM SMR", "Millor expedient · CFGM SMR", "Top academic record · IT Systems and Networks"],
+    ["19 de junio de 2026", "19 de juny de 2026", "19 June 2026"],
+    ["Cisco · Verificado", "Cisco · Verificat", "Cisco · Verified"],
+    ["27 abr 2026", "27 abr. 2026", "27 Apr 2026"],
+    ["CCNA: Introducción a las redes", "CCNA: Introducció a les xarxes", "CCNA: Introduction to Networks"],
+    ["18 jun 2025", "18 juny 2025", "18 Jun 2025"],
+    ["Seguridad de Terminales", "Seguretat de dispositius", "Endpoint Security"],
+    ["08 mar 2025", "08 març 2025", "08 Mar 2025"],
+    ["Fundamentos de Ciberseguridad", "Fonaments de Ciberseguretat", "Cybersecurity Fundamentals"],
+    ["Cisco Networking Academy · IES Simarro", "Cisco Networking Academy · IES Simarro", "Cisco Networking Academy · IES Simarro"],
+    ["Introducción a la Ciberseguridad", "Introducció a la Ciberseguretat", "Introduction to Cybersecurity"],
+    ["27 dic 2024", "27 des. 2024", "27 Dec 2024"],
+    ["Ver mi perfil en Cisco NetAcad →", "Ves el meu perfil a Cisco NetAcad →", "View my Cisco NetAcad profile →"],
+    ["04 · Me gusta", "04 · M'agrada", "04 · Interests"],
+    ["Lo que me", "El que em", "What"],
+    ["motiva", "motiva", "motivates me"],
+    ["Montaña", "Muntanya", "Mountains"],
+    ["Alta montaña, senderismo y algo de ciclismo de montaña.", "Alta muntanya, senderisme i una mica de ciclisme de muntanya.", "Mountaineering, hiking and a bit of mountain biking."],
+    ["Escalada", "Escalada", "Climbing"],
+    ["Mi principal pasión: resolver problemas con el cuerpo, igual que con el código.", "La meua passió principal: resoldre problemes amb el cos, igual que amb el codi.", "My main passion: solving problems with my body, just as I do with code."],
+    ["Tecnología", "Tecnologia", "Technology"],
+    ["Desmontar aparatos, repararlos y entender cómo funcionan por dentro.", "Desmuntar aparells, reparar-los i entendre com funcionen per dins.", "Taking devices apart, repairing them and understanding how they work."],
+    ["IA y agentes", "IA i agents", "AI and agents"],
+    ["Me interesa el futuro del software: modelos, automatización y agentes.", "M'interessa el futur del programari: models, automatització i agents.", "I am interested in the future of software: models, automation and agents."],
+    ["Música", "Música", "Music"],
+    ["Pop inglés y Remember como banda sonora de estudio.", "Pop anglés i Remember com a banda sonora per a estudiar.", "English pop and Remember as my study soundtrack."],
+    ["¿Buscas un", "Busques un", "Looking for a"],
+    ["con base técnica sólida?", "amb una base tècnica sòlida?", "with a strong technical background?"],
+    ["Soy Gabriel, estudio 1º DAM en el IES Simarro. Vengo del mantenimiento industrial, tengo CFGM en Sistemas Microinformáticos y Redes y certificaciones Cisco en redes y ciberseguridad.", "Soc Gabriel, estudie 1r de DAM a l'IES Simarro. Vinc del manteniment industrial, tinc el CFGM de Sistemes Microinformàtics i Xarxes i certificacions Cisco en xarxes i ciberseguretat.", "I'm Gabriel, studying multiplatform app development at IES Simarro. I come from industrial maintenance, hold an IT Systems and Networks qualification, and have Cisco networking and cybersecurity certifications."],
+    ["Asegúrame", "Assegura'm", "Belay me"],
+    ["Escríbeme", "Escriu-me", "Get in touch"],
+    ["Disponible para aprender, colaborar y dar el salto al desarrollo de software. Escríbeme para temas de programación, redes, ciberseguridad, montaña o aprendizaje.", "Disponible per a aprendre, col·laborar i fer el pas al desenvolupament de programari. Escriu-me per a parlar de programació, xarxes, ciberseguretat, muntanya o aprenentatge.", "Available to learn, collaborate and move into software development. Get in touch about programming, networking, cybersecurity, mountains or learning."],
+    ["Enlaces rápidos", "Enllaços ràpids", "Quick links"],
+    ["Lo que he hecho", "El que he fet", "Experience"],
+    ["Volver arriba", "Torna amunt", "Back to top"],
+    ["Directo", "Directe", "Direct"],
+    ["Formulario de contacto", "Formulari de contacte", "Contact form"],
+    ["Web personal con HTML, CSS y JS puros.", "Web personal amb HTML, CSS i JS sense frameworks.", "Personal website built with plain HTML, CSS and JavaScript."],
+    ["Contacto · Gabriel Vidal Badia", "Contacte · Gabriel Vidal Badia", "Contact · Gabriel Vidal Badia"],
+    ["Hablemos", "Parlem", "Let's talk"],
+    ["Cuéntame tu", "Conta'm el teu", "Tell me about your"],
+    ["proyecto", "projecte", "project"],
+    ["¿Buscas un programador en formación con base técnica? Escríbeme y te contesto lo antes posible.", "Busques un programador en formació amb una bona base tècnica? Escriu-me i et contestaré tan prompte com puga.", "Looking for a developer in training with a strong technical background? Get in touch and I'll reply as soon as I can."],
+    ["Email", "Correu electrònic", "Email"],
+    ["Asunto", "Assumpte", "Subject"],
+    ["Elige una opción…", "Tria una opció…", "Choose an option…"],
+    ["Prácticas / primer empleo", "Pràctiques / primera faena", "Internship / first job"],
+    ["Colaboración en proyecto", "Col·laboració en un projecte", "Project collaboration"],
+    ["Duda sobre mi perfil", "Dubte sobre el meu perfil", "Question about my profile"],
+    ["Otro", "Un altre", "Other"],
+    ["Mensaje", "Missatge", "Message"],
+    ["Quiero que me llames", "Vull que em telefones", "Please call me"],
+    ["Al marcarlo, aceptas que te contacte por teléfono para responder a tu solicitud.", "En marcar-ho, acceptes que et contacte per telèfon per a respondre la teua sol·licitud.", "By checking this, you agree that I may call you to respond to your request."],
+    ["Teléfono", "Telèfon", "Phone"],
+    ["Enviar mensaje", "Envia el missatge", "Send message"],
+    ["Enviando…", "Enviant…", "Sending…"],
+    ["✓ Enviado", "✓ Enviat", "✓ Sent"],
+    ["Respondo en 24–48 h.", "Conteste en 24–48 h.", "I reply within 24–48 hours."],
+    ["¡Mensaje enviado!", "Missatge enviat!", "Message sent!"],
+    ["Gracias por escribirme. Te contestaré lo antes posible.", "Gràcies per escriure'm. Et contestaré tan prompte com puga.", "Thanks for getting in touch. I'll reply as soon as I can."],
+    ["Datos directos", "Contacte directe", "Direct contact"],
+    ["GitHub", "GitHub", "GitHub"],
+    ["LinkedIn", "LinkedIn", "LinkedIn"],
+    ["¿Prefieres ver primero", "Prefereixes veure primer", "Would you rather see"],
+    ["la vía completa", "la via completa", "the full route"],
+    ["Vuelve al portfolio para ver mi formación, experiencia y movimientos clave.", "Torna al portafolis per a veure la meua formació, experiència i moviments clau.", "Return to my portfolio to see my qualifications, experience and key moves."],
+    ["Volver al inicio", "Torna a l'inici", "Back to home"],
+    ["Ir al portfolio", "Ves al portafolis", "Go to portfolio"],
+    ["Proyectos · Gabriel Vidal Badia", "Projectes · Gabriel Vidal Badia", "Projects · Gabriel Vidal Badia"],
+    ["En construcción", "En construcció", "Under construction"],
+    ["Proyectos del", "Projectes del", "Projects from"],
+    ["Proyectos del", "Projectes d'aquest", "Projects this"],
+    ["curso", "curs", "year"],
+    ["Lo que estoy construyendo durante 1º DAM. Cada proyecto es una vía: unos son individuales, otros en grupo, algunos ya en marcha y otros aún por montar. Aquí va todo, con su grado de dificultad.", "El que estic construint durant 1r de DAM. Cada projecte és una via: alguns són individuals, altres en grup, uns ja estan en marxa i altres encara per muntar. Ací ho tens tot, amb el seu grau de dificultat.", "What I'm building during my first year of multiplatform app development. Each project is a route: some are individual, others are group projects, and some are underway while others are still being planned. Here they are, with their difficulty grades."],
+    ["Todos", "Tots", "All"],
+    ["Individual", "Individual", "Individual"],
+    ["En grupo", "En grup", "Group"],
+    ["En curso", "En curs", "In progress"],
+    ["En diseño", "En disseny", "In design"],
+    ["Próximamente", "Pròximament", "Coming soon"],
+    ["App de gestión de cementerio", "Aplicació de gestió de cementeri", "Cemetery management app"],
+    ["Web personal con temática de escalada. HTML, CSS y JS puros, sin frameworks.", "Web personal amb temàtica d'escalada. HTML, CSS i JS sense frameworks.", "Personal website with a climbing theme, built with plain HTML, CSS and JavaScript."],
+    ["Web personal con temática de escalada. HTML, CSS y JS puros, sin frameworks. La vía como metáfora: cada sección es un movimiento, cada presa un logro.", "Web personal amb temàtica d'escalada. HTML, CSS i JS sense frameworks. La via com a metàfora: cada secció és un moviment i cada presa, un assoliment.", "Personal website with a climbing theme, built with plain HTML, CSS and JavaScript. The route is a metaphor: each section is a move, each hold an achievement."],
+    ["La vía como metáfora: cada sección es un movimiento, cada presa un logro.", "La via com a metàfora: cada secció és un moviment i cada presa, un assoliment.", "The route is a metaphor: each section is a move, each hold an achievement."],
+    ["Ver código →", "Ves el codi →", "View code →"],
+    ["Aplicación multiplataforma para llevar el registro de difuntos, pabellones, zonas y toda la información asociada a un cementerio municipal. Nace de mi trabajo actual como oficial de mantenimiento: conozco el problema desde dentro.", "Aplicació multiplataforma per a registrar difunts, pavellons, zones i tota la informació d'un cementeri municipal. Naix de la meua faena actual com a oficial de manteniment: conec el problema des de dins.", "A multiplatform app for managing records of deceased people, mausoleums, cemetery areas and related information. It grew out of my current maintenance work, where I know the problem first-hand."],
+    ["A definir", "Per definir", "To be defined"],
+    ["Base de datos", "Base de dades", "Database"],
+    ["Multiplataforma", "Multiplataforma", "Multiplatform"],
+    ["Repositorio próximamente", "Repositori pròximament", "Repository coming soon"],
+    ["App para aprender valenciano con un agente de IA entrenado: corrige textos, propone ejercicios y prepara para los niveles oficiales B1, B2, C1 y C2. La idea nace porque las herramientas actuales para aprender valenciano son muy limitadas.", "Aplicació per a aprendre valencià amb un agent d'IA entrenat: corregeix textos, proposa exercicis i prepara per als nivells oficials B1, B2, C1 i C2. La idea naix perquè les eines actuals per a aprendre valencià són molt limitades.", "An app for learning Valencian with a trained AI agent that corrects writing, suggests exercises and prepares learners for official B1, B2, C1 and C2 levels. The idea came from the limited tools currently available for learning Valencian."],
+    ["Agentes", "Agents", "Agents"],
+    ["Por decidir", "Per decidir", "To be decided"],
+    ["Pendiente de decidir con el profesor. Aquí irán el proyecto final en grupo y, si sale adelante, un pequeño videojuego. De momento toca esperar y escuchar.", "Pendent de decidir amb el professor. Ací aniran el projecte final en grup i, si tira avant, un xicotet videojoc. De moment toca esperar i escoltar.", "To be decided with the teacher. This will be the group project and, if it goes ahead, a small video game. For now, it's time to wait and listen."],
+    ["Terminado", "Acabat", "Completed"],
+    ["Los proyectos individuales se irán moviendo a", "Els projectes individuals passaran a", "Individual projects will move to"],
+    ["a medida que avance el curso. Esta página es un documento vivo.", "a mesura que avance el curs. Aquesta pàgina és un document viu.", "as the year progresses. This page is a living document."],
+    ["¿Quieres ver mi", "Vols veure el meu", "Would you like to see my"],
+    ["perfil completo", "perfil complet", "full profile"],
+    ["Vuelve al portfolio para ver formación, experiencia y certificaciones.", "Torna al portafolis per a veure formació, experiència i certificacions.", "Return to my portfolio to see my qualifications, experience and certifications."],
+    ["Dificultad · Escala V4 (5.11)", "Dificultat · Escala V4 (5.11)", "Difficulty · V4 grade (5.11)"],
+    ["Dificultad · Escala V5 (5.12)", "Dificultat · Escala V5 (5.12)", "Difficulty · V5 grade (5.12)"],
+    ["Dificultad · Escala V3 (5.10)", "Dificultat · Escala V3 (5.10)", "Difficulty · V3 grade (5.10)"],
+    ["Retrato de Gabriel Vidal Badia", "Retrat de Gabriel Vidal Badia", "Portrait of Gabriel Vidal Badia"],
+    ["Tu nombre", "El teu nom", "Your name"],
+    ["tu@email.com", "tu@email.com", "you@email.com"],
+    ["Cuéntame en qué estás pensando…", "Conta'm què tens en ment…", "Tell me what you have in mind…"],
+    ["+34 600 000 000", "+34 600 000 000", "+34 600 000 000"],
+    ["Cambiar a modo oscuro", "Canvia al mode fosc", "Switch to dark mode"],
+    ["¿Buscas un programador en formación con base técnica? Disponible para prácticas, colaboraciones y oportunidades como programador.", "Busques un programador en formació amb base tècnica? Disponible per a pràctiques, col·laboracions i oportunitats com a programador.", "Looking for a developer in training with a technical background? Available for internships, collaborations and developer opportunities."],
+    ["Contacto · Gabriel Vidal Badia", "Contacte · Gabriel Vidal Badia", "Contact · Gabriel Vidal Badia"],
+    ["Gabriel Vidal Badia · Desarrollador | 1º DAM · IES Simarro", "Gabriel Vidal Badia · Desenvolupador | 1r DAM · IES Simarro", "Gabriel Vidal Badia · Developer | Year 1 · IES Simarro"],
+    ["Gabriel Vidal Badia · Desarrollador", "Gabriel Vidal Badia · Desenvolupador", "Gabriel Vidal Badia · Developer"],
+    ["Estudiante de 1º DAM. Técnico Superior en Sistemas de Telecomunicación. Certificaciones Cisco.", "Estudiant de 1r de DAM. Tècnic Superior en Sistemes de Telecomunicació. Certificacions Cisco.", "First-year app development student. Advanced Technician in Telecommunications Systems. Cisco certifications."],
+    ["Portfolio de Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro. Técnico Superior en Sistemas de Telecomunicación, CFGM SMR y certificaciones Cisco en redes y ciberseguridad.", "Portafolis de Gabriel Vidal Badia, estudiant de 1r de DAM a l'IES Simarro. Tècnic Superior en Sistemes de Telecomunicació, CFGM SMR i certificacions Cisco en xarxes i ciberseguretat.", "Portfolio of Gabriel Vidal Badia, a first-year app development student at IES Simarro. Advanced Technician in Telecommunications Systems, IT Systems and Networks qualification, and Cisco networking and cybersecurity certifications."],
+    ["Contacta con Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro. Disponible para prácticas, colaboraciones y oportunidades como programador.", "Contacta amb Gabriel Vidal Badia, estudiant de 1r de DAM a l'IES Simarro. Disponible per a pràctiques, col·laboracions i oportunitats com a programador.", "Contact Gabriel Vidal Badia, a first-year app development student at IES Simarro. Available for internships, collaborations and developer opportunities."],
+    ["Proyectos de Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro.", "Projectes de Gabriel Vidal Badia, estudiant de 1r de DAM a l'IES Simarro.", "Projects by Gabriel Vidal Badia, a first-year app development student at IES Simarro."],
+    ["Proyecto en grupo + videojuego", "Projecte en grup + videojoc", "Group project + video game"],
+    ["o", "o", "or"],
+    ["05 · Me gusta", "05 · M'agrada", "05 · Interests"],
+    ["Gabriel Vidal Badia · Web personal con HTML, CSS y JS puros.", "Gabriel Vidal Badia · Web personal amb HTML, CSS i JS sense frameworks.", "Gabriel Vidal Badia · Personal website built with plain HTML, CSS and JavaScript."],
+    ["Escribe tu nombre.", "Escriu el teu nom.", "Enter your name."],
+    ["Mínimo 2 caracteres.", "Com a mínim 2 caràcters.", "At least 2 characters."],
+    ["Escribe tu email.", "Escriu el teu correu electrònic.", "Enter your email address."],
+    ["Email no válido.", "Correu electrònic no vàlid.", "Invalid email address."],
+    ["Elige un asunto.", "Tria un assumpte.", "Choose a subject."],
+    ["Escribe un mensaje.", "Escriu un missatge.", "Enter a message."],
+    ["Mínimo 10 caracteres.", "Com a mínim 10 caràcters.", "At least 10 characters."],
+    ["Escribe tu número de teléfono.", "Escriu el teu número de telèfon.", "Enter your phone number."],
+    ["Teléfono no válido.", "Número de telèfon no vàlid.", "Invalid phone number."],
+    ["No se pudo enviar el mensaje. Inténtalo más tarde.", "No s'ha pogut enviar el missatge. Torna-ho a provar més tard.", "The message could not be sent. Please try again later."],
+  ];
+
+  const normalize = (text) => text.replace(/\s+/g, " ").trim();
+  const dictionary = new Map(translations.map(([es, val, en]) => [normalize(es), { val, en }]));
+  const textOriginals = new WeakMap();
+  const attributeOriginals = new WeakMap();
+  const translatableAttributes = ["aria-label", "title", "placeholder", "alt", "data-tip", "data-words", "content"];
+  const languageSelect = document.getElementById("languageSelect");
+  const root = document.documentElement;
+  let currentLanguage = "es";
+
+  const translated = (source, language) => dictionary.get(normalize(source))?.[language] || source;
+  window.portfolioTranslate = (source) => translated(source, currentLanguage);
+
+  const applyLanguage = (language) => {
+    currentLanguage = language;
+    root.lang = language === "val" ? "ca-valencia" : language;
+
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.parentElement?.closest("script, style, noscript")) continue;
+      if (!textOriginals.has(node)) textOriginals.set(node, node.nodeValue);
+      const original = textOriginals.get(node);
+      const leading = original.match(/^\s*/)?.[0] || "";
+      const trailing = original.match(/\s*$/)?.[0] || "";
+      const value = translated(original, language);
+      node.nodeValue = value === original ? original : `${leading}${value}${trailing}`;
+    }
+
+    root.querySelectorAll("*").forEach((element) => {
+      if (!attributeOriginals.has(element)) attributeOriginals.set(element, {});
+      const originals = attributeOriginals.get(element);
+      translatableAttributes.forEach((attribute) => {
+        if (!element.hasAttribute(attribute)) return;
+        if (attribute === "content" && !element.matches('meta[name="description"], meta[property="og:description"], meta[name="twitter:description"]')) return;
+        if (!(attribute in originals)) originals[attribute] = element.getAttribute(attribute);
+        const original = originals[attribute];
+        const value = attribute === "data-words"
+          ? original.split(",").map((word) => translated(word, language)).join(",")
+          : translated(original, language);
+        element.setAttribute(attribute, value);
+      });
+    });
+
+    if (languageSelect) languageSelect.value = language;
+    try { localStorage.setItem("language", language); } catch (e) {}
+    document.dispatchEvent(new CustomEvent("portfolio:languagechange", { detail: { language } }));
+  };
+
+  let savedLanguage = "es";
+  try { savedLanguage = localStorage.getItem("language") || "es"; } catch (e) {}
+  applyLanguage(["es", "val", "en"].includes(savedLanguage) ? savedLanguage : "es");
+
+  languageSelect?.addEventListener("change", () => {
+    applyLanguage(languageSelect.value);
+  });
+})();

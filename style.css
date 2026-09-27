@@ -174,6 +174,18 @@ h1, h2, h3, h4 {
 
 .header-actions { display: flex; align-items: center; gap: .5rem; }
 
+.language-select {
+  min-width: 3.5rem;
+  height: 42px;
+  padding: 0 .35rem;
+  border: 2px solid var(--text);
+  border-radius: 4px;
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: 2px 2px 0 var(--text);
+  font: 700 .75rem var(--mono);
+}
+
 /* ---- Botón de tema ---- */
 .theme-toggle {
   position: relative; width: 42px; height: 42px; display: grid; place-items: center;
@@ -1127,7 +1139,8 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
    Estados del botón del formulario (idle / loading / success)
    ============================================================ */
 
-.btn [hidden] {
+/* El atributo hidden siempre manda */
+[hidden] {
   display: none !important;
 }
 
@@ -1138,18 +1151,14 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   line-height: 1;
 }
 
-.btn-icon {
-  display: inline-block;
-  font-size: 1rem;
-  line-height: 1;
-}
-
+/* Botón deshabilitado (mientras envía) */
 .btn[disabled] {
   opacity: .8;
   cursor: wait;
   pointer-events: none;
 }
 
+/* Spinner */
 .btn .loader {
   display: inline-block;
   width: 14px;
@@ -1165,8 +1174,10 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   to { transform: rotate(360deg); }
 }
 
-.btn-state--success {
-  color: inherit;
+.form-success.loading {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--muted);
 }
 
 /* ---- Responsive general ---- */
