@@ -1124,19 +1124,30 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
 }
 
 /* ============================================================
-   Loader del botón del formulario
+   Estados del botón del formulario (idle / loading / success)
    ============================================================ */
 
-.btn[disabled] {
-  opacity: .75;
-  cursor: wait;
-  pointer-events: none;
+.btn [hidden] {
+  display: none !important;
 }
 
-.btn .btn-loader {
+.btn-state {
   display: inline-flex;
   align-items: center;
   gap: .5rem;
+  line-height: 1;
+}
+
+.btn-icon {
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.btn[disabled] {
+  opacity: .8;
+  cursor: wait;
+  pointer-events: none;
 }
 
 .btn .loader {
@@ -1146,17 +1157,16 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   border: 2px solid currentColor;
   border-top-color: transparent;
   border-radius: 50%;
-  animation: spin .8s linear infinite;
+  animation: spin .7s linear infinite;
+  flex-shrink: 0;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-.form-success.loading {
-  border-color: var(--line);
-  background: var(--surface);
-  color: var(--muted);
+.btn-state--success {
+  color: inherit;
 }
 
 /* ---- Responsive general ---- */

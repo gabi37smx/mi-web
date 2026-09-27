@@ -401,8 +401,9 @@ if (toTop) {
 
   const success = document.getElementById("formSuccess");
   const submitBtn = document.getElementById("submitBtn");
-  const btnText = submitBtn ? submitBtn.querySelector(".btn-text") : null;
-  const btnLoader = submitBtn ? submitBtn.querySelector(".btn-loader") : null;
+  const stateIdle = submitBtn ? submitBtn.querySelector(".btn-state--idle") : null;
+  const stateLoading = submitBtn ? submitBtn.querySelector(".btn-state--loading") : null;
+  const stateSuccess = submitBtn ? submitBtn.querySelector(".btn-state--success") : null;
 
   const showError = (field, message) => {
     const wrap = field.closest(".form-field");
@@ -477,11 +478,14 @@ if (toTop) {
     });
   });
 
-  const setLoading = (loading) => {
-    if (!submitBtn) return;
-    submitBtn.disabled = loading;
-    if (btnText) btnText.hidden = loading;
-    if (btnLoader) btnLoader.hidden = !loading;
+  const showState = (which) => {
+    if (stateIdle) stateIdle.hidden = which !== "idle";
+    if (stateLoading) stateLoading.hidden = which !== "loading";
+    if (stateSuccess) stateSuccess.hidden = which !== "success";
+  };
+
+  const setDisabled = (disabled) => {
+    if (submitBtn) submitBtn.disabled = disabled;
   };
 
   form.addEventListener("submit", async (e) => {
@@ -516,7 +520,8 @@ if (toTop) {
 
     const backendUrl = "https://portfolio-backend-m07q.onrender.com/api/contact";
 
-    setLoading(true);
+    setDisabled(true);
+    showState("loading");
 
     try {
       const res = await fetch(backendUrl, {
@@ -531,6 +536,12 @@ if (toTop) {
       if (campoTelefono) campoTelefono.style.display = "none";
       if (inputTelefono) inputTelefono.required = false;
 
+      showState("success");
+      setTimeout(() => {
+        showState("idle");
+        setDisabled(false);
+      }, 2000);
+
       if (success) {
         success.hidden = false;
         success.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -539,8 +550,8 @@ if (toTop) {
     } catch (err) {
       console.error(err);
       alert("No se pudo enviar el mensaje. Inténtalo más tarde.");
-    } finally {
-      setLoading(false);
+      showState("idle");
+      setDisabled(false);
     }
   });
 })();

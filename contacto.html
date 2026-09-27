@@ -161,9 +161,14 @@
 
               <div class="form-actions">
                 <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-                  <span class="btn-text">Enviar mensaje</span>
-                  <span class="btn-loader" hidden>
+                  <span class="btn-state btn-state--idle">
+                    <span class="btn-icon">📧</span> Enviar mensaje
+                  </span>
+                  <span class="btn-state btn-state--loading" hidden>
                     <span class="loader"></span> Enviando…
+                  </span>
+                  <span class="btn-state btn-state--success" hidden>
+                    <span class="btn-icon">✓</span> Enviado
                   </span>
                 </button>
                 <p class="form-note">
