@@ -392,7 +392,7 @@ if (toTop) {
 })();
 
 /* ============================================================
-  Formulario de contacto · validación + envío al backend
+   Formulario de contacto · validación + envío al backend
    ============================================================ */
 
 (function contactForm() {
@@ -400,6 +400,9 @@ if (toTop) {
   if (!form) return;
 
   const success = document.getElementById("formSuccess");
+  const submitBtn = document.getElementById("submitBtn");
+  const btnText = submitBtn ? submitBtn.querySelector(".btn-text") : null;
+  const btnLoader = submitBtn ? submitBtn.querySelector(".btn-loader") : null;
 
   const showError = (field, message) => {
     const wrap = field.closest(".form-field");
@@ -417,7 +420,6 @@ if (toTop) {
     if (err) err.textContent = "";
   };
 
-  // --- Lógica del checkbox "Quiero que me llames" ---
   const checkLlamada = document.getElementById("quiero-llamada");
   const campoTelefono = document.getElementById("campo-telefono");
   const inputTelefono = document.getElementById("telefono");
@@ -437,7 +439,6 @@ if (toTop) {
     });
   }
 
-  // --- Validación por campo ---
   const validate = (field) => {
     const value = field.value.trim();
     const name = field.name;
@@ -476,6 +477,13 @@ if (toTop) {
     });
   });
 
+  const setLoading = (loading) => {
+    if (!submitBtn) return;
+    submitBtn.disabled = loading;
+    if (btnText) btnText.hidden = loading;
+    if (btnLoader) btnLoader.hidden = !loading;
+  };
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -485,7 +493,6 @@ if (toTop) {
 
     fields.forEach((f) => {
       if (f.name === "telefono" && (!inputTelefono || !inputTelefono.required)) return;
-
       const ok = validate(f);
       if (!ok) {
         allOk = false;
@@ -498,7 +505,6 @@ if (toTop) {
       return;
     }
 
-    // Recoger datos
     const payload = {
       nombre: form.nombre.value.trim(),
       email: form.email.value.trim(),
@@ -508,8 +514,9 @@ if (toTop) {
       quiereLlamada: checkLlamada ? checkLlamada.checked : false,
     };
 
-    // Enviar al backend
     const backendUrl = "https://portfolio-backend-m07q.onrender.com/api/contact";
+
+    setLoading(true);
 
     try {
       const res = await fetch(backendUrl, {
@@ -520,7 +527,6 @@ if (toTop) {
 
       if (!res.ok) throw new Error("Error del servidor");
 
-      // Éxito
       form.reset();
       if (campoTelefono) campoTelefono.style.display = "none";
       if (inputTelefono) inputTelefono.required = false;
@@ -533,6 +539,8 @@ if (toTop) {
     } catch (err) {
       console.error(err);
       alert("No se pudo enviar el mensaje. Inténtalo más tarde.");
+    } finally {
+      setLoading(false);
     }
   });
 })();

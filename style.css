@@ -1123,6 +1123,42 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   .contact-form textarea { font-size: 1rem; }
 }
 
+/* ============================================================
+   Loader del botón del formulario
+   ============================================================ */
+
+.btn[disabled] {
+  opacity: .75;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.btn .btn-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.btn .loader {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.form-success.loading {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--muted);
+}
+
 /* ---- Responsive general ---- */
 @media (max-width: 900px) {
   .about-layout { grid-template-columns: 1fr; gap: 1.5rem; }
