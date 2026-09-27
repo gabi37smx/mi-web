@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f2ede3" id="metaTheme" />
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='6' fill='%23c1272d'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-size='32' font-weight='900' fill='%23f2ede3'%3EGV%3C/text%3E%3C/svg%3E" />
+
+  <title>Presentación · Gabriel Vidal Badia</title>
+  <meta name="description" content="Presentación de Gabriel Vidal Badia · Portfolio personal." />
+  <meta name="author" content="Gabriel Vidal Badia" />
+  <meta name="robots" content="noindex, follow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* Estilos específicos de la página de presentación */
+    .presentacion {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 8rem 1.5rem 4rem;
+      overflow: hidden;
+    }
+
+    .presentacion__inner {
+      width: min(100% - 2rem, 640px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .presentacion__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .4rem .8rem;
+      background: var(--surface);
+      border: 2px solid var(--text);
+      color: var(--text);
+      font-size: .82rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      font-family: var(--mono);
+      box-shadow: 2px 2px 0 var(--text);
+    }
+
+    .presentacion__title {
+      font-size: 3rem;
+      line-height: 1.05;
+      font-family: var(--display);
+      font-weight: 700;
+      letter-spacing: -.03em;
+      margin: 0;
+    }
+
+    .presentacion__subtitle {
+      color: var(--muted);
+      max-width: 55ch;
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .presentacion__qr {
+      display: block;
+      width: clamp(240px, 60vw, 380px);
+      height: auto;
+      padding: .75rem;
+      background: var(--surface);
+      border: 2px solid var(--text);
+      box-shadow: 6px 6px 0 var(--text);
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+    }
+
+    .presentacion__url {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--surface);
+      border: 2px solid var(--text);
+      padding: .5rem 1rem;
+      box-shadow: 2px 2px 0 var(--text);
+      word-break: break-all;
+    }
+
+    .presentacion__hint {
+      font-family: var(--mono);
+      font-size: .85rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .presentacion__back {
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 720px) {
+      .presentacion__title { font-size: 2.2rem; }
+      .presentacion__inner { gap: 1.5rem; }
+      .presentacion__url { font-size: .85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="site-header" id="inicio">
+    <div class="container header-inner">
+      <a href="index.html" class="logo" aria-label="Inicio">
+        <span class="logo-mark">GV</span>
+        <span class="logo-text">Gabriel Vidal</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <ul class="nav-list">
+          <li><a href="index.html#sobre-mi" class="nav-link">Sobre mí</a></li>
+          <li><a href="index.html#hecho" class="nav-link">Experiencia</a></li>
+          <li><a href="proyectos.html" class="nav-link">Proyectos</a></li>
+          <li><a href="index.html#certs" class="nav-link">Certificaciones</a></li>
+          <li><a href="index.html#gusta" class="nav-link">Me gusta</a></li>
+          <li><a href="presentacion.html" class="nav-link" aria-current="page">Presentación</a></li>
+          <li><a href="contacto.html" class="nav-link nav-cta">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <select id="languageSelect" class="language-select" aria-label="Idioma">
+          <option value="es">ES</option>
+          <option value="val">VA</option>
+          <option value="en">EN</option>
+        </select>
+        <button id="themeToggle" class="theme-toggle" aria-label="Cambiar a modo oscuro" aria-pressed="false" title="Cambiar tema">
+          <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-list">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="presentacion" id="contenido">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="presentacion__inner">
+
+      <p class="presentacion__eyebrow"><span class="dot"></span> Presentación en vivo</p>
+
+      <h1 class="presentacion__title">
+        Escanea y entra en <span class="accent-text">mi portfolio</span>
+      </h1>
+
+      <p class="presentacion__subtitle">
+        Apunta con la cámara del móvil al código QR. Te llevará directo a la web personal
+        con la que estoy construyendo mi marca como desarrollador.
+      </p>
+
+      <img
+        src="image/qr-web.png"
+        alt="Código QR para acceder al portfolio personal de Gabriel Vidal Badia"
+        class="presentacion__qr"
+        width="800"
+        height="800" />
+
+      <span class="presentacion__url">https://gabi37smx.github.io/mi-web/</span>
+
+      <p class="presentacion__hint">Si el móvil no lo lee, acerca un poco más la cámara o ajusta el brillo de la pantalla.</p>
+
+      <div class="presentacion__back">
+        <a href="index.html" class="btn btn-primary">
+          ← Volver al portfolio
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p><small>© <span id="year"></span> Gabriel Vidal Badia · Web personal con HTML, CSS y JS puros.</small></p>
+      <button id="toTop" class="to-top" aria-label="Volver arriba">↑</button>
+    </div>
+  </footer>
+
+  <script src="language.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>

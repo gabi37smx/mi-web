@@ -1448,3 +1448,46 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   text-align: center;
   margin-top: 2rem;
 }
+
+/* ============================================================
+   QR en el footer (index + contacto)
+   ============================================================ */
+
+.footer-qr {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .6rem;
+}
+
+.footer-qr__label {
+  font-family: var(--mono);
+  font-size: .78rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+  font-weight: 700;
+}
+
+.footer-qr img {
+  display: block;
+  width: 120px;
+  height: 120px;
+  padding: .4rem;
+  background: var(--surface);
+  border: 2px solid var(--text);
+  box-shadow: 2px 2px 0 var(--text);
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+@media (max-width: 900px) {
+  .footer-qr {
+    align-items: center;
+    text-align: center;
+  }
+}
