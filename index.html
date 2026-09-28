@@ -514,6 +514,43 @@
             <p>Pop inglés y Remember como banda sonora de estudio.</p>
           </article>
         </div>
+
+        <div class="weather-widget reveal" id="weatherWidget" data-lat="38.9886" data-lon="-0.5183" data-city="Xàtiva">
+          <form class="weather-widget__search" id="weatherSearch" role="search">
+            <label for="weatherCityInput">Ciudad</label>
+            <div class="weather-widget__search-row">
+              <input id="weatherCityInput" name="city" type="search" list="weatherCities" placeholder="Busca una ciudad" autocomplete="off" required />
+              <button type="submit" class="weather-widget__search-button" aria-label="Buscar ciudad" title="Buscar ciudad">↗</button>
+            </div>
+            <datalist id="weatherCities">
+              <option value="Xàtiva"></option>
+              <option value="Valencia"></option>
+              <option value="Barcelona"></option>
+              <option value="Madrid"></option>
+              <option value="Londres"></option>
+              <option value="París"></option>
+            </datalist>
+            <p class="weather-widget__search-status" id="weatherSearchStatus" role="status" aria-live="polite"></p>
+          </form>
+          <div class="weather-widget__head">
+            <span class="weather-widget__icon" id="weatherIcon" aria-hidden="true">🌤</span>
+            <div>
+              <h3 class="weather-widget__title">¿Buen día para escalar?</h3>
+              <p class="weather-widget__city" id="weatherCity">Cargando…</p>
+            </div>
+          </div>
+          <div class="weather-widget__body">
+            <div class="weather-widget__main">
+              <span class="weather-widget__temp" id="weatherTemp">—°</span>
+              <span class="weather-widget__desc" id="weatherDesc">—</span>
+            </div>
+            <ul class="weather-widget__meta">
+              <li><span>Viento</span><strong id="weatherWind">—</strong></li>
+              <li><span>Humedad</span><strong id="weatherHumidity">—</strong></li>
+            </ul>
+          </div>
+          <p class="weather-widget__verdict" id="weatherVerdict" role="status" aria-live="polite">Cargando datos del tiempo…</p>
+        </div>
       </div>
     </section>
 

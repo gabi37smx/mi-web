@@ -414,6 +414,164 @@ if (toTop) {
 })();
 
 /* ============================================================
+   Tiempo actual en Xàtiva · Open-Meteo
+   ============================================================ */
+
+(function weatherWidget() {
+  const widget = document.getElementById("weatherWidget");
+  if (!widget) return;
+
+  const translate = (text) => window.portfolioTranslate ? window.portfolioTranslate(text) : text;
+  const weatherCodes = {
+    0: { desc: "Despejado", icon: "☀️" },
+    1: { desc: "Mayormente despejado", icon: "🌤" },
+    2: { desc: "Parcialmente nublado", icon: "⛅" },
+    3: { desc: "Nublado", icon: "☁️" },
+    45: { desc: "Niebla", icon: "🌫" },
+    48: { desc: "Niebla helada", icon: "🌫" },
+    51: { desc: "Llovizna ligera", icon: "🌦" },
+    53: { desc: "Llovizna", icon: "🌦" },
+    55: { desc: "Llovizna fuerte", icon: "🌧" },
+    56: { desc: "Llovizna helada", icon: "🌧" },
+    57: { desc: "Llovizna helada fuerte", icon: "🌧" },
+    61: { desc: "Lluvia ligera", icon: "🌧" },
+    63: { desc: "Lluvia", icon: "🌧" },
+    65: { desc: "Lluvia fuerte", icon: "🌧" },
+    66: { desc: "Lluvia helada ligera", icon: "🌧" },
+    67: { desc: "Lluvia helada fuerte", icon: "🌧" },
+    71: { desc: "Nieve ligera", icon: "🌨" },
+    73: { desc: "Nieve", icon: "🌨" },
+    75: { desc: "Nieve fuerte", icon: "❄️" },
+    77: { desc: "Granos de nieve", icon: "❄️" },
+    80: { desc: "Chubascos ligeros", icon: "🌦" },
+    81: { desc: "Chubascos", icon: "🌧" },
+    82: { desc: "Chubascos fuertes", icon: "⛈" },
+    85: { desc: "Chubascos de nieve", icon: "🌨" },
+    86: { desc: "Chubascos de nieve fuertes", icon: "❄️" },
+    95: { desc: "Tormenta", icon: "⛈" },
+    96: { desc: "Tormenta con granizo", icon: "⛈" },
+    99: { desc: "Tormenta fuerte con granizo", icon: "⛈" },
+  };
+
+  const elements = {
+    form: document.getElementById("weatherSearch"),
+    cityInput: document.getElementById("weatherCityInput"),
+    searchButton: document.querySelector(".weather-widget__search-button"),
+    searchStatus: document.getElementById("weatherSearchStatus"),
+    icon: document.getElementById("weatherIcon"),
+    city: document.getElementById("weatherCity"),
+    temp: document.getElementById("weatherTemp"),
+    desc: document.getElementById("weatherDesc"),
+    wind: document.getElementById("weatherWind"),
+    humidity: document.getElementById("weatherHumidity"),
+    verdict: document.getElementById("weatherVerdict"),
+  };
+  let city = widget.dataset.city || "Xàtiva";
+  let coordinates = { lat: widget.dataset.lat, lon: widget.dataset.lon };
+  let currentWeather = null;
+  let loadError = false;
+
+  elements.cityInput.value = city;
+
+  function renderWeather() {
+    if (!currentWeather) {
+      if (loadError) {
+        elements.city.textContent = city;
+        elements.verdict.textContent = translate("No se pudo cargar el tiempo. Inténtalo más tarde.");
+      }
+      return;
+    }
+
+    const { code, temperature, wind, humidity } = currentWeather;
+    const info = weatherCodes[code] || { desc: "—", icon: "🌡" };
+    const isBad = code >= 51 || wind > 35 || temperature < 3 || temperature > 33;
+
+    elements.icon.textContent = info.icon;
+    elements.city.textContent = `${city} · ${translate("Ahora")}`;
+    elements.temp.textContent = `${temperature}°`;
+    elements.desc.textContent = translate(info.desc);
+    elements.wind.textContent = `${wind} km/h`;
+    elements.humidity.textContent = `${humidity}%`;
+    elements.verdict.textContent = `${isBad ? "⚠️" : "✅"} ${translate(isBad ? "Hoy mejor no escalar al aire libre" : "Buen día para escalar")}`;
+    elements.verdict.classList.toggle("is-bad", isBad);
+    elements.verdict.classList.toggle("is-good", !isBad);
+  }
+
+  async function loadWeather() {
+    const params = new URLSearchParams({
+      latitude: coordinates.lat,
+      longitude: coordinates.lon,
+      current: "temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code",
+      timezone: "auto",
+    });
+
+    try {
+      const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+      if (!response.ok) throw new Error(`Open-Meteo respondió ${response.status}`);
+      const { current } = await response.json();
+      if (!current) throw new Error("La respuesta no incluye datos actuales");
+
+      currentWeather = {
+        code: current.weather_code,
+        temperature: Math.round(current.temperature_2m),
+        wind: Math.round(current.wind_speed_10m),
+        humidity: current.relative_humidity_2m,
+      };
+      loadError = false;
+      renderWeather();
+    } catch (error) {
+      console.error("Error en el widget del tiempo:", error);
+      currentWeather = null;
+      loadError = true;
+      elements.verdict.classList.remove("is-good", "is-bad");
+      renderWeather();
+    }
+  }
+
+  async function selectCity(name) {
+    const query = name.trim();
+    if (!query) {
+      elements.searchStatus.textContent = translate("Escribe una ciudad.");
+      elements.cityInput.focus();
+      return;
+    }
+
+    elements.searchButton.disabled = true;
+    elements.searchStatus.textContent = translate("Buscando ciudad…");
+
+    try {
+      const params = new URLSearchParams({ name: query, count: "1", language: "es", format: "json" });
+      const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?${params}`);
+      if (!response.ok) throw new Error(`Open-Meteo respondió ${response.status}`);
+      const data = await response.json();
+      const result = data.results?.[0];
+      if (!result) throw new Error("Ciudad no encontrada");
+
+      city = result.name + (result.country_code ? ` (${result.country_code})` : "");
+      coordinates = { lat: result.latitude, lon: result.longitude };
+      currentWeather = null;
+      loadError = false;
+      elements.cityInput.value = result.name;
+      elements.searchStatus.textContent = "";
+      await loadWeather();
+    } catch (error) {
+      console.error("Error buscando ciudad:", error);
+      elements.searchStatus.textContent = translate("No se encontró esa ciudad.");
+    } finally {
+      elements.searchButton.disabled = false;
+    }
+  }
+
+  elements.form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    selectCity(elements.cityInput.value);
+  });
+  document.addEventListener("portfolio:languagechange", renderWeather);
+  loadWeather();
+  window.setInterval(loadWeather, 15 * 60 * 1000);
+})();
+
+/* ============================================================
    Formulario de contacto · validación + envío al backend
    ============================================================ */
 
