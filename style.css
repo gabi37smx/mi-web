@@ -414,6 +414,19 @@ h1, h2, h3, h4 {
 .term-fn { color: var(--accent-3); font-weight: 700; }
 .term-cursor { display: inline-block; color: var(--accent); animation: caret 1s steps(2) infinite; }
 
+/* ============================================================
+   Terminal que se escribe sola
+   ============================================================ */
+.terminal--typing {
+  min-height: 130px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.terminal--typing .term-prompt { color: var(--accent); margin-right: .4rem; }
+.terminal--typing .term-var { color: var(--accent-2); font-weight: 700; }
+.terminal--typing .term-fn { color: var(--accent-3); font-weight: 700; }
+.terminal--typing .term-ok { color: var(--accent-2); font-weight: 700; }
+
 /* ---- Tarjetas ---- */
 .cards-grid {
   display: grid; gap: 1.5rem;

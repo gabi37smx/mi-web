@@ -763,3 +763,70 @@ if (toTop) {
     });
   });
 })();
+
+/* ============================================================
+   Terminal que se escribe sola
+   ============================================================ */
+
+(function typingTerminal() {
+  const term = document.getElementById("typingTerminal");
+  if (!term) return;
+
+  const lines = [
+    '<span class="term-prompt">$</span> while (<span class="term-var">no_llegue_a_la_cima</span>) {',
+    '  <span class="term-fn">resolver_problema</span>();',
+    '  <span class="term-fn">aprender</span>();',
+    '  <span class="term-fn">subir</span>();',
+    '}',
+    '<span class="term-ok">✓ Programa ejecutado. Subiendo...</span>',
+    '<span class="term-prompt">$</span> <span class="term-cursor">▊</span>'
+  ];
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  term.innerHTML = lines.join("\n");
+  if (reduceMotion) return;
+
+  const walker = document.createTreeWalker(term, NodeFilter.SHOW_TEXT);
+  const textNodes = [];
+  let node;
+  while ((node = walker.nextNode())) {
+    textNodes.push({ node, text: node.textContent });
+    node.textContent = "";
+  }
+
+  let nodeIndex = 0;
+  let charIndex = 0;
+  let started = false;
+
+  function type() {
+    if (nodeIndex >= textNodes.length) return;
+    const current = textNodes[nodeIndex];
+    current.node.textContent += current.text.charAt(charIndex);
+    charIndex++;
+    if (charIndex >= current.text.length) {
+      nodeIndex++;
+      charIndex = 0;
+    }
+    window.setTimeout(type, 32);
+  }
+
+  function start() {
+    if (started) return;
+    started = true;
+    type();
+  }
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          start();
+          observer.unobserve(term);
+        }
+      });
+    }, { threshold: 0.4 });
+    observer.observe(term);
+  } else {
+    start();
+  }
+})();
