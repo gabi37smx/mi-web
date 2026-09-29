@@ -18,7 +18,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='6' fill='%23c1272d'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-size='32' font-weight='900' fill='%23f2ede3'%3EGV%3C/text%3E%3C/svg%3E" />
 
   <title>Proyectos · Gabriel Vidal Badia</title>
-  <meta name="description" content="Proyectos en curso de Gabriel Vidal Badia: portfolio personal, app de gestión de cementerio, app de aprendizaje de valenciano con IA, y proyectos por definir del ciclo DAM." />
+  <meta name="description" content="Proyectos en curso de Gabriel Vidal Badia: portfolio personal, app de gestión de cementerio, app de aprendizaje de valenciano con IA y facturación para electricistas." />
   <meta name="author" content="Gabriel Vidal Badia" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://gabrielvidal.dev/proyectos.html" />
@@ -72,6 +72,7 @@
           <li><a href="index.html#hecho" class="nav-link">Experiencia</a></li>
           <li><a href="proyectos.html" class="nav-link" aria-current="page">Proyectos</a></li>
           <li><a href="index.html#certs" class="nav-link">Certificaciones</a></li>
+          <li><a href="index.html#gusta" class="nav-link">Me gusta</a></li>
           <li><a href="presentacion.html" class="nav-link">Presentación</a></li>
           <li><a href="contacto.html" class="nav-link nav-cta">Contacto</a></li>
         </ul>
@@ -108,11 +109,11 @@
           Proyectos del <span class="accent-text">curso</span>
         </h1>
         <p class="projects-subtitle">
-          Lo que estoy construyendo durante 1º DAM. Cada proyecto es una vía: unos son individuales, otros en grupo,
-          algunos ya en marcha y otros aún por montar. Aquí va todo, con su grado de dificultad.
+          Lo que estoy construyendo durante 1º DAM. Cada proyecto es una vía: unos ya están en marcha
+          y otros en fase de diseño. Aquí va todo, con su grado de dificultad.
         </p>
         <p class="certs-counter">
-          <strong>3</strong> proyectos en marcha · <strong>1</strong> idea · <strong>1</strong> en grupo por decidir
+          <strong>1</strong> proyecto en curso · <strong>3</strong> proyectos en diseño
         </p>
       </div>
     </section>
@@ -124,10 +125,8 @@
         <div class="projects-filters" role="tablist" aria-label="Filtrar proyectos">
           <button class="filter-btn is-active" data-filter="all">Todos</button>
           <button class="filter-btn" data-filter="individual">Individual</button>
-          <button class="filter-btn" data-filter="grupo">En grupo</button>
           <button class="filter-btn" data-filter="curso">En curso</button>
-          <button class="filter-btn" data-filter="idea">Idea</button>
-          <button class="filter-btn" data-filter="proximamente">Próximamente</button>
+          <button class="filter-btn" data-filter="idea">En diseño</button>
         </div>
 
         <!-- Grid de proyectos -->
@@ -152,15 +151,34 @@
               <li>HTML5</li>
               <li>CSS3</li>
               <li>JavaScript</li>
+              <li>Node.js</li>
+              <li>MongoDB</li>
               <li>Git</li>
             </ul>
             <div class="project-card__actions">
               <a href="https://github.com/gabi37smx/mi-web" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Ver código →</a>
+              <button type="button" class="btn btn-ghost btn-sm js-toggle-case" aria-expanded="false" aria-controls="case-portfolio">
+                Ver caso completo <span class="js-toggle-icon" aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div class="project-card__case" id="case-portfolio" hidden>
+              <div class="case-block">
+                <h3 class="case-block__title">Problema</h3>
+                <p>Necesitaba una marca personal para darme a conocer, una ventana a quién soy y, a la vez, un proyecto donde aplicar todo lo aprendido durante 1º DAM.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Solución</h3>
+                <p>Web construida con HTML, CSS y JavaScript puros, sin frameworks. Backend propio con Node.js y Express, base de datos MongoDB y envío de emails con Resend. Frontend desplegado en GitHub Pages y backend en Render.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Resultado</h3>
+                <p>Web online accesible desde cualquier dispositivo, con formulario real que envía emails, panel de administración, tres idiomas, widget del tiempo en directo y certificaciones. Todo versionado con Git a lo largo de más de 25 commits.</p>
+              </div>
             </div>
           </article>
 
           <!-- App Cementerio -->
-          <article class="project-card" data-type="individual">
+          <article class="project-card" data-type="individual idea">
             <div class="project-card__head">
               <div class="project-card__icon" aria-hidden="true">🗂️</div>
               <span class="project-card__grade">V5</span>
@@ -181,12 +199,29 @@
               <li>Multiplataforma</li>
             </ul>
             <div class="project-card__actions">
-              <span class="project-card__soon">Repositorio próximamente</span>
+              <a href="#" class="btn btn-ghost btn-sm">Ver código →</a>
+              <button type="button" class="btn btn-ghost btn-sm js-toggle-case" aria-expanded="false" aria-controls="case-cementerio">
+                Ver caso completo <span class="js-toggle-icon" aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div class="project-card__case" id="case-cementerio" hidden>
+              <div class="case-block">
+                <h3 class="case-block__title">Problema</h3>
+                <p>En el Ayuntamiento de Ollería, donde trabajo como oficial de mantenimiento, la gestión del cementerio se hace hoy con papel y hojas de cálculo. Encontrar dónde está enterrada una persona, consultar qué pabellones están libres o cuadrar los entierros es lento y propenso a errores.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Solución</h3>
+                <p>App multiplataforma con una base de datos real, diseñada desde dentro. Conozco el cementerio, a los compañeros que la van a usar y la información que necesitan en cada momento del día a día.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Resultado</h3>
+                <p>En fase de diseño. El objetivo es digitalizar el proceso para que cualquier compañero del ayuntamiento consulte la información sin depender de mí y se reduzcan los errores humanos.</p>
+              </div>
             </div>
           </article>
 
           <!-- App Valenciano IA -->
-          <article class="project-card" data-type="individual">
+          <article class="project-card" data-type="individual idea">
             <div class="project-card__head">
               <div class="project-card__icon" aria-hidden="true">🗣️</div>
               <span class="project-card__grade">V5</span>
@@ -208,12 +243,29 @@
               <li>A definir</li>
             </ul>
             <div class="project-card__actions">
-              <span class="project-card__soon">Repositorio próximamente</span>
+              <a href="#" class="btn btn-ghost btn-sm">Ver código →</a>
+              <button type="button" class="btn btn-ghost btn-sm js-toggle-case" aria-expanded="false" aria-controls="case-valenciano">
+                Ver caso completo <span class="js-toggle-icon" aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div class="project-card__case" id="case-valenciano" hidden>
+              <div class="case-block">
+                <h3 class="case-block__title">Problema</h3>
+                <p>Quiero aprender bien mi idioma materno, el valenciano, y preparar los exámenes oficiales (B1, B2, C1 y C2). Las apps actuales no cubren todas las destrezas de estos exámenes ni permiten entrenar de forma personalizada con corrección real de textos.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Solución</h3>
+                <p>App con un agente de IA que corrige textos, propone ejercicios, adapta el nivel y prepara cada destreza del examen oficial. La idea es ofrecer un entrenador personal de valenciano disponible 24/7 y familiarizado con el formato exacto de las pruebas.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Resultado</h3>
+                <p>En fase de diseño. El proyecto responde a la falta de herramientas para aprender bien el idioma, más allá de ejercicios básicos o aplicaciones genéricas que no conocen los exámenes oficiales.</p>
+              </div>
             </div>
           </article>
 
           <!-- App Facturación Electricistas -->
-          <article class="project-card project-card--soon" data-type="individual idea">
+          <article class="project-card" data-type="individual idea">
             <div class="project-card__head">
               <div class="project-card__icon" aria-hidden="true">⚡</div>
               <span class="project-card__grade project-card__grade--soon">V5</span>
@@ -221,7 +273,7 @@
             <h2 class="project-card__title">Facturación para electricistas</h2>
             <div class="project-card__meta">
               <span class="tag tag--individual">Individual</span>
-              <span class="tag tag--idea">Idea</span>
+              <span class="tag tag--idea">En diseño</span>
             </div>
             <p class="project-card__desc">
               App para electricistas autónomos que usa WhatsApp Business y un agente de IA:
@@ -236,30 +288,24 @@
               <li>Facturación</li>
             </ul>
             <div class="project-card__actions">
-              <span class="project-card__soon">En fase de idea</span>
+              <a href="#" class="btn btn-ghost btn-sm">Ver código →</a>
+              <button type="button" class="btn btn-ghost btn-sm js-toggle-case" aria-expanded="false" aria-controls="case-facturacion">
+                Ver caso completo <span class="js-toggle-icon" aria-hidden="true">→</span>
+              </button>
             </div>
-          </article>
-
-          <!-- Próximamente -->
-          <article class="project-card project-card--soon" data-type="grupo proximamente">
-            <div class="project-card__head">
-              <div class="project-card__icon" aria-hidden="true">⏳</div>
-              <span class="project-card__grade project-card__grade--soon">V0</span>
-            </div>
-            <h2 class="project-card__title">Proyecto en grupo + videojuego</h2>
-            <div class="project-card__meta">
-              <span class="tag tag--grupo">En grupo</span>
-              <span class="tag tag--proximamente">Próximamente</span>
-            </div>
-            <p class="project-card__desc">
-              Pendiente de decidir con el profesor. Aquí irán el proyecto final en grupo y, si
-              sale adelante, un pequeño videojuego. De momento toca esperar y escuchar.
-            </p>
-            <ul class="project-card__stack">
-              <li>A definir</li>
-            </ul>
-            <div class="project-card__actions">
-              <span class="project-card__soon">Por decidir</span>
+            <div class="project-card__case" id="case-facturacion" hidden>
+              <div class="case-block">
+                <h3 class="case-block__title">Problema</h3>
+                <p>Los electricistas autónomos pierden mucho tiempo haciendo facturas a mano. Además, la facturación electrónica obligatoria en España avanza y cada vez es más necesario emitir documentos digitales que cumplan los requisitos legales.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Solución</h3>
+                <p>App basada en WhatsApp Business y un agente de IA. El profesional dicta los materiales usados y las horas trabajadas; el agente calcula el importe, genera una factura con los requisitos legales y la envía al cliente por el mismo chat.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Resultado</h3>
+                <p>En fase de diseño. El objetivo es reducir el trabajo administrativo y permitir que el electricista facture desde el móvil en menos de un minuto, sin abrir un ordenador.</p>
+              </div>
             </div>
           </article>
 

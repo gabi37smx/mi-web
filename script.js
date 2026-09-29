@@ -764,6 +764,34 @@ if (toTop) {
   });
 })();
 
+/* ---- Casos de proyecto: problema, solución y resultado ---- */
+(function projectCases() {
+  const buttons = document.querySelectorAll(".js-toggle-case");
+  const translate = (text) => window.portfolioTranslate?.(text) || text;
+
+  function updateLabel(button) {
+    const label = button.firstChild;
+    if (!label) return;
+    const isOpen = button.getAttribute("aria-expanded") === "true";
+    label.nodeValue = `\n                ${translate(isOpen ? "Ocultar caso completo" : "Ver caso completo")} `;
+  }
+
+  buttons.forEach((button) => {
+    const caseBlock = document.getElementById(button.getAttribute("aria-controls"));
+    if (!caseBlock) return;
+
+    button.addEventListener("click", () => {
+      const isOpen = button.getAttribute("aria-expanded") === "true";
+      button.setAttribute("aria-expanded", String(!isOpen));
+      caseBlock.hidden = isOpen;
+      button.querySelector(".js-toggle-icon").textContent = isOpen ? "→" : "←";
+      updateLabel(button);
+    });
+
+    document.addEventListener("portfolio:languagechange", () => updateLabel(button));
+  });
+})();
+
 /* ============================================================
    Terminal que se escribe sola
    ============================================================ */
