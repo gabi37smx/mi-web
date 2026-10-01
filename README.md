@@ -194,3 +194,6 @@ Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub 
 ## 📄 Licencia
 
 Proyecto personal con fines educativos. Todos los derechos reservados.
+---
+
+*Última actualización: 29 de septiembre de 2026.*
