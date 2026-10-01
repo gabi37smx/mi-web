@@ -705,6 +705,46 @@ h1, h2, h3, h4 {
 [data-theme="dark"] .weather-widget__verdict.is-good { background: #3a5a40; color: #f2ede3; border-color: var(--text); }
 [data-theme="dark"] .weather-widget__verdict.is-bad { background: #7a6a3a; color: #f2ede3; border-color: var(--text); }
 
+/* ---- Zonas de escalada cerca ---- */
+.climbing-areas { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 2px dashed var(--muted-2); }
+.climbing-areas__title { margin: 0 0 .6rem; color: var(--text); font: 700 .85rem var(--mono); text-transform: uppercase; }
+.climbing-areas__status { min-height: 1.1em; margin: 0 0 .4rem; color: var(--muted); font: .78rem var(--mono); }
+.climbing-areas__list { display: grid; gap: .5rem; max-height: 320px; overflow-y: auto; margin: 0; padding: 0; list-style: none; }
+.climbing-areas__item { display: grid; width: 100%; gap: .15rem; padding: .5rem .65rem; background: var(--bg-soft); border: 2px solid var(--text); color: var(--text); font: inherit; font-size: .85rem; text-align: left; cursor: pointer; transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
+.climbing-areas__item:hover { transform: translate(1px, 1px); }
+.climbing-areas__item:focus-visible { outline: 3px solid rgba(var(--accent-rgb), .5); outline-offset: 2px; }
+.climbing-areas__item.is-selected { box-shadow: 4px 4px 0 var(--text); outline: 3px solid var(--text); outline-offset: -3px; }
+.climbing-areas__row { display: flex; justify-content: space-between; gap: .75rem; }
+.climbing-areas__distance { color: var(--muted); font-family: var(--mono); font-size: .78rem; white-space: nowrap; }
+.climbing-areas__meta { color: var(--muted); font-family: var(--mono); font-size: .75rem; }
+.climbing-areas__weather { color: var(--text); font: .75rem var(--mono); }
+.climbing-areas__item.is-best { background: #dcf0d1; color: #1a1a1a; box-shadow: 3px 3px 0 var(--text); }
+.climbing-areas__item.is-best .climbing-areas__distance,
+.climbing-areas__item.is-best .climbing-areas__meta,
+.climbing-areas__item.is-best .climbing-areas__weather { color: #1a1a1a; }
+.climbing-areas__item.is-bad { opacity: .75; }
+.climbing-areas__badge { justify-self: start; padding: .05rem .4rem; background: #1a1a1a; color: #f2ede3; font: 700 .68rem var(--mono); text-transform: uppercase; }
+.climbing-areas__detail { display: grid; gap: .5rem; margin-top: .75rem; padding: .85rem; background: var(--surface); border: 2px solid var(--text); box-shadow: 4px 4px 0 var(--text); }
+.climbing-areas__detail[hidden] { display: none; }
+.climbing-areas__detail.is-best,
+[data-theme="dark"] .climbing-areas__item.is-best { background: #3a5a40; color: #f2ede3; }
+.climbing-areas__detail.is-best { background: #dcf0d1; color: #1a1a1a; }
+.climbing-areas__detail-title { margin: 0; font: 700 1rem var(--mono); }
+.climbing-areas__links { display: grid; gap: .4rem; }
+.climbing-areas__link { display: block; padding: .45rem .65rem; border: 2px solid var(--text); color: var(--text); background: transparent; font: 700 .8rem var(--mono); text-decoration: none; }
+.climbing-areas__link:hover { background: var(--text); color: var(--bg); }
+.climbing-areas__link.is-primary { background: var(--text); color: var(--bg); }
+.climbing-areas__detail.is-best .climbing-areas__weather,
+.climbing-areas__detail.is-best .climbing-areas__link { color: #1a1a1a; }
+[data-theme="dark"] .climbing-areas__item.is-best .climbing-areas__distance,
+[data-theme="dark"] .climbing-areas__item.is-best .climbing-areas__meta,
+[data-theme="dark"] .climbing-areas__item.is-best .climbing-areas__weather,
+[data-theme="dark"] .climbing-areas__detail.is-best,
+[data-theme="dark"] .climbing-areas__detail.is-best .climbing-areas__weather,
+[data-theme="dark"] .climbing-areas__detail.is-best .climbing-areas__link { color: #f2ede3; }
+.climbing-areas__detail.is-best .climbing-areas__link.is-primary { background: #1a1a1a; color: #f2ede3; }
+.climbing-areas__credit { margin: .6rem 0 0; color: var(--muted); font: .68rem var(--mono); }
+
 @media (max-width: 600px) {
   .weather-widget__body { grid-template-columns: 1fr; gap: 1rem; }
 }

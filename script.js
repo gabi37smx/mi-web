@@ -553,6 +553,9 @@ if (toTop) {
       loadError = false;
       elements.cityInput.value = result.name;
       elements.searchStatus.textContent = "";
+      document.dispatchEvent(new CustomEvent("portfolio:citychange", {
+        detail: { city, lat: result.latitude, lon: result.longitude },
+      }));
       await loadWeather();
     } catch (error) {
       console.error("Error buscando ciudad:", error);
@@ -569,6 +572,190 @@ if (toTop) {
   document.addEventListener("portfolio:languagechange", renderWeather);
   loadWeather();
   window.setInterval(loadWeather, 15 * 60 * 1000);
+})();
+
+/* ============================================================
+   Zonas de escalada cerca de la ciudad consultada
+   ============================================================ */
+
+(function climbingAreas() {
+  const widget = document.getElementById("weatherWidget");
+  const list = document.getElementById("climbingList");
+  const status = document.getElementById("climbingStatus");
+  const detail = document.getElementById("climbingDetail");
+  if (!widget || !list || !status || !detail) return;
+
+  const API_URL = "https://portfolio-backend-m07q.onrender.com/api/climbing";
+  const translate = (text) => window.portfolioTranslate ? window.portfolioTranslate(text) : text;
+  const typeLabels = { sport: "Deportiva", boulder: "Búlder", trad: "Clásica", toprope: "Top-rope" };
+  const weatherIcon = (code) =>
+    code === 0 ? "☀️" : code <= 2 ? "🌤" : code === 3 ? "☁️" : code <= 48 ? "🌫"
+    : code <= 57 ? "🌦" : code <= 67 ? "🌧" : code <= 77 ? "❄️" : code <= 82 ? "🌦"
+    : code <= 86 ? "🌨" : "⛈";
+  const weatherText = (weather) =>
+    `${weatherIcon(weather.code)} ${weather.temperature}° · ${weather.wind} km/h · ` +
+    `${weather.good ? "✅ " + translate("Buen tiempo") : "⚠️ " + translate("Mal tiempo")}`;
+  const safeUrl = (url) => typeof url === "string" && /^https?:\/\//i.test(url) ? url : null;
+  let lastData = null;
+  let lastState = "idle";
+  let selectedId = null;
+  let requestId = 0;
+
+  function makeLink(label, url, primary = false) {
+    const href = safeUrl(url);
+    if (!href) return null;
+    const link = document.createElement("a");
+    link.className = `climbing-areas__link${primary ? " is-primary" : ""}`;
+    link.href = href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = label;
+    return link;
+  }
+
+  function renderDetail() {
+    detail.replaceChildren();
+    const area = lastData?.results.find((item) => item.id === selectedId);
+    if (!area) {
+      detail.hidden = true;
+      return;
+    }
+
+    detail.hidden = false;
+    detail.classList.toggle("is-best", Boolean(area.best));
+
+    const title = document.createElement("h5");
+    title.className = "climbing-areas__detail-title";
+    title.textContent = area.name;
+    detail.append(title);
+
+    if (area.best) {
+      const badge = document.createElement("span");
+      badge.className = "climbing-areas__badge";
+      badge.textContent = `★ ${translate("Mejor opción hoy")}`;
+      detail.append(badge);
+    }
+    if (area.weather) {
+      const weather = document.createElement("p");
+      weather.className = "climbing-areas__weather";
+      weather.textContent = weatherText(area.weather);
+      detail.append(weather);
+    }
+
+    const links = document.createElement("div");
+    links.className = "climbing-areas__links";
+    [
+      makeLink(`🧭 ${translate("Cómo llegar")}`, area.directionsUrl, true),
+      makeLink(`📍 ${translate("Ver en el mapa")}`, area.mapsUrl),
+      makeLink(`🧗 ${translate("Vías, sectores y grados")}`, area.topoLinks?.thecrag),
+      makeLink(`💬 ${translate("Reseñas y topos")}`, area.topoLinks?.crags27),
+      makeLink(`🌐 ${translate("Web de la zona")}`, area.website),
+    ].filter(Boolean).forEach((link) => links.append(link));
+    if (links.childElementCount) detail.append(links);
+  }
+
+  function updateSelection() {
+    list.querySelectorAll(".climbing-areas__item").forEach((button) => {
+      const selected = button.dataset.id === selectedId;
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+    renderDetail();
+  }
+
+  function render() {
+    list.replaceChildren();
+
+    if (lastState === "loading") {
+      status.textContent = translate("Buscando zonas de escalada…");
+      return;
+    }
+    if (lastState === "error") {
+      status.textContent = translate("No se pudieron cargar las zonas. Inténtalo más tarde.");
+      return;
+    }
+    if (!lastData || lastData.results.length === 0) {
+      status.textContent = lastData ? translate("No hay zonas registradas cerca en OpenStreetMap.") : "";
+      return;
+    }
+
+    status.textContent = "";
+    lastData.results.forEach((area) => {
+      const item = document.createElement("li");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "climbing-areas__item";
+      button.dataset.id = area.id;
+      if (area.best) button.classList.add("is-best");
+      if (area.weather && !area.weather.good) button.classList.add("is-bad");
+      button.addEventListener("click", () => {
+        selectedId = area.id;
+        updateSelection();
+        detail.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      });
+
+      const row = document.createElement("span");
+      row.className = "climbing-areas__row";
+      const name = document.createElement("strong");
+      name.textContent = `${area.best ? "★ " : ""}${area.name}`;
+      const distance = document.createElement("span");
+      distance.className = "climbing-areas__distance";
+      distance.textContent = `${area.distance_km} km`;
+      row.append(name, distance);
+      button.append(row);
+
+      const parts = area.types.map((type) => translate(typeLabels[type] || type));
+      if (area.routes) parts.push(`${area.routes} ${translate("vías")}`);
+      if (parts.length) {
+        const meta = document.createElement("span");
+        meta.className = "climbing-areas__meta";
+        meta.textContent = parts.join(" · ");
+        button.append(meta);
+      }
+      if (area.weather) {
+        const weather = document.createElement("span");
+        weather.className = "climbing-areas__weather";
+        weather.textContent = weatherText(area.weather);
+        button.append(weather);
+      }
+      item.append(button);
+      list.append(item);
+    });
+
+    if (!lastData.results.some((area) => area.id === selectedId)) {
+      selectedId = lastData.best_id || lastData.results[0]?.id || null;
+    }
+    updateSelection();
+  }
+
+  async function loadAreas(lat, lon) {
+    const id = ++requestId;
+    lastState = "loading";
+    lastData = null;
+    selectedId = null;
+    render();
+
+    try {
+      const params = new URLSearchParams({ lat, lon, radius: "30" });
+      const response = await fetch(`${API_URL}?${params}`);
+      if (!response.ok) throw new Error(`Backend respondió ${response.status}`);
+      const data = await response.json();
+      if (id !== requestId) return;
+      lastData = data;
+      lastState = "ok";
+    } catch (error) {
+      if (id !== requestId) return;
+      console.error("Error cargando zonas de escalada:", error);
+      lastState = "error";
+    }
+    render();
+  }
+
+  document.addEventListener("portfolio:citychange", (event) => {
+    loadAreas(event.detail.lat, event.detail.lon);
+  });
+  document.addEventListener("portfolio:languagechange", render);
+  loadAreas(widget.dataset.lat, widget.dataset.lon);
 })();
 
 /* ============================================================
