@@ -665,6 +665,7 @@ if (toTop) {
 
   function render() {
     list.replaceChildren();
+    detail.hidden = true;
 
     if (lastState === "loading") {
       status.textContent = translate("Buscando zonas de escalada…");
@@ -675,11 +676,27 @@ if (toTop) {
       return;
     }
     if (!lastData || lastData.results.length === 0) {
-      status.textContent = lastData ? translate("No hay zonas registradas cerca en OpenStreetMap.") : "";
+      if (!lastData) {
+        status.textContent = "";
+      } else if (lastData.mode === "indoor") {
+        status.textContent = translate("Hoy hace mal tiempo para roca. No hay rocódromos registrados cerca.");
+      } else {
+        status.textContent = translate("No hay zonas registradas cerca en OpenStreetMap.");
+      }
       return;
     }
 
-    status.textContent = "";
+    if (lastData.mode_fallback) {
+      status.textContent = translate(lastData.mode === "indoor"
+        ? "No hay rocódromos registrados cerca; mostramos otras zonas disponibles."
+        : "No hay zonas de roca registradas cerca; mostramos rocódromos disponibles.");
+    } else if (lastData.mode === "indoor") {
+      status.textContent = `☔ ${translate("Hoy toca rocódromo")}`;
+    } else if (lastData.mode === "outdoor") {
+      status.textContent = `☀️ ${translate("Hoy toca roca")}`;
+    } else {
+      status.textContent = translate("No se pudo determinar el tiempo; mostramos todas las zonas.");
+    }
     lastData.results.forEach((area) => {
       const item = document.createElement("li");
       const button = document.createElement("button");

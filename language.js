@@ -363,6 +363,16 @@
     ["Buen tiempo", "Bon temps", "Good weather"],
     ["Mal tiempo", "Mal temps", "Bad weather"],
     ["Mejor opción hoy", "Millor opció avui", "Best option today"],
+    ["Hoy toca rocódromo", "Hui toca rocòdrom", "Indoor climbing today"],
+    ["Hoy toca roca", "Hui toca roca", "Outdoor climbing today"],
+    ["Hoy hace mal tiempo para roca. No hay rocódromos registrados cerca.", "Hui fa mal temps per a escalar en roca. No hi ha rocòdroms registrats a prop.", "The weather is unsuitable for outdoor climbing, and no climbing gyms are listed nearby."],
+    ["No hay rocódromos registrados cerca; mostramos otras zonas disponibles.", "No hi ha rocòdroms registrats a prop; mostrem altres zones disponibles.", "No climbing gyms are listed nearby; showing other available areas."],
+    ["No hay zonas de roca registradas cerca; mostramos rocódromos disponibles.", "No hi ha zones de roca registrades a prop; mostrem els rocòdroms disponibles.", "No outdoor areas are listed nearby; showing available climbing gyms."],
+    ["No se pudo determinar el tiempo; mostramos todas las zonas.", "No s'ha pogut determinar l'oratge; mostrem totes les zones.", "Could not determine the weather; showing all areas."],
+    ["Rocódromo", "Rocòdrom", "Climbing gym"],
+    ["Zona de búlder", "Zona de búlder", "Bouldering area"],
+    ["Área de escalada", "Àrea d'escalada", "Climbing area"],
+    ["Zona de escalada", "Zona d'escalada", "Climbing area"],
   ];
 
   const normalize = (text) => text.replace(/\s+/g, " ").trim();
