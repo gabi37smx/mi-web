@@ -554,7 +554,7 @@ if (toTop) {
       elements.cityInput.value = result.name;
       elements.searchStatus.textContent = "";
       document.dispatchEvent(new CustomEvent("portfolio:citychange", {
-        detail: { city, lat: result.latitude, lon: result.longitude },
+        detail: { city, searchCity: result.name, lat: result.latitude, lon: result.longitude },
       }));
       await loadWeather();
     } catch (error) {
@@ -578,233 +578,138 @@ if (toTop) {
    Zonas de escalada cerca de la ciudad consultada
    ============================================================ */
 
-(function climbingAreas() {
+(function climbingZones() {
   const widget = document.getElementById("weatherWidget");
-  const list = document.getElementById("climbingList");
-  const status = document.getElementById("climbingStatus");
-  const detail = document.getElementById("climbingDetail");
-  if (!widget || !list || !status || !detail) return;
+  const container = document.getElementById("climbingLinks");
+  const status = document.getElementById("climbingLinksStatus");
+  const list = document.getElementById("climbingLinksList");
+  const fallback = document.getElementById("climbingLinksFallback");
+  const grid = document.getElementById("climbingLinksGrid");
+  if (!widget || !container || !status || !list || !fallback || !grid) return;
 
-  const API_URL = "https://portfolio-backend-m07q.onrender.com/api/climbing";
+  const API_URL = "https://portfolio-backend-m07q.onrender.com/api/climbing/zones";
   const translate = (text) => window.portfolioTranslate ? window.portfolioTranslate(text) : text;
-  const typeLabels = { sport: "Deportiva", boulder: "Búlder", trad: "Clásica", toprope: "Top-rope" };
-  const weatherIcon = (code) =>
-    code === 0 ? "☀️" : code <= 2 ? "🌤" : code === 3 ? "☁️" : code <= 48 ? "🌫"
-    : code <= 57 ? "🌦" : code <= 67 ? "🌧" : code <= 77 ? "❄️" : code <= 82 ? "🌦"
-    : code <= 86 ? "🌨" : "⛈";
-  const weatherText = (weather) =>
-    `${weatherIcon(weather.code)} ${weather.temperature}° · ${weather.wind} km/h · ` +
-    `${weather.good ? "✅ " + translate("Buen tiempo") : "⚠️ " + translate("Mal tiempo")}`;
-  const safeUrl = (url) => typeof url === "string" && /^https?:\/\//i.test(url) ? url : null;
-  let lastData = null;
-  let lastState = "idle";
-  let selectedId = null;
+  const safeUrl = (url) => typeof url === "string" && /^https:\/\//i.test(url) ? url : null;
   let requestId = 0;
+  let currentCity = "";
+  let loading = false;
+  let lastData = null;
 
-  function makeLink(label, url, primary = false) {
-    const href = safeUrl(url);
-    if (!href) return null;
-    const link = document.createElement("a");
-    link.className = `climbing-areas__link${primary ? " is-primary" : ""}`;
-    link.href = href;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.textContent = label;
-    return link;
-  }
+  function renderLinks(links) {
+    grid.replaceChildren();
+    fallback.hidden = !links;
+    if (!links) return;
 
-  function renderDetail() {
-    detail.replaceChildren();
-    const area = lastData?.results.find((item) => item.id === selectedId);
-    if (!area) {
-      detail.hidden = true;
-      return;
-    }
-
-    detail.hidden = false;
-    detail.classList.toggle("is-best", Boolean(area.best));
-
-    const title = document.createElement("h5");
-    title.className = "climbing-areas__detail-title";
-    title.textContent = area.name;
-    detail.append(title);
-
-    if (area.best) {
-      const badge = document.createElement("span");
-      badge.className = "climbing-areas__badge";
-      badge.textContent = `★ ${translate("Mejor opción hoy")}`;
-      detail.append(badge);
-    }
-    if (area.weather) {
-      const weather = document.createElement("p");
-      weather.className = "climbing-areas__weather";
-      weather.textContent = weatherText(area.weather);
-      detail.append(weather);
-    }
-
-    const links = document.createElement("div");
-    links.className = "climbing-areas__links";
     [
-      makeLink(`🧭 ${translate("Cómo llegar")}`, area.directionsUrl, true),
-      makeLink(`📍 ${translate("Ver en el mapa")}`, area.mapsUrl),
-      makeLink(`🧗 ${translate("Vías, sectores y grados")}`, area.topoLinks?.thecrag),
-      makeLink(`💬 ${translate("Reseñas y topos")}`, area.topoLinks?.crags27),
-      makeLink(`🌐 ${translate("Web de la zona")}`, area.website),
-    ].filter(Boolean).forEach((link) => links.append(link));
-    if (links.childElementCount) detail.append(links);
-  }
-
-  function updateSelection() {
-    list.querySelectorAll(".climbing-areas__item").forEach((button) => {
-      const selected = button.dataset.id === selectedId;
-      button.classList.toggle("is-selected", selected);
-      button.setAttribute("aria-pressed", String(selected));
+      ["🧗 theCrag", links.thecrag],
+      ["🏔️ TheTopo", links.thetopo],
+      ["🔍 Google", links.google],
+    ].forEach(([label, url]) => {
+      const href = safeUrl(url);
+      if (!href) return;
+      const anchor = document.createElement("a");
+      anchor.className = "climbing-links__item";
+      anchor.href = href;
+      anchor.target = "_blank";
+      anchor.rel = "noopener noreferrer";
+      anchor.textContent = label;
+      grid.append(anchor);
     });
-    renderDetail();
   }
 
   function render() {
     list.replaceChildren();
-
-    if (lastState === "loading") {
-      status.textContent = translate("Buscando zonas de escalada…");
+    if (!lastData) {
+      container.hidden = !loading;
+      status.textContent = loading ? translate("Buscando zonas de escalada…") : "";
+      fallback.hidden = true;
       return;
     }
 
-    /* Bloque de enlaces siempre presente */
-    const links = lastData?.searchLinks;
-    const hasResults = lastData && Array.isArray(lastData.results) && lastData.results.length > 0;
-
-    if (lastState === "error" && !links) {
+    container.hidden = false;
+    const results = Array.isArray(lastData.results) ? lastData.results : [];
+    if (lastData.error) {
       status.textContent = translate("No se pudieron cargar las zonas. Inténtalo más tarde.");
-      return;
+    } else if (results.length === 0) {
+      status.textContent = `${translate("No hay datos de OpenBeta para")} ${lastData.city}.`;
+    } else {
+      status.textContent = "";
     }
 
-    if (!hasResults) {
-      const cityLabel = lastData?.city || "";
-      status.textContent = cityLabel
-        ? `${cityLabel} ${translate("tiene pocas zonas en OpenStreetMap. Busca en webs especializadas:")}`
-        : translate("No hay zonas en OpenStreetMap, pero sí en estas webs especializadas:");
-      if (links) {
-        const fallback = document.createElement("div");
-        fallback.className = "climbing-areas__fallback";
-        const linksRow = document.createElement("div");
-        linksRow.className = "climbing-areas__links";
-        [
-          ["🧗 theCrag", links.thecrag],
-          ["🧗 27crags", links.crags27],
-          ["🏔️ TheTopo", links.thetopo],
-          ["🔍 Google", links.google],
-        ].forEach(([label, url]) => {
-          const a = makeLink(label, url, false);
-          if (a) linksRow.append(a);
-        });
-        fallback.append(linksRow);
-        list.append(fallback);
-      }
-      return;
-    }
-
-    status.textContent = "";
-
-    lastData.results.forEach((area) => {
+    results.forEach((area) => {
       const item = document.createElement("li");
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "climbing-areas__item";
-      button.dataset.id = area.id;
-      if (area.indoor) button.classList.add("is-indoor");
-      button.addEventListener("click", () => {
-        selectedId = area.id;
-        updateSelection();
-        detail.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      });
+      item.className = "climbing-links__zone";
 
-      const row = document.createElement("span");
-      row.className = "climbing-areas__row";
       const name = document.createElement("strong");
-      name.textContent = `${area.indoor ? "🏠" : "⛰️"} ${area.name}`;
-      const distance = document.createElement("span");
-      distance.className = "climbing-areas__distance";
-      distance.textContent = `${area.distance_km} km`;
-      row.append(name, distance);
-      button.append(row);
+      name.textContent = area.name;
+      item.append(name);
 
-      const parts = area.types.map((type) => translate(typeLabels[type] || type));
-      if (area.routes) parts.push(`${area.routes} ${translate("vías")}`);
-      if (parts.length) {
-        const meta = document.createElement("span");
-        meta.className = "climbing-areas__meta";
-        meta.textContent = parts.join(" · ");
-        button.append(meta);
+      if (area.totalClimbs > 0) {
+        const climbs = document.createElement("span");
+        climbs.className = "climbing-links__climbs";
+        climbs.textContent = `${area.totalClimbs} ${translate("vías")}`;
+        item.append(climbs);
       }
-      if (area.weather) {
-        const weather = document.createElement("span");
-        weather.className = "climbing-areas__weather";
-        weather.textContent = weatherText(area.weather);
-        button.append(weather);
-      }
-      item.append(button);
+
+      const actions = document.createElement("div");
+      actions.className = "climbing-links__actions";
+      [
+        ["📍", area.mapsUrl, "Ver en el mapa"],
+        ["🧭", area.directionsUrl, "Cómo llegar"],
+      ].forEach(([label, url, description]) => {
+        const href = safeUrl(url);
+        if (!href) return;
+        const anchor = document.createElement("a");
+        anchor.className = "climbing-links__icon";
+        anchor.href = href;
+        anchor.target = "_blank";
+        anchor.rel = "noopener noreferrer";
+        anchor.textContent = label;
+        anchor.title = translate(description);
+        anchor.setAttribute("aria-label", translate(description));
+        actions.append(anchor);
+      });
+      item.append(actions);
       list.append(item);
     });
 
-    /* Añadir al final los enlaces de búsqueda directa */
-    if (links) {
-      const more = document.createElement("div");
-      more.className = "climbing-areas__fallback";
-      const title = document.createElement("p");
-      title.className = "climbing-areas__fallback-title";
-      title.textContent = translate("Buscar más zonas en:");
-      more.append(title);
-      const linksRow = document.createElement("div");
-      linksRow.className = "climbing-areas__links";
-      [
-        ["🧗 theCrag", links.thecrag],
-        ["🧗 27crags", links.crags27],
-        ["🏔️ TheTopo", links.thetopo],
-      ].forEach(([label, url]) => {
-        const a = makeLink(label, url, false);
-        if (a) linksRow.append(a);
-      });
-      more.append(linksRow);
-      list.append(more);
-    }
-
-    if (!lastData.results.some((area) => area.id === selectedId)) {
-      selectedId = lastData.results[0]?.id || null;
-    }
-    updateSelection();
+    renderLinks(lastData.searchLinks);
   }
 
-  async function loadAreas(lat, lon, cityName = "") {
+  async function loadZones(cityName) {
     const id = ++requestId;
-    lastState = "loading";
+    currentCity = cityName.trim();
     lastData = null;
-    selectedId = null;
+    loading = Boolean(currentCity);
+    if (!loading) {
+      render();
+      return;
+    }
     render();
 
     try {
-      const params = new URLSearchParams({ lat, lon, radius: "50" });
-      if (cityName) params.set("city", cityName);
-      const response = await fetch(`${API_URL}?${params}`);
+      const response = await fetch(`${API_URL}?q=${encodeURIComponent(currentCity)}`);
       if (!response.ok) throw new Error(`Backend respondió ${response.status}`);
       const data = await response.json();
       if (id !== requestId) return;
       lastData = data;
-      lastState = "ok";
     } catch (error) {
       if (id !== requestId) return;
       console.error("Error cargando zonas de escalada:", error);
-      lastState = "error";
+      lastData = { city: currentCity, results: [], searchLinks: null, error: true };
+    } finally {
+      if (id === requestId) {
+        loading = false;
+        render();
+      }
     }
-    render();
   }
 
   document.addEventListener("portfolio:citychange", (event) => {
-    loadAreas(event.detail.lat, event.detail.lon, event.detail.city || "");
+    loadZones(event.detail.searchCity || event.detail.city || "");
   });
   document.addEventListener("portfolio:languagechange", render);
-  loadAreas(widget.dataset.lat, widget.dataset.lon, widget.dataset.city || "");
+  loadZones(widget.dataset.city || "");
 })();
 
 /* ============================================================

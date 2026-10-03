@@ -345,9 +345,9 @@
     ["Buen día para escalar", "Bon dia per a escalar", "Good day for climbing"],
     ["Hoy mejor no escalar al aire libre", "Hui és millor no escalar a l'aire lliure", "Better not climb outdoors today"],
     ["No se pudo cargar el tiempo. Inténtalo más tarde.", "No s'ha pogut carregar l'oratge. Torna-ho a provar més tard.", "Could not load weather data. Try again later."],
-    ["Zonas de escalada cerca", "Zones d'escalada properes", "Climbing areas nearby"],
+    ["Zonas de escalada", "Zones d'escalada", "Climbing areas"],
     ["Buscando zonas de escalada…", "Cercant zones d'escalada…", "Searching for climbing areas…"],
-    ["No hay zonas registradas cerca en OpenStreetMap.", "No hi ha zones registrades a prop a OpenStreetMap.", "No areas found nearby in OpenStreetMap."],
+    ["No hay datos de OpenBeta para", "No hi ha dades d'OpenBeta per a", "No OpenBeta data for"],
     ["No se pudieron cargar las zonas. Inténtalo más tarde.", "No s'han pogut carregar les zones. Torna-ho a provar més tard.", "Could not load climbing areas. Try again later."],
     ["Deportiva", "Esportiva", "Sport"],
     ["Búlder", "Bloc", "Boulder"],
@@ -373,11 +373,7 @@
     ["Zona de búlder", "Zona de búlder", "Boulder area"],
     ["Área de escalada", "Àrea d'escalada", "Climbing area"],
     ["Zona de escalada", "Zona d'escalada", "Climbing area"],
-    ["tiene pocas zonas en OpenStreetMap. Busca en webs especializadas:", "té poques zones a OpenStreetMap. Busca en webs especialitzades:", "has few areas on OpenStreetMap. Search on specialized sites:"],
-    ["Zonas de escalada cerca de", "Zones d'escalada a prop de", "Climbing areas near"],
-    ["No hay zonas en OpenStreetMap, pero sí en estas webs especializadas:", "No hi ha zones a OpenStreetMap, però sí en aquests llocs especialitzats:", "No areas on OpenStreetMap, but there are on these specialized sites:"],
-    ["Busca directamente en:", "Busca directament a:", "Search directly on:"],
-    ["Buscar más zonas en:", "Buscar més zones a:", "Find more areas on:"],
+    ["Busca más zonas en:", "Busca més zones a:", "Find more areas on:"],
   ];
 
   const normalize = (text) => text.replace(/\s+/g, " ").trim();
