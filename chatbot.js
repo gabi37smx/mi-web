@@ -346,7 +346,7 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
      no existiera en alguna página.
      ========================================================== */
   const CSS = `
-.cordada-burbuja{position:fixed;right:16px;bottom:16px;z-index:9998;width:56px;height:56px;padding:0;border-radius:50%;border:2px solid var(--text,#111);background:var(--accent,#b5482a);color:var(--on-accent,#fff);box-shadow:3px 3px 0 var(--text,#111);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s var(--ease,ease),box-shadow .15s var(--ease,ease)}
+.cordada-burbuja{position:fixed;right:16px;bottom:16px;z-index:9998;width:56px;height:56px;padding:0;border-radius:50%;border:2px solid var(--text,#111);background:var(--accent,#b5482a);color:var(--on-accent,#fff);box-shadow:3px 3px 0 var(--text,#111);cursor:none;display:flex;align-items:center;justify-content:center;transition:transform .15s var(--ease,ease),box-shadow .15s var(--ease,ease)}
 .cordada-burbuja:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--text,#111)}
 .cordada-burbuja:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--text,#111)}
 .cordada-burbuja svg{width:30px;height:30px;display:block}
@@ -356,7 +356,7 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
 
 .cordada-cabecera{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:var(--surface-2,#eee);border-bottom:2px solid var(--text,#111)}
 .cordada-titulo{margin:0;font-family:var(--mono,monospace);font-size:13px;font-weight:700;letter-spacing:.02em;line-height:1.3}
-.cordada-cerrar{flex:none;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;background:var(--surface,#fff);color:var(--text,#111);border:2px solid var(--text,#111);cursor:pointer;font:inherit}
+.cordada-cerrar{flex:none;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;background:var(--surface,#fff);color:var(--text,#111);border:2px solid var(--text,#111);cursor:none;font:inherit}
 .cordada-cerrar:hover{background:var(--accent,#b5482a);color:var(--on-accent,#fff)}
 .cordada-cerrar svg{width:14px;height:14px;display:block}
 
@@ -373,16 +373,16 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
 
 .cordada-chips{display:none;flex-wrap:wrap;gap:6px;padding:8px 12px;border-top:2px solid var(--line,#ccc);background:var(--bg-soft,var(--bg,#faf6ed))}
 .cordada-chips.cordada-visibles{display:flex}
-.cordada-chip{padding:4px 8px;background:var(--surface,#fff);color:var(--text,#111);border:2px solid var(--text,#111);box-shadow:2px 2px 0 var(--text,#111);font-family:var(--mono,monospace);font-size:12px;line-height:1.3;cursor:pointer;text-align:left}
+.cordada-chip{padding:4px 8px;background:var(--surface,#fff);color:var(--text,#111);border:2px solid var(--text,#111);box-shadow:2px 2px 0 var(--text,#111);font-family:var(--mono,monospace);font-size:12px;line-height:1.3;cursor:none;text-align:left}
 .cordada-chip:hover{background:var(--surface-2,#eee)}
 .cordada-chip:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--text,#111)}
 
 .cordada-entrada{display:flex;gap:8px;padding:10px 12px;border-top:2px solid var(--text,#111);background:var(--surface,#fff)}
 .cordada-campo{flex:1;min-width:0;padding:8px 10px;background:var(--bg,#faf6ed);color:var(--text,#111);border:2px solid var(--text,#111);border-radius:0;font-family:var(--mono,monospace);font-size:16px}
 .cordada-campo::placeholder{color:var(--muted,#777)}
-.cordada-enviar{flex:none;padding:0 14px;background:var(--accent,#b5482a);color:var(--on-accent,#fff);border:2px solid var(--text,#111);box-shadow:2px 2px 0 var(--text,#111);font-family:var(--mono,monospace);font-size:13px;font-weight:700;cursor:pointer}
+.cordada-enviar{flex:none;padding:0 14px;background:var(--accent,#b5482a);color:var(--on-accent,#fff);border:2px solid var(--text,#111);box-shadow:2px 2px 0 var(--text,#111);font-family:var(--mono,monospace);font-size:13px;font-weight:700;cursor:none}
 .cordada-enviar:active:not(:disabled){transform:translate(2px,2px);box-shadow:0 0 0 var(--text,#111)}
-.cordada-enviar:disabled{opacity:.5;cursor:not-allowed}
+.cordada-enviar:disabled{opacity:.5;cursor:none}
 
 .cordada-burbuja:focus-visible,.cordada-cerrar:focus-visible,.cordada-chip:focus-visible,.cordada-campo:focus-visible,.cordada-enviar:focus-visible{outline:2px solid var(--accent,#b5482a);outline-offset:2px}
 
@@ -392,6 +392,9 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
 }
 @media (prefers-reduced-motion:reduce){
   .cordada-burbuja,.cordada-punto{transition:none;animation:none}
+  /* Sin cursor personalizado, el cursor normal tiene que volver a verse */
+  .cordada-burbuja,.cordada-cerrar,.cordada-chip,.cordada-enviar{cursor:pointer}
+  .cordada-enviar:disabled{cursor:not-allowed}
 }
 `;
 

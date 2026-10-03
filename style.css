@@ -956,15 +956,17 @@ h1, h2, h3, h4 {
    CURSOR PERSONALIZADO · mano abierta / cerrada
    ============================================================ */
 
-html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .card-grade, input, textarea, select, [role="button"] {
+html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .card-grade, input, textarea, select, [role="button"],
+.cordada-burbuja, .cordada-cerrar, .cordada-chip, .cordada-campo, .cordada-enviar, .cordada-panel {
   cursor: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .card-grade { cursor: auto; }
+  html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .card-grade, input, textarea, select, [role="button"],
+  .cordada-burbuja, .cordada-cerrar, .cordada-chip, .cordada-campo, .cordada-enviar, .cordada-panel { cursor: auto; }
 }
 
-.cursor { position: fixed; inset: 0; pointer-events: none; z-index: 9999; display: none; }
+.cursor { position: fixed; inset: 0; pointer-events: none; z-index: 10000; display: none; }
 
 .cursor__hand {
   position: fixed;

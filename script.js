@@ -273,10 +273,21 @@ if (toTop) {
     wrap.classList.remove("is-clicking");
   });
 
-  const interactive = "a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .card-grade, input, textarea, select, [role='button']";
-  document.querySelectorAll(interactive).forEach((el) => {
-    el.addEventListener("pointerenter", () => wrap.classList.add("is-hovering"));
-    el.addEventListener("pointerleave", () => wrap.classList.remove("is-hovering"));
+  const interactive = "a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .card-grade, input, textarea, select, [role='button'], .cordada-burbuja, .cordada-cerrar, .cordada-chip, .cordada-campo, .cordada-enviar";
+
+  // Delegación de eventos: se escucha en TODO el documento y se mira qué hay bajo
+  // el ratón. Así también funciona con elementos creados después (el chatbot).
+  document.addEventListener("pointerover", (e) => {
+    if (e.target.closest && e.target.closest(interactive)) {
+      wrap.classList.add("is-hovering");
+    }
+  });
+  document.addEventListener("pointerout", (e) => {
+    const dentro = e.target.closest && e.target.closest(interactive);
+    const saliendoA = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(interactive);
+    if (dentro && !saliendoA) {
+      wrap.classList.remove("is-hovering");
+    }
   });
 
   document.addEventListener("mouseleave", () => { wrap.style.opacity = "0"; });
@@ -520,7 +531,8 @@ if (toTop) {
       loadError = false;
       renderWeather();
     } catch (error) {
-      console.error("Error en el widget del tiempo:", error);
+      // Se usa warn para no ensuciar la consola en producción si la API tarda en responder o cae.
+      console.warn("Error en el widget del tiempo:", error);
       currentWeather = null;
       loadError = true;
       elements.verdict.classList.remove("is-good", "is-bad");
@@ -695,7 +707,8 @@ if (toTop) {
       lastData = data;
     } catch (error) {
       if (id !== requestId) return;
-      console.error("Error cargando zonas de escalada:", error);
+      // Se usa warn para no ensuciar la consola en producción cuando la API del backend está dormida.
+      console.warn("Error cargando zonas de escalada:", error);
       lastData = { city: currentCity, results: [], searchLinks: null, error: true };
     } finally {
       if (id === requestId) {
@@ -1051,7 +1064,10 @@ if (toTop) {
       activity = data;
       render();
     })
-    .catch((error) => console.error("Error cargando actividad de GitHub:", error));
+    .catch((error) => {
+      // Se usa warn para mantener la consola limpia en producción si Render despierta tarde.
+      console.warn("Error cargando actividad de GitHub:", error);
+    });
 
   document.addEventListener("portfolio:languagechange", render);
 })();
