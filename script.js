@@ -671,32 +671,44 @@ if (toTop) {
       status.textContent = translate("Buscando zonas de escalada…");
       return;
     }
-    if (lastState === "error") {
+
+    const links = lastData?.searchLinks;
+    const hasResults = lastData && Array.isArray(lastData.results) && lastData.results.length > 0;
+
+    if (lastState === "error" && !links) {
       status.textContent = translate("No se pudieron cargar las zonas. Inténtalo más tarde.");
       return;
     }
-    if (!lastData || lastData.results.length === 0) {
-      if (!lastData) {
-        status.textContent = "";
-      } else if (lastData.mode === "indoor") {
-        status.textContent = translate("Hoy hace mal tiempo para roca. No hay rocódromos registrados cerca.");
-      } else {
-        status.textContent = translate("No hay zonas registradas cerca en OpenStreetMap.");
+
+    if (!hasResults) {
+      status.textContent = translate("No hemos encontrado zonas registradas en OpenStreetMap cerca.");
+      if (links) {
+        const fallback = document.createElement("div");
+        fallback.className = "climbing-areas__fallback";
+
+        const title = document.createElement("p");
+        title.className = "climbing-areas__fallback-title";
+        title.textContent = translate("Busca directamente en:");
+        fallback.append(title);
+
+        const linksRow = document.createElement("div");
+        linksRow.className = "climbing-areas__links";
+        [
+          ["🧗 theCrag", links.thecrag],
+          ["🧗 27crags", links.crags27],
+          ["🔍 Google", links.google],
+        ].forEach(([label, url]) => {
+          const link = makeLink(label, url, false);
+          if (link) linksRow.append(link);
+        });
+        fallback.append(linksRow);
+        list.append(fallback);
       }
       return;
     }
 
-    if (lastData.mode_fallback) {
-      status.textContent = translate(lastData.mode === "indoor"
-        ? "No hay rocódromos registrados cerca; mostramos otras zonas disponibles."
-        : "No hay zonas de roca registradas cerca; mostramos rocódromos disponibles.");
-    } else if (lastData.mode === "indoor") {
-      status.textContent = `☔ ${translate("Hoy toca rocódromo")}`;
-    } else if (lastData.mode === "outdoor") {
-      status.textContent = `☀️ ${translate("Hoy toca roca")}`;
-    } else {
-      status.textContent = translate("No se pudo determinar el tiempo; mostramos todas las zonas.");
-    }
+    status.textContent = "";
+
     lastData.results.forEach((area) => {
       const item = document.createElement("li");
       const button = document.createElement("button");
@@ -739,13 +751,32 @@ if (toTop) {
       list.append(item);
     });
 
+    if (links) {
+      const more = document.createElement("div");
+      more.className = "climbing-areas__fallback";
+
+      const title = document.createElement("p");
+      title.className = "climbing-areas__fallback-title";
+      title.textContent = translate("Buscar más zonas en:");
+      more.append(title);
+
+      const linksRow = document.createElement("div");
+      linksRow.className = "climbing-areas__links";
+      [["🧗 theCrag", links.thecrag], ["🧗 27crags", links.crags27]].forEach(([label, url]) => {
+        const link = makeLink(label, url, false);
+        if (link) linksRow.append(link);
+      });
+      more.append(linksRow);
+      list.append(more);
+    }
+
     if (!lastData.results.some((area) => area.id === selectedId)) {
-      selectedId = lastData.best_id || lastData.results[0]?.id || null;
+      selectedId = lastData.results[0]?.id || null;
     }
     updateSelection();
   }
 
-  async function loadAreas(lat, lon) {
+  async function loadAreas(lat, lon, cityName = "") {
     const id = ++requestId;
     lastState = "loading";
     lastData = null;
@@ -753,7 +784,8 @@ if (toTop) {
     render();
 
     try {
-      const params = new URLSearchParams({ lat, lon, radius: "30" });
+      const params = new URLSearchParams({ lat, lon, radius: "50" });
+      if (cityName) params.set("city", cityName);
       const response = await fetch(`${API_URL}?${params}`);
       if (!response.ok) throw new Error(`Backend respondió ${response.status}`);
       const data = await response.json();
@@ -769,10 +801,10 @@ if (toTop) {
   }
 
   document.addEventListener("portfolio:citychange", (event) => {
-    loadAreas(event.detail.lat, event.detail.lon);
+    loadAreas(event.detail.lat, event.detail.lon, event.detail.city || "");
   });
   document.addEventListener("portfolio:languagechange", render);
-  loadAreas(widget.dataset.lat, widget.dataset.lon);
+  loadAreas(widget.dataset.lat, widget.dataset.lon, widget.dataset.city || "");
 })();
 
 /* ============================================================

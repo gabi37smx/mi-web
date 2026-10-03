@@ -745,6 +745,23 @@ h1, h2, h3, h4 {
 .climbing-areas__detail.is-best .climbing-areas__link.is-primary { background: #1a1a1a; color: #f2ede3; }
 .climbing-areas__credit { margin: .6rem 0 0; color: var(--muted); font: .68rem var(--mono); }
 
+.climbing-areas__fallback {
+  display: grid;
+  gap: .5rem;
+  padding: .85rem;
+  margin-top: .5rem;
+  background: var(--surface);
+  border: 2px dashed var(--text);
+  border-radius: var(--radius-sm);
+}
+.climbing-areas__fallback-title {
+  margin: 0;
+  color: var(--muted);
+  font: 700 .78rem var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
 @media (max-width: 600px) {
   .weather-widget__body { grid-template-columns: 1fr; gap: 1rem; }
 }

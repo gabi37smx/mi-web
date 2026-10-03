@@ -373,6 +373,9 @@
     ["Zona de búlder", "Zona de búlder", "Bouldering area"],
     ["Área de escalada", "Àrea d'escalada", "Climbing area"],
     ["Zona de escalada", "Zona d'escalada", "Climbing area"],
+    ["No hemos encontrado zonas registradas en OpenStreetMap cerca.", "No hem trobat zones registrades a OpenStreetMap a prop.", "We haven't found any climbing areas registered in OpenStreetMap nearby."],
+    ["Busca directamente en:", "Busca directament a:", "Search directly on:"],
+    ["Buscar más zonas en:", "Buscar més zones a:", "Find more areas on:"],
   ];
 
   const normalize = (text) => text.replace(/\s+/g, " ").trim();
