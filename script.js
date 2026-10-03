@@ -999,3 +999,59 @@ if (toTop) {
     start();
   }
 })();
+
+/* ============================================================
+   Actividad pública de GitHub
+   ============================================================ */
+
+(function githubActivity() {
+  const container = document.getElementById("githubActivity");
+  const subtitle = document.getElementById("githubActivitySubtitle");
+  const grid = document.getElementById("githubActivityGrid");
+  if (!container || !subtitle || !grid) return;
+
+  const API_URL = "https://portfolio-backend-m07q.onrender.com/api/github/activity";
+  const translate = (text) => window.portfolioTranslate ? window.portfolioTranslate(text) : text;
+  let activity = null;
+
+  function render() {
+    if (!activity?.repos?.length) return;
+    container.hidden = false;
+    grid.replaceChildren();
+    subtitle.textContent = `${activity.user.publicRepos} ${translate("repositorios públicos")} · ${activity.user.followers} ${translate("seguidores")}`;
+
+    activity.repos.forEach((repo) => {
+      const card = document.createElement("a");
+      card.className = "github-activity__card";
+      card.href = repo.url;
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+
+      const name = document.createElement("strong");
+      name.className = "github-activity__name";
+      name.textContent = repo.name;
+      const description = document.createElement("p");
+      description.className = "github-activity__desc";
+      description.textContent = repo.description || translate("Sin descripción");
+      const meta = document.createElement("span");
+      meta.className = "github-activity__meta";
+      const bits = [];
+      if (repo.language) bits.push(`● ${repo.language}`);
+      bits.push(`⭐ ${repo.stars}`);
+      bits.push(`🍴 ${repo.forks}`);
+      meta.textContent = bits.join(" · ");
+      card.append(name, description, meta);
+      grid.append(card);
+    });
+  }
+
+  fetch(API_URL)
+    .then((response) => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
+    .then((data) => {
+      activity = data;
+      render();
+    })
+    .catch((error) => console.error("Error cargando actividad de GitHub:", error));
+
+  document.addEventListener("portfolio:languagechange", render);
+})();
