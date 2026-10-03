@@ -154,8 +154,6 @@ Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub 
 
 ## 🕰️ Historial de versiones
 
-## 🕰️ Historial de versiones
-
 | Versión | Descripción |
 |---|---|
 | v1 | Primera web: estructura semántica básica |
