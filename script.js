@@ -665,13 +665,13 @@ if (toTop) {
 
   function render() {
     list.replaceChildren();
-    detail.hidden = true;
 
     if (lastState === "loading") {
       status.textContent = translate("Buscando zonas de escalada…");
       return;
     }
 
+    /* Bloque de enlaces siempre presente */
     const links = lastData?.searchLinks;
     const hasResults = lastData && Array.isArray(lastData.results) && lastData.results.length > 0;
 
@@ -685,12 +685,10 @@ if (toTop) {
       if (links) {
         const fallback = document.createElement("div");
         fallback.className = "climbing-areas__fallback";
-
         const title = document.createElement("p");
         title.className = "climbing-areas__fallback-title";
         title.textContent = translate("Busca directamente en:");
         fallback.append(title);
-
         const linksRow = document.createElement("div");
         linksRow.className = "climbing-areas__links";
         [
@@ -698,8 +696,8 @@ if (toTop) {
           ["🧗 27crags", links.crags27],
           ["🔍 Google", links.google],
         ].forEach(([label, url]) => {
-          const link = makeLink(label, url, false);
-          if (link) linksRow.append(link);
+          const a = makeLink(label, url, false);
+          if (a) linksRow.append(a);
         });
         fallback.append(linksRow);
         list.append(fallback);
@@ -715,8 +713,7 @@ if (toTop) {
       button.type = "button";
       button.className = "climbing-areas__item";
       button.dataset.id = area.id;
-      if (area.best) button.classList.add("is-best");
-      if (area.weather && !area.weather.good) button.classList.add("is-bad");
+      if (area.indoor) button.classList.add("is-indoor");
       button.addEventListener("click", () => {
         selectedId = area.id;
         updateSelection();
@@ -726,7 +723,7 @@ if (toTop) {
       const row = document.createElement("span");
       row.className = "climbing-areas__row";
       const name = document.createElement("strong");
-      name.textContent = `${area.best ? "★ " : ""}${area.name}`;
+      name.textContent = `${area.indoor ? "🏠" : "⛰️"} ${area.name}`;
       const distance = document.createElement("span");
       distance.className = "climbing-areas__distance";
       distance.textContent = `${area.distance_km} km`;
@@ -751,20 +748,22 @@ if (toTop) {
       list.append(item);
     });
 
+    /* Añadir al final los enlaces de búsqueda directa */
     if (links) {
       const more = document.createElement("div");
       more.className = "climbing-areas__fallback";
-
       const title = document.createElement("p");
       title.className = "climbing-areas__fallback-title";
       title.textContent = translate("Buscar más zonas en:");
       more.append(title);
-
       const linksRow = document.createElement("div");
       linksRow.className = "climbing-areas__links";
-      [["🧗 theCrag", links.thecrag], ["🧗 27crags", links.crags27]].forEach(([label, url]) => {
-        const link = makeLink(label, url, false);
-        if (link) linksRow.append(link);
+      [
+        ["🧗 theCrag", links.thecrag],
+        ["🧗 27crags", links.crags27],
+      ].forEach(([label, url]) => {
+        const a = makeLink(label, url, false);
+        if (a) linksRow.append(a);
       });
       more.append(linksRow);
       list.append(more);

@@ -761,6 +761,12 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   letter-spacing: .04em;
 }
+.climbing-areas__item.is-indoor {
+  background: var(--surface-2);
+}
+[data-theme="dark"] .climbing-areas__item.is-indoor {
+  background: var(--surface);
+}
 
 @media (max-width: 600px) {
   .weather-widget__body { grid-template-columns: 1fr; gap: 1rem; }
