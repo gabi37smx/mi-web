@@ -681,19 +681,19 @@ if (toTop) {
     }
 
     if (!hasResults) {
-      status.textContent = translate("No hemos encontrado zonas registradas en OpenStreetMap cerca.");
+      const cityLabel = lastData?.city || "";
+      status.textContent = cityLabel
+        ? `${cityLabel} ${translate("tiene pocas zonas en OpenStreetMap. Busca en webs especializadas:")}`
+        : translate("No hay zonas en OpenStreetMap, pero sí en estas webs especializadas:");
       if (links) {
         const fallback = document.createElement("div");
         fallback.className = "climbing-areas__fallback";
-        const title = document.createElement("p");
-        title.className = "climbing-areas__fallback-title";
-        title.textContent = translate("Busca directamente en:");
-        fallback.append(title);
         const linksRow = document.createElement("div");
         linksRow.className = "climbing-areas__links";
         [
           ["🧗 theCrag", links.thecrag],
           ["🧗 27crags", links.crags27],
+          ["🏔️ TheTopo", links.thetopo],
           ["🔍 Google", links.google],
         ].forEach(([label, url]) => {
           const a = makeLink(label, url, false);
@@ -761,6 +761,7 @@ if (toTop) {
       [
         ["🧗 theCrag", links.thecrag],
         ["🧗 27crags", links.crags27],
+        ["🏔️ TheTopo", links.thetopo],
       ].forEach(([label, url]) => {
         const a = makeLink(label, url, false);
         if (a) linksRow.append(a);

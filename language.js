@@ -373,7 +373,9 @@
     ["Zona de búlder", "Zona de búlder", "Boulder area"],
     ["Área de escalada", "Àrea d'escalada", "Climbing area"],
     ["Zona de escalada", "Zona d'escalada", "Climbing area"],
-    ["No hemos encontrado zonas registradas en OpenStreetMap cerca.", "No hem trobat zones registrades a OpenStreetMap a prop.", "We haven't found any climbing areas registered in OpenStreetMap nearby."],
+    ["tiene pocas zonas en OpenStreetMap. Busca en webs especializadas:", "té poques zones a OpenStreetMap. Busca en webs especialitzades:", "has few areas on OpenStreetMap. Search on specialized sites:"],
+    ["Zonas de escalada cerca de", "Zones d'escalada a prop de", "Climbing areas near"],
+    ["No hay zonas en OpenStreetMap, pero sí en estas webs especializadas:", "No hi ha zones a OpenStreetMap, però sí en aquests llocs especialitzats:", "No areas on OpenStreetMap, but there are on these specialized sites:"],
     ["Busca directamente en:", "Busca directament a:", "Search directly on:"],
     ["Buscar más zonas en:", "Buscar més zones a:", "Find more areas on:"],
   ];
