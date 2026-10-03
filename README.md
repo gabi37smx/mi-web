@@ -1,7 +1,3 @@
-📄 README.md — completo
-Sustituye tu README.md actual por este:
-
-markdown
 # 🧗 mi-web · Portfolio personal de Gabriel Vidal Badia
 
 Web personal de marca con temática de escalada. Estudiante de **1º DAM** en el **IES Simarro** (Xàtiva, Valencia), en transición desde el mantenimiento industrial hacia la programación, la IA y los agentes.
@@ -21,8 +17,9 @@ No es una plantilla. Es una web pensada, escrita y desplegada por mí, con:
 - **Frontend** en HTML, CSS y JavaScript puros (sin frameworks, sin librerías externas).
 - **Backend** propio en Node.js + Express, con base de datos MongoDB y envío de emails mediante Resend.
 - **Despliegue real** en producción: GitHub Pages (frontend) y Render (backend).
+- **Chatbot propio** ("Cordada") que responde por mí a los visitantes.
 
-Todo el proceso está versionado con Git a lo largo de más de 20 commits, con mensajes honestos que cuentan las decisiones tomadas.
+Todo el proceso está versionado con Git a lo largo de más de 30 commits, con mensajes honestos que cuentan las decisiones tomadas.
 
 ---
 
@@ -40,6 +37,41 @@ Todo el proceso está versionado con Git a lo largo de más de 20 commits, con m
 
 ---
 
+## 🤖 Chatbot "Cordada"
+
+El chatbot **Cordada** es el asistente flotante que aparece en la esquina inferior derecha de las 4 páginas del portfolio. Responde a los visitantes sobre mí, mis estudios, mis proyectos y cómo contactarme.
+
+### Cómo funciona (arquitectura de dos capas)
+
+**Capa 1 · IA externa (cuando está disponible):**
+La pregunta viaja al backend, que la envía a una API de IA externa. La IA genera una respuesta natural basada en mis instrucciones (`INSTRUCCIONES` en `chatbot.js`).
+
+**Capa 2 · Árbol de decisión (plan B, siempre activo):**
+Si la IA falla (timeout, error HTTP, servicio caído), el chatbot responde con frases literales escritas por mí, organizadas en 9 temas: identidad, estudios, experiencia, proyectos, tecnologías, escalada, certificaciones, contacto e idiomas. Para preguntas fuera de esos temas, remite al canal de contacto.
+
+**Ventajas de este diseño:**
+- **Resiliencia**: el chatbot no depende de ninguna API externa para funcionar.
+- **Privacidad**: la conversación vive solo en el navegador del visitante, nunca en el servidor.
+- **Control**: el mensaje "no sé la respuesta" remite al contacto real.
+
+### Ficheros del chatbot
+
+| Fichero | Ubicación | Función |
+|---|---|---|
+| `chatbot.js` | `mi-web/` | Frontend del chat (burbuja, panel, lógica, árbol) |
+| `routes/chat.js` | `portfolio-backend/` | Proxy del backend (rate limit, caché, validación) |
+
+### Aprendizajes del desarrollo
+
+Durante el desarrollo del chatbot, **dos APIs gratuitas de IA dejaron de funcionar**:
+
+1. **Pollinations** (`text.pollinations.ai`) → cerró su endpoint legacy con error 500 `ENOSPC`.
+2. **KeylessAI** (`keylessai.thryx.workers.dev`) → el dominio dejó de existir (`DNS_PROBE_FINISHED_NXDOMAIN`).
+
+**Conclusión**: los servicios gratuitos de IA no son fiables. Por eso el chatbot está diseñado con el árbol de decisión como base, y la IA como capa opcional. Cuando haya un servicio fiable disponible, se conectará sin tocar el árbol.
+
+---
+
 ## 🌐 APIs externas consumidas
 
 El frontend consume directamente o a través del backend:
@@ -49,85 +81,110 @@ El frontend consume directamente o a través del backend:
 | **Open-Meteo** | Tiempo actual + geocoding | Widget del tiempo (Me gusta) |
 | **OpenBeta** (vía backend) | Zonas de escalada por ciudad | Widget del tiempo (Me gusta) |
 | **GitHub API** (vía backend) | Actividad pública de repos | Sección "Me gusta" |
+| **Backend propio** (vía `/api/chat`) | Proxy del chatbot Cordada | Chatbot flotante |
+
+---
 
 ## 📁 Estructura de ficheros
 
 ### Frontend (`mi-web`)
-
-```
 mi-web/
-├── index.html              ← Página principal (portfolio)
-├── contacto.html           ← Página de contacto con formulario
-├── proyectos.html          ← Página de proyectos con casos y filtros
-├── presentacion.html       ← Página de QR para presentar en clase
-├── style.css               ← Hoja de estilos completa (variables, temas, animaciones)
-├── script.js               ← Interacciones (tema, cursor, escalada, formulario, proyectos)
-├── language.js             ← Sistema de traducción ES/VA/EN
+├── index.html ← Página principal (portfolio)
+├── contacto.html ← Página de contacto con formulario
+├── proyectos.html ← Página de proyectos con casos y filtros
+├── presentacion.html ← Página de QR para presentar en clase
+├── style.css ← Hoja de estilos completa (variables, temas, animaciones)
+├── script.js ← Interacciones (tema, cursor, escalada, formulario, proyectos)
+├── language.js ← Sistema de traducción ES/VA/EN
+├── chatbot.js ← Chatbot Cordada (burbuja, panel, árbol de decisión)
+├── notas.txt ← Notas del proyecto (instrucciones del bot, pruebas trampa)
 ├── image/
-│   ├── gabriel.webp        ← Retrato personal (optimizado a WebP, 45 KB)
-│   └── qr-web.png          ← QR personalizado con mi foto
-├── .nojekyll               ← Evita el procesado de Jekyll en GitHub Pages
-├── .gitignore              ← Ficheros que nunca deben subirse
-└── README.md               ← Este archivo
-```
+│ ├── gabriel.webp ← Retrato personal (optimizado a WebP, 45 KB)
+│ └── qr-web.png ← QR personalizado con mi foto
+├── .nojekyll ← Evita el procesado de Jekyll en GitHub Pages
+├── .gitignore ← Ficheros que nunca deben subirse
+└── README.md ← Este archivo
+
+text
 
 ### Backend (`portfolio-backend`, repo separado)
-
-```
 portfolio-backend/
-├── models/Message.js       ← Esquema de MongoDB para mensajes del formulario
-├── routes/contact.js       ← Rutas API (POST formulario, GET mensajes, PATCH leído)
-├── middleware/auth.js      ← Autenticación del panel admin
-├── server.js               ← Servidor Express principal
-├── loadEnv.js              ← Carga de variables de entorno antes que nada
-├── admin.html              ← Panel de administración con estética topo
-├── package.json            ← Dependencias y scripts
-├── .env.example            ← Plantilla de variables (sin secretos)
-└── .gitignore              ← Evita subir .env y node_modules
-```
+├── models/Message.js ← Esquema de MongoDB para mensajes del formulario
+├── models/Passkey.js ← Esquema de credenciales WebAuthn
+├── routes/contact.js ← Rutas API del formulario + logs
+├── routes/passkey.js ← Endpoints de WebAuthn (passkeys)
+├── routes/chat.js ← Proxy del chatbot (rate limit, caché, validación)
+├── routes/climbing.js ← Zonas de escalada (OpenBeta)
+├── routes/github.js ← Actividad de GitHub
+├── middleware/auth.js ← Autenticación del panel admin
+├── server.js ← Servidor Express principal
+├── logger.js ← Winston (consola + MongoDB)
+├── loadEnv.js ← Carga de variables de entorno
+├── admin.html ← Panel de administración con estética topo
+├── package.json ← Dependencias y scripts
+├── .env.example ← Plantilla de variables (sin secretos)
+└── .gitignore ← Evita subir .env y node_modules
+
+text
 
 ---
 
 ## 🏗️ Decisiones de arquitectura (ADR)
 
-Un ADR (Architecture Decision Record) es un documento breve que explica **por qué** se tomó una decisión técnica. Estos son los tres ADR de este proyecto, con formato *situación → decisión → consecuencia*.
+Un ADR (Architecture Decision Record) es un documento breve que explica **por qué** se tomó una decisión técnica. Estos son los cuatro ADR de este proyecto.
 
 ### ADR 1 · Frontend y backend en repositorios separados
 
 **Situación.** La web necesitaba tener un formulario real con backend, pero también debía publicarse como web estática y gratuita en internet. GitHub Pages solo sirve archivos estáticos.
 
 **Decisión.** Separar el proyecto en dos repositorios:
-
 - `mi-web` (frontend estático) → desplegado en **GitHub Pages**.
 - `portfolio-backend` (backend Node.js) → desplegado en **Render**.
 
-Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub Pages.
-
-**Consecuencia.** Cada parte se despliega de forma independiente: cambiar el backend no toca el frontend y viceversa. Además, evita subir código sensible (`.env`, dependencias) al mismo repo donde vive la web pública. El coste es tener que mantener dos repositorios coordinados.
+**Consecuencia.** Cada parte se despliega de forma independiente: cambiar el backend no toca el frontend y viceversa. Evita subir código sensible al mismo repo donde vive la web pública. El coste es mantener dos repositorios coordinados.
 
 ---
 
 ### ADR 2 · Stack del backend: Node.js + Express + MongoDB + Resend
 
-**Situación.** Necesitaba un backend que recibiera mensajes del formulario, los guardara y me avisara por email. Yo no había hecho nunca un backend y necesitaba algo que pudiera aprender rápido y desplegar gratis.
+**Situación.** Necesitaba un backend que recibiera mensajes del formulario, los guardara y me avisara por email. No había hecho nunca un backend y necesitaba algo que pudiera aprender rápido y desplegar gratis.
 
 **Decisión.** Elegí:
+- **Node.js + Express** por ser el estándar de la industria.
+- **MongoDB Atlas** porque el plan gratuito (512 MB) es suficiente y su esquema flexible encaja con un formulario.
+- **Resend** para emails, porque su plan gratuito (3.000 emails/mes) es suficiente y su API es de las más sencillas.
 
-- **Node.js + Express** por ser el estándar de la industria, con miles de ejemplos y documentación clara.
-- **MongoDB Atlas** como base de datos porque el plan gratuito (512 MB) es más que suficiente para un portfolio y su esquema flexible encaja bien con un formulario.
-- **Resend** para el envío de emails, porque su plan gratuito (3.000 emails/mes) es más que suficiente y su API es de las más sencillas del mercado.
-
-**Consecuencia.** Tener un backend real en un portfolio de estudiante me diferencia del 90% de la clase. El coste: MongoDB Atlas y Render en plan gratuito tienen limitaciones (la base de datos tiene 512 MB y Render duerme el servicio tras 15 min sin uso, tardando ~30 segundos en responder la primera petición).
+**Consecuencia.** Tener un backend real en un portfolio me diferencia del 90 % de la clase. El coste: MongoDB Atlas y Render en plan gratuito tienen limitaciones (Render duerme el servicio tras 15 min sin uso, tardando ~30 s en la primera petición).
 
 ---
 
 ### ADR 3 · Sistema de traducción propio en lugar de librería externa
 
-**Situación.** Quería que la web estuviera disponible en tres idiomas (castellano, valenciano e inglés) como proyecto personal, ya que soy de Valencia y estudio en un centro donde el valenciano es relevante.
+**Situación.** Quería que la web estuviera disponible en tres idiomas (castellano, valenciano e inglés).
 
-**Decisión.** Escribir un sistema propio en `language.js` que recorre el DOM, traduce nodos de texto y atributos, y persiste la selección en `localStorage`. No usé ninguna librería como i18next o similar.
+**Decisión.** Escribir un sistema propio en `language.js` que recorre el DOM, traduce nodos de texto y atributos, y persiste la selección en `localStorage`. No usé ninguna librería como i18next.
 
-**Consecuencia.** El sistema pesa solo ~40 KB (vs. librerías que pesan más y añaden dependencias). Además, entiendo cómo funciona por dentro y puedo modificarlo cuando quiera. El coste: es un sistema sencillo que no cubre casos complejos (pluralización, fechas, números), pero para este proyecto es más que suficiente.
+**Consecuencia.** El sistema pesa solo ~40 KB y entiendo cómo funciona por dentro. El coste: no cubre casos complejos (pluralización, fechas), pero para este proyecto es suficiente. **El chatbot reutiliza este mismo patrón** (`data-i18n` + recorrido del DOM) para traducirse al instante al cambiar de idioma.
+
+---
+
+### ADR 4 · Chatbot con árbol de decisión como base, IA como capa opcional
+
+**Situación.** Quería añadir un chatbot al portfolio, pero las APIs gratuitas de IA son inestables. Durante el desarrollo, dos servicios gratuitos dejaron de funcionar (Pollinations, KeylessAI).
+
+**Decisión.** Diseñar el chatbot con **dos capas independientes**:
+1. **Capa IA** (opcional): consulta una API externa para generar respuestas naturales.
+2. **Capa árbol** (base): frases literales escritas por mí, organizadas en 9 temas.
+
+Si la IA falla, el chatbot cae automáticamente al árbol. **El usuario nunca ve un error.**
+
+**Consecuencia.**
+- ✅ El chatbot funciona **siempre**, aunque la IA externa esté caída.
+- ✅ Las 10 pruebas trampa del proyecto se superaron en modo árbol (10/10 APTO).
+- ✅ En la defensa puedo explicar la arquitectura con datos reales: *"Durante el desarrollo, dos APIs de IA fallaron. El árbol las cubrió. Esto valida el diseño."*
+- ⚠️ Las respuestas del árbol son menos variadas que las de la IA. Pero son **honestas y controladas**.
+
+Este es el enfoque que usan los productos serios: **plan B siempre activo, IA como mejora, no como dependencia**.
 
 ---
 
@@ -138,7 +195,7 @@ Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub 
 - **Rama publicada:** `main`
 - **Carpeta:** raíz (`/`)
 - **URL final:** https://gabi37smx.github.io/mi-web/
-- **Fichero `.nojekyll`:** en la raíz. Desactiva el procesador Jekyll que GitHub Pages activa por defecto y que ignora ficheros que empiezan por `_` o por punto. Con HTML + CSS + JS puros, no lo necesito, pero lo pongo para publicar exactamente lo que tengo.
+- **Fichero `.nojekyll`:** en la raíz. Desactiva el procesador Jekyll que GitHub Pages activa por defecto.
 
 **Cómo se activa:** `Settings → Pages → Deploy from a branch → main / (root) → Save`.
 
@@ -147,7 +204,7 @@ Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub 
 - **Servicio:** `portfolio-backend` en https://render.com
 - **Build Command:** `npm install`
 - **Start Command:** `npm start`
-- **Variables de entorno:** configuradas en el panel de Render (no en el código)
+- **Variables de entorno:** configuradas en el panel de Render
 - **URL:** https://portfolio-backend-m07q.onrender.com
 
 ---
@@ -181,7 +238,12 @@ Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub 
 | v22.1 | Render con búsqueda directa y enlaces theCrag/27crags |
 | v22.2 | Mensaje más honesto y añade TheTopo a los enlaces |
 | v23 | Zonas de escalada con **OpenBeta API** (sustituye OpenStreetMap) |
-| **v24** | **Bloque de actividad de GitHub** en la sección "Me gusta" (consume `/api/github/activity`). **Última versión.** |
+| v24 | **Bloque de actividad de GitHub** en la sección "Me gusta" |
+| **v25** | **Chatbot "Cordada"**: burbuja flotante, backend propio y árbol de decisión |
+| **v25.1** | **Chatbot disponible en las 4 páginas** del portfolio |
+| **v25.2** | Notas del chatbot: instrucciones y estructura del árbol en `notas.txt` |
+| **v25.3** | **Fix cursor personalizado** en el chatbot + mejora del i18n en caliente |
+| **v25.4** | **Fix fallback del chatbot**: mensaje correcto para "no sé" + rama identidad + pruebas trampa (10/10 APTO) |
 
 ---
 
@@ -189,6 +251,7 @@ Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub 
 
 - **Retrato personal:** fotografía propia.
 - **Icono de escalador (barra lateral):** inspirado en referencias de SVGRepo, adaptado y modificado por mí.
+- **Icono de nudo (chatbot):** SVG dibujado a mano, inspirado en el nudo en ocho de escalada.
 - **Emojis:** tipos estándar del sistema.
 - **Tipografías:** [Space Grotesk](https://fonts.google.com/specimen/Space+Grotesk), [Inter](https://fonts.google.com/specimen/Inter) y [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono), todas de Google Fonts.
 - **API del tiempo:** [Open-Meteo](https://open-meteo.com/), gratuita y sin clave API.
@@ -212,6 +275,21 @@ Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub 
 ## 📄 Licencia
 
 Proyecto personal con fines educativos. Todos los derechos reservados.
+
 ---
 
-*Última actualización: 29 de septiembre de 2026.*
+*Última actualización: 4 de octubre de 2026.*
+
+🎯 Qué destacan los nuevos READMEs
+Frontend
+✅ Sección "Chatbot Cordada" con arquitectura de dos capas.
+
+✅ Tabla de APIs externas ampliada con el backend propio.
+
+✅ ADR 4 sobre el diseño del chatbot.
+
+✅ Estructura de ficheros actualizada.
+
+✅ Historial de versiones v25 a v25.4.
+
+✅ Créditos con el icono de nudo.

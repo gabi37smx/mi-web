@@ -261,16 +261,18 @@ Fecha: 4 de octubre de 2026
 Resultado: **10/10 APTO**.
 
 Notas:
-- Las respuestas "No estoy seguro de eso…" son del mensaje RESPUESTA_DEFECTO.
-  Es el comportamiento correcto para "no sé la respuesta": no inventa y remite
-  al canal de contacto real.
-- Las pruebas 1, 2, 3, 6 encuentran coincidencia en el árbol de decisión y
-  responden con una frase específica del tema.
-- Las demás no coinciden con ningún tema del árbol, así que caen al mensaje
-  por defecto.
-- El árbol de decisión cubre 8 temas: identidad, estudios, experiencia,
+- Las respuestas "No estoy seguro de eso…" son del mensaje RESPUESTA_DEFECTO,
+  el correcto para "no sé la respuesta".
+- El árbol de decisión cubre 9 temas: identidad, estudios, experiencia,
   proyectos, tecnologías, escalada, certificaciones, contacto e idiomas.
   Todo lo demás se remite al contacto (decisión deliberada: mejor reconocer
   los límites que inventar).
-- Pendiente: cuando Pollinations (la API de IA) vuelva a funcionar, repetir
-  las pruebas contra la IA real y actualizar los resultados.
+
+Estado de la IA externa durante el desarrollo:
+- Se empezó con Pollinations (text.pollinations.ai, sin clave). Su endpoint
+  legacy cerró con error 500 (ENOSPC: no space left on device).
+- Se intentó migrar a KeylessAI (keylessai.thryx.workers.dev). El dominio
+  dejó de existir (DNS_PROBE_FINISHED_NXDOMAIN).
+- Conclusión: el chatbot no depende de ninguna IA externa para funcionar.
+  El árbol de decisión es la base sólida; la IA queda como extra para cuando
+  haya un servicio fiable disponible.
