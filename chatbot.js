@@ -90,6 +90,12 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
      el servidor no responde, para que el chat siga siendo útil.
      ========================================================== */
   const RAMAS = {
+    // ← ARREGLO: nueva rama "identidad" para "¿quién te ha creado?" / "¿qué eres?"
+    identidad: {
+      es: "Soy Cordada, el asistente de la web de Gabriel Vidal Badia. Estoy aquí para responder dudas sobre él: sus estudios, experiencia, proyectos y aficiones. Si quieres algo más, escríbele a gabvidbad@alu.edu.gva.es o usa el formulario de contacto.",
+      val: "Sóc Cordada, l'assistent de la web de Gabriel Vidal Badia. Estic ací per a respondre dubtes sobre ell: els seus estudis, experiència, projectes i aficions. Si vols alguna cosa més, escriu-li a gabvidbad@alu.edu.gva.es o usa el formulari de contacte.",
+      en: "I'm Cordada, the assistant on Gabriel Vidal Badia's website. I'm here to answer questions about him: his studies, experience, projects and hobbies. If you need anything else, email him at gabvidbad@alu.edu.gva.es or use the contact form.",
+    },
     estudios: {
       es: "Gabriel estudia 1º de DAM en el IES Simarro de Xàtiva, uno de los tres centros de excelencia en Big Data e IA de España. Se metió en DAM porque el año pasado descubrió los agentes de IA creando tutores con el temario de cada asignatura. Le encantó y quiso formarse a fondo.",
       val: "Gabriel estudia 1r de DAM a l'IES Simarro de Xàtiva, un dels tres centres d'excel·lència en Big Data i IA d'Espanya. Es va ficar en DAM perquè l'any passat va descobrir els agents d'IA creant tutors amb el temari de cada assignatura. Li va encantar i va voler formar-se a fons.",
@@ -132,9 +138,10 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
     },
   };
 
-  // Mensaje de reserva del árbol. Ahora mismo, cuando ni el servidor ni el
-  // árbol saben responder, se muestra el mensaje "saturada" de TEXOS (más
-  // abajo), tal como pediste. Este queda guardado por si prefieres usarlo.
+  // ← ARREGLO: este es el mensaje correcto para "no sé la respuesta".
+  // Se usa cuando el árbol no encuentra nada. Es distinto del "saturada"
+  // (que solo se usa si TODO falla: backend, árbol y ni siquiera hay
+  // respuesta por defecto — caso teórico).
   const RESPUESTA_DEFECTO = {
     es: "No estoy seguro de eso. Escríbele directamente a gabvidbad@alu.edu.gva.es o usa el formulario de contacto de la web.",
     val: "No estic segur d'això. Escriu-li directament a gabvidbad@alu.edu.gva.es o usa el formulari de contacte de la web.",
@@ -146,6 +153,11 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
   // Además de tus palabras en español, he añadido las equivalentes en valenciano
   // e inglés, para que las preguntas rápidas también funcionen en esos idiomas.
   const PALABRAS_CLAVE = {
+    // ← ARREGLO: nueva entrada "identidad" para preguntas tipo
+    // "¿quién te ha creado?", "¿qué eres?", "¿quién eres?"
+    identidad: ["quien", "quién", "creado", "creador", "eres", "asistente",
+      "bot", "chatbot", "funcionas", "funciona", "què ets", "qui ets",
+      "who", "created", "creator", "are you", "what are you"],
     estudios: ["estudio", "estudiar", "estudias", "damas", "dam", "simarro", "instituto", "ies", "centro", "excelencia", "agentes", "tutores",
       "estudi", "study", "studies", "school", "institut"],
     experiencia: ["trabajo", "trabajas", "experiencia", "mecanico", "hilatura", "ollería", "olleria", "ayuntamiento", "oficial", "mantenimiento", "fontanero", "electricista",
@@ -180,7 +192,6 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       chipsEtiqueta: "Preguntas rápidas",
       saludo: "¡Hola! Soy Cordada, el asistente de Gabriel. Pregúntame lo que quieras — si no sé algo, te paso la cuerda a Gabriel.",
       saturada: "Cordada está saturada ahora mismo. Inténtalo en un rato o escríbeme a gabvidbad@alu.edu.gva.es",
-      // ← ARREGLO: i18n con data-i18n (los chips pasan de lista a chip0, chip1, chip2)
       chip0: "¿Qué estudias?",
       chip1: "¿Qué proyectos tiene?",
       chip2: "¿Cómo te contacto?",
@@ -197,7 +208,6 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       chipsEtiqueta: "Preguntes ràpides",
       saludo: "Hola! Sóc Cordada, l'assistent de Gabriel. Pregunta'm el que vulgues — si no sé alguna cosa, et passe la corda a Gabriel.",
       saturada: "Cordada està saturada ara mateix. Torna-ho a provar en un rato o escriu-me a gabvidbad@alu.edu.gva.es",
-      // ← ARREGLO: i18n con data-i18n
       chip0: "Què estudies?",
       chip1: "Quins projectes té?",
       chip2: "Com et puc contactar?",
@@ -214,7 +224,6 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       chipsEtiqueta: "Quick questions",
       saludo: "Hi! I'm Cordada, Gabriel's assistant. Ask me anything — if I don't know something, I'll pass the rope to Gabriel.",
       saturada: "Cordada is overloaded right now. Try again in a while or email me at gabvidbad@alu.edu.gva.es",
-      // ← ARREGLO: i18n con data-i18n
       chip0: "What do you study?",
       chip1: "What projects does he have?",
       chip2: "How can I contact you?",
@@ -392,7 +401,6 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
 }
 @media (prefers-reduced-motion:reduce){
   .cordada-burbuja,.cordada-punto{transition:none;animation:none}
-  /* Sin cursor personalizado, el cursor normal tiene que volver a verse */
   .cordada-burbuja,.cordada-cerrar,.cordada-chip,.cordada-enviar{cursor:pointer}
   .cordada-enviar:disabled{cursor:not-allowed}
 }
@@ -428,54 +436,50 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
     burbuja.innerHTML = ICONO_NUDO;
     burbuja.setAttribute("aria-expanded", "false");
     burbuja.setAttribute("aria-controls", "cordada-panel");
-    burbuja.setAttribute("data-i18n-aria-label", "abrir"); // ← ARREGLO: i18n con data-i18n
+    burbuja.setAttribute("data-i18n-aria-label", "abrir");
 
     // 10.3 Crear el panel
     const panel = crear("div", "cordada-panel");
     panel.id = "cordada-panel";
     panel.setAttribute("role", "dialog");
-    panel.setAttribute("data-i18n-aria-label", "panel"); // ← ARREGLO: i18n con data-i18n
+    panel.setAttribute("data-i18n-aria-label", "panel");
 
     const cabecera = crear("div", "cordada-cabecera");
     const titulo = crear("h2", "cordada-titulo");
-    titulo.setAttribute("data-i18n", "titulo"); // ← ARREGLO: i18n con data-i18n
+    titulo.setAttribute("data-i18n", "titulo");
     const cerrar = crear("button", "cordada-cerrar");
     cerrar.type = "button";
     cerrar.innerHTML = ICONO_CERRAR;
-    cerrar.setAttribute("data-i18n-aria-label", "cerrar"); // ← ARREGLO: i18n con data-i18n
-    cerrar.setAttribute("data-i18n-title", "cerrar"); // ← ARREGLO: i18n con data-i18n (tooltip)
+    cerrar.setAttribute("data-i18n-aria-label", "cerrar");
+    cerrar.setAttribute("data-i18n-title", "cerrar");
     cabecera.appendChild(titulo);
     cabecera.appendChild(cerrar);
 
-    // Zona donde se van apilando los mensajes. role="log" hace que los
-    // lectores de pantalla lean las respuestas nuevas automáticamente.
     const lista = crear("div", "cordada-lista");
     lista.setAttribute("role", "log");
     lista.setAttribute("aria-live", "polite");
 
-    // Preguntas rápidas
     const chipsCaja = crear("div", "cordada-chips cordada-visibles");
     chipsCaja.setAttribute("role", "group");
-    chipsCaja.setAttribute("data-i18n-aria-label", "chipsEtiqueta"); // ← ARREGLO: i18n con data-i18n
+    chipsCaja.setAttribute("data-i18n-aria-label", "chipsEtiqueta");
     const chips = [0, 1, 2].map(function (i) {
       const chip = crear("button", "cordada-chip");
       chip.type = "button";
-      chip.setAttribute("data-i18n", "chip" + i); // ← ARREGLO: i18n con data-i18n
+      chip.setAttribute("data-i18n", "chip" + i);
       chipsCaja.appendChild(chip);
       return chip;
     });
 
-    // Campo de texto y botón de enviar
     const entrada = crear("div", "cordada-entrada");
     const campo = crear("input", "cordada-campo");
     campo.type = "text";
     campo.maxLength = MAX_PREGUNTA;
     campo.autocomplete = "off";
-    campo.setAttribute("data-i18n-placeholder", "placeholder"); // ← ARREGLO: i18n con data-i18n
-    campo.setAttribute("data-i18n-aria-label", "placeholder"); // ← ARREGLO: i18n con data-i18n
+    campo.setAttribute("data-i18n-placeholder", "placeholder");
+    campo.setAttribute("data-i18n-aria-label", "placeholder");
     const enviar = crear("button", "cordada-enviar");
     enviar.type = "button";
-    enviar.setAttribute("data-i18n", "enviar"); // ← ARREGLO: i18n con data-i18n
+    enviar.setAttribute("data-i18n", "enviar");
     entrada.appendChild(campo);
     entrada.appendChild(enviar);
 
@@ -488,28 +492,15 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
 
     // 10.4 Estado del chat (lo que "recuerda" mientras la página está abierta)
     let abierto = false;
-    let esperando = false;          // true mientras aguardamos una respuesta
-    let conversacionIniciada = false; // true cuando el visitante ya ha enviado algo
-    let saludoHecho = false;        // para no saludar dos veces en la misma página
-    const historialFrases = [];     // frases de la conversación, para dar contexto a la IA
+    let esperando = false;
+    let conversacionIniciada = false;
+    let saludoHecho = false;
+    const historialFrases = [];
 
-    // 10.5 Poner los textos en el idioma activo.  // ← ARREGLO: i18n con data-i18n
-    // Se llama al empezar y cada vez que cambias de idioma en la web.
-    //
-    // Cómo funciona (igual que tu language.js): cada elemento traducible lleva
-    // una "etiqueta" que dice QUÉ texto le toca. Esta función no sabe nada de
-    // elementos concretos: recorre todo lo etiquetado y rellena desde TEXOS.
-    //   data-i18n="clave"              → cambia el texto del elemento
-    //   data-i18n-placeholder="clave"  → cambia el texto de ayuda de un campo
-    //   data-i18n-aria-label="clave"   → cambia la etiqueta para lectores de pantalla
-    //   data-i18n-title="clave"        → cambia el texto flotante al pasar el ratón
-    // Para añadir un texto nuevo en el futuro: ponle la etiqueta y su clave en
-    // TEXOS (en los 3 idiomas). No hay que tocar esta función.
+    // 10.5 Poner los textos en el idioma activo.
     function aplicarTextos() {
       const t = TEXOS[idiomaActivo()];
 
-      // Busca los elementos con una etiqueta dentro del panel. La burbuja y el
-      // propio panel se añaden aparte porque el buscador no incluye "el contenedor".
       function marcados(selector) {
         const encontrados = Array.from(panel.querySelectorAll(selector));
         [panel, burbuja].forEach(function (el) {
@@ -518,14 +509,11 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
         return encontrados;
       }
 
-      // Textos visibles. Esto incluye los mensajes que ya están en pantalla y
-      // llevan etiqueta (el saludo y el aviso de saturación), que se re-traducen.
       marcados("[data-i18n]").forEach(function (el) {
         const texto = t[el.getAttribute("data-i18n")];
         if (texto !== undefined) el.textContent = texto;
       });
 
-      // Textos que van dentro de un atributo (placeholder, aria-label, title).
       function traducirAtributo(etiqueta, atributo) {
         marcados("[" + etiqueta + "]").forEach(function (el) {
           const texto = t[el.getAttribute(etiqueta)];
@@ -542,25 +530,20 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       lista.scrollTop = lista.scrollHeight;
     }
 
-    // "quien" es "bot" o "usuario". Usamos textContent (no HTML) por seguridad:
-    // así nadie puede colar código raro a través del chat.
-    // Si pasas una "claveTraduccion", el mensaje queda etiquetado con data-i18n
-    // y aplicarTextos() lo traduce (y lo re-traduce si cambia el idioma).
     function anadirMensaje(quien, texto, claveTraduccion) {
       const el = crear("div", "cordada-msg cordada-msg--" + quien);
       el.textContent = texto;
-      if (claveTraduccion) el.setAttribute("data-i18n", claveTraduccion); // ← ARREGLO: i18n con data-i18n
+      if (claveTraduccion) el.setAttribute("data-i18n", claveTraduccion);
       lista.appendChild(el);
       bajarAlFinal();
       return el;
     }
 
-    // La burbuja con tres puntos animados que se ve mientras se espera.
     function mostrarEscribiendo() {
       const el = crear("div", "cordada-msg cordada-msg--bot cordada-escribiendo");
       el.setAttribute("role", "status");
       el.setAttribute("aria-label", TEXOS[idiomaActivo()].escribiendo);
-      el.setAttribute("data-i18n-aria-label", "escribiendo"); // ← ARREGLO: i18n con data-i18n
+      el.setAttribute("data-i18n-aria-label", "escribiendo");
       for (let i = 0; i < 3; i++) el.appendChild(crear("span", "cordada-punto"));
       lista.appendChild(el);
       bajarAlFinal();
@@ -573,10 +556,9 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       panel.classList.add("cordada-abierto");
       burbuja.setAttribute("aria-expanded", "true");
 
-      // Saludo automático: solo la primera vez (recordado en el navegador).
       if (!saludoHecho && !leerAlmacen(CLAVE_SALUDO)) {
-        anadirMensaje("bot", "", "saludo"); // ← ARREGLO: i18n con data-i18n
-        aplicarTextos(); // ← ARREGLO: i18n con data-i18n (rellena el saludo en el idioma activo)
+        anadirMensaje("bot", "", "saludo");
+        aplicarTextos();
         guardarAlmacen(CLAVE_SALUDO, "1");
       }
       saludoHecho = true;
@@ -594,20 +576,17 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
     // 10.8 Enviar una pregunta (el corazón del chat)
     async function enviarPregunta() {
       const pregunta = campo.value.trim();
-      if (!pregunta || esperando) return; // sin texto, o ya hay una consulta en curso
+      if (!pregunta || esperando) return;
 
       esperando = true;
       enviar.disabled = true;
       campo.value = "";
 
-      // Cogemos las últimas 4 frases ANTES de añadir la pregunta actual,
-      // porque la pregunta ya viaja aparte.
       const historial = historialFrases.slice(-4);
       const idioma = idiomaActivo();
 
       anadirMensaje("usuario", pregunta);
 
-      // Al primer mensaje desaparecen las preguntas rápidas.
       conversacionIniciada = true;
       chipsCaja.classList.remove("cordada-visibles");
 
@@ -618,21 +597,35 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       try {
         respuesta = await pedirAlServidor(pregunta, historial, idioma);
       } catch (error) {
-        respuesta = null; // sin conexión, tiempo agotado, etc.
+        respuesta = null;
       }
 
-      // Plan B: árbol de decisión.
+      // Si el servidor no ha dado respuesta, probamos el árbol.
       if (!respuesta) respuesta = buscarEnArbol(pregunta, idioma);
+
+      // ← ARREGLO: si el árbol tampoco ha encontrado nada, usamos
+      // RESPUESTA_DEFECTO ("no estoy seguro de eso..."), que es el mensaje
+      // correcto para "no sé la respuesta". El "saturada" queda reservado
+      // para el caso extremo de que ni siquiera exista RESPUESTA_DEFECTO
+      // (teórico), así que solo se usa como último recurso.
+      let usarSaturada = false;
+      if (!respuesta) {
+        if (RESPUESTA_DEFECTO && RESPUESTA_DEFECTO[idioma]) {
+          respuesta = RESPUESTA_DEFECTO[idioma];
+        } else {
+          usarSaturada = true;
+        }
+      }
 
       indicador.remove();
 
-      if (respuesta) {
+      if (usarSaturada) {
+        // Caso extremo: no hay RESPUESTA_DEFECTO para este idioma.
+        anadirMensaje("bot", "", "saturada");
+        aplicarTextos();
+      } else {
         anadirMensaje("bot", respuesta);
         historialFrases.push("(visitante) " + pregunta, "(Cordada) " + respuesta);
-      } else {
-        // Ni servidor ni árbol: mensaje amable. El campo sigue operativo.
-        anadirMensaje("bot", "", "saturada"); // ← ARREGLO: i18n con data-i18n
-        aplicarTextos(); // ← ARREGLO: i18n con data-i18n (rellena el aviso en el idioma activo)
       }
 
       esperando = false;
@@ -647,7 +640,6 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
     cerrar.addEventListener("click", function () { cerrarPanel(true); });
     enviar.addEventListener("click", enviarPregunta);
 
-    // Enter envía (ignoramos el Enter con el que se confirma un acento o carácter compuesto).
     campo.addEventListener("keydown", function (e) {
       if (e.key === "Enter" && !e.isComposing) {
         e.preventDefault();
@@ -655,12 +647,10 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       }
     });
 
-    // Escape cierra el panel desde cualquier sitio.
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && abierto) cerrarPanel(true);
     });
 
-    // Las preguntas rápidas rellenan el campo (sin enviar) para que puedas editarlas.
     chips.forEach(function (chip) {
       chip.addEventListener("click", function () {
         campo.value = chip.textContent;
@@ -668,7 +658,6 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       });
     });
 
-    // Cuando cambias de idioma en la web, el chat se traduce al instante.
     document.addEventListener("portfolio:languagechange", aplicarTextos);
 
     aplicarTextos();
