@@ -40,6 +40,16 @@ Todo el proceso está versionado con Git a lo largo de más de 20 commits, con m
 
 ---
 
+## 🌐 APIs externas consumidas
+
+El frontend consume directamente o a través del backend:
+
+| API | Uso | Dónde se usa |
+|---|---|---|
+| **Open-Meteo** | Tiempo actual + geocoding | Widget del tiempo (Me gusta) |
+| **OpenBeta** (vía backend) | Zonas de escalada por ciudad | Widget del tiempo (Me gusta) |
+| **GitHub API** (vía backend) | Actividad pública de repos | Sección "Me gusta" |
+
 ## 📁 Estructura de ficheros
 
 ### Frontend (`mi-web`)
