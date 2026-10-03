@@ -144,6 +144,8 @@ Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub 
 
 ## 🕰️ Historial de versiones
 
+## 🕰️ Historial de versiones
+
 | Versión | Descripción |
 |---|---|
 | v1 | Primera web: estructura semántica básica |
@@ -154,7 +156,7 @@ Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub 
 | v6 | Certificaciones Cisco y títulos oficiales |
 | v7 | Rediseño del formulario y opción "Quiero que me llames" |
 | v8 | Foto personal en "Sobre mí" con layout de dos columnas |
-| v9 | Nueva estética topo, tipografía Space Grotesk, títulos agrupados |
+| v9 | Nueva estética topo, tipografía Space Grotesk |
 | v10 | Página de proyectos con filtros y sección preview en el index |
 | v13 | Backend online: formulario conectado a la API real |
 | v14 | Panel admin con estética topo y loader del botón del formulario |
@@ -164,6 +166,14 @@ Ambos se comunican mediante `fetch()` con CORS restringido al dominio de GitHub 
 | v18 | Widget del tiempo en vivo con selector de ciudad (Open-Meteo) |
 | v19 | Terminal que se escribe sola en "Sobre mí" |
 | v20 | Casos de proyecto con problema, solución y resultado |
+| v20.1 | Perf: reduce pesos de fuente y aplaza los scripts (Lighthouse ≥94) |
+| v21 | Selección y detalles de zonas de escalada |
+| v21.1 | Cabecera roca/rocódromo según el tiempo |
+| v22 | Zonas de escalada con enlaces a theCrag y 27crags |
+| v22.1 | Render con búsqueda directa y enlaces theCrag/27crags |
+| v22.2 | Mensaje más honesto y añade TheTopo a los enlaces |
+| v23 | Zonas de escalada con **OpenBeta API** (sustituye OpenStreetMap) |
+| **v24** | **Bloque de actividad de GitHub** en la sección "Me gusta" (consume `/api/github/activity`). **Última versión.** |
 
 ---
 
