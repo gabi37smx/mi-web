@@ -1816,3 +1816,18 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   font-family: var(--mono);
   grid-column: 1 / -1;
 }
+/* ============================================================
+   Logo SVG propio (GV): hereda el color del tema con currentColor
+   ============================================================ */
+.logo-svg { width: 26px; height: 26px; display: block; }
+.logo-mark { transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
+.logo:hover .logo-mark,
+.logo:focus-visible .logo-mark {
+  transform: translateY(-2px) rotate(-5deg);
+  box-shadow: 4px 4px 0 var(--text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-mark { transition: none; }
+  .logo:hover .logo-mark,
+  .logo:focus-visible .logo-mark { transform: none; box-shadow: 2px 2px 0 var(--text); }
+}
