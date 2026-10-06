@@ -13,12 +13,17 @@
 
   const textos = {
     es: { loading: 'Cargando noticias...', empty: 'No hay noticias disponibles', error: 'No se pudieron cargar las noticias' },
-    ca: { loading: 'Carregant notícies...', empty: 'No hi ha notícies disponibles', error: 'No es van poder carregar les notícies' },
+    val: { loading: 'Carregant notícies...', empty: 'No hi ha notícies disponibles', error: 'No es van poder carregar les notícies' },
     en: { loading: 'Loading news...', empty: 'No news available', error: 'Could not load news' }
   };
 
   function getIdioma() {
-    return localStorage.getItem('lang') || 'es';
+    try {
+      const guardado = localStorage.getItem('language');
+      return textos[guardado] ? guardado : 'es';
+    } catch (e) {
+      return 'es';
+    }
   }
 
   async function cargarNoticias() {
