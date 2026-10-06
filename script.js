@@ -172,26 +172,27 @@ document.querySelectorAll(".card").forEach((card) => {
   });
 });
 
-/* ---- Contador animado en las estadísticas del hero ---- */
+/* ---- Contador animado en las estadísticas del hero ----
+   Misión: convertir un dato en un momento; el número se recuerda mejor si se cuenta solo.
+   Cuenta una sola vez, en 1 segundo, cuando el número entra en pantalla.
+   Con prefers-reduced-motion (o sin IntersectionObserver) se queda el número final del HTML. */
 (function counters() {
-  const stats = document.querySelectorAll(".stat strong");
-  if (!stats.length || !("IntersectionObserver" in window)) return;
+  const stats = [...document.querySelectorAll(".stat strong")].filter((el) => /^\d+$/.test(el.textContent.trim()));
+  if (!stats.length) return;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion || !("IntersectionObserver" in window)) return;
 
+  const DURATION = 1000;
   const animate = (el) => {
-    const target = el.textContent.trim();
-    const num = parseInt(target, 10);
-    if (isNaN(num)) return;
-    const prefix = target.startsWith("1º") ? "1º" : "";
-    const final = prefix ? "1º" : String(num);
-    if (reduceMotion) { el.textContent = final; return; }
-    let n = 0;
-    const step = Math.max(1, Math.ceil(num / 40));
-    const t = setInterval(() => {
-      n += step;
-      if (n >= num) { n = num; clearInterval(t); }
-      el.textContent = prefix ? prefix : String(n);
-    }, 28);
+    const final = parseInt(el.dataset.final, 10);
+    const t0 = performance.now();
+    const tick = (now) => {
+      const p = Math.min((now - t0) / DURATION, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = String(Math.round(final * eased));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
   };
 
   const cIO = new IntersectionObserver((entries) => {
@@ -200,7 +201,11 @@ document.querySelectorAll(".card").forEach((card) => {
     });
   }, { threshold: 0.4 });
 
-  stats.forEach((s) => cIO.observe(s));
+  stats.forEach((el) => {
+    el.dataset.final = el.textContent.trim();
+    el.textContent = "0";
+    cIO.observe(el);
+  });
 })();
 
 /* ---- Botón "volver arriba" ---- */

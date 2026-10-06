@@ -843,7 +843,7 @@ h1, h2, h3, h4 {
 .to-top:hover { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--text); color: var(--accent); }
 
 /* ---- Animaciones on-scroll ---- */
-.reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
 .reveal:nth-child(2) { transition-delay: .08s; }
 .reveal:nth-child(3) { transition-delay: .16s; }
@@ -1861,4 +1861,36 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   .skill-icon__svg { transition: none; }
   .skill-icon:hover .skill-icon__svg,
   .skill-icon:focus-within .skill-icon__svg { transform: none; }
+}
+
+/* ============================================================
+   Microinteracciones con intención
+   1) Aparición al scroll: .reveal (arriba) marca "empieza contenido nuevo"
+   2) Hover del botón de contacto: se levanta y la sombra crece = "esto se pulsa"
+   3) Contador del hero: ver script.js
+   Todas se apagan con prefers-reduced-motion.
+   ============================================================ */
+.btn-primary[href="contacto.html"],
+.nav-cta {
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease), color .2s var(--ease);
+}
+.btn-primary[href="contacto.html"]:hover,
+.btn-primary[href="contacto.html"]:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0 var(--text);
+}
+.cta-inner .btn-primary[href="contacto.html"]:hover,
+.cta-inner .btn-primary[href="contacto.html"]:focus-visible {
+  box-shadow: 6px 6px 0 var(--bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.is-visible { opacity: 1; transform: none; transition: none; }
+  .btn-primary[href="contacto.html"],
+  .nav-cta { transition: none; }
+  .btn-primary[href="contacto.html"]:hover,
+  .btn-primary[href="contacto.html"]:focus-visible,
+  .cta-inner .btn-primary[href="contacto.html"]:hover,
+  .cta-inner .btn-primary[href="contacto.html"]:focus-visible { transform: none; }
 }

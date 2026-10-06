@@ -61,7 +61,7 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
      redes, ciberseguridad, IA y agentes.
    - Su pasión es la escalada. También alta montaña, senderismo, BTT
      y trastear con aparatos para repararlos.
-   - Tiene 2 títulos oficiales y 5 certificaciones Cisco en redes y
+   - Tiene 5 títulos oficiales y 5 certificaciones Cisco en redes y
      ciberseguridad, más algunos cursos de programación con IA.
 
 3. Si preguntan por sus estudios reglados completos (títulos oficiales,
@@ -122,9 +122,9 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       en: "His passion is climbing. He also enjoys mountaineering, hiking and mountain biking. And he's always liked tinkering with devices to try to fix them.",
     },
     certificaciones: {
-      es: "Tiene 2 títulos oficiales y 5 certificaciones Cisco en redes y ciberseguridad, más algunos cursos de programación con IA.",
-      val: "Té 2 títols oficials i 5 certificacions Cisco en xarxes i ciberseguretat, més alguns cursos de programació amb IA.",
-      en: "He holds 2 official qualifications and 5 Cisco certifications in networking and cybersecurity, plus some AI programming courses.",
+      es: "Tiene 5 títulos oficiales y 5 certificaciones Cisco en redes y ciberseguridad, más algunos cursos de programación con IA.",
+      val: "Té 5 títols oficials i 5 certificacions Cisco en xarxes i ciberseguretat, més alguns cursos de programació amb IA.",
+      en: "He holds 5 official qualifications and 5 Cisco certifications in networking and cybersecurity, plus some AI programming courses.",
     },
     contacto: {
       es: "Puedes escribirle a gabvidbad@alu.edu.gva.es o usar el formulario de contacto de la web.",
