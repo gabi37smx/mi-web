@@ -148,12 +148,24 @@ h1, h2, h3, h4 {
 }
 .logo-text { font-size: 1.05rem; font-family: var(--display); font-weight: 700; }
 
-.nav-list { display: flex; gap: .35rem; align-items: center; }
+.nav-list {
+  display: flex;
+  gap: .25rem;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
 .nav-link {
-  position: relative; padding: .5rem .85rem; border-radius: 4px;
-  color: var(--muted); font-weight: 500; font-size: .95rem;
+  position: relative;
+  padding: .5rem .7rem;
+  border-radius: 4px;
+  color: var(--muted);
+  font-weight: 500;
+  font-size: .9rem;
+  white-space: nowrap;
   transition: color .25s var(--ease), background .25s var(--ease);
 }
+
 .nav-link:hover { color: var(--text); background: var(--panel-soft); }
 .nav-link[aria-current="true"] { color: var(--text); font-weight: 700; }
 .nav-link[aria-current="true"]::after {
@@ -1733,4 +1745,74 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
     align-items: center;
     text-align: center;
   }
+}
+
+/* ============================================================
+   Noticias IA
+   ============================================================ */
+
+.news-container {
+  display: block;
+}
+
+.news-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.news-item {
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--text);
+  background: var(--surface);
+  box-shadow: 4px 4px 0 var(--text);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+}
+
+.news-item:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--text);
+}
+
+.news-link {
+  text-decoration: none;
+  display: block;
+}
+
+.news-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 .5rem 0;
+  color: var(--text);
+  line-height: 1.35;
+  font-family: var(--display);
+}
+
+.news-title:hover {
+  color: var(--accent);
+}
+
+.news-source {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: .2rem .5rem;
+  border: 2px solid var(--text);
+  border-radius: 4px;
+  background: var(--bg-soft);
+  color: var(--muted);
+}
+
+.news-loading,
+.news-empty {
+  font-size: .9rem;
+  opacity: .7;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+  font-family: var(--mono);
+  grid-column: 1 / -1;
 }
