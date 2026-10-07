@@ -401,7 +401,7 @@ if (toTop) {
     const last  = holdPositions[holdPositions.length - 1];
     const y = first + (last - first) * progress;
 
-    climber.style.top = `${y}px`;
+    climber.style.transform = `translate(-50%, calc(${y}px - 50%))`;
   }
 
   const railSectionIds = holds.map((h) => h.dataset.section);

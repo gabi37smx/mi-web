@@ -197,12 +197,25 @@
     .arcade__keys { margin: 0; font-family: var(--mono); font-size: .8rem; color: var(--muted); max-width: 40ch; }
     .arcade-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+    /* Móvil: marcadores arriba, tablero y botones JUNTOS en la pantalla (sin tener que hacer scroll mientras juegas).
+       El tablero se encoge según la altura de la pantalla para que siempre quepan los botones debajo. */
     @media (max-width: 760px) {
-      .arcade { grid-template-columns: 1fr; justify-items: center; gap: 1.5rem; }
-      .arcade__side { align-items: center; width: 100%; max-width: 300px; }
-      .arcade__stats { width: 100%; }
-      .arcade__stats-row { width: 100%; }
-      .arcade__keys { text-align: center; }
+      .arcade { grid-template-columns: 1fr; justify-items: center; gap: .75rem; margin-top: 1.5rem; }
+      .arcade__side { display: contents; }
+      .arcade__stats-row { order: 1; width: 100%; max-width: 300px; align-items: stretch; gap: .5rem; }
+      .arcade__stats { flex: 1 1 auto; max-width: none; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .4rem; }
+      .arcade__stat { padding: .3rem .4rem; }
+      .arcade__stat dt { font-size: .56rem; letter-spacing: .02em; }
+      .arcade__stat dd { font-size: 1.05rem; }
+      .arcade__restart { width: 44px; height: auto; }
+      .arcade__screen { order: 2; max-width: clamp(150px, calc((100vh - 210px) / 2), 300px); max-width: clamp(150px, calc((100svh - 210px) / 2), 300px); }
+      .arcade__overlay { gap: .6rem; padding: .75rem; }
+      .arcade__overlay-title { font-size: 1.2rem; }
+      .arcade__overlay-text { font-size: .75rem; }
+      .arcade__pad { order: 3; width: 100%; max-width: 300px; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-areas: "left down right rot drop"; gap: .4rem; }
+      .arcade__btn { height: 52px; }
+      .arcade__next { order: 4; }
+      .arcade__keys { order: 5; text-align: center; }
     }
 
     @media (prefers-reduced-motion: no-preference) {
@@ -499,7 +512,7 @@
   }
 
   function reiniciar() {
-    if (state === "playing") {
+    if (state === "playing" || state === "paused") {
       if (!window.confirm(tx("restartConfirm"))) return;
     }
     empezar();
