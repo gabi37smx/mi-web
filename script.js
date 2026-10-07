@@ -154,7 +154,9 @@ if ("IntersectionObserver" in window && navSections.length) {
         const id = "#" + entry.target.id;
         navLinks.forEach((link) => {
           const active = link.getAttribute("href") === id;
-          link.setAttribute("aria-current", active ? "true" : "false");
+          // ▼ CAMBIO: aria-current="page" en vez de "true" (Accessibility)
+          if (active) link.setAttribute("aria-current", "page");
+          else link.removeAttribute("aria-current");
         });
       });
     },
@@ -280,8 +282,6 @@ if (toTop) {
 
   const interactive = "a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .card-grade, input, textarea, select, [role='button'], .cordada-burbuja, .cordada-cerrar, .cordada-chip, .cordada-campo, .cordada-enviar";
 
-  // Delegación de eventos: se escucha en TODO el documento y se mira qué hay bajo
-  // el ratón. Así también funciona con elementos creados después (el chatbot).
   document.addEventListener("pointerover", (e) => {
     if (e.target.closest && e.target.closest(interactive)) {
       wrap.classList.add("is-hovering");
@@ -401,7 +401,7 @@ if (toTop) {
     const last  = holdPositions[holdPositions.length - 1];
     const y = first + (last - first) * progress;
 
-    climber.style.transform = `translate(-50%, calc(${y}px - 50%))`;
+    climber.style.top = `${y}px`;
   }
 
   const railSectionIds = holds.map((h) => h.dataset.section);
@@ -536,7 +536,6 @@ if (toTop) {
       loadError = false;
       renderWeather();
     } catch (error) {
-      // Se usa warn para no ensuciar la consola en producción si la API tarda en responder o cae.
       console.warn("Error en el widget del tiempo:", error);
       currentWeather = null;
       loadError = true;
@@ -712,7 +711,6 @@ if (toTop) {
       lastData = data;
     } catch (error) {
       if (id !== requestId) return;
-      // Se usa warn para no ensuciar la consola en producción cuando la API del backend está dormida.
       console.warn("Error cargando zonas de escalada:", error);
       lastData = { city: currentCity, results: [], searchLinks: null, error: true };
     } finally {
@@ -959,8 +957,6 @@ if (toTop) {
   const term = document.getElementById("typingTerminal");
   if (!term) return;
 
-  /* Identificadores y mensaje del "programa" en cada idioma.
-     "while" es palabra reservada del lenguaje, así que no se traduce. */
   const code = {
     es:  { cond: "no_llegue_a_la_cima", solve: "resolver_problema", learn: "aprender", climb: "subir",  ok: "✓ Programa ejecutado. Subiendo..." },
     val: { cond: "no_arribe_al_cim",    solve: "resoldre_problema", learn: "aprendre", climb: "pujar",  ok: "✓ Programa executat. Pujant..." },
@@ -992,7 +988,6 @@ if (toTop) {
 
   const render = (lang) => { term.innerHTML = buildLines(lang).join("\n"); };
 
-  /* Prepara los nodos de texto vacíos para ir escribiéndolos letra a letra */
   const prepareTyping = () => {
     const walker = document.createTreeWalker(term, NodeFilter.SHOW_TEXT);
     textNodes = [];
@@ -1027,7 +1022,6 @@ if (toTop) {
   render(currentLang());
   if (!reduceMotion) prepareTyping();
 
-  /* Al cambiar de idioma se muestra el programa ya completo en el nuevo idioma */
   document.addEventListener("portfolio:languagechange", (event) => {
     window.clearTimeout(timer);
     started = true;
@@ -1103,7 +1097,6 @@ if (toTop) {
       render();
     })
     .catch((error) => {
-      // Se usa warn para mantener la consola limpia en producción si Render despierta tarde.
       console.warn("Error cargando actividad de GitHub:", error);
     });
 
