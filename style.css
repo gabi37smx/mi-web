@@ -167,8 +167,10 @@ h1, h2, h3, h4 {
 }
 
 .nav-link:hover { color: var(--text); background: var(--panel-soft); }
-.nav-link[aria-current="true"] { color: var(--text); font-weight: 700; }
-.nav-link[aria-current="true"]::after {
+.nav-link[aria-current="true"],
+.nav-link[aria-current="page"]:not(.nav-cta) { color: var(--text); font-weight: 700; }
+.nav-link[aria-current="true"]::after,
+.nav-link[aria-current="page"]:not(.nav-cta)::after {
   content: ""; position: absolute; left: 50%; bottom: 2px; transform: translateX(-50%);
   width: 18px; height: 3px; border-radius: 0; background: var(--accent);
 }
@@ -1893,4 +1895,15 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   .btn-primary[href="contacto.html"]:focus-visible,
   .cta-inner .btn-primary[href="contacto.html"]:hover,
   .cta-inner .btn-primary[href="contacto.html"]:focus-visible { transform: none; }
+}
+
+/* Foto propia de escalada en "Me gusta" */
+.climb-photo { margin: 2.5rem auto; max-width: 340px; }
+.climb-photo img {
+  display: block; width: 100%; height: auto;
+  border: 2px solid var(--text); box-shadow: 4px 4px 0 var(--text);
+}
+.climb-photo figcaption {
+  margin-top: .9rem; font-family: var(--mono); font-size: .85rem;
+  color: var(--muted); text-align: center;
 }

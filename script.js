@@ -959,31 +959,52 @@ if (toTop) {
   const term = document.getElementById("typingTerminal");
   if (!term) return;
 
-  const lines = [
-    '<span class="term-prompt">$</span> while (<span class="term-var">no_llegue_a_la_cima</span>) {',
-    '  <span class="term-fn">resolver_problema</span>();',
-    '  <span class="term-fn">aprender</span>();',
-    '  <span class="term-fn">subir</span>();',
-    '}',
-    '<span class="term-ok">✓ Programa ejecutado. Subiendo...</span>',
-    '<span class="term-prompt">$</span> <span class="term-cursor">▊</span>'
-  ];
+  /* Identificadores y mensaje del "programa" en cada idioma.
+     "while" es palabra reservada del lenguaje, así que no se traduce. */
+  const code = {
+    es:  { cond: "no_llegue_a_la_cima", solve: "resolver_problema", learn: "aprender", climb: "subir",  ok: "✓ Programa ejecutado. Subiendo..." },
+    val: { cond: "no_arribe_al_cim",    solve: "resoldre_problema", learn: "aprendre", climb: "pujar",  ok: "✓ Programa executat. Pujant..." },
+    en:  { cond: "not_at_the_summit",   solve: "solve_problem",     learn: "learn",    climb: "climb",  ok: "✓ Program executed. Climbing..." }
+  };
+
+  const currentLang = () => {
+    const l = document.documentElement.lang;
+    return l === "en" ? "en" : l === "ca-valencia" ? "val" : "es";
+  };
+
+  const buildLines = (lang) => {
+    const t = code[lang] || code.es;
+    return [
+      '<span class="term-prompt">$</span> while (<span class="term-var">' + t.cond + '</span>) {',
+      '  <span class="term-fn">' + t.solve + '</span>();',
+      '  <span class="term-fn">' + t.learn + '</span>();',
+      '  <span class="term-fn">' + t.climb + '</span>();',
+      '}',
+      '<span class="term-ok">' + t.ok + '</span>',
+      '<span class="term-prompt">$</span> <span class="term-cursor">▊</span>'
+    ];
+  };
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  term.innerHTML = lines.join("\n");
-  if (reduceMotion) return;
+  let timer = null;
+  let started = false;
+  let textNodes = [];
 
-  const walker = document.createTreeWalker(term, NodeFilter.SHOW_TEXT);
-  const textNodes = [];
-  let node;
-  while ((node = walker.nextNode())) {
-    textNodes.push({ node, text: node.textContent });
-    node.textContent = "";
-  }
+  const render = (lang) => { term.innerHTML = buildLines(lang).join("\n"); };
+
+  /* Prepara los nodos de texto vacíos para ir escribiéndolos letra a letra */
+  const prepareTyping = () => {
+    const walker = document.createTreeWalker(term, NodeFilter.SHOW_TEXT);
+    textNodes = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      textNodes.push({ node, text: node.textContent });
+      node.textContent = "";
+    }
+  };
 
   let nodeIndex = 0;
   let charIndex = 0;
-  let started = false;
 
   function type() {
     if (nodeIndex >= textNodes.length) return;
@@ -994,7 +1015,7 @@ if (toTop) {
       nodeIndex++;
       charIndex = 0;
     }
-    window.setTimeout(type, 32);
+    timer = window.setTimeout(type, 32);
   }
 
   function start() {
@@ -1002,6 +1023,18 @@ if (toTop) {
     started = true;
     type();
   }
+
+  render(currentLang());
+  if (!reduceMotion) prepareTyping();
+
+  /* Al cambiar de idioma se muestra el programa ya completo en el nuevo idioma */
+  document.addEventListener("portfolio:languagechange", (event) => {
+    window.clearTimeout(timer);
+    started = true;
+    render((event.detail && event.detail.language) || currentLang());
+  });
+
+  if (reduceMotion) return;
 
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver((entries) => {
