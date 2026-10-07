@@ -1701,10 +1701,10 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   font-family: var(--mono);
   font-size: .72rem;
   font-weight: 700;
-  color: var(--accent);
+  color: #ffffff;
+  background: var(--accent);
   letter-spacing: .04em;
   margin-top: .25rem;
-  background: var(--bg-soft);
   padding: .2rem .5rem;
   border: 2px solid var(--text);
   border-radius: 4px;
