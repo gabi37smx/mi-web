@@ -123,7 +123,7 @@
       <div class="container">
 
         <!-- Filtros -->
-        <div class="projects-filters" role="tablist" aria-label="Filtrar proyectos">
+        <div class="projects-filters" role="group" aria-label="Filtrar proyectos">
           <button class="filter-btn is-active" data-filter="all">Todos</button>
           <button class="filter-btn" data-filter="individual">Individual</button>
           <button class="filter-btn" data-filter="curso">En curso</button>
@@ -339,8 +339,20 @@
     </div>
   </footer>
 
-  <script src="language.js"></script>
-  <script src="script.js"></script>
+  <script src="language.js" defer></script>
+  <script src="script.js" defer></script>
   <script src="chatbot.js" defer></script>
+  <script>
+    /* Los filtros son botones de alternar: aria-pressed dice a los lectores de pantalla cuál está activo */
+    (function () {
+      var botones = document.querySelectorAll(".filter-btn");
+      botones.forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b.classList.contains("is-active")));
+        b.addEventListener("click", function () {
+          botones.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
