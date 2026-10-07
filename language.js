@@ -404,6 +404,9 @@
     ["Un descanso:", "Un descans:", "A break:"],
     ["sube la vía", "puja la via", "climb the route"],
     ["Un arcade clásico con alma de escalada: encaja las piezas, cierra líneas y sube de grado. Cada 5 líneas, una vía más difícil.", "Un arcade clàssic amb ànima d'escalada: encaixa les peces, tanca línies i puja de grau. Cada 5 línies, una via més difícil.", "A classic arcade with a climber's soul: fit the pieces, clear lines and climb up the grades. Every 5 lines, a harder route."],
+    // ▼ NUEVO: textos del vídeo demo "Así trabajo" (Tutorial 4 · Paso 5)
+    ["Así trabajo: le pido una mejora a la IA, la integro en mi web y compruebo el resultado. 30 segundos, sin cortes.", "Així treballe: li demane una millora a la IA, la integre en la meua web i comprove el resultat. 30 segons, sense talls.", "How I work: I ask the AI for an improvement, integrate it into my site and check the result. 30 seconds, no cuts."],
+    ["Demostración de 30 segundos: le pido una mejora a la IA, la pego en mi web y compruebo el resultado", "Demostració de 30 segons: li demane una millora a la IA, la pegue en la meua web i comprove el resultat", "30-second demo: I ask the AI for an improvement, paste it into my site and check the result"],
   ];
 
   const normalize = (text) => text.replace(/\s+/g, " ").trim();
