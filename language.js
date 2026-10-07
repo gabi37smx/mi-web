@@ -17,6 +17,8 @@
     ["Ir a Proyectos", "Ves a Projectes", "Go to Projects"],
     ["Ir a Certificaciones", "Ves a Certificacions", "Go to Certifications"],
     ["Ir a Me gusta", "Ves a M'agrada", "Go to Interests"],
+    ["Ir a Juego", "Ves a Joc", "Go to Game"],
+    ["Ir a Contacto", "Ves a Contacte", "Go to Contact"],
     ["Cambiar a modo oscuro", "Canvia al mode fosc", "Switch to dark mode"],
     ["Cambiar a modo claro", "Canvia al mode clar", "Switch to light mode"],
     ["Cambiar tema", "Canvia el tema", "Change theme"],
@@ -40,7 +42,7 @@
     ["Los nombres que más están moviendo el sector de la IA esta semana, ordenados por momentum. Fuente: GNews.", "Els noms que més estan movent el sector de la IA esta setmana, ordenats per impuls. Font: GNews.", "The names moving the AI sector the most this week, ranked by momentum. Source: GNews."],
     ["¿Quieres ver", "Vols veure", "Want to see"],
     ["mi perfil completo", "el meu perfil complet", "my full profile"],
-    ["Vuelve al portfolio para ver formación, experiencia y proyectos.", "Torna al portafolis per veure formació, experiència i projectes.", "Go back to the portfolio to see my education, experience and projects."],
+    ["Vuelve al portfolio para ver formación, experiencia y proyectos.", "Torna al portafolis per a veure formació, experiència i projectes.", "Go back to the portfolio to see my education, experience and projects."],
     ["Escalando en roca: la afición que me enseñó a resolver problemas paso a paso.", "Escalant en roca: l'afició que em va ensenyar a resoldre problemes pas a pas.", "Rock climbing: the hobby that taught me to solve problems step by step."],
     ["Gabriel escalando una vía en roca caliza, con el arnés cargado de cintas exprés y el cielo azul de fondo", "Gabriel escalant una via en roca calcària, amb l'arnés carregat de cintes exprés i el cel blau de fons", "Gabriel climbing a limestone route, harness loaded with quickdraws, with a blue sky behind him"],
     ["Gabriel Vidal Badia sonriendo, con americana azul y camisa blanca, sobre fondo gris claro", "Gabriel Vidal Badia somrient, amb americana blava i camisa blanca, sobre fons gris clar", "Gabriel Vidal Badia smiling, wearing a blue blazer and a white shirt, against a light gray background"],
@@ -398,6 +400,10 @@
     ["Área de escalada", "Àrea d'escalada", "Climbing area"],
     ["Zona de escalada", "Zona d'escalada", "Climbing area"],
     ["Busca más zonas en:", "Busca més zones a:", "Find more areas on:"],
+    ["Juego", "Joc", "Game"],
+    ["Un descanso:", "Un descans:", "A break:"],
+    ["sube la vía", "puja la via", "climb the route"],
+    ["Un arcade clásico con alma de escalada: encaja las piezas, cierra líneas y sube de grado. Cada 5 líneas, una vía más difícil.", "Un arcade clàssic amb ànima d'escalada: encaixa les peces, tanca línies i puja de grau. Cada 5 línies, una via més difícil.", "A classic arcade with a climber's soul: fit the pieces, clear lines and climb up the grades. Every 5 lines, a harder route."],
   ];
 
   const normalize = (text) => text.replace(/\s+/g, " ").trim();
@@ -419,7 +425,8 @@
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     let node;
     while ((node = walker.nextNode())) {
-      if (node.parentElement?.closest("script, style, noscript")) continue;
+      // ▼ Excluye scripts, estilos y el bloque del juego (que se traduce solo)
+      if (node.parentElement?.closest("script, style, noscript, #juego-root")) continue;
       if (!textOriginals.has(node)) textOriginals.set(node, node.nodeValue);
       const original = textOriginals.get(node);
       const leading = original.match(/^\s*/)?.[0] || "";
@@ -429,6 +436,8 @@
     }
 
     root.querySelectorAll("*").forEach((element) => {
+      // ▼ El juego tiene su propio i18n interno (tx()), lo dejamos en paz
+      if (element.closest("#juego-root")) return;
       if (!attributeOriginals.has(element)) attributeOriginals.set(element, {});
       const originals = attributeOriginals.get(element);
       translatableAttributes.forEach((attribute) => {
