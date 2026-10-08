@@ -1,72 +1,158 @@
-🧗 mi-web · Portfolio personal de Gabriel Vidal Badia
+📄 1. README.md de mi-web (completo, listo para sustituir)
+markdown
+# 🧗 mi-web · Portfolio personal de Gabriel Vidal Badia
+
 Web personal de marca con temática de escalada. Estudiante de 1º DAM en el IES Simarro (Xàtiva, Valencia), en transición desde el mantenimiento industrial hacia la programación, la IA y los agentes.
 
-"Resolver problemas con el cuerpo, igual que con el código."
+> *"Resolver problemas con el cuerpo, igual que con el código."*
 
-🌐 Web en directo: https://gabi37smx.github.io/mi-web/
+🌐 **Web en directo:** https://gabi37smx.github.io/mi-web/
 
-📖 ¿Qué es este proyecto?
-Este repositorio contiene mi portfolio personal, construido desde cero como proyecto de la asignatura Programación con IA del ciclo de Desarrollo de Aplicaciones Multiplataforma (DAM).
+---
 
-No es una plantilla. Es una web pensada, escrita y desplegada por mí, con:
+## 📖 ¿Qué es este proyecto?
 
-- Frontend en HTML, CSS y JavaScript puros (sin frameworks, sin librerías externas).
-- Backend propio en Node.js + Express, con base de datos MongoDB y envío de emails mediante Resend.
-- Despliegue real en producción: GitHub Pages (frontend) y Render (backend).
-- Chatbot propio ("Cordada") que responde por mí a los visitantes.
-- Página de noticias IA que se actualiza a diario con titulares reales.
+Este repositorio contiene mi portfolio personal, construido desde cero como proyecto de la asignatura **Programación con IA** del ciclo de **Desarrollo de Aplicaciones Multiplataforma (DAM)**.
 
-Todo el proceso está versionado con Git a lo largo de más de 30 commits, con mensajes honestos que cuentan las decisiones tomadas.
+**No es una plantilla.** Es una web pensada, escrita y desplegada por mí, con:
 
-🗺️ Secciones de la web
+- **Frontend en HTML, CSS y JavaScript puros** (sin frameworks, sin librerías externas).
+- **Backend propio** en Node.js + Express, con base de datos MongoDB y envío de emails mediante Resend.
+- **Despliegue real en producción:** GitHub Pages (frontend) y Render (backend).
+- **Chatbot propio ("Cordada")** que responde por mí a los visitantes.
+- **Página de noticias IA** que se actualiza a diario con titulares reales.
+- **Mini-juego "Vía de bloques"** (Tetris con metáfora de escalada).
+- **Vídeo demo** de 30 segundos donde enseño cómo trabajo con la IA.
+
+Todo el proceso está versionado con Git a lo largo de **más de 40 commits**, con mensajes honestos que cuentan las decisiones tomadas.
+
+---
+
+## 🗺️ Secciones de la web
+
 | Sección | Contenido |
 | --- | --- |
 | Hero | Presentación + efecto máquina de escribir + efecto magnético en el título |
-| Sobre mí | Retrato, biografía, terminal animada con bucle de aprendizaje |
+| Sobre mí | Retrato, biografía, terminal animada con bucle de aprendizaje, **vídeo demo de cómo trabajo** |
 | Lo que he hecho | Formación, experiencia, timeline temática ("movimientos de la vía") |
 | Proyectos | Casos de proyecto con formato problema → solución → resultado |
 | Certificaciones | 2 títulos oficiales + 5 certificaciones Cisco Networking Academy |
-| Me gusta | Montaña, escalada, tecnología, IA, música + widget del tiempo en directo |
+| Me gusta | Montaña, escalada, tecnología, IA, música + widget del tiempo en directo + zonas de escalada + actividad de GitHub |
+| **Juego** | **Mini-juego "Vía de bloques"** (Tetris con metáfora de escalada, 3 idiomas, récord en localStorage) |
 | Contacto | Formulario real conectado a backend, panel de administración |
-| **Noticias IA** | **Titulares reales sobre IA de la última semana, vía backend propio (GNews)** |
+| Noticias IA | Titulares reales sobre IA de la última semana, vía backend propio (GNews) |
 
-🤖 Chatbot "Cordada"
+---
+
+## 🎨 Identidad visual propia
+
+Todo el sistema visual está hecho a mano, sin librerías externas:
+
+- **Logo SVG inline** (`logo-svg` en el header): usa `currentColor` para adaptarse al tema claro/oscuro. Animación al hover con `prefers-reduced-motion` respetado.
+- **Favicon SVG propio** (`favicon.svg`): el mismo símbolo, escalado a 16×16 píxeles.
+- **4 iconos SVG de la misma familia** (trazo 2px, esquinas redondeadas) para las áreas de trabajo: Escalada, Programación e IA, Mantenimiento, Redes y ciberseguridad.
+- **Cursor personalizado**: mano abierta/cerrada según el contexto (hover sobre elementos interactivos). Se desactiva en móvil y con `prefers-reduced-motion`.
+- **Barra lateral de escalada**: escalador SVG que sube por la vía conforme haces scroll, con presas que se iluminan al pasar por su sección.
+- **Microinteracciones con intención**:
+  - Aparición al scroll (marca el inicio de cada sección).
+  - Hover de botones (indica "esto se pulsa").
+  - Contador animado en las stats del hero (convierte un dato en un momento).
+  - Todas respetan `prefers-reduced-motion`.
+
+---
+
+## 🎥 Vídeo demo · Así trabajo
+
+En la sección "Sobre mí" hay un **vídeo de 30 segundos** donde le pido una mejora a la IA, la integro en mi web y compruebo el resultado en el navegador.
+
+- **Peso final**: 1,46 MB (comprimido con HandBrake, H.264, CRF 28, Optimize for Web).
+- **Póster**: `media/poster.webp` (35 KB, WebP).
+- **Atributos del `<video>`**: `controls`, `preload="none"`, `poster`, `playsinline`, `fetchpriority="high"`.
+- **Sin audio** → sin subtítulos (justificado en la defensa).
+- **Póster precargado** con `<link rel="preload" as="image">` para mejorar el LCP.
+
+Lo que enseña el vídeo:
+1. Le pido a la IA un mini-juego (el "Vía de bloques") con requisitos concretos.
+2. La IA me devuelve el código y yo lo integro.
+3. Compruebo en el navegador que funciona: muevo piezas, cierro líneas, subo de grado.
+
+No es un vídeo promocional ni un tutorial. Es una **muestra del proceso de trabajo**.
+
+---
+
+## 🎮 Juego "Vía de bloques"
+
+Un mini-juego tipo Tetris con metáfora de escalada que vive en la sección "Juego" del portfolio.
+
+**Cómo funciona:**
+- Encajas piezas, cierras líneas y subes de grado de escalada: **4 → 5 → 5+ → 6a → 6a+ → 6b → 6b+ → 6c → 6c+ → 7a → 7a+ → 7b**.
+- Cada 5 líneas cerradas subes de grado. La gravedad aumenta con el grado.
+- **Récord persistente** en `localStorage`.
+- **Bolsa de 7 piezas** (reparto justo, sin aleatoriedad pura).
+- **Fantasma de la pieza** (proyección al suelo) para planificar la caída.
+- **Pausa automática** al perder el foco o al salir de la sección.
+
+**Controles:**
+- **Teclado**: `←` `→` mover, `↑` girar, `↓` bajar, `Espacio` caer del todo, `P` pausa.
+- **Táctil**: botones en pantalla con repetición al mantener pulsado.
+- **Botón de reinicio** (pide confirmación si hay partida en curso).
+
+**Accesibilidad:**
+- Textos en 3 idiomas (ES/VA/EN) con sistema propio de i18n.
+- `aria-live` para anunciar cambios de estado.
+- `aria-label` dinámico en el canvas con los marcadores actuales.
+- **Respeta `prefers-reduced-motion`**: sin flash de línea, sin animación de toast, botones sin "hundirse".
+
+**Fichero único**: `juego.js` (~9 KB). Sin librerías, sin red, todo dentro.
+
+---
+
+## 🤖 Chatbot "Cordada"
+
 El chatbot Cordada es el asistente flotante que aparece en la esquina inferior derecha de las 4 páginas del portfolio. Responde a los visitantes sobre mí, mis estudios, mis proyectos y cómo contactarme.
 
-Cómo funciona (arquitectura de dos capas)
-- **Capa 1 · IA externa (cuando está disponible):** La pregunta viaja al backend, que la envía a una API de IA externa. La IA genera una respuesta natural basada en mis instrucciones (INSTRUCCIONES en chatbot.js).
-- **Capa 2 · Árbol de decisión (plan B, siempre activo):** Si la IA falla (timeout, error HTTP, servicio caído), el chatbot responde con frases literales escritas por mí, organizadas en 9 temas: identidad, estudios, experiencia, proyectos, tecnologías, escalada, certificaciones, contacto e idiomas. Para preguntas fuera de esos temas, remite al canal de contacto.
+### Cómo funciona (arquitectura de dos capas)
 
-Ventajas de este diseño:
+- **Capa 1 · IA externa (cuando está disponible):** La pregunta viaja al backend, que la envía a una API de IA externa. La IA genera una respuesta natural basada en mis instrucciones (`INSTRUCCIONES` en `chatbot.js`).
+- **Capa 2 · Árbol de decisión (plan B, siempre activo):** Si la IA falla (timeout, error HTTP, servicio caído), el chatbot responde con frases literales escritas por mí, organizadas en **9 temas**: identidad, estudios, experiencia, proyectos, tecnologías, escalada, certificaciones, contacto e idiomas. Para preguntas fuera de esos temas, remite al canal de contacto.
+
+**Ventajas de este diseño:**
 - **Resiliencia:** el chatbot no depende de ninguna API externa para funcionar.
 - **Privacidad:** la conversación vive solo en el navegador del visitante, nunca en el servidor.
 - **Control:** el mensaje "no sé la respuesta" remite al contacto real.
 
-Ficheros del chatbot
+### Ficheros del chatbot
+
 | Fichero | Ubicación | Función |
 | --- | --- | --- |
-| chatbot.js | mi-web/ | Frontend del chat (burbuja, panel, lógica, árbol) |
-| routes/chat.js | portfolio-backend/ | Proxy del backend (rate limit, caché, validación) |
+| `chatbot.js` | `mi-web/` | Frontend del chat (burbuja, panel, lógica, árbol) |
+| `routes/chat.js` | `portfolio-backend/` | Proxy del backend (rate limit, caché, validación) |
 
-Aprendizajes del desarrollo
+### Aprendizajes del desarrollo
+
 Durante el desarrollo del chatbot, dos APIs gratuitas de IA dejaron de funcionar:
 
-- **Pollinations** (text.pollinations.ai) → cerró su endpoint legacy con error 500 ENOSPC.
-- **KeylessAI** (keylessai.thryx.workers.dev) → el dominio dejó de existir (DNS_PROBE_FINISHED_NXDOMAIN).
+- **Pollinations** (`text.pollinations.ai`) → cerró su endpoint legacy con error 500 ENOSPC.
+- **KeylessAI** (`keylessai.thryx.workers.dev`) → el dominio dejó de existir (DNS_PROBE_FINISHED_NXDOMAIN).
 
 **Conclusión:** los servicios gratuitos de IA no son fiables. Por eso el chatbot está diseñado con el árbol de decisión como base, y la IA como capa opcional. Cuando haya un servicio fiable disponible, se conectará sin tocar el árbol.
 
-📰 Noticias IA
-La página `noticias.html` muestra los últimos artículos sobre inteligencia artificial publicados en la última semana. Es una funcionalidad nueva añadida en la versión v26.
+---
 
-Cómo funciona
+## 📰 Noticias IA
+
+La página `noticias.html` muestra los últimos artículos sobre inteligencia artificial publicados en la última semana. Funcionalidad añadida en la versión **v26**.
+
+### Cómo funciona
+
 - El frontend llama al **backend propio** (`/api/news/ai`), nunca directamente a GNews.
 - El backend consulta GNews, filtra por idioma `es`, ventana de 7 días, orden por fecha y limita a 10 resultados.
 - El backend cachea la respuesta durante **30 minutos**.
 - Cada titular abre el **artículo original** en una pestaña nueva.
 - Si el backend falla o GNews no responde, se muestra "No hay noticias disponibles" sin romper la página.
 
-Detección de entorno
+### Detección de entorno
+
 `noticias.js` detecta automáticamente dónde se está sirviendo la página:
 
 - Si `location.hostname` es `localhost` o `127.0.0.1` → llama a `http://localhost:3000/api/news/ai`.
@@ -74,7 +160,8 @@ Detección de entorno
 
 Sin tocar el código entre entornos. La web en producción y el desarrollo local funcionan igual.
 
-⚠️ Servir por HTTP en local
+### ⚠️ Servir por HTTP en local
+
 El navegador bloquea `fetch()` cuando la página se abre como `file://`. Para probar el widget en local:
 
 ```bash
@@ -94,28 +181,33 @@ Backend propio (vía /api/chat)	Proxy del chatbot Cordada	Chatbot flotante
 Backend propio (vía /api/news/ai)	Proxy de GNews	Página "Noticias IA"
 📁 Estructura de ficheros
 Frontend (mi-web)
-
 text
 mi-web/
-├── index.html          ← Página principal (portfolio)
-├── contacto.html       ← Página de contacto con formulario
-├── proyectos.html      ← Página de proyectos con casos y filtros
-├── presentacion.html   ← Página de QR para presentar en clase
-├── noticias.html       ← Página de noticias IA (NUEVO en v26)
-├── style.css           ← Hoja de estilos completa (variables, temas, animaciones)
-├── script.js           ← Interacciones (tema, cursor, escalada, formulario, proyectos)
-├── language.js         ← Sistema de traducción ES/VA/EN
-├── chatbot.js          ← Chatbot Cordada (burbuja, panel, árbol de decisión)
-├── noticias.js         ← Widget de noticias IA (NUEVO en v26)
-├── notas.txt           ← Notas del proyecto (instrucciones del bot, pruebas trampa)
+├── index.html              ← Página principal (portfolio)
+├── contacto.html           ← Página de contacto con formulario
+├── proyectos.html          ← Página de proyectos con casos y filtros
+├── presentacion.html       ← Página de QR para presentar en clase
+├── noticias.html           ← Página de noticias IA (v26)
+├── style.css               ← Hoja de estilos completa (variables, temas, animaciones)
+├── script.js               ← Interacciones (tema, cursor, escalada, formulario, proyectos)
+├── language.js             ← Sistema de traducción ES/VA/EN
+├── chatbot.js              ← Chatbot Cordada (burbuja, panel, árbol de decisión)
+├── noticias.js             ← Widget de noticias IA (v26)
+├── juego.js                ← Mini-juego "Vía de bloques" (v27)
+├── favicon.svg             ← Favicon propio en SVG
+├── notas.txt               ← Notas del proyecto (instrucciones del bot, pruebas trampa)
+├── media/
+│   ├── demo.mp4            ← Vídeo demo de 30 s (Tutorial 4)
+│   └── poster.webp         ← Póster del vídeo (WebP, 35 KB)
 ├── image/
-│   ├── gabriel.webp    ← Retrato personal (optimizado a WebP, 45 KB)
-│   └── qr-web.png      ← QR personalizado con mi foto
-├── .nojekyll           ← Evita el procesado de Jekyll en GitHub Pages
-├── .gitignore          ← Ficheros que nunca deben subirse
-└── README.md           ← Este archivo
+│   ├── gabriel.webp        ← Retrato personal (WebP, 45 KB)
+│   ├── gabriel-560.webp    ← Retrato en resolución pequeña (WebP, 18 KB)
+│   ├── escalada-roca.webp  ← Foto escalando en roca (WebP)
+│   └── qr-web.webp         ← QR personalizado (WebP)
+├── .nojekyll               ← Evita el procesado de Jekyll en GitHub Pages
+├── .gitignore              ← Ficheros que nunca deben subirse
+└── README.md               ← Este archivo
 Backend (portfolio-backend, repo separado)
-
 text
 portfolio-backend/
 ├── models/Message.js       ← Esquema de MongoDB para mensajes del formulario
@@ -123,7 +215,7 @@ portfolio-backend/
 ├── routes/contact.js       ← Rutas API del formulario + logs
 ├── routes/passkey.js       ← Endpoints de WebAuthn (passkeys)
 ├── routes/chat.js          ← Proxy del chatbot (rate limit, caché, validación)
-├── routes/news.js          ← Proxy de noticias IA con GNews (NUEVO en v12)
+├── routes/news.js          ← Proxy de noticias IA con GNews (v12)
 ├── routes/climbing.js      ← Zonas de escalada (OpenBeta)
 ├── routes/github.js        ← Actividad de GitHub
 ├── middleware/auth.js      ← Autenticación del panel admin
@@ -214,7 +306,6 @@ Consecuencia. El widget muestra noticias reales, en español, actualizadas a dia
 
 🚀 Cómo se publica
 Frontend → GitHub Pages
-
 Rama publicada: main
 
 Carpeta: raíz (/)
@@ -226,7 +317,6 @@ Fichero .nojekyll: en la raíz. Desactiva el procesador Jekyll que GitHub Pages 
 Cómo se activa: Settings → Pages → Deploy from a branch → main / (root) → Save.
 
 Backend → Render
-
 Servicio: portfolio-backend en https://render.com
 
 Build Command: npm install
@@ -238,7 +328,6 @@ Variables de entorno: configuradas en el panel de Render (ALLOWED_ORIGIN, GNEWS_
 URL: https://portfolio-backend-m07q.onrender.com
 
 🕰️ Historial de versiones
-
 Versión	Descripción
 v1	Primera web: estructura semántica básica
 v2	Cursor personalizado con dos círculos
@@ -272,8 +361,52 @@ v25.2	Notas del chatbot: instrucciones y estructura del árbol en notas.txt
 v25.3	Fix cursor personalizado en el chatbot + mejora del i18n en caliente
 v25.4	Fix fallback del chatbot: mensaje correcto para "no sé" + rama identidad + pruebas trampa (10/10 APTO)
 v26	Página de noticias IA: nueva página noticias.html, widget noticias.js, endpoint /api/news/ai con proxy a GNews, caché 30 min, enlace "Noticias IA" en el nav de las 5 páginas. Documenta ADR 5.
-🙏 Créditos
+v27	Logo SVG propio con currentColor + hover con prefers-reduced-motion. El logo de la cabecera pasa a ser un SVG inline hecho a mano, con el color heredado del texto del menú. Animación sutil al hover (giro de 5°, elevación de 2px) que se desactiva si el sistema pide menos movimiento.
+v28	Vídeo demo de 30 segundos en la sección "Sobre mí". Grabado con Xbox Game Bar, comprimido con HandBrake (H.264, CRF 28, Optimize for Web) de 80 MB a 1,46 MB. Póster extraído y optimizado a WebP (35 KB). Atributos del <video>: controls, preload="none", playsinline, fetchpriority="high".
+v29	Traducciones del vídeo + centrado responsive. Añadidas las traducciones del figcaption y del aria-label del vídeo en los 3 idiomas (ES/VA/EN) en language.js. El contenedor .work-demo se centra con margin: 3rem auto y se adapta a móvil.
+v30	Optimización de imágenes a WebP. El póster del vídeo (517 KB → 35 KB) y el QR del footer (.png → .webp) se convierten con Squoosh. Todas las referencias en index.html, contacto.html y presentacion.html se actualizan. El retrato ya estaba en WebP.
+v31	Mini-juego "Vía de bloques". Tetris con metáfora de escalada, 3 idiomas, récord en localStorage, respeta prefers-reduced-motion. Integrado en index.html como sección "06 · Juego" con un <div id="juego-root">. Fichero único juego.js (9 KB, sin librerías).
+v32	Fix 404 de juego.js + accesibilidad ARIA. El fichero estaba como Juego.js (con mayúscula) y GitHub Pages lo buscaba en minúscula → 404 en consola. Se renombró a juego.js. Se corrigieron los atributos aria-current (a page en vez de true) y el aria-labelledby de la sección del juego (añadido role="region"). También se corrigieron los aria-* de los filtros de proyectos.
+v32.1 → v32.5	Iteración sobre el contraste del chip de proyectos. Lighthouse marcaba .project-preview__tag como contraste insuficiente (por debajo de 4.5:1 en modo claro). Se probaron 5 combinaciones de color/fondo hasta dar con la que pasa WCAG AA con valores literales (blanco #ffffff sobre rojo #c1272d, contraste 6.4:1). Aprendizaje: Lighthouse tiene un falso positivo con las variables CSS; no resuelve var(--accent) al calcular el contraste. Hay que usar valores literales para las parejas fondo/texto donde importa el contraste.
+v32.6 → v32.7	Preload de fuentes + scripts diferidos. Las Google Fonts bloqueaban el render. Se precargan con <link rel="preload"> y se cargan sin bloquear con media="print" onload="this.media='all'". También se aplazan los scripts y se corrige el orden de carga.
+v33	Rediseño de la cabecera + escalador v2 + presas que se iluminan. El nombre del logo pasa a una sola línea (antes ocupaba dos). El escalador de la barra lateral gana detalle: más cuerpo, más movimientos y animación al desplazarse. Las presas activas del rail lateral cambian de color al pasar por su sección. Todo respeta prefers-reduced-motion.
+📊 Lighthouse final
+Estado del portfolio en producción (gabi37smx.github.io/mi-web/):
 
+Categoría	Nota	Objetivo rúbrica
+Performance	91	≥90 ✅
+Accessibility	97	≥90 ✅
+Best Practices	100	≥90 ✅
+SEO	100	— ✅
+Métricas clave:
+
+FCP: 1,6 s
+
+LCP: 2,0 s
+
+TBT: 0 ms
+
+CLS: 0,01
+
+Cambios que subieron la nota:
+
+Convertir el póster del vídeo a WebP con Squoosh (517 KB → 35 KB).
+
+Preload de Google Fonts sin bloquear el render.
+
+fetchpriority="high" + <link rel="preload" as="image"> para el póster.
+
+Valores literales de color en .project-preview__tag (Lighthouse no resuelve variables CSS).
+
+Avisos ignorados conscientemente:
+
+Minify CSS/JS: la rúbrica premia el código legible para la defensa.
+
+Cache lifetimes: GitHub Pages no permite configurar cabeceras.
+
+CSP/HSTS/COOP: son config del servidor; GitHub Pages no las permite.
+
+🙏 Créditos
 Retrato personal: fotografía propia.
 
 Icono de escalador (barra lateral): inspirado en referencias de SVGRepo, adaptado y modificado por mí.
@@ -288,19 +421,28 @@ API del tiempo: Open-Meteo, gratuita y sin clave API.
 
 API de noticias: GNews, plan de estudiante, 1.000 peticiones/día.
 
+Compresión de vídeo: HandBrake (open source).
+
+Optimización de imágenes: Squoosh (open source, se ejecuta en el navegador).
+
 👤 Autor
 Gabriel Vidal Badia
 
 🎓 1º DAM · IES Simarro (Xàtiva, Valencia)
+
 💼 Técnico Superior en Sistemas de Telecomunicación e Informáticos · CFGM SMR · 11 años de experiencia en mantenimiento industrial
+
 🏅 Certificaciones Cisco: CCNA Intro, Ciberseguridad, Junior Cybersecurity Analyst Career Path
+
 🎯 Enfoque: programación, inteligencia artificial y agentes
 
 📫 Contacto: gabvidbad@alu.edu.gva.es
+
 🐙 GitHub: @gabi37smx
+
 💼 LinkedIn: gabriel-vidal-badia
 
 📄 Licencia
 Proyecto personal con fines educativos. Todos los derechos reservados.
 
-Última actualización: 6 de octubre de 2026.
+Última actualización: 8 de octubre de 2026.
