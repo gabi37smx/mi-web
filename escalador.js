@@ -2,7 +2,7 @@
    escalador.js · Escalador animado de la barra lateral (versión 2)
 
    Qué hace, en cristiano:
-   1. Dibujo con más cuerpo: casco, torso, arnés, manos y pies.
+   1. Dibujo con más cuerpo (casco, torso, arnés, manos y pies) en color mostaza.
    2. Mientras haces scroll alterna dos poses (brazo y pierna contrarios).
    3. Al parar se queda colgado y se balancea suave.
    4. Las presas por las que ya ha pasado se quedan iluminadas.
@@ -37,6 +37,12 @@
     /* Un poco más grande que antes (26×32 → 32×40) */
     .climb-climber { width: 32px; height: 40px; }
     @media (max-width: 720px) { .climb-climber { width: 26px; height: 33px; } }
+
+    /* Color mostaza para que destaque sobre la cuerda y las presas rojas.
+       Tema oscuro: el mostaza de tu paleta (--accent-3). Tema claro: un ocre más oscuro, porque el
+       mostaza claro sobre el fondo crema casi no se ve (contraste 2:1; el ocre da 3,5:1). */
+    .climb-climber { color: #a67300; }
+    [data-theme="dark"] .climb-climber { color: var(--accent-3); }
 
     .climb-climber svg { transform-origin: 50% 20%; }
     .climb-climber .cuerpo { stroke-width: 3.4; }
