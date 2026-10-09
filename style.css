@@ -2280,3 +2280,606 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
 :root[data-skin="minecraft"]  .project-preview h3 { font-size: 0.69rem; line-height: 1.3; letter-spacing: 0; }
 :root[data-skin="minecraft"]  .news-title { font-size: 0.63rem; line-height: 1.3; letter-spacing: 0; }
 :root[data-skin="minecraft"]  .skill-icon__label { font-size: 0.57rem; line-height: 1.3; letter-spacing: 0; }
+/* ============================================================================
+   BLOQUE B · OMARCHY · CASOS ESPECIALES
+   ----------------------------------------------------------------------------
+   Overrides de componentes que:
+   · viven en style.css pero necesitan remate (.climb-*, .news-*, .weather-*,
+     .github-activity__*, .climbing-links__*), o
+   · viven inyectados en juego.js / chatbot.js (.arcade__*, .cordada-*) y se
+     sobrescriben desde aquí con especificidad (0,3,0) > (0,1,0) sin tocar JS.
+   Todo bajo :root[data-skin="omarchy"]. Topo intacto.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. JUEGO "VÍA DE BLOQUES" · .arcade__*
+   Especificidad (0,3,0): :root[data-skin="omarchy"] + .arcade__*
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .arcade__screen {
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-skin="omarchy"] .arcade__overlay {
+  border-radius: var(--radius);
+  background: rgba(15, 23, 42, .85);
+  color: #f1f5f9;
+  box-shadow: none;
+}
+:root[data-skin="omarchy"][data-theme="dark"] .arcade__overlay {
+  background: rgba(11, 15, 23, .85);
+}
+
+:root[data-skin="omarchy"] .arcade__overlay-title {
+  font-family: var(--display);
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+:root[data-skin="omarchy"] .arcade__overlay-text {
+  color: rgba(241, 245, 249, .78);
+  font-family: var(--font);
+}
+
+:root[data-skin="omarchy"] .arcade__toast {
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--mono);
+}
+
+:root[data-skin="omarchy"] .arcade__stats {
+  gap: .5rem;
+}
+
+:root[data-skin="omarchy"] .arcade__stat {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  padding: .6rem .8rem;
+}
+
+:root[data-skin="omarchy"] .arcade__stat dt {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+:root[data-skin="omarchy"] .arcade__stat dd {
+  font-family: var(--display);
+  color: var(--text);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.1;
+}
+
+:root[data-skin="omarchy"] .arcade__stats-row {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+:root[data-skin="omarchy"] .arcade__restart {
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  transition: color .2s var(--ease), transform .15s var(--ease), box-shadow .15s var(--ease);
+}
+:root[data-skin="omarchy"] .arcade__restart:hover {
+  color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+:root[data-skin="omarchy"] .arcade__next {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: .5rem;
+}
+
+:root[data-skin="omarchy"] .arcade__next canvas {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  display: block;
+}
+
+:root[data-skin="omarchy"] .arcade__pad {
+  gap: .4rem;
+}
+
+:root[data-skin="omarchy"] .arcade__btn {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease), color .2s var(--ease);
+}
+:root[data-skin="omarchy"] .arcade__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+  color: var(--accent);
+}
+:root[data-skin="omarchy"] .arcade__btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-skin="omarchy"] .arcade__keys {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .8rem;
+}
+
+/* ---------------------------------------------------------------------------
+   2. CHATBOT "CORDADA" · .cordada-*
+   Especificidad (0,3,0). El CSS original vive en chatbot.js.
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .cordada-burbuja {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+}
+:root[data-skin="omarchy"] .cordada-burbuja:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+:root[data-skin="omarchy"] .cordada-panel {
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+:root[data-skin="omarchy"] .cordada-cabecera {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+  padding: 1rem;
+}
+
+:root[data-skin="omarchy"] .cordada-titulo {
+  font-family: var(--display);
+  font-weight: 600;
+  color: var(--text);
+}
+
+:root[data-skin="omarchy"] .cordada-cerrar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  transition: color .2s var(--ease);
+}
+:root[data-skin="omarchy"] .cordada-cerrar:hover { color: var(--accent); }
+
+:root[data-skin="omarchy"] .cordada-msg {
+  padding: .75rem 1rem;
+  border-radius: 18px;
+  font-size: .95rem;
+  max-width: 85%;
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-skin="omarchy"] .cordada-msg--bot {
+  background: var(--surface-2);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+}
+
+:root[data-skin="omarchy"] .cordada-msg--usuario {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-bottom-right-radius: 4px;
+  margin-left: auto;
+}
+
+:root[data-skin="omarchy"] .cordada-escribiendo {
+  display: inline-flex;
+  gap: .25rem;
+  align-items: center;
+}
+
+:root[data-skin="omarchy"] .cordada-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: cordada-fade 1.2s infinite ease-in-out;
+}
+:root[data-skin="omarchy"] .cordada-punto:nth-child(2) { animation-delay: .15s; }
+:root[data-skin="omarchy"] .cordada-punto:nth-child(3) { animation-delay: .3s; }
+
+@keyframes cordada-fade {
+  0%, 80%, 100% { opacity: .3; transform: translateY(0); }
+  40%           { opacity: 1;  transform: translateY(-3px); }
+}
+
+:root[data-skin="omarchy"] .cordada-chips { display: none; }
+:root[data-skin="omarchy"] .cordada-chips.cordada-visibles { display: flex; flex-wrap: wrap; gap: .4rem; }
+
+:root[data-skin="omarchy"] .cordada-chip {
+  border-radius: 999px;
+  padding: .4rem .9rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--text);
+  transition: background .2s var(--ease), color .2s var(--ease);
+}
+:root[data-skin="omarchy"] .cordada-chip:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+:root[data-skin="omarchy"] .cordada-entrada {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  padding: .75rem;
+  gap: .5rem;
+}
+
+:root[data-skin="omarchy"] .cordada-campo {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: .65rem .9rem;
+  color: var(--text);
+  font-family: var(--font);
+  transition: box-shadow .15s var(--ease), border-color .15s var(--ease);
+}
+:root[data-skin="omarchy"] .cordada-campo:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .15);
+  border-color: var(--accent);
+}
+
+:root[data-skin="omarchy"] .cordada-enviar {
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 1px solid var(--line);
+  padding: .6rem 1rem;
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+}
+:root[data-skin="omarchy"] .cordada-enviar:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------------------------------------------------------------------------
+   3. BARRA LATERAL DE ESCALADA · .climb-*
+   El Bloque A ya tocó .climb-hold, .climb-hold__label y .climb-photo img.
+   Aquí rematamos el rail, la cuerda, el escalador y los estados.
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .climb-rail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--line);
+}
+
+:root[data-skin="omarchy"] .climb-rope { display: none; }
+
+:root[data-skin="omarchy"] .climb-hold {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted-2);
+  border: none;
+  box-shadow: none;
+  transition: width .2s var(--ease), height .2s var(--ease),
+              background .2s var(--ease), box-shadow .2s var(--ease);
+}
+:root[data-skin="omarchy"] .climb-hold::before { display: none; }
+
+:root[data-skin="omarchy"] .climb-hold:hover {
+  transform: none;
+  background: var(--accent);
+}
+
+:root[data-skin="omarchy"] .climb-hold.is-active {
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb), .18);
+}
+
+:root[data-skin="omarchy"] .climb-hold.is-passed {
+  background: rgba(var(--accent-rgb), .35);
+}
+
+:root[data-skin="omarchy"] .climb-hold__label {
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: .72rem;
+  padding: .2rem .5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-skin="omarchy"] .climb-climber {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow:
+    0 0 12px rgba(var(--accent-rgb), .55),
+    0 0 0 2px rgba(var(--accent-rgb), .25);
+  transform: translate(-50%, -50%);
+  transition: transform .2s linear;
+}
+
+:root[data-skin="omarchy"] .climb-climber svg { display: none; }
+
+/* ---------------------------------------------------------------------------
+   4. NOTICIAS IA · .news-*
+   El Bloque A ya toca .news-item y .news-source vía :is(...).
+   Aquí rematamos tipografía, hover fino, focus y estados.
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .news-item {
+  padding: 1.25rem;
+  border-radius: 16px;
+  transition: transform .25s cubic-bezier(.4, 0, .2, 1),
+              box-shadow .25s cubic-bezier(.4, 0, .2, 1);
+}
+:root[data-skin="omarchy"] .news-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+}
+:root[data-skin="omarchy"][data-theme="dark"] .news-item:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+}
+
+:root[data-skin="omarchy"] .news-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  border-radius: var(--radius-sm);
+}
+:root[data-skin="omarchy"] .news-link:focus-visible {
+  outline: 3px solid rgba(var(--accent-rgb), .5);
+  outline-offset: 3px;
+}
+
+:root[data-skin="omarchy"] .news-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text);
+  margin: 0 0 .75rem;
+  transition: color .2s var(--ease);
+}
+:root[data-skin="omarchy"] .news-title:hover { color: var(--accent); }
+
+:root[data-skin="omarchy"] .news-source {
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .72rem;
+  text-transform: uppercase;
+  padding: .2rem .6rem;
+  border: none;
+  display: inline-block;
+}
+
+:root[data-skin="omarchy"] :is(.news-loading, .news-empty) {
+  font-family: var(--mono);
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* ---------------------------------------------------------------------------
+   5. WIDGET DEL TIEMPO · .weather-widget__*
+   El Bloque A ya toca el contenedor, el input, el botón y el verdict.
+   Aquí rematamos tipografía y chips específicos.
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .weather-widget {
+  padding: 1.5rem;
+}
+
+:root[data-skin="omarchy"] .weather-widget__head {
+  border-bottom: 1px solid var(--line);
+}
+
+:root[data-skin="omarchy"] .weather-widget__icon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-2);
+  font-size: 1.75rem;
+  flex: none;
+}
+
+:root[data-skin="omarchy"] .weather-widget__temp {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 2.5rem;
+  color: var(--accent);
+}
+
+:root[data-skin="omarchy"] .weather-widget__city {
+  font-family: var(--mono);
+  font-size: .8rem;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: .05em;
+}
+
+:root[data-skin="omarchy"] .weather-widget__meta li {
+  border-bottom: 1px solid var(--line);
+}
+
+:root[data-skin="omarchy"] .weather-widget__search-button {
+  width: 40px;
+  flex: 0 0 40px;
+  border-radius: 50%;
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-skin="omarchy"] .weather-widget__verdict {
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: .82rem;
+  border: none;
+  padding: .5rem .9rem;
+}
+:root[data-skin="omarchy"] .weather-widget__verdict.is-good {
+  background: #10b981;
+  color: #ffffff;
+}
+:root[data-skin="omarchy"] .weather-widget__verdict.is-bad {
+  background: #f59e0b;
+  color: #ffffff;
+}
+:root[data-skin="omarchy"][data-theme="dark"] .weather-widget__verdict.is-good {
+  background: #10b981;
+  color: #ffffff;
+}
+:root[data-skin="omarchy"][data-theme="dark"] .weather-widget__verdict.is-bad {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+/* ---------------------------------------------------------------------------
+   6. WIDGET GITHUB · .github-activity__*
+   El Bloque A ya toca .github-activity__card.
+   Aquí rematamos border-top, tipografía y hover fino.
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .github-activity {
+  border-top: 1px solid var(--line);
+  padding-top: 1.5rem;
+}
+
+:root[data-skin="omarchy"] .github-activity__card {
+  border-radius: 12px;
+  padding: 1rem;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+}
+:root[data-skin="omarchy"] .github-activity__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+}
+:root[data-skin="omarchy"][data-theme="dark"] .github-activity__card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+}
+
+:root[data-skin="omarchy"] .github-activity__name {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--text);
+}
+
+:root[data-skin="omarchy"] .github-activity__desc {
+  font-family: var(--font);
+  font-size: .85rem;
+  color: var(--muted);
+}
+
+:root[data-skin="omarchy"] .github-activity__meta {
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--muted-2);
+}
+
+/* ---------------------------------------------------------------------------
+   7. ZONAS DE ESCALADA · .climbing-links__*
+   El Bloque A ya toca .climbing-links__zone, __icon y __item.
+   Aquí rematamos el chip pill del item y el hover del icono.
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .climbing-links__zone {
+  border-radius: var(--radius-sm);
+  padding: .6rem .85rem;
+}
+
+:root[data-skin="omarchy"] .climbing-links__icon {
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+}
+:root[data-skin="omarchy"] .climbing-links__icon:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+:root[data-skin="omarchy"] .climbing-links__item {
+  border-radius: 999px;
+  padding: .55rem .85rem;
+  transition: background .2s var(--ease), color .2s var(--ease), transform .15s var(--ease);
+}
+:root[data-skin="omarchy"] .climbing-links__item:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+  transform: translateY(-1px);
+}
+
+/* ---------------------------------------------------------------------------
+   8. prefers-reduced-motion · todo lo nuevo del Bloque B
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-skin="omarchy"] .arcade__restart,
+  :root[data-skin="omarchy"] .arcade__btn,
+  :root[data-skin="omarchy"] .cordada-burbuja,
+  :root[data-skin="omarchy"] .cordada-cerrar,
+  :root[data-skin="omarchy"] .cordada-chip,
+  :root[data-skin="omarchy"] .cordada-campo,
+  :root[data-skin="omarchy"] .cordada-enviar,
+  :root[data-skin="omarchy"] .climb-hold,
+  :root[data-skin="omarchy"] .climb-climber,
+  :root[data-skin="omarchy"] .news-item,
+  :root[data-skin="omarchy"] .news-title,
+  :root[data-skin="omarchy"] .github-activity__card,
+  :root[data-skin="omarchy"] .climbing-links__icon,
+  :root[data-skin="omarchy"] .climbing-links__item {
+    transition: none;
+  }
+  :root[data-skin="omarchy"] .cordada-punto { animation: none; }
+  :root[data-skin="omarchy"] :is(
+    .arcade__btn:hover,
+    .arcade__btn:active,
+    .arcade__restart:hover,
+    .cordada-burbuja:hover,
+    .cordada-enviar:hover,
+    .news-item:hover,
+    .github-activity__card:hover,
+    .climbing-links__icon:hover,
+    .climbing-links__item:hover
+  ) { transform: none; }
+}
