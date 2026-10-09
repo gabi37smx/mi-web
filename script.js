@@ -217,7 +217,7 @@ if (toTop) {
 }
 
 /* ============================================================
-   Cursor personalizado · mano abierta / cerrada
+   Cursor personalizado · mano (topo/omarchy) o pico (minecraft)
    ============================================================ */
 
 (function customCursor() {
@@ -230,7 +230,14 @@ if (toTop) {
 
   const hand = document.createElement("div");
   hand.className = "cursor__hand";
-  hand.innerHTML = `
+
+  // Detecta el skin activo. Se reevalúa cada vez que cambia data-skin.
+  function skinActual() {
+    return document.documentElement.getAttribute("data-skin") || "topo";
+  }
+
+  // SVG de la mano (topo / omarchy)
+  const SVG_MANO = `
     <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <g class="hand-open">
         <path d="M9 14V7a2 2 0 1 1 4 0v6"/>
@@ -246,6 +253,95 @@ if (toTop) {
       </g>
     </svg>
   `;
+
+  // SVG del pico de diamante (minecraft) · pixel art con <rect>
+  // Dos frames: reposo (diagonal) y picando (girado).
+  // Paleta: cabeza #5DECF5 (diamante), brillo #B8F8FC, mango #8B6239,
+  //         sombra mango #5A3A1E, contorno #1a1a1a.
+    // SVG de la espada de diamante (minecraft) · pixel art
+  // Espada clásica de Minecraft: hoja cian, guarda marrón, empuñadura oscura.
+  // Paleta: hoja #5DECF5, brillo #B8F8FC, sombra hoja #3BA8B0,
+  //         guarda #8B6239, pomo #5A3A1E, contorno #1a1a1a.
+    // SVG de la espada de diamante (minecraft) · pixel art auténtico
+  // Silueta de 20×20 aprox, diagonal arriba-izq a abajo-der.
+  // Hoja cian, guarda marrón, mango oscuro con pomo de diamante.
+  const SVG_ESPADA = `
+    <svg viewBox="1 1 24 24" shape-rendering="crispEdges" aria-hidden="true">
+      <!-- HOJA (diamante) -->
+      <g fill="#5DECF5">
+        <rect x="2"  y="2"  width="3" height="3"/>
+        <rect x="4"  y="4"  width="3" height="3"/>
+        <rect x="6"  y="6"  width="3" height="3"/>
+        <rect x="8"  y="8"  width="3" height="3"/>
+        <rect x="10" y="10" width="3" height="3"/>
+        <rect x="12" y="12" width="3" height="3"/>
+      </g>
+      <!-- BRILLO (línea superior-izq de la hoja) -->
+      <g fill="#B8F8FC">
+        <rect x="2"  y="2"  width="2" height="1"/>
+        <rect x="4"  y="4"  width="2" height="1"/>
+        <rect x="6"  y="6"  width="2" height="1"/>
+        <rect x="8"  y="8"  width="2" height="1"/>
+        <rect x="10" y="10" width="2" height="1"/>
+        <rect x="12" y="12" width="2" height="1"/>
+      </g>
+      <!-- SOMBRA (línea inferior-der de la hoja) -->
+      <g fill="#3BA8B0">
+        <rect x="4"  y="6"  width="1" height="1"/>
+        <rect x="6"  y="8"  width="1" height="1"/>
+        <rect x="8"  y="10" width="1" height="1"/>
+        <rect x="10" y="12" width="1" height="1"/>
+        <rect x="12" y="14" width="1" height="1"/>
+        <rect x="14" y="14" width="1" height="1"/>
+      </g>
+      <!-- GUARDA (cruz) -->
+      <g fill="#8B6239">
+        <rect x="9"  y="15" width="3" height="2"/>
+        <rect x="12" y="15" width="3" height="2"/>
+        <rect x="15" y="15" width="2" height="2"/>
+        <rect x="17" y="13" width="2" height="3"/>
+        <rect x="17" y="16" width="2" height="3"/>
+      </g>
+      <!-- SOMBRA de la guarda -->
+      <g fill="#5A3A1E">
+        <rect x="9"  y="16" width="8" height="1"/>
+        <rect x="18" y="14" width="1" height="2"/>
+        <rect x="18" y="17" width="1" height="2"/>
+      </g>
+      <!-- MANGO -->
+      <g fill="#5A3A1E">
+        <rect x="16" y="17" width="2" height="2"/>
+        <rect x="18" y="19" width="2" height="2"/>
+        <rect x="20" y="21" width="2" height="2"/>
+      </g>
+      <!-- POMO (diamante pequeño al final) -->
+      <g fill="#5DECF5">
+        <rect x="21" y="22" width="3" height="3"/>
+      </g>
+      <g fill="#B8F8FC">
+        <rect x="21" y="22" width="2" height="1"/>
+      </g>
+      <!-- CONTORNO (silueta negra por encima de todo) -->
+      <g fill="none" stroke="#1a1a1a" stroke-width="0.6">
+        <rect x="1.5" y="1.5" width="4" height="4"/>
+        <rect x="3.5" y="3.5" width="4" height="4"/>
+        <rect x="5.5" y="5.5" width="4" height="4"/>
+        <rect x="7.5" y="7.5" width="4" height="4"/>
+        <rect x="9.5" y="9.5" width="4" height="4"/>
+        <rect x="11.5" y="11.5" width="4" height="4"/>
+      </g>
+    </svg>
+  `;
+
+  // Repinta el cursor según el skin
+
+  function pintarCursor() {
+    const skin = skinActual();
+    hand.innerHTML = skin === "minecraft" ? SVG_ESPADA : SVG_MANO;
+    wrap.classList.toggle("cursor--minecraft", skin === "minecraft");
+  }
+  
+  pintarCursor();
 
   wrap.appendChild(hand);
   document.body.appendChild(wrap);
@@ -305,6 +401,13 @@ if (toTop) {
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
+
+  // Redibuja el cursor al cambiar de skin en caliente
+  const observer = new MutationObserver(() => pintarCursor());
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-skin"]
+  });
 })();
 
 /* ============================================================

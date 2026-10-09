@@ -201,7 +201,6 @@ mi-web/
 │   └── poster.webp         ← Póster del vídeo (WebP, 35 KB)
 ├── image/
 │   ├── gabriel.webp        ← Retrato personal (WebP, 45 KB)
-│   ├── gabriel-560.webp    ← Retrato en resolución pequeña (WebP, 18 KB)
 │   ├── escalada-roca.webp  ← Foto escalando en roca (WebP)
 │   └── qr-web.webp         ← QR personalizado (WebP)
 ├── .nojekyll               ← Evita el procesado de Jekyll en GitHub Pages

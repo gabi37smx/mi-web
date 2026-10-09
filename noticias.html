@@ -106,6 +106,19 @@
           <option value="val">VA</option>
           <option value="en">EN</option>
         </select>
+        <button class="sound-toggle" id="soundToggle" type="button"
+                aria-label="Activar sonidos" aria-pressed="false" hidden>
+          <svg class="icon icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4z"/>
+            <line x1="22" y1="9" x2="16" y2="15"/>
+            <line x1="16" y1="9" x2="22" y2="15"/>
+          </svg>
+          <svg class="icon icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4z"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
         <button id="themeToggle" class="theme-toggle" aria-label="Cambiar a modo oscuro" aria-pressed="false" title="Cambiar tema">
           <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
@@ -170,6 +183,7 @@
   <script src="language.js"></script>
   <script src="script.js"></script>
   <script src="skin-picker.js" defer></script>
+  <script src="easter-eggs.js" defer></script>
   <script src="escalador.js" defer></script>
   <script src="chatbot.js" defer></script>
   <script src="noticias.js" defer></script>

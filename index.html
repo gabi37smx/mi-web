@@ -165,6 +165,19 @@
           <option value="val">VA</option>
           <option value="en">EN</option>
         </select>
+                <button class="sound-toggle" id="soundToggle" type="button"
+                aria-label="Activar sonidos" aria-pressed="false" hidden>
+          <svg class="icon icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4z"/>
+            <line x1="22" y1="9" x2="16" y2="15"/>
+            <line x1="16" y1="9" x2="22" y2="15"/>
+          </svg>
+          <svg class="icon icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4z"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
         <button id="themeToggle" class="theme-toggle" aria-label="Cambiar a modo oscuro" aria-pressed="false" title="Cambiar tema">
           <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
@@ -225,7 +238,7 @@
 
         <div class="about-layout">
           <figure class="about-photo reveal">
-            <img src="image/gabriel.webp" srcset="image/gabriel-560.webp 560w, image/gabriel.webp 800w" sizes="280px" alt="Gabriel Vidal Badia sonriendo, con americana azul y camisa blanca, sobre fondo gris claro" width="800" height="993" loading="lazy" />
+          <img src="image/gabriel.webp" alt="Gabriel Vidal Badia sonriendo, con americana azul y camisa blanca, sobre fondo gris claro" width="800" height="993" loading="lazy" />  
           </figure>
 
           <div class="about-text reveal">
@@ -395,20 +408,21 @@
         </div>
 
         <div class="stack reveal" aria-label="Tecnologías">
-          <h3 class="stack-title">Stack en aprendizaje</h3>
-          <ul class="stack-list">
-            <li><span>Java</span></li>
-            <li><span>Python</span></li>
-            <li><span>JavaScript</span></li>
-            <li><span>HTML5</span></li>
-            <li><span>CSS3</span></li>
-            <li><span>SQL</span></li>
-            <li><span>Git</span></li>
-            <li><span>Redes</span></li>
-            <li><span>Ciberseguridad</span></li>
-            <li><span>IA</span></li>
-            <li><span>Agentes</span></li>
-          </ul>
+            <h3 class="stack-title">Stack en aprendizaje</h3>
+            <ul class="stack-list">
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">☕</span><span class="stack-slot__name">Java</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🐍</span><span class="stack-slot__name">Python</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🟨</span><span class="stack-slot__name">JavaScript</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🧱</span><span class="stack-slot__name">HTML5</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🎨</span><span class="stack-slot__name">CSS3</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🗄️</span><span class="stack-slot__name">SQL</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🐙</span><span class="stack-slot__name">Git</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🌐</span><span class="stack-slot__name">Redes</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🔒</span><span class="stack-slot__name">Ciberseguridad</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🤖</span><span class="stack-slot__name">IA</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🧠</span><span class="stack-slot__name">Agentes</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🐧</span><span class="stack-slot__name">Linux</span></li>
+            </ul>
         </div>
       </div>
     </section>
@@ -703,15 +717,24 @@
       </div>
     </div>
 
-    <div class="container footer-bottom">
-      <p><small>© <span id="year"></span> Gabriel Vidal Badia · Web personal con HTML, CSS y JS puros.</small></p>
+        <div class="container footer-bottom">
+      <div class="footer-bottom__left">
+        <p><small>© <span id="year"></span> Gabriel Vidal Badia · Web personal con HTML, CSS y JS puros.</small></p>
+        <p class="footer-secreto" title="Los clásicos nunca mueren">
+          <span class="footer-secreto__icono" aria-hidden="true">⛏</span>
+          <span class="footer-secreto__texto">Pista:</span>
+          <span class="footer-secreto__teclas" aria-label="Arriba arriba abajo abajo izquierda derecha izquierda derecha B A">↑ ↑ ↓ ↓ ← → ← → B A</span>
+        </p>
+      </div>
       <button id="toTop" class="to-top" aria-label="Volver arriba">↑</button>
     </div>
+  </footer>
   </footer>
 
   <script src="language.js" defer></script>
   <script src="script.js" defer></script>
   <script src="skin-picker.js" defer></script>
+  <script src="easter-eggs.js" defer></script>
   <script src="escalador.js" defer></script>
   <script src="chatbot.js" defer></script>
   <script src="juego.js" defer></script>

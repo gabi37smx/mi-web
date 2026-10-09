@@ -2836,61 +2836,73 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
 }
 
 /* ============================================================================
-   SKIN · MINECRAFT · variables (paleta basada en bloques reales)
-   ============================================================================
-   Claro = "Cabaña" (Spruce, Birch, Stone Bricks).
-   Oscuro = "Cueva" (Deepslate, Diamond, Glowstone).
-   Las variables --mc-* son NUEVAS, específicas de este skin.
+   SKIN · MINECRAFT · BLOQUE CONSOLIDADO (v2)
+   ----------------------------------------------------------------------------
+   Un único bloque limpio. Sustituye a:
+     · variables Minecraft (light + dark)
+     · BLOQUE C1 (bisel + texturas + slots)
+     · BLOQUE C2 (Steve, torre, slots, stats)
+     · todos los fixes apilados (terminal, paleta Prismarine, nav, stats…)
+   Todo va bajo :root[data-skin="minecraft"]. Topo y Omarchy intactos.
    ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1 · VARIABLES
+   --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"] {
   font-size: 112.5%;
   --radius: 0; --radius-sm: 0;
   --font: "VT323", "Courier New", monospace;
-  --display: "Press Start 2P", "Courier New", monospace;
+  --display: "Monocraft", "Courier New", monospace;
   --mono: "VT323", "Courier New", monospace;
 
-  /* Paleta "Cabaña" (light) */
-  --bg:        #735531;   /* Spruce Planks */
-  --bg-soft:   #745A34;   /* Stripped Spruce */
-  --surface:   #E4D5B0;   /* Birch Planks (legibilidad) */
-  --surface-2: #D4C498;   /* Birch más oscuro */
+  /* Light · Cabaña acuática (Prismarine / Copper / Sea Lantern) */
+  --bg:        #62A292;
+  --bg-soft:   #63AC9E;
+  --surface:   #ACC8BF;
+  --surface-2: #A0BFB5;
   --panel-soft: rgba(26,26,26,.08);
-  --text:      #1a1a1a;
-  --muted:     #3e2912;
-  --muted-2:   #5a4a2e;
-  --line:      #373737;   /* Deepslate Tiles */
-  --accent:    #976253;   /* Bricks */
-  --accent-2:  #52A385;   /* Copper Oxidized */
-  --accent-3:  #F9D67D;   /* Glowstone */
-  --accent-rgb: 151, 98, 83;
+  --text:      #F4FBF8;
+  --muted:     #DCE9E4;
+  --muted-2:   #B8CFC7;
+  --line:      #345C4C;
+  --accent:    #345C4C;
+  --accent-2:  #52A385;
+  --accent-3:  #ACC8BF;
+  --accent-rgb: 52, 92, 76;
   --accent-2-rgb: 82, 163, 133;
-  --on-accent: #FFFFFF;
+  --on-accent: #F4FBF8;
 
-  --grid-line: rgba(26,26,26,.1);
-  --header-bg: rgba(115,85,49,.92);
-  --header-bg-scrolled: rgba(115,85,49,.98);
+  --grid-line: rgba(26,26,26,.08);
+  --header-bg: rgba(98,162,146,.92);
+  --header-bg-scrolled: rgba(98,162,146,.98);
 
   --shadow-sm: 2px 2px 0 #1a1a1a;
   --shadow:    4px 4px 0 #1a1a1a;
   --logo-shadow: 2px 2px 0 #1a1a1a;
   --btn-primary-shadow: 3px 3px 0 #1a1a1a;
   --btn-primary-shadow-hover: 5px 5px 0 #1a1a1a;
-
   --card-glow: transparent;
-  --timeline-dot-ring: rgba(151,98,83,.2);
+  --timeline-dot-ring: rgba(52,92,76,.25);
   --color-scheme: light;
 
-  /* Colores del bisel Minecraft */
+  /* Bisel GUI Minecraft */
   --mc-btn-bg:      #8b8b8b;
   --mc-btn-bg-hover:#7a7a7a;
   --mc-bevel-light: #b8b8b8;
   --mc-bevel-dark:  #5a5a5a;
   --mc-border-outer:#1a1a1a;
   --mc-slot-bg:     #c6c6c6;
+
+  /* Colores puntuales del skin */
+  --mc-lava:   #FF8A1F;   /* naranja Lava (acento fuerte sobre fondo) */
+  --mc-red:    #8a1f14;   /* cuerda Redstone en light */
+  --mc-green:  #0E4F30;   /* verde musgo para terminal light */
+  --mc-red-t:  #7A1F14;   /* rojo oscuro terminal light */
 }
 
 :root[data-skin="minecraft"][data-theme="dark"] {
-  --bg:        #373737;   /* Deepslate Tiles */
+  --bg:        #373737;
   --bg-soft:   #2b2b2b;
   --surface:   #4c4c4c;
   --surface-2: #5a5a5a;
@@ -2899,7 +2911,7 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   --muted:     #B5B5B5;
   --muted-2:   #8A8A8A;
   --line:      #1a1a1a;
-  --accent:    #5DECF5;   /* Diamond */
+  --accent:    #5DECF5;
   --accent-2:  #52A385;
   --accent-3:  #F9D67D;
   --accent-rgb: 93, 236, 245;
@@ -2915,7 +2927,6 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   --logo-shadow: 2px 2px 0 #000;
   --btn-primary-shadow: 3px 3px 0 #000;
   --btn-primary-shadow-hover: 5px 5px 0 #000;
-
   --timeline-dot-ring: rgba(93,236,245,.2);
   --color-scheme: dark;
 
@@ -2925,40 +2936,43 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   --mc-bevel-dark:  #2a2a2a;
   --mc-border-outer:#000000;
   --mc-slot-bg:     #2b2b2b;
+
+  --mc-lava:   #FF8A1F;
+  --mc-red:    #FF8A1F;
+  --mc-green:  #52A385;
+  --mc-red-t:  #FF8A1F;
 }
 
-/* Esquinas rectas en todo el skin (menos el conmutador de skins) */
+/* ---------------------------------------------------------------------------
+   2 · BASE · esquinas rectas + tipografía Monocraft
+   --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"] *:not(.skin-picker *) { border-radius: 0; }
-
-/* Press Start 2P es muy ancha: se reducen los títulos para que no desborden */
-:root[data-skin="minecraft"] :is(h1, h2, h3, h4) { line-height: 1.4; letter-spacing: 0; text-transform: none; }
+:root[data-skin="minecraft"] :is(h1, h2, h3, h4) {
+  line-height: 1.4; letter-spacing: 0; text-transform: none;
+}
 :root[data-skin="minecraft"] h1 { font-size: clamp(1.4rem, 3.6vw, 2.1rem); }
 :root[data-skin="minecraft"] h2 { font-size: clamp(1.05rem, 2.6vw, 1.6rem); }
 :root[data-skin="minecraft"] h3 { font-size: .95rem; }
 :root[data-skin="minecraft"] h4 { font-size: .85rem; }
-:root[data-skin="minecraft"] .logo-mark { font-size: 0.57rem; line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .logo-text { font-size: 0.63rem; line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .hero-title { font-size: clamp(1.56rem, 3.9vw, 3rem); line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .stat strong { font-size: 1.08rem; line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .weather-widget__title { font-size: 0.63rem; line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .weather-widget__temp { font-size: 1.5rem; line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .contact-title { font-size: clamp(1.32rem, 3vw, 2.16rem); line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .projects-title { font-size: clamp(1.32rem, 3vw, 2.16rem); line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .project-card__title { font-size: 0.75rem; line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .project-preview h3 { font-size: 0.69rem; line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .news-title { font-size: 0.63rem; line-height: 1.3; letter-spacing: 0; }
-:root[data-skin="minecraft"] .skill-icon__label { font-size: 0.57rem; line-height: 1.3; letter-spacing: 0; }
 
-/* ============================================================================
-   BLOQUE C1 · MINECRAFT · bisel 4-lados + texturas pixel art + slots
-   ============================================================================ */
+:root[data-skin="minecraft"] .logo-mark { font-size: .65rem; line-height: 1.3; width: 42px; height: 42px; }
+:root[data-skin="minecraft"] .logo-text { font-size: .85rem; line-height: 1.2; letter-spacing: .02em; }
+:root[data-skin="minecraft"] .hero-title { font-size: clamp(1.56rem, 3.9vw, 3rem); line-height: 1.3; }
+:root[data-skin="minecraft"] .weather-widget__title { font-size: .63rem; line-height: 1.3; }
+:root[data-skin="minecraft"] .weather-widget__temp { font-size: 1.5rem; line-height: 1.3; }
+:root[data-skin="minecraft"] .contact-title,
+:root[data-skin="minecraft"] .projects-title { font-size: clamp(1.32rem, 3vw, 2.16rem); line-height: 1.3; }
+:root[data-skin="minecraft"] .project-card__title { font-size: .75rem; line-height: 1.3; }
+:root[data-skin="minecraft"] .project-preview h3 { font-size: .69rem; line-height: 1.3; }
+:root[data-skin="minecraft"] .news-title { font-size: .63rem; line-height: 1.3; }
+:root[data-skin="minecraft"] .skill-icon__label { font-size: .57rem; line-height: 1.3; }
 
 /* ---------------------------------------------------------------------------
-   1. TEXTURA DEL BODY · tierra sutil (patrón 8x8 pixelado)
+   3 · TEXTURAS DE FONDO · body + header
    --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"] body {
   background-color: var(--bg);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%23735531'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%235a421f' opacity='.35'/%3E%3Crect x='3' y='1' width='1' height='1' fill='%235a421f' opacity='.3'/%3E%3Crect x='6' y='0' width='1' height='1' fill='%238a6a3f' opacity='.25'/%3E%3Crect x='1' y='3' width='1' height='1' fill='%238a6a3f' opacity='.25'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%235a421f' opacity='.3'/%3E%3Crect x='7' y='5' width='1' height='1' fill='%235a421f' opacity='.3'/%3E%3Crect x='2' y='6' width='1' height='1' fill='%238a6a3f' opacity='.25'/%3E%3Crect x='5' y='7' width='1' height='1' fill='%238a6a3f' opacity='.25'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%2362A292'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23345C4C' opacity='.22'/%3E%3Crect x='3' y='1' width='1' height='1' fill='%23345C4C' opacity='.18'/%3E%3Crect x='6' y='0' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3Crect x='1' y='3' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%23345C4C' opacity='.18'/%3E%3Crect x='7' y='5' width='1' height='1' fill='%23345C4C' opacity='.18'/%3E%3Crect x='2' y='6' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3Crect x='5' y='7' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3C/svg%3E");
   background-size: 64px 64px;
 }
 :root[data-skin="minecraft"][data-theme="dark"] body {
@@ -2967,9 +2981,6 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   background-size: 64px 64px;
 }
 
-/* ---------------------------------------------------------------------------
-   2. CABECERA · borde inferior grueso + textura sutil de piedra
-   --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"] .site-header {
   border-bottom: 4px solid var(--mc-border-outer);
   backdrop-filter: none;
@@ -2979,10 +2990,10 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
 }
 
 /* ---------------------------------------------------------------------------
-   3. BOTONES · bisel 4-lados con hundimiento al hover
+   4 · BOTONES · bisel 4-lados
    --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"] :is(
-  .btn, .nav-cta, .filter-btn, .arcade__btn, .arcade__restart,
+  .btn, .nav-cta, .nav-link, .filter-btn, .arcade__btn, .arcade__restart,
   .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
   .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn
 ) {
@@ -2990,49 +3001,62 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   color: #1a1a1a;
   border: 3px solid;
   border-color:
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light);
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
   box-shadow:
     0 0 0 2px var(--mc-border-outer),
-    4px 4px 0 2px rgba(0,0,0,.35);
+    3px 3px 0 2px rgba(0,0,0,.35);
   border-radius: 0;
   font-family: var(--display);
   text-transform: uppercase;
-  letter-spacing: .04em;
+  letter-spacing: .02em;
   transition: transform 100ms steps(2), box-shadow 100ms steps(2);
 }
-
+:root[data-skin="minecraft"] .nav-link {
+  padding: .45rem .65rem;
+  font-size: .62rem;
+  white-space: nowrap;
+}
+:root[data-skin="minecraft"] .nav-cta {
+  padding: .5rem .85rem;
+  font-size: .68rem;
+}
 :root[data-skin="minecraft"] :is(
-  .btn, .nav-cta, .filter-btn, .arcade__btn, .arcade__restart,
+  .btn, .nav-cta, .nav-link, .filter-btn, .arcade__btn, .arcade__restart,
   .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
   .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn
 ):hover {
   background: var(--mc-btn-bg-hover);
   border-color:
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light)
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark);
+    var(--mc-bevel-dark)  var(--mc-bevel-light)
+    var(--mc-bevel-light) var(--mc-bevel-dark);
   transform: translate(2px, 2px);
   box-shadow:
     0 0 0 2px var(--mc-border-outer),
-    2px 2px 0 2px rgba(0,0,0,.35);
+    1px 1px 0 2px rgba(0,0,0,.35);
 }
 
-/* El skin-picker sigue circular (es el conmutador) */
-:root[data-skin="minecraft"] .skin-picker__btn { border-radius: 50%; }
+/* Conmutador de skin: circular (es especial) */
+:root[data-skin="minecraft"] .skin-picker__btn,
 :root[data-skin="minecraft"] .skin-picker__opt { border-radius: 50%; }
 
-/* Iconos de los toggles en tinta oscura */
+/* Iconos de los toggles en tinta oscura (light) */
 :root[data-skin="minecraft"] .theme-toggle .icon,
 :root[data-skin="minecraft"] .nav-toggle span { color: #1a1a1a; }
 :root[data-skin="minecraft"] .nav-toggle span { background: #1a1a1a; }
 
-/* En dark, texto claro sobre gris oscuro */
+/* Estado activo del nav-link */
+:root[data-skin="minecraft"] .nav-link[aria-current="true"],
+:root[data-skin="minecraft"] .nav-link[aria-current="page"]:not(.nav-cta) {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+:root[data-skin="minecraft"] .nav-link[aria-current="true"]::after,
+:root[data-skin="minecraft"] .nav-link[aria-current="page"]:not(.nav-cta)::after { content: none; }
+
+/* Dark: texto claro sobre gris oscuro */
 :root[data-skin="minecraft"][data-theme="dark"] :is(
-  .btn, .nav-cta, .filter-btn, .arcade__btn, .arcade__restart,
+  .btn, .nav-cta, .nav-link, .filter-btn, .arcade__btn, .arcade__restart,
   .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
   .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn
 ) { color: #E9ECEC; }
@@ -3041,27 +3065,22 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
 :root[data-skin="minecraft"][data-theme="dark"] .nav-toggle span { background: #E9ECEC; }
 
 /* ---------------------------------------------------------------------------
-   4. TARJETAS / PANELES · bisel 4-lados + elevación sutil al hover
+   5 · TARJETAS / PANELES · bisel + elevación al hover
    --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"] :is(
   .card, .project-card, .cert-card, .like-card, .about-card,
   .contact-form-wrap, .contact-aside, .news-item, .project-preview,
-  .weather-widget, .stat, .github-activity__card, .arcade__stat,
-  .cordada-panel
+  .weather-widget, .github-activity__card, .arcade__stat, .cordada-panel
 ) {
   background: var(--surface);
   border: 3px solid;
   border-color:
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light);
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
   box-shadow:
     0 0 0 2px var(--mc-border-outer),
     6px 6px 0 2px rgba(0,0,0,.35);
-  border-radius: 0;
 }
-
 :root[data-skin="minecraft"] :is(
   .card, .project-card, .cert-card, .like-card, .news-item,
   .project-preview, .github-activity__card
@@ -3072,15 +3091,13 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
     8px 8px 0 2px rgba(0,0,0,.35);
   transition: transform 100ms steps(2), box-shadow 100ms steps(2);
 }
-
-/* Tarjetas grandes: punto sutil de textura */
 :root[data-skin="minecraft"] :is(.about-card, .contact-form-wrap) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='none'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23000000' opacity='.05'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%23ffffff' opacity='.05'/%3E%3C/svg%3E");
   background-size: 16px 16px;
 }
 
 /* ---------------------------------------------------------------------------
-   5. INPUTS · apariencia slot de inventario (bisel invertido, hundido)
+   6 · INPUTS · slot de inventario (bisel invertido, hundido)
    --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"] :is(
   .contact-form input, .contact-form select, .contact-form textarea,
@@ -3090,18 +3107,14 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   color: #1a1a1a;
   border: 3px solid;
   border-color:
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light)
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark);
+    var(--mc-bevel-dark)  var(--mc-bevel-light)
+    var(--mc-bevel-light) var(--mc-bevel-dark);
   box-shadow:
     0 0 0 2px var(--mc-border-outer),
     inset 2px 2px 0 rgba(0,0,0,.2);
-  border-radius: 0;
   font-family: var(--mono);
   font-size: 1.05rem;
 }
-
 :root[data-skin="minecraft"] :is(
   .contact-form input, .contact-form select, .contact-form textarea,
   .weather-widget__search input, .cordada-campo, .language-select
@@ -3111,7 +3124,6 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
     0 0 0 2px var(--accent),
     inset 2px 2px 0 rgba(0,0,0,.2);
 }
-
 :root[data-skin="minecraft"][data-theme="dark"] :is(
   .contact-form input, .contact-form select, .contact-form textarea,
   .weather-widget__search input, .cordada-campo, .language-select
@@ -3119,972 +3131,177 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   background: var(--mc-slot-bg);
   color: #E9ECEC;
 }
+:root[data-skin="minecraft"] :is(.contact-form input, .contact-form textarea)::placeholder { color: #4a4a4a; opacity: 1; }
+:root[data-skin="minecraft"][data-theme="dark"] :is(.contact-form input, .contact-form textarea)::placeholder { color: #b5b5b5; opacity: 1; }
 
+/* ---------------------------------------------------------------------------
+   7 · ICONOS COMO SLOTS
+   --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"] :is(
-  .contact-form input, .contact-form textarea
-)::placeholder { color: #4a4a4a; opacity: 1; }
-:root[data-skin="minecraft"][data-theme="dark"] :is(
-  .contact-form input, .contact-form textarea
-)::placeholder { color: #b5b5b5; opacity: 1; }
-
-/* ---------------------------------------------------------------------------
-   6. ESCALADA · ajustes básicos (los frikis van en C2)
-   --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"] .climb-hold {
-  width: 16px;
-  height: 16px;
-  border-radius: 0;
-  background: var(--mc-bevel-light);
-  border: 2px solid var(--mc-border-outer);
-  box-shadow: 2px 2px 0 rgba(0,0,0,.3);
-}
-:root[data-skin="minecraft"] .climb-hold::before { display: none; }
-:root[data-skin="minecraft"] .climb-hold:hover { transform: scale(1.15); }
-:root[data-skin="minecraft"] .climb-hold.is-active {
-  background: var(--accent);
-  box-shadow:
-    2px 2px 0 rgba(0,0,0,.3),
-    0 0 0 3px rgba(var(--accent-rgb), .35);
-}
-
-:root[data-skin="minecraft"] .climb-hold__label {
-  background: var(--surface);
-  color: var(--text);
-  border: 2px solid var(--mc-border-outer);
-  border-radius: 0;
-  font-family: var(--mono);
-  font-size: .78rem;
-  padding: .2rem .5rem;
-  box-shadow: 2px 2px 0 var(--mc-border-outer);
-}
-
-/* ---------------------------------------------------------------------------
-   7. prefers-reduced-motion · apaga todo lo nuevo del Bloque C1
-   --------------------------------------------------------------------------- */
-@media (prefers-reduced-motion: reduce) {
-  :root[data-skin="minecraft"] :is(
-    .btn, .nav-cta, .filter-btn, .arcade__btn, .arcade__restart,
-    .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
-    .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn,
-    .card, .project-card, .cert-card, .like-card, .news-item,
-    .project-preview, .github-activity__card, .climb-hold
-  ) { transition: none; }
-
-  :root[data-skin="minecraft"] :is(
-    .btn, .nav-cta, .filter-btn, .arcade__btn, .arcade__restart,
-    .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
-    .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn
-  ):hover {
-    transform: none;
-    box-shadow:
-      0 0 0 2px var(--mc-border-outer),
-      4px 4px 0 2px rgba(0,0,0,.35);
-  }
-
-  :root[data-skin="minecraft"] :is(
-    .card, .project-card, .cert-card, .like-card, .news-item,
-    .project-preview, .github-activity__card
-  ):hover { transform: none; }
-
-  :root[data-skin="minecraft"] .climb-hold:hover { transform: none; }
-  :root[data-skin="minecraft"] .climb-hold.is-active {
-    box-shadow: 2px 2px 0 rgba(0,0,0,.3);
-  }
-}
-/* ---------------------------------------------------------------------------
-   ESCALADOR · recoloreado forzado con filter (funciona con fill o stroke)
-   --------------------------------------------------------------------------- */
-
-/* --- Light: naranja Lava #FF8A1F con contorno simulado --- */
-:root[data-skin="minecraft"] .climb-climber {
-  /* Convierte cualquier SVG a negro puro, luego lo recolorea a naranja Lava.
-     Fórmula estándar: brightness(0) → negro; luego cadena sepia/hue/sat. */
-  filter:
-    brightness(0) saturate(100%)
-    invert(62%) sepia(74%) saturate(1900%) hue-rotate(1deg) brightness(103%) contrast(101%)
-    drop-shadow(1px 1px 0 #1a1a1a)
-    drop-shadow(-1px -1px 0 #1a1a1a)
-    drop-shadow(1px -1px 0 #1a1a1a)
-    drop-shadow(-1px 1px 0 #1a1a1a);
-}
-:root[data-skin="minecraft"] .climb-climber svg { color: #FF8A1F; }
-
-/* Cuerda en light: rojo Redstone oscuro para que se vea sobre Spruce */
-:root[data-skin="minecraft"] .climb-rope {
-  color: #8a1f14;
-  opacity: .9;
-  filter: drop-shadow(0 0 0 #1a1a1a);
-}
-
-/* --- Dark: mismo naranja, contorno negro puro --- */
-:root[data-skin="minecraft"][data-theme="dark"] .climb-climber {
-  filter:
-    brightness(0) saturate(100%)
-    invert(62%) sepia(74%) saturate(1900%) hue-rotate(1deg) brightness(103%) contrast(101%)
-    drop-shadow(1px 1px 0 #000)
-    drop-shadow(-1px -1px 0 #000)
-    drop-shadow(1px -1px 0 #000)
-    drop-shadow(-1px 1px 0 #000);
-}
-:root[data-skin="minecraft"][data-theme="dark"] .climb-climber svg { color: #FF8A1F; }
-
-:root[data-skin="minecraft"][data-theme="dark"] .climb-rope {
-  color: #FF8A1F;
-  opacity: .7;
-}
-/* Refuerzo del escalador SOLO en light, para que despegue del marrón Spruce */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .climb-climber {
-  filter:
-    brightness(0) saturate(100%)
-    invert(58%) sepia(95%) saturate(2200%) hue-rotate(357deg) brightness(108%) contrast(105%)
-    drop-shadow(2px 0 0 #1a1a1a)
-    drop-shadow(-2px 0 0 #1a1a1a)
-    drop-shadow(0 2px 0 #1a1a1a)
-    drop-shadow(0 -2px 0 #1a1a1a);
-}
-/* ============================================================================
-   FIX DEFINITIVO · Terminal de Minecraft legible en light y dark
-   ----------------------------------------------------------------------------
-   Va al final del archivo para ganar en cascada. Machaca cualquier regla
-   previa de .term-* y .terminal--typing .term-*.
-   En light: colores oscuros saturados sobre Birch (#E4D5B0).
-   En dark: acentos vivos sobre Deepslate (#373737).
-   ============================================================================ */
-
-/* --- LIGHT: colores oscuros y saturados --- */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-prompt,
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-prompt {
-  color: #1a1a1a;
-}
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-var,
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-var {
-  color: #B0000F;   /* rojo Redstone intenso */
-  font-weight: 700;
-}
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-fn,
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-fn {
-  color: #0E5C1A;   /* verde esmeralda oscuro */
-  font-weight: 700;
-}
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-ok,
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-ok {
-  color: #0E5C1A;
-  font-weight: 700;
-}
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-cursor,
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-cursor {
-  color: #1a1a1a;
-}
-
-/* --- DARK: acentos vivos tipo Diamante / Glowstone / Cobre --- */
-:root[data-skin="minecraft"][data-theme="dark"] .term-prompt,
-:root[data-skin="minecraft"][data-theme="dark"] .terminal--typing .term-prompt {
-  color: #5DECF5;   /* Diamond */
-}
-:root[data-skin="minecraft"][data-theme="dark"] .term-var,
-:root[data-skin="minecraft"][data-theme="dark"] .terminal--typing .term-var {
-  color: #FF8A1F;   /* Lava Orange */
-  font-weight: 700;
-}
-:root[data-skin="minecraft"][data-theme="dark"] .term-fn,
-:root[data-skin="minecraft"][data-theme="dark"] .terminal--typing .term-fn {
-  color: #F9D67D;   /* Glowstone */
-  font-weight: 700;
-}
-:root[data-skin="minecraft"][data-theme="dark"] .term-ok,
-:root[data-skin="minecraft"][data-theme="dark"] .terminal--typing .term-ok {
-  color: #52A385;   /* Copper Oxidized */
-  font-weight: 700;
-}
-:root[data-skin="minecraft"][data-theme="dark"] .term-cursor,
-:root[data-skin="minecraft"][data-theme="dark"] .terminal--typing .term-cursor {
-  color: #5DECF5;
-}
-/* ============================================================================
-   FIX · Minecraft · legibilidad en light + nav como botones
-   ============================================================================ */
-
-/* ---------------------------------------------------------------------------
-   1. Ajuste de variables SOLO en light Minecraft
-   Subimos el contraste del texto sobre el fondo Spruce (#735531) y
-   Stripped Spruce (#745A34).
-   Contraste medido sobre #735531:
-   · #F4ECD8 sobre #735531 → 9.8:1  ✅ AAA
-   · #E8DEC4 sobre #735531 → 7.6:1  ✅ AAA
-   · #D4C8A8 sobre #735531 → 5.4:1  ✅ AA
-   --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) {
-  --text:    #F4ECD8;   /* antes #1a1a1a — ahora claro tipo "hueso" */
-  --muted:   #E8DEC4;   /* antes #3e2912 — claro apagado */
-  --muted-2: #D4C8A8;   /* antes #5a4a2e — claro más tenue */
-}
-
-/* PERO: --text sigue siendo negro para los sitios donde el fondo es claro
-   (tarjetas, inputs, terminal, etc.). Solo lo aclaramos para texto que
-   vive sobre el fondo Spruce del body. */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .card, .card h3, .card-list li, .card-list li.highlight,
-  .about-card, .about-card h3, .about-text p, .about-text strong,
-  .cert-card, .cert-card__title, .cert-card__issuer,
-  .like-card, .like-card h3, .like-card p,
-  .news-item, .news-title,
-  .project-card, .project-card__title, .project-card__desc,
-  .project-preview, .project-preview h3, .project-preview p,
-  .github-activity__card, .github-activity__name, .github-activity__desc,
-  .contact-form-wrap, .contact-aside, .contact-aside__title,
-  .contact-list, .contact-list a,
-  .weather-widget, .weather-widget__title,
-  .stat, .stat strong, .stat span,
-  .skill-icon, .skill-icon__label,
-  .climbing-links__zone, .climbing-links__zone strong,
-  .terminal, .terminal code, .terminal--typing,
-  .cordada-panel, .cordada-titulo, .cordada-msg,
-  .arcade__stat, .arcade__overlay-text
+  .card-icon, .project-card__icon, .cert-card__icon, .like-icon,
+  .skill-icon__svg, .news-source, .tag
 ) {
-  color: #1a1a1a;
-}
-
-/* Estos viven sobre fondo oscuro del body: texto claro */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .hero-title, .hero-desc, .section-head h2,
-  .contact-title, .contact-subtitle,
-  .projects-title, .projects-subtitle,
-  .timeline-title, .timeline-item h4, .timeline-item p,
-  .stack-title, .site-footer p, .site-footer h2,
-  .footer-links a, .footer-bottom,
-  .cta-inner h2, .cta-inner p, .cta-inner .accent-text,
-  .logo-text
-) {
-  color: var(--text);
-}
-
-/* Los textos secundarios que viven sobre el fondo Spruce */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .hero-desc, .timeline-item p, .site-footer p, .footer-bottom
-) {
-  color: var(--muted);
-}
-
-/* ---------------------------------------------------------------------------
-   2. NAV LINKS · botones con bisel en ambos temas
-   Antes eran texto plano; ahora son botones coherentes con el resto del skin.
-   --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"] .nav-link {
-  background: var(--mc-btn-bg);
-  color: #1a1a1a;
+  background: var(--mc-slot-bg);
   border: 3px solid;
   border-color:
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light);
+    var(--mc-bevel-dark)  var(--mc-bevel-light)
+    var(--mc-bevel-light) var(--mc-bevel-dark);
   box-shadow:
     0 0 0 2px var(--mc-border-outer),
-    3px 3px 0 2px rgba(0,0,0,.35);
-  border-radius: 0;
-  padding: .55rem .85rem;
-  font-family: var(--display);
-  font-size: .62rem;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  transition: transform 100ms steps(2), box-shadow 100ms steps(2);
-  white-space: nowrap;
-}
-:root[data-skin="minecraft"] .nav-link:hover {
-  background: var(--mc-btn-bg-hover);
-  border-color:
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light)
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark);
-  transform: translate(2px, 2px);
-  box-shadow:
-    0 0 0 2px var(--mc-border-outer),
-    1px 1px 0 2px rgba(0,0,0,.35);
-}
-
-/* El nav-link activo (aria-current) también con bisel, pero en acento */
-:root[data-skin="minecraft"] .nav-link[aria-current="true"],
-:root[data-skin="minecraft"] .nav-link[aria-current="page"]:not(.nav-cta) {
-  background: var(--accent);
-  color: var(--on-accent);
-  border-color:
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light);
-  box-shadow:
-    0 0 0 2px var(--mc-border-outer),
-    3px 3px 0 2px rgba(0,0,0,.35);
-}
-/* Quitamos el subrayado ::after que había antes */
-:root[data-skin="minecraft"] .nav-link[aria-current="true"]::after,
-:root[data-skin="minecraft"] .nav-link[aria-current="page"]:not(.nav-cta)::after {
-  content: none;
-}
-:root[data-skin="minecraft"] .nav-link[aria-current="true"]:hover,
-:root[data-skin="minecraft"] .nav-link[aria-current="page"]:not(.nav-cta):hover {
-  background: var(--accent);
-  color: var(--on-accent);
-  border-color:
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light)
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark);
-}
-
-/* El .nav-cta (CONTACT) ya tenía su tratamiento de botón pero le damos el
-   bisel Minecraft también, con acento Bricks en light / Diamond en dark */
-:root[data-skin="minecraft"] .nav-cta {
-  background: var(--accent);
-  color: var(--on-accent);
-  border-color:
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light);
-  box-shadow:
-    0 0 0 2px var(--mc-border-outer),
-    3px 3px 0 2px rgba(0,0,0,.35);
-  padding: .55rem .95rem;
-  font-size: .62rem;
-}
-
-/* Dark: texto claro sobre los botones de nav */
-:root[data-skin="minecraft"][data-theme="dark"] .nav-link {
-  color: #E9ECEC;
-}
-:root[data-skin="minecraft"][data-theme="dark"] .nav-link:hover {
-  color: #E9ECEC;
-}
-:root[data-skin="minecraft"][data-theme="dark"] .nav-link[aria-current="true"],
-:root[data-skin="minecraft"][data-theme="dark"] .nav-link[aria-current="page"]:not(.nav-cta) {
-  background: var(--accent);
-  color: var(--on-accent);   /* #1a1a1a sobre Diamond — alto contraste */
-}
-:root[data-skin="minecraft"][data-theme="dark"] .nav-cta {
-  background: var(--accent);
-  color: var(--on-accent);
-}
-
-/* Menú móvil (dentro de .main-nav cuando está abierto): los links ocupan ancho completo */
-@media (max-width: 1240px) {
-  :root[data-skin="minecraft"] .nav-list { gap: .4rem; }
-  :root[data-skin="minecraft"] .nav-link { width: 100%; text-align: center; }
-}
-
-/* ---------------------------------------------------------------------------
-   3. prefers-reduced-motion para los nav-links
-   --------------------------------------------------------------------------- */
-@media (prefers-reduced-motion: reduce) {
-  :root[data-skin="minecraft"] .nav-link { transition: none; }
-  :root[data-skin="minecraft"] .nav-link:hover { transform: none; }
-}
-/* ============================================================================
-   FIX · Minecraft · nav compacto + labels con texto oscuro sobre superficie clara
-   ============================================================================ */
-
-/* ---------------------------------------------------------------------------
-   1. NAV COMPACTO · reducir tamaño para que quepan todos los links
-   Press Start 2P es muy ancha: reducimos padding, font-size y quitamos
-   letter-spacing para que no se desborde.
-   --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"] .nav-list {
-  gap: .3rem;
-}
-
-:root[data-skin="minecraft"] .nav-link {
-  padding: .35rem .5rem;
-  font-size: .52rem;
-  letter-spacing: 0;
-  line-height: 1;
-}
-
-:root[data-skin="minecraft"] .nav-cta {
-  padding: .35rem .55rem;
-  font-size: .52rem;
-  letter-spacing: 0;
-  line-height: 1;
-}
-
-/* El logo también un pelín más compacto para dejar sitio */
-:root[data-skin="minecraft"] .logo-text {
-  font-size: 0.58rem;
-}
-
-/* Los iconos de acción (theme-toggle, skin-picker, language) mantienen tamaño
-   pero reducimos el gap del contenedor */
-:root[data-skin="minecraft"] .header-actions {
-  gap: .35rem;
-}
-
-/* En pantallas medianas (tablet), forzamos que el menú se convierta en
-   hamburguesa antes para no romper el header */
-@media (max-width: 1400px) {
-  :root[data-skin="minecraft"] .nav-list {
-    gap: .25rem;
-  }
-  :root[data-skin="minecraft"] .nav-link,
-  :root[data-skin="minecraft"] .nav-cta {
-    padding: .3rem .45rem;
-    font-size: .48rem;
-  }
-}
-
-/* En móvil/tablet, cuando el menú se despliega, los links ocupan ancho
-   completo y respiramos más */
-@media (max-width: 1240px) {
-  :root[data-skin="minecraft"] .nav-link,
-  :root[data-skin="minecraft"] .nav-cta {
-    width: 100%;
-    padding: .7rem .9rem;
-    font-size: .58rem;
-    text-align: center;
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   2. LABELS SOBRE SUPERFICIE CLARA · forzar texto oscuro
-   Problema: --text en light Minecraft ahora es hueso claro (#F4ECD8) para
-   leerse sobre el fondo Spruce del body. Pero hay elementos con fondo claro
-   (--surface Birch #E4D5B0) que necesitan texto OSCURO.
-   Lista exhaustiva de elementos con fondo claro que deben llevar texto negro.
-   --------------------------------------------------------------------------- */
-
-/* Light only (en dark ya se ve bien porque --text es claro y --surface oscuro) */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  /* Label del escalador (tooltip "Sobre mí") */
-  .climb-hold__label,
-  /* Eyebrow del hero ("Disponible para oportunidades") */
-  .hero-eyebrow,
-  /* Botones (todos tienen fondo gris piedra, texto oscuro) */
-  .btn, .nav-cta, .filter-btn, .arcade__btn, .arcade__restart,
-  .cordada-enviar, .weather-widget__search-button,
-  .to-top, .nav-toggle, .theme-toggle, .language-select,
-  /* Chips y badges con fondo claro */
-  .tag, .tag--individual, .tag--grupo, .tag--curso, .tag--idea,
-  .card-grade, .cert-card__badge, .certs-counter,
-  .project-card__grade, .project-card__stack li,
-  .stack-list li, .grades-legend .chip,
-  .news-source, .climbing-links__item, .climbing-links__icon,
-  .project-preview__tag,
-  /* Formulario: labels, inputs, checkboxes */
-  .form-label, .form-check, .form-hint,
-  .contact-form input, .contact-form select, .contact-form textarea,
-  .contact-form input::placeholder, .contact-form textarea::placeholder,
-  /* Terminal (fondo Birch claro) */
-  .terminal, .terminal code,
-  .weather-widget__search input,
-  /* Cordada chatbot */
-  .cordada-campo, .cordada-chip
-) {
+    inset 2px 2px 0 rgba(0,0,0,.15);
   color: #1a1a1a;
+  display: grid;
+  place-items: center;
 }
+:root[data-skin="minecraft"] :is(.card-icon, .project-card__icon) { width: 52px; height: 52px; font-size: 1.4rem; }
+:root[data-skin="minecraft"] .cert-card__icon { width: 48px; height: 48px; font-size: 1.6rem; }
+:root[data-skin="minecraft"] .like-icon { width: 52px; height: 52px; margin-bottom: .75rem; }
+:root[data-skin="minecraft"] .skill-icon__svg { width: 56px; height: 56px; padding: .5rem; }
+:root[data-skin="minecraft"][data-theme="dark"] :is(
+  .card-icon, .project-card__icon, .cert-card__icon, .like-icon, .skill-icon__svg
+) { background: var(--mc-slot-bg); color: #E9ECEC; }
 
-/* Los placeholders un poco más suaves pero aún legibles */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .contact-form input, .contact-form textarea
-)::placeholder {
-  color: #4a4a4a;
-  opacity: 1;
+/* ---------------------------------------------------------------------------
+   8 · STATS · slots 3D
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] .stat {
+  background: var(--mc-slot-bg);
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    inset 3px 3px 0 rgba(0,0,0,.15),
+    4px 4px 0 2px rgba(0,0,0,.35);
+  padding: 1rem 1rem;
+  min-width: 0;
 }
-
-/* La label del escalador tiene fondo --surface (Birch). Le damos un borde
-   y una sombra coherentes y nos aseguramos del contraste. */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .climb-hold__label {
-  background: var(--surface);
+:root[data-skin="minecraft"] .stat strong {
+  display: block;
+  margin-bottom: .6rem;
+  font-size: clamp(1rem, 2.6vw, 1.5rem);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  color: var(--accent);
+  text-shadow: 1px 1px 0 #1a1a1a;
+}
+:root[data-skin="minecraft"] .stat span {
+  display: block;
+  line-height: 1.4;
   color: #1a1a1a;
   font-weight: 700;
 }
-
-/* El eyebrow del hero también sobre fondo claro */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .hero-eyebrow {
-  background: var(--surface);
-  color: #1a1a1a;
-  font-weight: 700;
+:root[data-skin="minecraft"][data-theme="dark"] .stat span { color: #E9ECEC; }
+@media (max-width: 900px) {
+  :root[data-skin="minecraft"] .stat strong { font-size: clamp(.95rem, 3.2vw, 1.3rem); }
 }
 
-/* El "About me" / "Sobre mi" tooltip en dark ya estaba bien, pero por si acaso */
-:root[data-skin="minecraft"][data-theme="dark"] .climb-hold__label {
-  background: var(--surface);
-  color: #E9ECEC;
-}
-:root[data-skin="minecraft"][data-theme="dark"] .hero-eyebrow {
-  background: var(--surface);
-  color: #E9ECEC;
-}
-/* ============================================================================
-   FIX · Minecraft · acentos legibles sobre el fondo Spruce (light)
-   El --accent (Bricks #976253) sobre el fondo marrón del body se pierde.
-   En light usamos tonos más saturados o más claros para el acento cuando
-   vive sobre el fondo del body (no dentro de tarjetas).
-   ============================================================================ */
+/* ---------------------------------------------------------------------------
+   9 · TERMINAL · legible en light y dark
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-prompt { color: #1a1a1a; }
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-var  { color: var(--mc-red-t); font-weight: 700; }
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-fn,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-ok   { color: var(--mc-green); font-weight: 700; }
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-cursor { color: #1a1a1a; }
 
-:root[data-skin="minecraft"]:not([data-theme="dark"]) {
-  /* El acento del texto que vive sobre Spruce: un Bricks más saturado/rojizo
-     que SÍ contrasta sobre #735531. Mismo tono Minecraft pero más vivo. */
-  --accent-text-on-bg: #FF8A1F;   /* Lava Orange, ya lo tenemos en el escalador */
-}
+:root[data-skin="minecraft"][data-theme="dark"] .term-prompt { color: #5DECF5; }
+:root[data-skin="minecraft"][data-theme="dark"] .term-var  { color: #FF8A1F; font-weight: 700; }
+:root[data-skin="minecraft"][data-theme="dark"] .term-fn   { color: #F9D67D; font-weight: 700; }
+:root[data-skin="minecraft"][data-theme="dark"] .term-ok   { color: #52A385; font-weight: 700; }
+:root[data-skin="minecraft"][data-theme="dark"] .term-cursor { color: #5DECF5; }
 
-/* 1. El .accent-text y .hero-subtitle y todo lo que use --accent sobre el
-   fondo marrón del body: Lava Orange en lugar de Bricks. */
+/* ---------------------------------------------------------------------------
+   10 · LEGIBILIDAD · light: texto claro sobre Prismarine, oscuro sobre Sea Lantern
+   --------------------------------------------------------------------------- */
+/* Texto que vive sobre el fondo Prismarine del body */
 :root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .accent-text,
-  .hero-subtitle,
-  .typing::after,
-  .term-prompt,      /* ojo: el prompt del terminal vive sobre Birch, no tocar */
-  .section-tag,
-  .contact-aside__title,
-  .site-footer h3,
-  .climbing-links__climbs,
-  .weather-widget__temp,
-  .card h3,
-  .about-card h3,
-  .footer-links a:hover,
-  .card-grade:hover::after
-) 
+  .hero-title, .section-head h2, .section-tag, .timeline-title, .timeline-item h4,
+  .stack-title, .site-footer h2, .contact-title, .projects-title,
+  .logo-text, .cta-inner h2, .accent-text, .hero-subtitle
+) { color: var(--text); }
 
-/* Mejor ser específico: los elementos que REALMENTE viven sobre Spruce */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .accent-text {
-  color: #FF8A1F;
-}
-
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .hero-subtitle {
-  color: #FF8A1F;
-  font-weight: 700;
-}
-
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .hero-subtitle .typing::after {
-  color: #FF8A1F;
-}
-
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .section-tag {
-  color: #FF8A1F;
-}
-
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .site-footer h3 {
-  color: #FF8A1F;
-}
-
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .footer-links a:hover {
-  color: #FF8A1F;
-}
-
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .stats strong,
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .stat strong {
-  color: #FF8A1F;   /* el número 10, 5, Studying de las stat cards */
-}
-
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .climbing-links__climbs {
-  color: #FF8A1F;
-}
-
-/* ---------------------------------------------------------------------------
-   2. El párrafo .hero-desc y demás texto muted sobre Spruce: subir un punto
-      el color para asegurar legibilidad.
-   --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .hero-desc {
-  color: #F4ECD8;   /* mismo tono que --text, para máxima legibilidad */
-}
-
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .timeline-item p,
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .site-footer p {
-  color: #E8DEC4;
-}
-
-/* ---------------------------------------------------------------------------
-   3. Los títulos h2 sobre Spruce: aseguramos que van en --text (hueso claro)
-      y no en --accent ni en nada raro.
-   --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .hero-title,
-  .section-head h2,
-  .timeline-title,
-  .stack-title,
-  .contact-title,
-  .projects-title,
-  .site-footer h2
-) {
-  color: #F4ECD8;
-}
+  .hero-desc, .timeline-item p, .site-footer p, .footer-bottom,
+  .contact-subtitle, .projects-subtitle, .hero-subtitle, .section-tag
+) { color: var(--muted); }
 
-/* ---------------------------------------------------------------------------
-   4. En DARK: nos aseguramos de que el acento sigue siendo Diamond
-      (que ya funciona bien sobre Deepslate). No tocar.
-   --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"][data-theme="dark"] .hero-title {
-  color: var(--text);
-}
-:root[data-skin="minecraft"][data-theme="dark"] .accent-text {
-  color: var(--accent);   /* Diamond */
-}
-:root[data-skin="minecraft"][data-theme="dark"] .hero-subtitle {
-  color: var(--accent);
-}
-:root[data-skin="minecraft"][data-theme="dark"] .section-tag {
-  color: var(--accent);
-}
-:root[data-skin="minecraft"][data-theme="dark"] .stat strong {
-  color: var(--accent);
-}
-/* ============================================================================
-   FIX · Minecraft · Nueva paleta LIGHT basada en bloques acuáticos
-   ----------------------------------------------------------------------------
-   Sustituye la paleta Spruce/Birch/Stone por Prismarine/Copper/Sea Lantern.
-   Solo aplica a light. Dark no se toca (ya funciona bien).
-   Va al final para ganar la cascada sobre los fixes anteriores.
-   ============================================================================ */
-
-:root[data-skin="minecraft"]:not([data-theme="dark"]) {
-  /* --- Fondos --- */
-  --bg:        #62A292;   /* Prismarine */
-  --bg-soft:   #63AC9E;   /* Prismarine Bricks (un pelín más claro) */
-
-  /* --- Superficies (tarjetas, inputs, etc.) --- */
-  --surface:   #ACC8BF;   /* Sea Lantern (claro, para texto oscuro encima) */
-  --surface-2: #A0BFB5;   /* Sea Lantern más oscuro */
-
-  /* --- Texto --- */
-  --text:      #F4FBF8;   /* Blanco perla tirando a cian muy claro */
-  --muted:     #DCE9E4;   /* Claro apagado */
-  --muted-2:   #B8CFC7;   /* Claro más tenue */
-
-  /* --- Líneas y bordes --- */
-  --line:      #345C4C;   /* Dark Prismarine (líneas oscuras) */
-
-  /* --- Acentos --- */
-  --accent:    #345C4C;   /* Dark Prismarine (antes Bricks) */
-  --accent-2:  #52A385;   /* Oxidized Copper */
-  --accent-3:  #ACC8BF;   /* Sea Lantern */
-  --accent-rgb: 52, 92, 76;
-  --accent-2-rgb: 82, 163, 133;
-
-  /* --- Texto sobre acento --- */
-  --on-accent: #F4FBF8;   /* claro, sobre Dark Prismarine oscuro */
-
-  /* --- Grid y header --- */
-  --grid-line: rgba(26,26,26,.08);
-  --header-bg: rgba(98,162,146,.92);
-  --header-bg-scrolled: rgba(98,162,146,.98);
-
-  /* --- Sombras duras (ya eran negras, las mantenemos) --- */
-  --shadow-sm: 2px 2px 0 #1a1a1a;
-  --shadow:    4px 4px 0 #1a1a1a;
-  --logo-shadow: 2px 2px 0 #1a1a1a;
-  --btn-primary-shadow: 3px 3px 0 #1a1a1a;
-  --btn-primary-shadow-hover: 5px 5px 0 #1a1a1a;
-
-  --timeline-dot-ring: rgba(52,92,76,.25);
-  --color-scheme: light;
-
-  /* --- Bisel Minecraft (mantener, son estándar de GUI) --- */
-  --mc-btn-bg:      #8b8b8b;
-  --mc-btn-bg-hover:#7a7a7a;
-  --mc-bevel-light: #b8b8b8;
-  --mc-bevel-dark:  #5a5a5a;
-  --mc-border-outer:#1a1a1a;
-  --mc-slot-bg:     #c6c6c6;
-}
-
-/* ---------------------------------------------------------------------------
-   1. TEXTURA DEL BODY · ahora Prismarine con motas verdosas sutiles
-   --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) body {
-  background-color: #62A292;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%2362A292'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23345C4C' opacity='.22'/%3E%3Crect x='3' y='1' width='1' height='1' fill='%23345C4C' opacity='.18'/%3E%3Crect x='6' y='0' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3Crect x='1' y='3' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%23345C4C' opacity='.18'/%3E%3Crect x='7' y='5' width='1' height='1' fill='%23345C4C' opacity='.18'/%3E%3Crect x='2' y='6' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3Crect x='5' y='7' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3C/svg%3E");
-  background-size: 64px 64px;
-}
-
-/* ---------------------------------------------------------------------------
-   2. TEXTOS SOBRE EL FONDO PRISMARINE · aclarar para contraste
-   --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .hero-title,
-  .hero-desc,
-  .section-head h2,
-  .section-tag,
-  .timeline-title,
-  .timeline-item h4,
-  .timeline-item p,
-  .stack-title,
-  .site-footer h2,
-  .site-footer p,
-  .footer-links a,
-  .footer-bottom,
-  .contact-title,
-  .contact-subtitle,
-  .projects-title,
-  .projects-subtitle,
-  .logo-text,
-  .cta-inner h2,
-  .cta-inner p
-) {
-  color: var(--text);
-}
+  .hero-subtitle, .accent-text, .section-tag, .climbing-links__climbs,
+  .footer-links a:hover, .site-footer h3
+) { color: #F4FBF8; font-weight: 700; }
 
-/* El párrafo secundario, muted claro pero legible */
+/* Texto que vive dentro de tarjetas (fondo Sea Lantern claro) */
 :root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .hero-desc,
-  .timeline-item p,
-  .site-footer p,
-  .contact-subtitle,
-  .projects-subtitle
-) {
-  color: var(--muted);
-}
-
-/* ---------------------------------------------------------------------------
-   3. ACENTOS SOBRE PRISMARINE · qué color usar
-   El Dark Prismarine #345C4C sobre Prismarine #62A292 es un contraste bajito
-   (~2.1:1), así que el acento de texto debe ser CLARO:
-   · --text  #F4FBF8 sobre Prismarine → 4.9:1 ✅ AA-large
-   · --accent-2 Oxidized Copper NO funciona como texto sobre Prismarine.
-     Lo reservamos para BORDES o como acento dentro de tarjetas (donde el
-     fondo es Sea Lantern claro y sí contrasta).
-   Para acentos de TEXTO sobre Prismarine usamos blanco perla o el propio
-   blanco puro. Para BORDES/ICONOS usamos Dark Prismarine (que destaca).
-   --------------------------------------------------------------------------- */
-
-/* Acentos de texto sobre Prismarine: blanco perla */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .accent-text,
-  .hero-subtitle,
-  .typing::after,
-  .section-tag,
-  .climbing-links__climbs,
-  .footer-links a:hover,
-  .site-footer h3
-) {
-  color: #F4FBF8;
-  font-weight: 700;
-}
-
-/* Los números grandes de las stat cards: sobre Sea Lantern (fondo claro),
-   aquí SÍ podemos usar el Dark Prismarine oscuro como acento, que destaca
-   sobre el fondo claro de la tarjeta. */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .stat strong {
-  color: #345C4C;   /* Dark Prismarine oscuro sobre Sea Lantern claro */
-}
-
-/* El subtítulo del hero (Tècnic Superior...): mismo criterio que accent-text */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .hero-subtitle {
-  color: #F4FBF8;
-}
-
-/* ---------------------------------------------------------------------------
-   4. TARJETAS · textos oscuros sobre Sea Lantern (fondo claro)
-   --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .card, .card h3, .card-list li, .card-list li.highlight,
-  .about-card, .about-card h3, .about-text p, .about-text strong,
-  .cert-card, .cert-card__title, .cert-card__issuer,
-  .like-card, .like-card h3, .like-card p,
-  .news-item, .news-title,
-  .project-card, .project-card__title, .project-card__desc,
-  .project-preview, .project-preview h3, .project-preview p,
+  .card, .card h3, .card-list li, .about-card, .about-card h3,
+  .about-text p, .about-text strong, .cert-card, .cert-card__title,
+  .cert-card__issuer, .like-card, .like-card h3, .like-card p,
+  .news-item, .news-title, .project-card, .project-card__title,
+  .project-card__desc, .project-preview, .project-preview h3,
   .github-activity__card, .github-activity__name, .github-activity__desc,
   .contact-form-wrap, .contact-aside, .contact-aside__title,
-  .contact-list, .contact-list a,
-  .weather-widget, .weather-widget__title,
-  .stat, .stat span,
-  .skill-icon, .skill-icon__label,
+  .contact-list, .contact-list a, .weather-widget, .weather-widget__title,
+  .stat, .stat span, .skill-icon, .skill-icon__label,
   .climbing-links__zone, .climbing-links__zone strong,
   .terminal, .terminal code, .terminal--typing,
   .cordada-panel, .cordada-titulo, .cordada-msg,
   .arcade__stat, .arcade__overlay-text,
-  .hero-eyebrow, .climb-hold__label
-) {
-  color: #1a1a1a;
-}
+  .hero-eyebrow, .climb-hold__label,
+  .form-label, .form-check, .form-hint,
+  .tag, .card-grade, .cert-card__badge, .certs-counter,
+  .project-card__grade, .project-card__stack li, .stack-list li,
+  .grades-legend .chip, .news-source, .climbing-links__item,
+  .climbing-links__icon, .project-preview__tag,
+  .cordada-campo, .cordada-chip,
+  .weather-widget__search input
+) { color: #1a1a1a; }
 
-/* El acento DENTRO de las tarjetas (sobre Sea Lantern) sí puede ser el
-   Dark Prismarine oscuro, que contrasta bien sobre fondo claro. */
+/* Acento dentro de tarjetas (fondo claro): Dark Prismarine oscuro */
 :root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
-  .card h3,
-  .about-card h3,
-  .contact-aside__title,
-  .case-block__title,
-  .term-prompt,
-  .term-var,
+  .card h3, .about-card h3, .contact-aside__title, .case-block__title,
   .card-grade::after
-) {
-  color: #345C4C;
-}
+) { color: #345C4C; }
 
-/* El term-fn y term-ok: verde Copper Oxidized sobre Sea Lantern → contraste 3.1:1
-   NO cumple AA. Usamos un verde oscuro especial. */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-fn,
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-ok {
-  color: #0E4F30;   /* verde musgo oscuro, contraste ~7:1 sobre Sea Lantern */
-  font-weight: 700;
-}
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-var {
-  color: #7A1F14;   /* rojo oscuro, contraste ~8:1 sobre Sea Lantern */
-  font-weight: 700;
-}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .stat strong { color: #345C4C; }
+
+/* Dark: el acento es Diamond y ya contrasta sobre Deepslate */
+:root[data-skin="minecraft"][data-theme="dark"] :is(
+  .accent-text, .hero-subtitle, .section-tag, .stat strong
+) { color: var(--accent); }
 
 /* ---------------------------------------------------------------------------
-   5. NAV-LINK · bisel se mantiene igual (gris piedra) y funciona sobre
-   cualquier fondo. El activo ahora en Dark Prismarine.
-   --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .nav-link[aria-current="true"],
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .nav-link[aria-current="page"]:not(.nav-cta) {
-  background: #345C4C;   /* Dark Prismarine */
-  color: #F4FBF8;
-}
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .nav-cta {
-  background: #345C4C;
-  color: #F4FBF8;
-}
-
-/* ---------------------------------------------------------------------------
-   7. Botones del cta-band (.cta-inner) sobre fondo oscuro del cta
+   11 · CTA BAND · light
    --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"]:not([data-theme="dark"]) .cta-band {
-  background: #345C4C;   /* Dark Prismarine */
+  background: #345C4C;
   color: #F4FBF8;
   border-color: #1a1a1a;
 }
 :root[data-skin="minecraft"]:not([data-theme="dark"]) .cta-inner h2,
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .cta-inner p {
-  color: #F4FBF8;
-}
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .cta-inner h2 .accent-text {
-  color: #52A385;   /* Copper Oxidized para destacar dentro del CTA oscuro */
-}
-:root[data-skin="minecraft"] {
-  --display: "Monocraft", "Courier New", monospace;
-}
-/* ============================================================================
-   BLOQUE C2 · MINECRAFT · Cursor pixelado tipo GUI
-   ============================================================================
-   El cursor actual es un SVG de mano inyectado por JS. No lo podemos
-   reemplazar sin tocar JS, pero sí recolorearlo y pixelarlo con CSS.
-   Aplicamos: contorno negro pixelado + colores planos tipo GUI.
-   ============================================================================ */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .cta-inner p { color: #F4FBF8; }
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .cta-inner h2 .accent-text { color: #52A385; }
 
-:root[data-skin="minecraft"] .cursor__hand {
-  filter:
-    drop-shadow(1px 0 0 #1a1a1a)
-    drop-shadow(-1px 0 0 #1a1a1a)
-    drop-shadow(0 1px 0 #1a1a1a)
-    drop-shadow(0 -1px 0 #1a1a1a);
-  color: #F4FBF8;   /* blanco perla tipo cursor de Minecraft */
-  width: 32px;
-  height: 32px;
-  margin: -6px 0 0 -6px;   /* ajustamos el hotspot para que apunte bien */
-}
-
-/* En light: contorno negro puro */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .cursor__hand {
-  filter:
-    drop-shadow(1px 0 0 #000)
-    drop-shadow(-1px 0 0 #000)
-    drop-shadow(0 1px 0 #000)
-    drop-shadow(0 -1px 0 #000);
-  color: #F4FBF8;
-}
-
-/* En dark: mismo cursor pero más brillante */
-:root[data-skin="minecraft"][data-theme="dark"] .cursor__hand {
-  color: #E9ECEC;
-}
-
-/* Hover: color naranja Lava (mismo que el escalador) */
-:root[data-skin="minecraft"].is-hovering .cursor__hand,
-:root[data-skin="minecraft"] .cursor.is-hovering .cursor__hand {
-  color: #FF8A1F;
-}
-:root[data-skin="minecraft"] .cursor.is-clicking .cursor__hand {
-  color: #FF8A1F;
-  transform: scale(.9);
-}
-
-/* Anti-aliasing off para que el SVG se vea pixelado */
-:root[data-skin="minecraft"] .cursor__hand svg {
-  image-rendering: pixelated;
-  shape-rendering: crispEdges;
-}
-/* ============================================================================
-   BLOQUE C2 · MINECRAFT · Steve pixel art (escalador)
-   ============================================================================
-   Sustituimos el muñeco genérico actual por un SVG inline de Steve con
-   dos frames (reposo / subiendo). El SVG se inyecta vía CSS con
-   background-image en el contenedor .climb-climber.
-   La posición sigue siendo JS (translateY), solo cambiamos el aspecto.
-   ============================================================================ */
-
-:root[data-skin="minecraft"] .climb-climber {
-  /* Ocultamos el SVG original (sigue existiendo, no lo borramos) */
-  width: 24px;
-  height: 32px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32' shape-rendering='crispEdges'%3E%3C!-- CABEZA --%3E%3Crect x='6' y='0' width='12' height='8' fill='%23C9A27E'/%3E%3Crect x='6' y='0' width='12' height='3' fill='%235A3A1E'/%3E%3Crect x='6' y='3' width='2' height='2' fill='%235A3A1E'/%3E%3Crect x='16' y='3' width='2' height='2' fill='%235A3A1E'/%3E%3C!-- OJOS --%3E%3Crect x='9' y='4' width='1' height='1' fill='%23FFFFFF'/%3E%3Crect x='14' y='4' width='1' height='1' fill='%23FFFFFF'/%3E%3Crect x='10' y='4' width='1' height='1' fill='%233A1E0E'/%3E%3Crect x='15' y='4' width='1' height='1' fill='%233A1E0E'/%3E%3C!-- BOCA --%3E%3Crect x='10' y='6' width='4' height='1' fill='%233A1E0E'/%3E%3C!-- PECHO/CAMISETA --%3E%3Crect x='6' y='8' width='12' height='9' fill='%2324A0A0'/%3E%3C!-- BRAZOS --%3E%3Crect x='4' y='8' width='2' height='9' fill='%23C9A27E'/%3E%3Crect x='18' y='8' width='2' height='9' fill='%23C9A27E'/%3E%3C!-- PANTALONES --%3E%3Crect x='6' y='17' width='12' height='9' fill='%233A4A7A'/%3E%3C!-- PIERNAS --%3E%3Crect x='8' y='26' width='4' height='6' fill='%233A4A7A'/%3E%3Crect x='12' y='26' width='4' height='6' fill='%233A4A7A'/%3E%3C!-- BOTAS --%3E%3Crect x='8' y='30' width='4' height='2' fill='%233A2E1E'/%3E%3Crect x='12' y='30' width='4' height='2' fill='%233A2E1E'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  /* Contorno pixelado para que destaque sobre el fondo */
-  filter:
-    drop-shadow(1px 0 0 #1a1a1a)
-    drop-shadow(-1px 0 0 #1a1a1a)
-    drop-shadow(0 1px 0 #1a1a1a)
-    drop-shadow(0 -1px 0 #1a1a1a);
-}
-
-/* Ocultamos el SVG original para que no se solape con la nueva imagen */
-:root[data-skin="minecraft"] .climb-climber svg {
-  visibility: hidden;
-}
-
-/* En dark: contorno negro puro */
-:root[data-skin="minecraft"][data-theme="dark"] .climb-climber {
-  filter:
-    drop-shadow(1px 0 0 #000)
-    drop-shadow(-1px 0 0 #000)
-    drop-shadow(0 1px 0 #000)
-    drop-shadow(0 -1px 0 #000);
-}
-
-/* Reducimos un poco en móvil */
-@media (max-width: 720px) {
-  :root[data-skin="minecraft"] .climb-climber {
-    width: 20px;
-    height: 26px;
-  }
-}
-/* ============================================================================
-   BLOQUE C2 · MINECRAFT · Torre de bloques (holds temáticos)
-   ============================================================================
-   Cada .climb-hold pasa a ser un bloque de Minecraft diferente según
-   su posición en la torre (usando :nth-child). Los bloques son:
-   · Posición 0 (arriba): Diamond Ore
-   · Posición intermedia alta: Gold Ore
-   · Posición intermedia: Iron Ore
-   · Posición baja: Stone
-   · Posición 0 (abajo, primera): Dirt (tierra)
-   ============================================================================ */
-
-/* Base común: bloque pixel art cuadrado */
+/* ---------------------------------------------------------------------------
+   12 · ESCALADA · barra lateral y presas
+   --------------------------------------------------------------------------- */
 :root[data-skin="minecraft"] .climb-hold {
   width: 18px;
   height: 18px;
-  border-radius: 0;
   border: 2px solid #1a1a1a;
   box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  background-color: #7A7A7A;
+  background-image:
+    linear-gradient(90deg, transparent 47%, rgba(0,0,0,.15) 47%, rgba(0,0,0,.15) 53%, transparent 53%),
+    linear-gradient(0deg,  transparent 47%, rgba(0,0,0,.15) 47%, rgba(0,0,0,.15) 53%, transparent 53%);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   transition: transform 100ms steps(2);
 }
-
-/* Bloque por defecto (Stone / Stone Bricks) */
-:root[data-skin="minecraft"] .climb-hold {
-  background-color: #7A7A7A;
-  background-image:
-    linear-gradient(90deg, transparent 47%, rgba(0,0,0,.15) 47%, rgba(0,0,0,.15) 53%, transparent 53%),
-    linear-gradient(0deg, transparent 47%, rgba(0,0,0,.15) 47%, rgba(0,0,0,.15) 53%, transparent 53%);
-}
-
-/* Primer hold (arriba del todo): Diamond Ore */
+:root[data-skin="minecraft"] .climb-hold::before { display: none; }
 :root[data-skin="minecraft"] .climb-hold:first-child {
   background-color: #5DECF5;
   background-image:
@@ -4092,37 +3309,20 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
     radial-gradient(circle at 70% 60%, #F4FBF8 1.5px, transparent 1.5px),
     radial-gradient(circle at 50% 80%, #F4FBF8 1px, transparent 1px),
     linear-gradient(90deg, transparent 47%, rgba(0,0,0,.2) 47%, rgba(0,0,0,.2) 53%, transparent 53%);
-  box-shadow:
-    2px 2px 0 rgba(0,0,0,.4),
-    0 0 8px rgba(93,236,245,.6);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4), 0 0 8px rgba(93,236,245,.6);
 }
-
-/* Segundo hold: Gold Ore */
 :root[data-skin="minecraft"] .climb-hold:nth-child(2) {
   background-color: #F9D67D;
   background-image:
     radial-gradient(circle at 40% 40%, #FFE9A8 1.5px, transparent 1.5px),
     radial-gradient(circle at 70% 70%, #FFE9A8 1.5px, transparent 1.5px);
 }
-
-/* Tercer hold: Iron Ore */
 :root[data-skin="minecraft"] .climb-hold:nth-child(3) {
   background-color: #C9C9C9;
-  background-image:
-    radial-gradient(circle at 50% 50%, #F4FBF8 1.5px, transparent 1.5px);
+  background-image: radial-gradient(circle at 50% 50%, #F4FBF8 1.5px, transparent 1.5px);
 }
-
-/* Cuarto hold: Mossy Stone (verde musgo) */
-:root[data-skin="minecraft"] .climb-hold:nth-child(4) {
-  background-color: #737969;
-}
-
-/* Quinto y siguientes: Stone */
-:root[data-skin="minecraft"] .climb-hold:nth-child(n+5) {
-  background-color: #7A7A7A;
-}
-
-/* El último hold (abajo, base de la torre): Dirt */
+:root[data-skin="minecraft"] .climb-hold:nth-child(4) { background-color: #737969; }
+:root[data-skin="minecraft"] .climb-hold:nth-child(n+5) { background-color: #7A7A7A; }
 :root[data-skin="minecraft"] .climb-hold:last-child {
   background-color: #735531;
   background-image:
@@ -4130,455 +3330,527 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
     radial-gradient(circle at 70% 70%, #5A3A1E 1px, transparent 1px),
     radial-gradient(circle at 50% 50%, #8A6A3F 1px, transparent 1px);
 }
-
-/* Estado activo (donde está Steve): brillo */
 :root[data-skin="minecraft"] .climb-hold.is-active {
   background-color: #FF8A1F;
-  box-shadow:
-    2px 2px 0 rgba(0,0,0,.4),
-    0 0 0 2px #FF8A1F,
-    0 0 12px rgba(255,138,31,.7);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4), 0 0 0 2px #FF8A1F, 0 0 12px rgba(255,138,31,.7);
   transform: scale(1.15);
 }
-
-/* Hover: pixelado y con brillo sutil */
 :root[data-skin="minecraft"] .climb-hold:hover {
   transform: scale(1.15);
-  box-shadow:
-    2px 2px 0 rgba(0,0,0,.4),
-    0 0 0 2px #F4FBF8;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4), 0 0 0 2px #F4FBF8;
 }
 
-/* Label ("Sobre mí"): mantenemos el estilo cartel de madera */
 :root[data-skin="minecraft"] .climb-hold__label {
-  background: #E4D5B0;    /* Birch Planks */
+  background: #E4D5B0;
   color: #1a1a1a;
   border: 2px solid #1a1a1a;
-  border-radius: 0;
   font-family: var(--mono);
   font-size: .78rem;
   padding: .25rem .55rem;
-  box-shadow:
-    2px 2px 0 #1a1a1a,
-    inset 1px 1px 0 rgba(255,255,255,.3),
-    inset -1px -1px 0 rgba(0,0,0,.15);
+  box-shadow: 2px 2px 0 #1a1a1a, inset 1px 1px 0 rgba(255,255,255,.3), inset -1px -1px 0 rgba(0,0,0,.15);
 }
-
-/* En dark: contorno negro puro y label oscura */
-:root[data-skin="minecraft"][data-theme="dark"] .climb-hold {
-  border-color: #000;
-}
+:root[data-skin="minecraft"][data-theme="dark"] .climb-hold { border-color: #000; }
 :root[data-skin="minecraft"][data-theme="dark"] .climb-hold__label {
-  background: #4c4c4c;
-  color: #E9ECEC;
-  border-color: #000;
+  background: #4c4c4c; color: #E9ECEC; border-color: #000;
   box-shadow: 2px 2px 0 #000;
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  :root[data-skin="minecraft"] .climb-hold,
-  :root[data-skin="minecraft"] .climb-hold:hover,
-  :root[data-skin="minecraft"] .climb-hold.is-active {
-    transition: none;
-    transform: none;
-  }
-}
-/* ============================================================================
-   BLOQUE C2 · MINECRAFT · Iconos como slots de inventario
-   ============================================================================
-   Los .card-icon, .project-card__icon, .cert-card__icon, .like-icon pasan
-   a verse como slots de inventario de Minecraft (fondo gris claro con
-   bisel hundido).
-   ============================================================================ */
-
-:root[data-skin="minecraft"] :is(
-  .card-icon,
-  .project-card__icon,
-  .cert-card__icon,
-  .like-icon,
-  .skill-icon__svg,
-  .news-source,
-  .tag
-) {
-  background: var(--mc-slot-bg);
-  border: 3px solid;
-  border-color:
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light)
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark);
-  box-shadow:
-    0 0 0 2px var(--mc-border-outer),
-    inset 2px 2px 0 rgba(0,0,0,.15);
-  border-radius: 0;
-  color: #1a1a1a;
-  display: grid;
-  place-items: center;
-  font-size: 1.4rem;
-}
-
-/* Tamaños específicos */
-:root[data-skin="minecraft"] .card-icon,
-:root[data-skin="minecraft"] .project-card__icon {
-  width: 52px;
-  height: 52px;
-}
-
-:root[data-skin="minecraft"] .cert-card__icon {
-  width: 48px;
-  height: 48px;
-  font-size: 1.6rem;
-}
-
-:root[data-skin="minecraft"] .like-icon {
-  width: 52px;
-  height: 52px;
-  margin-bottom: .75rem;
-}
-
-:root[data-skin="minecraft"] .skill-icon__svg {
-  width: 56px;
-  height: 56px;
-  padding: .5rem;
-}
-
-/* En dark: slots oscuros */
-:root[data-skin="minecraft"][data-theme="dark"] :is(
-  .card-icon,
-  .project-card__icon,
-  .cert-card__icon,
-  .like-icon,
-  .skill-icon__svg
-) {
-  background: var(--mc-slot-bg);
-  color: #E9ECEC;
-}
-/* ============================================================================
-   BLOQUE C2 · MINECRAFT · Stats como slots 3D
-   ============================================================================
-   Las .stat (10, 5, Studying) se ven como casillas de inventario con
-   bisel hundido, coherente con los inputs.
-   ============================================================================ */
-
-:root[data-skin="minecraft"] .stat {
-  background: var(--mc-slot-bg);
-  border: 3px solid;
-  border-color:
-    var(--mc-bevel-light)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-dark)
-    var(--mc-bevel-light);
-  box-shadow:
-    0 0 0 2px var(--mc-border-outer),
-    inset 3px 3px 0 rgba(0,0,0,.15),
-    4px 4px 0 2px rgba(0,0,0,.35);
-  border-radius: 0;
-  padding: 1.1rem 1.2rem;
-}
-
-:root[data-skin="minecraft"] .stat strong {
-  color: var(--lava, #FF6B1A);
-  text-shadow: 1px 1px 0 #1a1a1a;
-  font-size: 1.9rem;
-}
-
-:root[data-skin="minecraft"] .stat span {
-  color: #1a1a1a;
-  font-weight: 700;
-}
-
-:root[data-skin="minecraft"][data-theme="dark"] .stat {
-  background: var(--mc-slot-bg);
-}
-
-:root[data-skin="minecraft"][data-theme="dark"] .stat span {
-  color: #E9ECEC;
-}
-/* ============================================================================
-   FIX · Minecraft · tamaños de header (logo, nav, contact)
-   ============================================================================ */
-
-/* --- LOGO "Gabriel Vidal" más grande --- */
-:root[data-skin="minecraft"] .logo-text {
-  font-size: 0.85rem;      /* antes 0.58rem */
-  line-height: 1.2;
-  letter-spacing: .02em;
-}
-
-/* El monograma GV del logo también un pelín más grande */
-:root[data-skin="minecraft"] .logo-mark {
-  width: 42px;
-  height: 42px;
-  font-size: 0.65rem;      /* antes 0.57rem */
-}
-
-/* --- NAV LINKS un poco más grandes --- */
-:root[data-skin="minecraft"] .nav-link {
-  padding: .45rem .65rem;   /* antes .35rem .5rem */
-  font-size: .62rem;        /* antes .52rem */
-  letter-spacing: .02em;
-}
-
-/* --- CONTACT (nav-cta) más grande y destacado --- */
-:root[data-skin="minecraft"] .nav-cta {
-  padding: .5rem .85rem;    /* antes .35rem .55rem */
-  font-size: .68rem;        /* antes .52rem */
-  letter-spacing: .03em;
-}
-
-/* --- Ajuste en pantallas medianas para que no se rompa el header --- */
-@media (max-width: 1400px) {
-  :root[data-skin="minecraft"] .logo-text {
-    font-size: 0.72rem;
-  }
-  :root[data-skin="minecraft"] .nav-link {
-    padding: .4rem .5rem;
-    font-size: .55rem;
-  }
-  :root[data-skin="minecraft"] .nav-cta {
-    padding: .45rem .7rem;
-    font-size: .6rem;
-  }
-}
-
-/* --- En móvil/tablet, cuando el menú se despliega, más grande aún --- */
-@media (max-width: 1240px) {
-  :root[data-skin="minecraft"] .logo-text {
-    font-size: 0.85rem;
-  }
-  :root[data-skin="minecraft"] .nav-link,
-  :root[data-skin="minecraft"] .nav-cta {
-    font-size: .75rem;
-    padding: .8rem 1rem;
-  }
-}
-/* Stats: unificar color de acento en número y texto destacado */
-:root[data-skin="minecraft"] .stat strong {
-  color: var(--accent);   /* Diamond en dark, Prismarine/lo que toque en light */
-  text-shadow: 1px 1px 0 #1a1a1a;
-}
-/* ============================================================================
-   FIX · Minecraft · Cursando no desborda + Steve animado
-   ============================================================================ */
+/* Cuerda */
+:root[data-skin="minecraft"] .climb-rope { color: var(--mc-red); opacity: .9; }
+:root[data-skin="minecraft"][data-theme="dark"] .climb-rope { color: var(--mc-red); opacity: .7; }
 
 /* ---------------------------------------------------------------------------
-   1. STATS · evitar que textos largos como "Cursando" desborden
-   Solución: reducir tamaño del strong, permitir wrap, y limitar altura.
+   13 · ESCALADOR (Steve) · SIN FILTER que pise el color
+   ----------------------------------------------------------------------------
+   El escalador lo pinta `escalador.js` con su propio SVG y su propio estilo.
+   Aquí SOLO definimos contenedor y, como mucho, un drop-shadow neutro.
+   NO usar `brightness(0) saturate(100%) invert(...)` — eso es lo que ponía
+   a Steve naranja. El color lo controla el JS con `currentColor`.
    --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"] .stat strong {
-  font-size: clamp(1.2rem, 3.2vw, 1.85rem);
-  line-height: 1.05;
-  overflow-wrap: anywhere;    /* si es muy largo, rompe la palabra */
-  word-break: break-word;
-  hyphens: auto;
-  display: block;
-  text-shadow: 1px 1px 0 #1a1a1a;
+:root[data-skin="minecraft"] .climb-climber {
+  /* Sin filter de recoloreado. El JS ya le da color con currentColor. */
+  filter: none;
 }
-
-/* En las stat cards, un pequeño padding extra para que respire el texto */
-:root[data-skin="minecraft"] .stat {
-  padding: 1rem 1rem;
-  min-width: 0;   /* permite encogerse si el grid lo pide */
-}
-
-/* Si aún así "Cursando" es muy largo, reducimos más el strong cuando el
-   texto es largo. No hay selector CSS para "el texto es largo", pero
-   podemos reducir el tamaño general un poco y que el clamp lo maneje. */
-@media (max-width: 900px) {
-  :root[data-skin="minecraft"] .stat strong {
-    font-size: clamp(1rem, 4vw, 1.5rem);
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   2. STEVE · animación de frames al moverse
-   El JS mueve a Steve con translateY en el contenedor .climb-climber.
-   Añadimos una animación interna (en un pseudo-elemento) que hace que
-   Steve "patallee" (cambia entre dos frames) de forma cíclica.
-   Al no tocar el contenedor del transform, no rompemos el scroll.
-   --------------------------------------------------------------------------- */
-
-/* Contenedor: sin cambios, mantiene translateY del JS */
-:root[data-skin="minecraft"] .climb-climber 
-
-/* Añadimos un pseudo-elemento ::after que hace de "segundo frame" encima
-   del background-image actual, alternando opacidad para simular animación. */
-:root[data-skin="minecraft"] .climb-climber::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32' shape-rendering='crispEdges'%3E%3C!-- CABEZA --%3E%3Crect x='6' y='0' width='12' height='8' fill='%23C9A27E'/%3E%3Crect x='6' y='0' width='12' height='3' fill='%235A3A1E'/%3E%3Crect x='6' y='3' width='2' height='2' fill='%235A3A1E'/%3E%3Crect x='16' y='3' width='2' height='2' fill='%235A3A1E'/%3E%3C!-- OJOS --%3E%3Crect x='9' y='4' width='1' height='1' fill='%23FFFFFF'/%3E%3Crect x='14' y='4' width='1' height='1' fill='%23FFFFFF'/%3E%3Crect x='10' y='4' width='1' height='1' fill='%233A1E0E'/%3E%3Crect x='15' y='4' width='1' height='1' fill='%233A1E0E'/%3E%3C!-- BOCA (frame 2: sonriendo) --%3E%3Crect x='9' y='6' width='6' height='1' fill='%233A1E0E'/%3E%3C!-- PECHO/CAMISETA --%3E%3Crect x='6' y='8' width='12' height='9' fill='%2324A0A0'/%3E%3C!-- BRAZOS (frame 2: uno levantado saludando) --%3E%3Crect x='4' y='8' width='2' height='9' fill='%23C9A27E'/%3E%3Crect x='18' y='4' width='2' height='6' fill='%23C9A27E'/%3E%3Crect x='18' y='10' width='2' height='7' fill='%23C9A27E'/%3E%3C!-- PANTALONES --%3E%3Crect x='6' y='17' width='12' height='9' fill='%233A4A7A'/%3E%3C!-- PIERNAS --%3E%3Crect x='8' y='26' width='4' height='6' fill='%233A4A7A'/%3E%3Crect x='12' y='26' width='4' height='6' fill='%233A4A7A'/%3E%3C!-- BOTAS --%3E%3Crect x='8' y='30' width='4' height='2' fill='%233A2E1E'/%3E%3Crect x='12' y='30' width='4' height='2' fill='%233A2E1E'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0;
-  animation: steve-frames 1.2s steps(2) infinite;
+/* Contorno pixelado suave: solo si el JS no lo está pintando con su propio
+   filter. Si escalador.js mete estilos, esto queda inerte. */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .climb-climber {
   filter:
     drop-shadow(1px 0 0 #1a1a1a)
     drop-shadow(-1px 0 0 #1a1a1a)
     drop-shadow(0 1px 0 #1a1a1a)
     drop-shadow(0 -1px 0 #1a1a1a);
 }
-
-/* El .climb-climber ya tiene position: absolute por el JS. Añadimos
-   position: relative al contenedor si no lo tiene ya, para que el ::after
-   se posicione respecto a él. Como el contenedor ya es absolute, el ::after
-   con inset: 0 se posiciona dentro. */
-:root[data-skin="minecraft"] .climb-climber {
-  position: absolute;
-  /* el JS mueve top y transform; no lo tocamos */
-}
-
-/* La animación alterna entre el frame 1 (background-image base) y el
-   frame 2 (::after), con steps(2) para que sea pixel-perfect (sin blend). */
-@keyframes steve-frames {
-  0%, 49%   { opacity: 0; }   /* frame 1 visible (base) */
-  50%, 100% { opacity: 1; }   /* frame 2 visible (::after) */
-}
-
-/* ---------------------------------------------------------------------------
-   3. STEVE · micro-oscilación (parece que sube trepando)
-   Pequeño movimiento vertical extra, independiente del scroll.
-   --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"] .climb-climber {
-  animation: steve-bob 0.8s steps(2) infinite;
-}
-
-@keyframes steve-bob {
-  0%, 49%   { margin-top: 0; }
-  50%, 100% { margin-top: -2px; }   /* sube 2px, baja 2px, parece que trepa */
-}
-
-/* ⚠️ OJO: el JS ya usa transform: translate(-50%, -50%) en el contenedor.
-   Con margin-top no rompemos el transform del JS, así que coexisten. */
-
-/* ---------------------------------------------------------------------------
-   4. STEVE · saludo periódico (cada ~6s agita el brazo)
-   Como no tenemos detección de "paso por bloque", hacemos un saludo
-   periódico. Aproximación: cada 6s agita el brazo durante 1s.
-   --------------------------------------------------------------------------- */
-
-/* Si quieres el saludo más notorio, hacemos que el contenedor haga un
-   pequeño "shake" horizontal cada 6s. */
-:root[data-skin="minecraft"] .climb-climber {
-  animation:
-    steve-bob 0.8s steps(2) infinite,
-    steve-wave 6s ease-in-out infinite;
-}
-
-@keyframes steve-wave {
-  0%, 80%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-  85%           { transform: translate(-50%, -50%) rotate(-8deg); }
-  90%           { transform: translate(-50%, -50%) rotate(8deg); }
-  95%           { transform: translate(-50%, -50%) rotate(-8deg); }
-}
-
-/* ⚠️ ATENCIÓN: si el JS también pone transform en el elemento, esta
-   animación lo pisa. Puede que necesitemos quitarla o envolverla.
-   Prueba primero y si Steve se queda quieto en un sitio, quitamos
-   esta parte. */
-
-/* ---------------------------------------------------------------------------
-   5. prefers-reduced-motion
-   --------------------------------------------------------------------------- */
-@media (prefers-reduced-motion: reduce) {
-  :root[data-skin="minecraft"] .climb-climber::after { animation: none; opacity: 0; }
-  :root[data-skin="minecraft"] .climb-climber {
-    animation: none;
-    transform: translate(-50%, -50%);   /* dejamos la posición base */
-  }
-}
-/* ============================================================================
-   FIX · Minecraft · Stats homogéneas y "Cursando" no desborda
-   ============================================================================ */
-
-:root[data-skin="minecraft"] .stat strong {
-  font-size: clamp(1rem, 2.6vw, 1.5rem);   /* antes llegaba a 1.85rem */
-  line-height: 1.1;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-  hyphens: auto;
-  display: block;
-  text-shadow: 1px 1px 0 #1a1a1a;
-}
-
-:root[data-skin="minecraft"] .stat {
-  padding: 1rem 1rem;
-  min-width: 0;
-}
-
-/* En pantallas medianas y pequeñas, aún más pequeño para asegurar que cabe */
-@media (max-width: 900px) {
-  :root[data-skin="minecraft"] .stat strong {
-    font-size: clamp(.95rem, 3.2vw, 1.3rem);
-  }
-}
-/* ============================================================================
-   FIX · Minecraft · Stats con más aire entre número y label
-   ============================================================================ */
-
-:root[data-skin="minecraft"] .stat strong {
-  margin-bottom: .6rem;    /* separa el número del label debajo */
-  display: block;
-}
-
-:root[data-skin="minecraft"] .stat span {
-  display: block;
-  margin-top: 0;
-  line-height: 1.4;
-  color: #1a1a1a;
-  font-weight: 700;
-}
-
-/* En dark, el label en blanco hueso */
-:root[data-skin="minecraft"][data-theme="dark"] .stat span {
-  color: #E9ECEC;
-}
-/* ============================================================================
-   BLOQUE C2 · Minecraft · Steve saluda al pasar por bloque
-   ============================================================================
-   La clase .is-greeting la añade script.js cuando Steve cruza un .climb-hold.
-   La animación levanta los brazos y agita ligeramente a Steve durante 800ms.
-   ============================================================================ */
-
-/* Marco base del contenedor: aseguramos position relative para el ::after */
-:root[data-skin="minecraft"] .climb-climber {
-  transition: transform .15s var(--ease);
-}
-
-/* Cuando Steve saluda: animación de "shake" + brazos levantados */
-:root[data-skin="minecraft"] .climb-climber.is-greeting {
-  animation: steve-greet 0.4s steps(2) 2;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32' shape-rendering='crispEdges'%3E%3C!-- CABEZA --%3E%3Crect x='6' y='0' width='12' height='8' fill='%23C9A27E'/%3E%3Crect x='6' y='0' width='12' height='3' fill='%235A3A1E'/%3E%3Crect x='6' y='3' width='2' height='2' fill='%235A3A1E'/%3E%3Crect x='16' y='3' width='2' height='2' fill='%235A3A1E'/%3E%3C!-- OJOS --%3E%3Crect x='9' y='4' width='1' height='1' fill='%23FFFFFF'/%3E%3Crect x='14' y='4' width='1' height='1' fill='%23FFFFFF'/%3E%3Crect x='10' y='4' width='1' height='1' fill='%233A1E0E'/%3E%3Crect x='15' y='4' width='1' height='1' fill='%233A1E0E'/%3E%3C!-- BOCA SONRIENTE --%3E%3Crect x='9' y='6' width='6' height='1' fill='%233A1E0E'/%3E%3C!-- PECHO/CAMISETA --%3E%3Crect x='6' y='8' width='12' height='9' fill='%2324A0A0'/%3E%3C!-- BRAZO IZQ LEVANTADO --%3E%3Crect x='2' y='0' width='2' height='8' fill='%23C9A27E'/%3E%3C!-- BRAZO DER LEVANTADO --%3E%3Crect x='20' y='0' width='2' height='8' fill='%23C9A27E'/%3E%3C!-- PANTALONES --%3E%3Crect x='6' y='17' width='12' height='9' fill='%233A4A7A'/%3E%3C!-- PIERNAS --%3E%3Crect x='8' y='26' width='4' height='6' fill='%233A4A7A'/%3E%3Crect x='12' y='26' width='4' height='6' fill='%233A4A7A'/%3E%3C!-- BOTAS --%3E%3Crect x='8' y='30' width='4' height='2' fill='%233A2E1E'/%3E%3Crect x='12' y='30' width='4' height='2' fill='%233A2E1E'/%3E%3C/svg%3E") !important;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  filter:
-    drop-shadow(1px 0 0 #1a1a1a)
-    drop-shadow(-1px 0 0 #1a1a1a)
-    drop-shadow(0 1px 0 #1a1a1a)
-    drop-shadow(0 -1px 0 #1a1a1a);
-}
-
-@keyframes steve-greet {
-  0%, 49%  { transform: translate(-50%, -50%) rotate(-6deg); }
-  50%, 100% { transform: translate(-50%, -50%) rotate(6deg); }
-}
-
-/* En dark: mismo comportamiento, contorno negro puro */
-:root[data-skin="minecraft"][data-theme="dark"] .climb-climber.is-greeting {
+:root[data-skin="minecraft"][data-theme="dark"] .climb-climber {
   filter:
     drop-shadow(1px 0 0 #000)
     drop-shadow(-1px 0 0 #000)
     drop-shadow(0 1px 0 #000)
     drop-shadow(0 -1px 0 #000);
 }
+/* El saludo: mismo color, sin recolorear */
+:root[data-skin="minecraft"] .climb-climber.is-greeting { filter: none; }
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .climb-climber.is-greeting {
+  filter:
+    drop-shadow(1px 0 0 #1a1a1a) drop-shadow(-1px 0 0 #1a1a1a)
+    drop-shadow(0 1px 0 #1a1a1a) drop-shadow(0 -1px 0 #1a1a1a);
+}
+
+/* ---------------------------------------------------------------------------
+   14 · CURSOR PIXELADO
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] .cursor__hand {
+  width: 32px; height: 32px;
+  margin: -6px 0 0 -6px;
+  color: #F4FBF8;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .cursor__hand {
+  filter: drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000)
+          drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000);
+}
+:root[data-skin="minecraft"][data-theme="dark"] .cursor__hand {
+  color: #E9ECEC;
+  filter: drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000)
+          drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000);
+}
+:root[data-skin="minecraft"] .cursor.is-hovering .cursor__hand,
+:root[data-skin="minecraft"] .cursor.is-clicking .cursor__hand { color: #FF8A1F; }
+:root[data-skin="minecraft"] .cursor__hand svg {
+  image-rendering: pixelated;
+  shape-rendering: crispEdges;
+}
+
+/* ---------------------------------------------------------------------------
+   15 · RESPONSIVE
+   --------------------------------------------------------------------------- */
+@media (max-width: 1400px) {
+  :root[data-skin="minecraft"] .logo-text { font-size: .72rem; }
+  :root[data-skin="minecraft"] .nav-link { padding: .4rem .5rem; font-size: .55rem; }
+  :root[data-skin="minecraft"] .nav-cta  { padding: .45rem .7rem; font-size: .6rem; }
+}
+@media (max-width: 1240px) {
+  :root[data-skin="minecraft"] .logo-text { font-size: .85rem; }
+  :root[data-skin="minecraft"] .nav-list { gap: .4rem; }
+  :root[data-skin="minecraft"] .nav-link,
+  :root[data-skin="minecraft"] .nav-cta {
+    width: 100%; text-align: center;
+    padding: .8rem 1rem; font-size: .75rem;
+  }
+}
+@media (max-width: 720px) {
+  :root[data-skin="minecraft"] .climb-climber { width: 20px; height: 26px; }
+}
+
+/* ---------------------------------------------------------------------------
+   16 · prefers-reduced-motion
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-skin="minecraft"] :is(
+    .btn, .nav-cta, .nav-link, .filter-btn, .arcade__btn, .arcade__restart,
+    .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
+    .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn,
+    .card, .project-card, .cert-card, .like-card, .news-item,
+    .project-preview, .github-activity__card, .climb-hold
+  ) { transition: none; }
+  :root[data-skin="minecraft"] :is(
+    .btn, .nav-cta, .nav-link, .filter-btn, .arcade__btn, .arcade__restart,
+    .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
+    .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn
+  ):hover { transform: none; }
+  :root[data-skin="minecraft"] :is(
+    .card, .project-card, .cert-card, .like-card, .news-item,
+    .project-preview, .github-activity__card, .climb-hold
+  ):hover { transform: none; }
+}
+/* ============================================================================
+   FIX · Nav estable · no baila entre idiomas ni skins
+   ============================================================================
+   Cada .nav-link tiene un min-width fijo por skin, así el menú no cambia
+   de tamaño cuando cambia el texto (ES/VA/EN) o la tipografía.
+   ============================================================================ */
+
+/* Base: Topo y Omarchy */
+.nav-link {
+  min-width: 6.5rem;   /* ajusta si algún idioma necesita más */
+  text-align: center;
+  justify-content: center;
+}
+
+/* Minecraft: fuente más ancha, necesita más espacio */
+:root[data-skin="minecraft"] .nav-link {
+  min-width: 7.5rem;
+}
+:root[data-skin="minecraft"] .nav-cta {
+  min-width: 6rem;
+}
+
+/* En pantallas medianas, reducir un poco para que quepa */
+@media (max-width: 1400px) {
+  .nav-link { min-width: 5.5rem; }
+  :root[data-skin="minecraft"] .nav-link { min-width: 6rem; }
+}
+
+/* En móvil, el nav es vertical: sin min-width */
+@media (max-width: 1240px) {
+  .nav-link,
+  :root[data-skin="minecraft"] .nav-link {
+    min-width: 0;
+  }
+}
+/* ============================================================================
+   FIX · Nav Minecraft: compactar para que no desborde con VA/EN
+   ============================================================================ */
+@media (min-width: 1241px) {
+  :root[data-skin="minecraft"] .nav-link,
+  :root[data-skin="minecraft"] .nav-cta {
+    font-size: .55rem;      /* un pelín más pequeño */
+    padding: .35rem .5rem;
+    letter-spacing: 0;
+  }
+}
+/* ============================================================================
+   FIX · Nav estable · todos los skins e idiomas
+   ----------------------------------------------------------------------------
+   Cada botón tiene un ancho MÍNIMO fijo, calculado para el idioma más largo
+   (castellano). Así el menú no baila al cambiar ES / VA / EN ni de skin.
+   En móvil el nav es vertical y se desactiva el min-width.
+   ============================================================================ */
+
+/* Base: Topo y Omarchy (fuente estrecha) */
+@media (min-width: 1241px) {
+  .nav-link {
+    min-width: 6rem;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* Minecraft: fuente Monocraft, más ancha → más min-width */
+@media (min-width: 1241px) {
+  :root[data-skin="minecraft"] .nav-link,
+  :root[data-skin="minecraft"] .nav-cta {
+    min-width: 7.2rem;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* Pantallas medianas: reducir un poco para que quepa sin desbordar */
+@media (min-width: 1241px) and (max-width: 1500px) {
+  .nav-link { min-width: 5.2rem; }
+  :root[data-skin="minecraft"] .nav-link,
+  :root[data-skin="minecraft"] .nav-cta { min-width: 6.2rem; }
+}
+
+/* Móvil / tablet: el nav se despliega vertical → sin min-width */
+@media (max-width: 1240px) {
+  .nav-link,
+  :root[data-skin="minecraft"] .nav-link,
+  :root[data-skin="minecraft"] .nav-cta {
+    min-width: 0;
+  }
+}
+/* ============================================================================
+   Cursor Minecraft · pico de diamante pixel art
+   ============================================================================ */
+
+/* El pico ya tiene sus colores: no aplicar currentColor ni filtro de mano */
+.cursor--minecraft .cursor__hand {
+  width: 44px;
+  height: 44px;
+  /* Hotspot: la punta de la hoja cae en el píxel (2,2) del viewBox.
+     Al escalar de 24 a 44px hay un factor ~1.83, y como el viewBox empieza
+     en (1,1), la punta queda cerca de (1.83, 1.83) → desplazamos el margen. */
+  margin: -2px 0 0 -2px;
+  color: initial;
+  filter: drop-shadow(1px 1px 0 rgba(0,0,0,.35));
+}
+
+/* Al hacer click, la espada hace un "tajo" corto */
+.cursor--minecraft.is-clicking .cursor__hand {
+  transform-origin: 2px 2px;    /* gira desde la punta */
+  animation: espada-tajo 120ms steps(2) 1;
+}
+
+/* En hover, la espada crece un pelín para feedback */
+.cursor--minecraft.is-hovering .cursor__hand {
+  width: 48px;
+  height: 48px;
+  margin: -2px 0 0 -2px;
+}
+
+/* Reduced motion: sin animación de pico */
+@media (prefers-reduced-motion: reduce) {
+  .cursor--minecraft.is-clicking .cursor__hand { animation: none; }
+}
+/* ============================================================================
+   Stack en formato slots de inventario (solo Minecraft)
+   ============================================================================
+   Convierte la lista de tecnologías en una rejilla 3 columnas donde cada
+   ítem es un slot de inventario Minecraft con bisel hundido, icono arriba
+   y nombre debajo. En Topo/Omarchy se ve la lista normal de chips.
+   ============================================================================ */
+
+/* Base: cada li ya tiene el estilo de chip de siempre (no cambia en topo/omarchy) */
+.stack-slot {
+  display: grid;
+  place-items: center;
+  gap: .25rem;
+  text-align: center;
+}
+
+.stack-slot__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  display: block;
+}
+
+.stack-slot__name {
+  display: block;
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* ---------------------------------------------------------------------------
+   Solo en Minecraft: rejilla 3 columnas + aspecto de slot
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] .stack-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+  margin-top: 1.25rem;
+}
+
+:root[data-skin="minecraft"] .stack-slot {
+  /* Fondo base */
+  background-color: var(--mc-slot-bg);
+
+  /* Degradado interior: claro arriba, oscuro abajo (efecto de bloque sólido) */
+  background-image: linear-gradient(
+    180deg,
+    rgba(255,255,255,.12) 0%,
+    rgba(255,255,255,.04) 40%,
+    rgba(0,0,0,.12)       100%
+  );
+
+  /* Bisel NORMAL (elevado): luz arriba-izq, sombra abajo-der */
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
+
+  /* Sombra exterior fuerte + marco exterior + brillo interno arriba */
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),        /* marco negro que rodea el bloque */
+    inset 1px 1px 0 rgba(255,255,255,.25),   /* brillo superior interno */
+    inset -1px -1px 0 rgba(0,0,0,.25),       /* sombra inferior interna */
+    0 4px 0 rgba(0,0,0,.45);                 /* sombra externa que lo eleva */
+
+  padding: 1rem .5rem;
+  min-height: 100px;
+  color: #1a1a1a;
+  transition: transform 100ms steps(2), box-shadow 100ms steps(2);
+  will-change: transform, box-shadow;
+}
+
+:root[data-skin="minecraft"][data-theme="dark"] .stack-slot {
+  background-color: #4a4a4a;   /* gris medio, más visible */
+  background-image: linear-gradient(
+    180deg,
+    rgba(255,255,255,.1)  0%,
+    rgba(255,255,255,.03) 40%,
+    rgba(0,0,0,.25)       100%
+  );
+}
+
+/* Hover: el bloque se eleva un poco más */
+:root[data-skin="minecraft"] .stack-slot:hover {
+  transform: translate(0, -2px);
+  box-shadow:
+    0 0 0 2px var(--accent),                 /* marco de acento (brillo) */
+    inset 1px 1px 0 rgba(255,255,255,.3),
+    inset -1px -1px 0 rgba(0,0,0,.25),
+    0 6px 0 rgba(0,0,0,.5);                  /* sombra más grande = flota más */
+}
+
+/* Active (cuando pulsas): el bloque se hunde ligeramente */
+:root[data-skin="minecraft"] .stack-slot:active {
+  transform: translate(0, 1px);
+  box-shadow:
+    0 0 0 2px var(--accent),
+    inset 1px 1px 0 rgba(0,0,0,.2),
+    inset -1px -1px 0 rgba(255,255,255,.1),
+    0 1px 0 rgba(0,0,0,.4);                  /* sombra casi desaparece = hundido */
+}
+
+/* Hover: el slot se "ilumina" con el borde de acento */
+:root[data-skin="minecraft"] .stack-slot:hover {
+  transform: translate(0, -1px);   /* sube 1px, como si lo sacaras del inventario */
+  box-shadow:
+    0 0 0 2px var(--accent),        /* marco de acento */
+    inset 3px 3px 0 rgba(0,0,0,.35),
+    inset -2px -2px 0 rgba(255,255,255,.08),
+    inset 1px 1px 0 rgba(0,0,0,.4),
+    0 4px 0 rgba(0,0,0,.45);        /* sombra más grande = parece que flota */
+}
+
+/* En Minecraft el icono se ve más grande y el nombre en Monocraft */
+:root[data-skin="minecraft"] .stack-slot__icon {
+  font-size: 2rem;
+  /* El icono "flota" dentro del bloque */
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,.5));
+  margin-bottom: .4rem;
+  display: block;
+}
+
+:root[data-skin="minecraft"] .stack-slot__name {
+  font-family: var(--display);
+  font-size: .75rem;
+  letter-spacing: .03em;
+  line-height: 1.25;
+  color: #F4FBF8;
+  /* Texto con sombra dura tipo Minecraft: 1px negro abajo */
+  text-shadow: 1px 1px 0 rgba(0,0,0,.75);
+  padding: 0 .25rem;
+}
+
+/* En móvil: 2 columnas en lugar de 3 */
+@media (max-width: 520px) {
+  :root[data-skin="minecraft"] .stack-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 
 /* prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  :root[data-skin="minecraft"] .climb-climber.is-greeting {
-    animation: none;
-    transform: translate(-50%, -50%);
-  }
+  :root[data-skin="minecraft"] .stack-slot { transition: none; }
+  :root[data-skin="minecraft"] .stack-slot:hover { transform: none; }
+}
+
+:root[data-skin="minecraft"][data-theme="dark"] .stack-slot {
+  background-image: linear-gradient(
+    180deg,
+    rgba(0,0,0,.4)   0%,
+    rgba(0,0,0,.15)  15%,
+    rgba(255,255,255,.03) 55%,
+    rgba(255,255,255,.06) 100%
+  );
+}
+/* ============================================================================
+   Minecraft · Tarjetas "Me gusta" con elevación al hover
+   ----------------------------------------------------------------------------
+   En reposo se ven como el resto de cards. Al pasar el ratón, se elevan 2px
+   y la sombra crece, como si las "sacaras del inventario". Solo Minecraft.
+   ============================================================================ */
+:root[data-skin="minecraft"] .like-card {
+  transition: transform 100ms steps(2), box-shadow 100ms steps(2);
+  will-change: transform, box-shadow;
+}
+
+:root[data-skin="minecraft"] .like-card:hover {
+  transform: translate(0, -2px);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),        /* marco exterior */
+    inset 1px 1px 0 rgba(255,255,255,.2),    /* brillo superior interno */
+    inset -1px -1px 0 rgba(0,0,0,.2),        /* sombra inferior interna */
+    0 8px 0 2px rgba(0,0,0,.4);              /* sombra externa fuerte */
+}
+
+/* Reduced motion: sin elevación */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-skin="minecraft"] .like-card { transition: none; }
+  :root[data-skin="minecraft"] .like-card:hover { transform: none; }
+}
+/* ============================================================================
+   Pista secreta del Konami (footer)
+   ============================================================================ */
+.footer-secreto {
+  margin: 1.25rem 0 0;
+  padding: .55rem .85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--muted-2);
+  background: transparent;
+  border: 2px dashed var(--line);
+  border-radius: 4px;
+  opacity: .55;
+  transition: opacity .25s var(--ease);
+}
+.footer-secreto:hover { opacity: 1; }
+
+.footer-secreto__icono { font-size: 1rem; }
+.footer-secreto__teclas {
+  font-family: var(--mono);
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .05em;
+}
+
+/* Solo visible en Minecraft (opcional) */
+:root:not([data-skin="minecraft"]) .footer-secreto { display: none; }
+/* ============================================================================
+   Toggle de sonido (solo Minecraft)
+   ============================================================================ */
+.sound-toggle {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--text);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 2px 2px 0 var(--text);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease), color .25s var(--ease);
+}
+.sound-toggle:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--text);
+  color: var(--accent);
+}
+.sound-toggle[aria-pressed="true"] { color: var(--accent); }
+
+.sound-toggle .icon {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  transition: transform .3s var(--ease), opacity .2s var(--ease);
+}
+.sound-toggle .icon-sound-on  { transform: scale(0); opacity: 0; }
+.sound-toggle .icon-sound-off { transform: scale(1); opacity: 1; }
+.sound-toggle[aria-pressed="true"] .icon-sound-on  { transform: scale(1); opacity: 1; }
+.sound-toggle[aria-pressed="true"] .icon-sound-off { transform: scale(0); opacity: 0; }
+
+/* En Minecraft: bisel coherente */
+:root[data-skin="minecraft"] .sound-toggle {
+  background: var(--mc-btn-bg);
+  color: #1a1a1a;
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    3px 3px 0 2px rgba(0,0,0,.35);
+  border-radius: 0;
+}
+:root[data-skin="minecraft"] .sound-toggle:hover {
+  background: var(--mc-btn-bg-hover);
+  border-color:
+    var(--mc-bevel-dark)  var(--mc-bevel-light)
+    var(--mc-bevel-light) var(--mc-bevel-dark);
+  transform: translate(2px, 2px);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    1px 1px 0 2px rgba(0,0,0,.35);
+}
+:root[data-skin="minecraft"][data-theme="dark"] .sound-toggle { color: #E9ECEC; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sound-toggle { transition: none; }
+  .sound-toggle:hover { transform: none; }
 }
