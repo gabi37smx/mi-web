@@ -390,7 +390,7 @@ if (toTop) {
     holdPositions = getHoldPositions();
   }
 
-  function updateClimber() {
+    function updateClimber() {
     if (holdPositions.length < 2) return;
 
     const scrollY = window.scrollY;
@@ -402,6 +402,27 @@ if (toTop) {
     const y = first + (last - first) * progress;
 
     climber.style.top = `${y}px`;
+
+    // ---- Detección de "paso por bloque" para el saludo de Steve ----
+    const steveRect = climber.getBoundingClientRect();
+    const steveCenterY = steveRect.top + steveRect.height / 2;
+
+    holds.forEach((hold) => {
+      const holdRect = hold.getBoundingClientRect();
+      const holdCenterY = holdRect.top + holdRect.height / 2;
+
+      if (Math.abs(steveCenterY - holdCenterY) < 15) {
+        if (!hold.dataset.greeted) {
+          hold.dataset.greeted = 'true';
+          climber.classList.add('is-greeting');
+          setTimeout(() => {
+            climber.classList.remove('is-greeting');
+          }, 800);
+        }
+      } else {
+        delete hold.dataset.greeted;
+      }
+    });
   }
 
   const railSectionIds = holds.map((h) => h.dataset.section);
