@@ -66,6 +66,8 @@
     ["títulos y certificaciones", "títols i certificacions", "degrees and certificates"],
     ["títulos técnicos oficiales", "títols tècnics oficials", "official technical qualifications"],
     ["DAM en el IES Simarro", "DAM a l'IES Simarro", "Multiplatform App Development at IES Simarro"],
+    ["Cursando", "Cursant", "Studying"],
+    ["1º DAM en IES Simarro", "1r DAM a l'IES Simarro", "1st-year DAM at IES Simarro"],  
     ["Técnico Superior en Sistemas de Telecomunicación e Informáticos, con certificaciones Cisco en redes y ciberseguridad y experiencia previa como mecánico y oficial de mantenimiento. Ahora estudio 1º DAM en el IES Simarro para dar el salto a la programación, la inteligencia artificial y los agentes.", "Tècnic Superior en Sistemes de Telecomunicació i Informàtics, amb certificacions Cisco en xarxes i ciberseguretat i experiència prèvia com a mecànic i oficial de manteniment. Ara estudie 1r de DAM a l'IES Simarro per a fer el pas cap a la programació, la intel·ligència artificial i els agents.", "Advanced Technician in Telecommunications and Computer Systems, with Cisco networking and cybersecurity certifications and previous experience as a mechanic and maintenance technician. I am now studying multiplatform app development at IES Simarro to move into programming, artificial intelligence and agents."],
     ["01 · Sobre mí", "01 · Sobre mi", "01 · About me"],
     ["Perfil técnico con vocación de", "Perfil tècnic amb vocació de", "A technical background with a drive to become a"],
