@@ -5,6 +5,7 @@
    1. Dibuja un escalador distinto según el skin activo:
         · topo / omarchy  →  escalador de líneas (v2 original)
         · minecraft       →  Steve pixel art
+        · matrix          →  Centinela (calamar de la película)
    2. Al cambiar de skin en caliente, redibuja automáticamente.
    3. Mientras haces scroll alterna dos poses (brazo y pierna contrarios).
    4. Al parar se queda colgado y se balancea suave.
@@ -69,6 +70,46 @@
     .climb-climber svg[data-escalador="3"].is-waving:not(.is-summit) .steve-arm-r-a { display: none; }
     .climb-climber svg[data-escalador="3"].is-waving:not(.is-summit) .steve-arm-wave { display: inline; }
     .climb-climber svg[data-escalador="3"] .steve-arm-wave { transform-box: view-box; transform-origin: 13px 9.8px; }
+
+    /* Centinela de Matrix (calamar): los colores salen de las variables del skin */
+    .climb-climber svg[data-escalador="4"] .ojos { fill: var(--accent-2); stroke: none; }
+    .climb-climber svg[data-escalador="4"] .arm-wave { transform-box: view-box; transform-origin: 15.2px 13px; }
+
+    /* Centinela: cada tentáculo se agita por su cuenta (giro desde la base).
+       --amp = amplitud, --k = multiplicador de duración (menor = más rápido).
+       Parado: ondulación lenta y corta. Con scroll (.is-moving): agitación amplia y rápida, "amenazante". */
+    .climb-climber svg[data-escalador="4"] .t { transform-box: view-box; }
+    .climb-climber svg[data-escalador="4"] .t1 { transform-origin: 8.8px 13px; }
+    .climb-climber svg[data-escalador="4"] .t2 { transform-origin: 10.2px 13px; }
+    .climb-climber svg[data-escalador="4"] .t3 { transform-origin: 11.4px 13px; }
+    .climb-climber svg[data-escalador="4"] .t4 { transform-origin: 12.6px 13px; }
+    .climb-climber svg[data-escalador="4"] .t5 { transform-origin: 13.8px 13px; }
+    .climb-climber svg[data-escalador="4"] .t6 { transform-origin: 15.2px 13px; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .climb-climber svg[data-escalador="4"] { --amp: 3deg; --k: 2.4; }
+      .climb-climber svg[data-escalador="4"].is-moving { --amp: 10deg; --k: 1; }
+
+      .climb-climber svg[data-escalador="4"] .t {
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+      }
+      .climb-climber svg[data-escalador="4"] .t1 { animation-name: tentIzq; animation-duration: calc(.55s * var(--k)); }
+      .climb-climber svg[data-escalador="4"] .t2 { animation-name: tentDer; animation-duration: calc(.70s * var(--k)); animation-delay: -.2s; }
+      .climb-climber svg[data-escalador="4"] .t3 { animation-name: tentIzq; animation-duration: calc(.60s * var(--k)); animation-delay: -.4s; }
+      .climb-climber svg[data-escalador="4"] .t4 { animation-name: tentDer; animation-duration: calc(.80s * var(--k)); animation-delay: -.1s; }
+      .climb-climber svg[data-escalador="4"] .t5 { animation-name: tentIzq; animation-duration: calc(.50s * var(--k)); animation-delay: -.3s; }
+      .climb-climber svg[data-escalador="4"] .t6 { animation-name: tentDer; animation-duration: calc(.65s * var(--k)); animation-delay: -.5s; }
+      @keyframes tentIzq { from { transform: rotate(calc(var(--amp) * -1)) scaleY(1); } to { transform: rotate(var(--amp)) scaleY(1.05); } }
+      @keyframes tentDer { from { transform: rotate(var(--amp)) scaleY(1.04); } to { transform: rotate(calc(var(--amp) * -1)) scaleY(1); } }
+
+      /* Al avanzar: el cuerpo "acecha" (balanceo rápido) y los ojos palpitan */
+      .climb-climber svg[data-escalador="4"].is-moving:not(.is-summit) { animation: centinelaAcecha .35s ease-in-out infinite alternate; }
+      .climb-climber svg[data-escalador="4"].is-moving .ojos { animation: centinelaOjos .3s ease-in-out infinite alternate; }
+      @keyframes centinelaAcecha { from { transform: rotate(-2.5deg) translateY(0); } to { transform: rotate(2.5deg) translateY(-1.5px); } }
+      @keyframes centinelaOjos { from { opacity: 1; } to { opacity: .45; } }
+    }
 
     /* Presas */
     .climb-hold.is-passed:not(.is-active):not(.is-lit) { background: rgba(var(--accent-rgb), .28); }
@@ -205,19 +246,75 @@
     </svg>
   `;
 
+  /* ---------- Dibujo 3: Centinela de Matrix (calamar) ---------- */
+  /* Cabeza en punta con racimo de "ojos", collar y seis tentáculos.
+     · pose A / B: el haz de tentáculos se curva a un lado y al otro (B es A en espejo) → "nada" al hacer scroll
+     · saludo: el tentáculo derecho se levanta y se agita
+     · cima: tentáculos en alto a ambos lados
+     Reutiliza las clases pose / pose-a / pose-b / pose-c / arm-r-a / arm-wave, así que la
+     lógica de poses y el CSS de alternancia ya existentes funcionan sin cambios. */
+  const DIBUJO_CENTINELA = `
+    <svg viewBox="0 0 24 30" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-escalador="4">
+      <path d="M12 1.2 C15.4 3.4 16.4 7.4 15.2 11.4 L8.8 11.4 C7.6 7.4 8.6 3.4 12 1.2 Z" fill="currentColor" fill-opacity=".14" stroke-width="1.3"/>
+      <rect x="8" y="11.4" width="8" height="1.7" rx=".5" fill="currentColor" stroke="none"/>
+      <g class="ojos">
+        <circle cx="10.3" cy="6.6" r=".85"/><circle cx="12" cy="7.4" r=".85"/><circle cx="13.7" cy="6.6" r=".85"/>
+        <circle cx="11.1" cy="9.2" r=".75"/><circle cx="12.9" cy="9.2" r=".75"/>
+      </g>
+      <g class="pose pose-a">
+        <path class="t t1" d="M8.8 13 C7.4 16.5 9.4 19.5 7.2 23.5 C5.4 25.4 5.4 27 6.2 28.4"/>
+        <path class="t t2" d="M10.2 13 C9.4 17 11 20 9.2 24.2 C8.6 25.8 8.6 27.4 9.2 29"/>
+        <path class="t t3" d="M11.4 13 C11 17.2 12.4 20.4 10.8 24.6 C10.4 26.2 10.4 27.8 10.8 29.2"/>
+        <path class="t t4" d="M12.6 13 C12.4 17 13.6 20 12.4 24 C12 25.6 12.2 27 12.8 28.2"/>
+        <path class="t t5" d="M13.8 13 C13.8 16.6 15.2 19.4 14 23 C13.6 24.4 13.8 25.6 14.4 26.6"/>
+        <path class="t t6 arm-r-a" d="M15.2 13 C15.6 16 17 18.4 16.6 21.6 C16.4 23 17.2 24.2 18.2 25"/>
+      </g>
+      <g class="pose pose-b" transform="matrix(-1 0 0 1 24 0)">
+        <path class="t t1" d="M8.8 13 C7.4 16.5 9.4 19.5 7.2 23.5 C5.4 25.4 5.4 27 6.2 28.4"/>
+        <path class="t t2" d="M10.2 13 C9.4 17 11 20 9.2 24.2 C8.6 25.8 8.6 27.4 9.2 29"/>
+        <path class="t t3" d="M11.4 13 C11 17.2 12.4 20.4 10.8 24.6 C10.4 26.2 10.4 27.8 10.8 29.2"/>
+        <path class="t t4" d="M12.6 13 C12.4 17 13.6 20 12.4 24 C12 25.6 12.2 27 12.8 28.2"/>
+        <path class="t t5" d="M13.8 13 C13.8 16.6 15.2 19.4 14 23 C13.6 24.4 13.8 25.6 14.4 26.6"/>
+        <path class="t t6" d="M15.2 13 C15.6 16 17 18.4 16.6 21.6 C16.4 23 17.2 24.2 18.2 25"/>
+      </g>
+      <g class="pose pose-c">
+        <path d="M8.8 12.8 C6 12.4 4 10 3.6 6.4 C3.4 4.8 3.8 3.6 4.6 2.8"/>
+        <path d="M9.6 13.2 C6.6 14.6 3.8 13.6 2.2 11 C1.6 9.8 1.6 8.8 2 8"/>
+        <path d="M10.4 13.4 C9.4 17 8.6 21 9.4 27"/>
+        <g transform="matrix(-1 0 0 1 24 0)">
+        <path d="M8.8 12.8 C6 12.4 4 10 3.6 6.4 C3.4 4.8 3.8 3.6 4.6 2.8"/>
+        <path d="M9.6 13.2 C6.6 14.6 3.8 13.6 2.2 11 C1.6 9.8 1.6 8.8 2 8"/>
+        <path d="M10.4 13.4 C9.4 17 8.6 21 9.4 27"/>
+        </g>
+      </g>
+      <g class="arm-wave">
+        <path d="M15.2 13 C17.6 13.6 19.6 12 20.6 9 C21.1 7.6 21.1 6.4 20.5 5.4"/>
+      </g>
+    </svg>
+  `;
+
   /* ---------- Elegir dibujo según skin activo ---------- */
   function skinActual() {
     return document.documentElement.getAttribute("data-skin") || "topo";
   }
 
   function dibujoParaSkin(skin) {
-    return skin === "minecraft" ? DIBUJO_STEVE : DIBUJO_LINEAS;
+    if (skin === "minecraft") return DIBUJO_STEVE;
+    if (skin === "matrix") return DIBUJO_CENTINELA;
+    return DIBUJO_LINEAS;
+  }
+
+  // Marca data-escalador de cada dibujo: líneas = "2", Steve = "3", Centinela = "4"
+  function marcaParaSkin(skin) {
+    if (skin === "minecraft") return "3";
+    if (skin === "matrix") return "4";
+    return "2";
   }
 
   // Repinta el escalador con el dibujo que toque. Devuelve el SVG.
   function montar() {
     const skin = skinActual();
-    const marca = skin === "minecraft" ? "3" : "2";
+    const marca = marcaParaSkin(skin);
     if (!climber.querySelector(`[data-escalador="${marca}"]`)) {
       climber.innerHTML = dibujoParaSkin(skin);
     }

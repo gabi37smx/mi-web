@@ -3,10 +3,10 @@
 
    Qué hace, en cristiano:
    1. Maneja el botón circular de la cabecera. Al pulsarlo se abre una
-      "rueda" con 3 opciones: topo, omarchy y minecraft.
+      "rueda" con 4 opciones: topo, omarchy, minecraft y matrix.
    2. Al elegir una, cambia data-skin en <html> (todo el CSS cambia de golpe,
       sin recargar) y se guarda en localStorage con la clave "skin".
-   3. Con el ratón sobre el botón, la rueda del ratón cambia entre los tres skins.
+   3. Con el ratón sobre el botón, la rueda del ratón cambia entre los cuatro skins.
    4. Al cargar cualquier página, el skin se aplica ANTES de pintar con el
       pequeño script del <head> (así no hay parpadeo). Este fichero solo
       añade el comportamiento del botón.
@@ -30,9 +30,10 @@
   /* ---------- Datos ---------- */
   // x e y: dónde queda cada opción respecto al botón al abrir la rueda (abanico hacia abajo)
   const SKINS = [
-    { id: "topo", name: "Topo", x: -46, y: 66 },
-    { id: "omarchy", name: "Omarchy", x: 0, y: 80 },
-    { id: "minecraft", name: "Minecraft", x: 46, y: 66 }
+    { id: "topo", name: "Topo", x: -65, y: 59 },
+    { id: "omarchy", name: "Omarchy", x: -24, y: 85 },
+    { id: "minecraft", name: "Minecraft", x: 24, y: 85 },
+    { id: "matrix", name: "Matrix", x: 65, y: 59 }
   ];
   const IDS = SKINS.map((s) => s.id);
   const CLAVE = "skin";
