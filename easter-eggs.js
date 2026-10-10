@@ -301,7 +301,7 @@
         toast.remove();
         toastAbierto = false;
       }, 350);
-    }, 4000);
+    }, 9500);
   }
 
   // ---------- Konami code ----------
@@ -430,3 +430,4 @@
     attributeFilter: ["data-skin"]
   });
 })();
+

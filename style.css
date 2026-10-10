@@ -3202,7 +3202,22 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
 /* ---------------------------------------------------------------------------
    9 · TERMINAL · legible en light y dark
    --------------------------------------------------------------------------- */
-:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-prompt { color: #1a1a1a; }
+/* Terminal light · tonos cálidos tipo fruta/zelda */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-prompt {
+  color: #1a1a1a;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-var {
+  color: #FF8A1F;          /* naranja Lava, más legible que el rojo oscuro */
+  font-weight: 700;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-fn,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-ok {
+  color: #B8860B;          /* amarillo plátano oscuro (cumple AA sobre Sea Lantern) */
+  font-weight: 700;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-cursor {
+  color: #1a1a1a;
+}
 :root[data-skin="minecraft"]:not([data-theme="dark"]) .term-var  { color: var(--mc-red-t); font-weight: 700; }
 :root[data-skin="minecraft"]:not([data-theme="dark"]) .term-fn,
 :root[data-skin="minecraft"]:not([data-theme="dark"]) .term-ok   { color: var(--mc-green); font-weight: 700; }
@@ -3697,10 +3712,22 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
 /* En Minecraft el icono se ve más grande y el nombre en Monocraft */
 :root[data-skin="minecraft"] .stack-slot__icon {
   font-size: 2rem;
-  /* El icono "flota" dentro del bloque */
-  filter: drop-shadow(2px 2px 0 rgba(0,0,0,.5));
+  /* Doble sombra: negra abajo-derecha (sombra real) + blanca arriba-izq (rebote) */
+  filter:
+    drop-shadow(1.5px 1.5px 0 rgba(0,0,0,.55))
+    drop-shadow(-1px -1px 0 rgba(255,255,255,.12));
   margin-bottom: .4rem;
   display: block;
+  transform: scale(1.08);   /* un pelín más grande */
+  transition: transform 100ms steps(2), filter 100ms steps(2);
+}
+
+/* En hover, el icono "salta" un poco (acompaña al relieve del slot) */
+:root[data-skin="minecraft"] .stack-slot:hover .stack-slot__icon {
+  transform: scale(1.15) translateY(-1px);
+  filter:
+    drop-shadow(2px 2px 0 rgba(0,0,0,.6))
+    drop-shadow(-1px -1px 0 rgba(255,255,255,.15));
 }
 
 :root[data-skin="minecraft"] .stack-slot__name {
@@ -3766,17 +3793,18 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
    ============================================================================ */
 .footer-secreto {
   margin: 1.25rem 0 0;
-  padding: .55rem .85rem;
+  padding: .55rem .9rem;
   display: inline-flex;
   align-items: center;
   gap: .6rem;
   font-family: var(--mono);
-  font-size: .72rem;
+  font-size: .78rem;
   color: var(--muted-2);
   background: transparent;
   border: 2px dashed var(--line);
   border-radius: 4px;
-  opacity: .55;
+  opacity: .75;
+  border-color: var(--muted-2); /* borde más definido */
   transition: opacity .25s var(--ease);
 }
 .footer-secreto:hover { opacity: 1; }
@@ -3853,4 +3881,68 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
 @media (prefers-reduced-motion: reduce) {
   .sound-toggle { transition: none; }
   .sound-toggle:hover { transform: none; }
+}
+/* QR del footer en Minecraft · bisel coherente */
+:root[data-skin="minecraft"] .footer-qr img {
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    4px 4px 0 rgba(0,0,0,.4);
+  padding: .5rem;
+  background: var(--mc-slot-bg);
+  image-rendering: pixelated;
+}
+/* ============================================================================
+   FIX · Terminal Minecraft light (blindado al final)
+   ============================================================================ */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal .term-var,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-var {
+  color: #02873c !important;   /* naranja Lava */
+  font-weight: 700 !important;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal .term-fn,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-fn,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal .term-ok,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-ok {
+  color: #aa800e !important;   /* amarillo plátano oscuro */
+  font-weight: 700 !important;
+}
+/* ============================================================================
+   Minecraft · Badges V0-V6 con marco reforzado para que destaquen
+   ============================================================================ */
+:root[data-skin="minecraft"] .card-grade,
+:root[data-skin="minecraft"] .grades-legend .chip {
+  border: 2px solid #1a1a1a;
+  box-shadow:
+    0 0 0 2px #1a1a1a,          /* marco externo grueso */
+    3px 3px 0 rgba(0,0,0,.55),  /* sombra dura */
+    inset 1px 1px 0 rgba(255,255,255,.35);   /* brillo interno */
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+/* Hover: se levanta un poco */
+:root[data-skin="minecraft"] .card-grade:hover {
+  transform: translate(-1px, -1px);
+  box-shadow:
+    0 0 0 2px #1a1a1a,
+    5px 5px 0 rgba(0,0,0,.6),
+    inset 1px 1px 0 rgba(255,255,255,.35);
+}
+/* ============================================================================
+   Minecraft · Noticias IA: source legible en dark
+   ============================================================================ */
+:root[data-skin="minecraft"][data-theme="dark"] .news-source {
+  background: #F4FBF8;    /* fondo claro tipo blanco perla */
+  color: #1a1a1a;          /* texto oscuro */
+  border: 2px solid #1a1a1a;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: .25rem .55rem;
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,.6),
+    2px 2px 0 rgba(0,0,0,.5);
 }
