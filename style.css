@@ -2045,205 +2045,6 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   .skin-picker__btn, .skin-picker__opt, .skin-picker__wheel { transition: none; }
 }
 
-/* ============================ SKIN · OMARCHY ============================ */
-/* Moderno tipo sistema operativo actual: azul eléctrico, formas muy redondeadas, sombras suaves */
-:root[data-skin="omarchy"] {
-  --radius: 20px; --radius-sm: 12px;
-  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --display: "Sora", "Inter", system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --bg: #f7f8fa; --bg-soft: #eef1f6; --surface: #ffffff; --surface-2: #f1f5f9;
-  --panel-soft: rgba(15,23,42,.04); --line: #e2e8f0;
-  --text: #0f172a; --muted: #475569; --muted-2: #5b6b82;
-  --accent: #2563eb; --accent-2: #7c3aed; --accent-3: #047857;
-  --accent-rgb: 37, 99, 235; --accent-2-rgb: 124, 58, 237; --on-accent: #ffffff;
-  --grid-line: rgba(15,23,42,.05);
-  --header-bg: rgba(247,248,250,.72); --header-bg-scrolled: rgba(247,248,250,.92);
-  --shadow-sm: 0 1px 2px rgba(15,23,42,.06); --shadow: 0 6px 18px rgba(15,23,42,.08);
-  --logo-shadow: 0 1px 2px rgba(15,23,42,.1);
-  --btn-primary-shadow: 0 1px 2px rgba(15,23,42,.12); --btn-primary-shadow-hover: 0 6px 16px rgba(37,99,235,.3);
-  --card-glow: transparent; --timeline-dot-ring: rgba(37,99,235,.14); --color-scheme: light;
-}
-:root[data-skin="omarchy"][data-theme="dark"] {
-  --bg: #0b0f17; --bg-soft: #10151f; --surface: #151a23; --surface-2: #1b2230;
-  --panel-soft: rgba(226,232,240,.04); --line: #263041;
-  --text: #e2e8f0; --muted: #a3b1c6; --muted-2: #8494ad;
-  --accent: #60a5fa; --accent-2: #a78bfa; --accent-3: #34d399;
-  --accent-rgb: 96, 165, 250; --accent-2-rgb: 167, 139, 250; --on-accent: #0b0f17;
-  --grid-line: rgba(226,232,240,.04);
-  --header-bg: rgba(11,15,23,.72); --header-bg-scrolled: rgba(11,15,23,.92);
-  --shadow-sm: 0 1px 2px rgba(0,0,0,.4); --shadow: 0 8px 24px rgba(0,0,0,.45);
-  --logo-shadow: 0 1px 2px rgba(0,0,0,.5);
-  --btn-primary-shadow: 0 1px 2px rgba(0,0,0,.5); --btn-primary-shadow-hover: 0 6px 18px rgba(96,165,250,.35);
-  --card-glow: transparent; --timeline-dot-ring: rgba(96,165,250,.2); --color-scheme: dark;
-}
-/* Capa de formas: bordes finos y suaves, tarjetas redondeadas, botones tipo píldora */
-:root[data-skin="omarchy"] :is(
-  .about-card,
-  .about-photo,
-  .btn,
-  .card,
-  .card-grade,
-  .card-icon,
-  .cert-card,
-  .cert-card__badge,
-  .certs-counter,
-  .climb-hold,
-  .climb-hold__label,
-  .climb-photo img,
-  .climbing-links__icon,
-  .climbing-links__item,
-  .climbing-links__zone,
-  .contact-aside,
-  .contact-form input,
-  .contact-form select,
-  .contact-form textarea,
-  .contact-form-wrap,
-  .filter-btn,
-  .footer-qr img,
-  .form-check__box,
-  .form-success,
-  .github-activity__card,
-  .grades-legend .chip,
-  .hero-eyebrow,
-  .language-select,
-  .like-card,
-  .logo-mark,
-  .main-nav,
-  .mouse,
-  .nav-cta,
-  .nav-toggle,
-  .news-item,
-  .news-source,
-  .project-card,
-  .project-card__grade,
-  .project-card__icon,
-  .project-card__stack li,
-  .project-preview,
-  .projects-note,
-  .skill-icon,
-  .skip-link,
-  .social-link,
-  .stack-list li,
-  .stat,
-  .tag,
-  .terminal,
-  .theme-toggle,
-  .to-top,
-  .weather-widget,
-  .weather-widget__search input,
-  .weather-widget__search-button,
-  .weather-widget__verdict,
-  .work-demo video
-) { border-width: 1px; border-color: var(--line); }
-:root[data-skin="omarchy"] :is(
-  .btn,
-  .card-grade,
-  .card-icon,
-  .cert-card__badge,
-  .certs-counter,
-  .climb-hold__label,
-  .climbing-links__icon,
-  .climbing-links__item,
-  .climbing-links__zone,
-  .contact-form input,
-  .contact-form select,
-  .contact-form textarea,
-  .filter-btn,
-  .form-check__box,
-  .grades-legend .chip,
-  .language-select,
-  .logo-mark,
-  .mouse,
-  .nav-link,
-  .nav-toggle,
-  .news-source,
-  .project-card__grade,
-  .project-card__icon,
-  .project-card__stack li,
-  .project-preview__tag,
-  .skip-link,
-  .social-link,
-  .stack-list li,
-  .stat,
-  .tag,
-  .theme-toggle,
-  .to-top,
-  .weather-widget__search input,
-  .weather-widget__search-button
-) { border-radius: var(--radius-sm); }
-:root[data-skin="omarchy"] :is(
-  .about-card,
-  .about-photo,
-  .card,
-  .cert-card,
-  .climb-photo img,
-  .contact-aside,
-  .contact-form-wrap,
-  .footer-qr img,
-  .form-success,
-  .github-activity__card,
-  .hero-eyebrow,
-  .like-card,
-  .main-nav,
-  .nav-cta,
-  .news-item,
-  .project-card,
-  .project-preview,
-  .projects-note,
-  .skill-icon,
-  .terminal,
-  .weather-widget,
-  .weather-widget__verdict,
-  .work-demo video
-) { border-radius: var(--radius); }
-:root[data-skin="omarchy"] :is(
-  .btn,
-  .card-grade,
-  .certs-counter,
-  .climb-hold__label,
-  .climbing-links__icon,
-  .climbing-links__item,
-  .filter-btn,
-  .footer-qr img,
-  .form-check__box,
-  .github-activity__card,
-  .hero-eyebrow,
-  .language-select,
-  .logo-mark,
-  .nav-cta,
-  .nav-toggle,
-  .project-card__grade,
-  .projects-note,
-  .skill-icon,
-  .social-link,
-  .stack-list li,
-  .stat,
-  .theme-toggle,
-  .to-top,
-  .weather-widget__search-button
-) { box-shadow: var(--shadow-sm); }
-:root[data-skin="omarchy"] :is(
-  .about-card,
-  .about-photo,
-  .card,
-  .cert-card,
-  .climb-photo img,
-  .contact-aside,
-  .contact-form-wrap,
-  .form-success,
-  .like-card,
-  .main-nav,
-  .news-item,
-  .project-card,
-  .project-preview,
-  .terminal,
-  .weather-widget,
-  .work-demo video
-) { box-shadow: var(--shadow); }
-:root[data-skin="omarchy"] :is(.btn, .nav-link, .nav-cta, .filter-btn, .tag, .card-grade, .project-card__grade, .project-preview__tag, .cert-card__badge, .news-source, .certs-counter, .stack-list li, .project-card__stack li, .grades-legend .chip, .language-select, .hero-eyebrow) { border-radius: 999px; }
-:root[data-skin="omarchy"] .site-header { border-bottom-width: 1px; border-bottom-color: var(--line); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-
 /* ============================================================================
    BLOQUE B · OMARCHY · CASOS ESPECIALES
    ----------------------------------------------------------------------------
@@ -4486,3 +4287,483 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
    El fondo del hero y de las secciones alternas era opaco y la tapaba. */
 :root[data-skin="matrix"] .hero-bg { background: transparent; }
 :root[data-skin="matrix"] .section-alt { background: rgba(13, 20, 13, .78); }
+
+/* ============================================================================
+   SKIN · OMARCHY (v2) · escritorio Hyprland
+   ----------------------------------------------------------------------------
+   Qué es: un escritorio tipo Omarchy (Arch + Hyprland + Waybar + Walker + Mako).
+   · Cada panel es una "ventana" con hueco y borde de 2px; la que tiene el foco
+     (ratón encima o foco de teclado) lleva el borde de acento en degradado:
+     "focus follows mouse", como Hyprland.
+   · La cabecera es una barra tipo Waybar: la navegación son workspaces numerados.
+   · Temas de Omarchy (data-omarchy-theme): tokyo-night (por defecto), catppuccin,
+     gruvbox, nord, kanagawa, rose-pine, everforest y catppuccin-latte (claro).
+     El selector claro/oscuro de la web se oculta en este skin: manda el tema.
+   · El lanzador (Ctrl+K), los avisos, fastfetch y el reloj viven en omarchy-effects.js.
+   Todo bajo :root[data-skin="omarchy"]. Topo, Minecraft y Matrix intactos.
+   ============================================================================ */
+
+/* ---------- Variables comunes + paleta por defecto (Tokyo Night) ---------- */
+:root[data-skin="omarchy"],
+:root[data-skin="omarchy"][data-theme="dark"],
+:root[data-skin="omarchy"][data-theme="light"] {
+  --radius: 10px; --radius-sm: 6px;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --display: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --logo-shadow: none; --btn-primary-shadow: none;
+  --btn-primary-shadow-hover: 0 0 0 1px var(--accent), 0 0 18px rgba(var(--accent-rgb), .4);
+  --card-glow: transparent;
+  --bg: #1a1b26; --bg-soft: #16161e; --surface: #1f2335; --surface-2: #24283b;
+  --panel-soft: rgba(122, 162, 247, .08); --line: #3b4261;
+  --text: #c0caf5; --muted: #a9b1d6; --muted-2: #8a93bd;
+  --accent: #7aa2f7; --accent-2: #bb9af7; --accent-3: #9ece6a;
+  --accent-rgb: 122, 162, 247; --accent-2-rgb: 187, 154, 247; --on-accent: #16161e;
+  --grid-line: rgba(122, 162, 247, .06);
+  --header-bg: rgba(26, 27, 38, .8); --header-bg-scrolled: rgba(26, 27, 38, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(122, 162, 247, .22); --color-scheme: dark;
+}
+
+/* ---------- Temas de Omarchy ---------- */
+:root[data-skin="omarchy"][data-omarchy-theme="tokyo-night"] {
+  --bg: #1a1b26; --bg-soft: #16161e; --surface: #1f2335; --surface-2: #24283b;
+  --panel-soft: rgba(122, 162, 247, .08); --line: #3b4261;
+  --text: #c0caf5; --muted: #a9b1d6; --muted-2: #8a93bd;
+  --accent: #7aa2f7; --accent-2: #bb9af7; --accent-3: #9ece6a;
+  --accent-rgb: 122, 162, 247; --accent-2-rgb: 187, 154, 247; --on-accent: #16161e;
+  --grid-line: rgba(122, 162, 247, .06);
+  --header-bg: rgba(26, 27, 38, .8); --header-bg-scrolled: rgba(26, 27, 38, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(122, 162, 247, .22); --color-scheme: dark;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="catppuccin"] {
+  --bg: #1e1e2e; --bg-soft: #181825; --surface: #262637; --surface-2: #313244;
+  --panel-soft: rgba(137, 180, 250, .08); --line: #45475a;
+  --text: #cdd6f4; --muted: #bac2de; --muted-2: #9fa6c4;
+  --accent: #89b4fa; --accent-2: #cba6f7; --accent-3: #a6e3a1;
+  --accent-rgb: 137, 180, 250; --accent-2-rgb: 203, 166, 247; --on-accent: #11111b;
+  --grid-line: rgba(137, 180, 250, .06);
+  --header-bg: rgba(30, 30, 46, .8); --header-bg-scrolled: rgba(30, 30, 46, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(137, 180, 250, .22); --color-scheme: dark;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="gruvbox"] {
+  --bg: #282828; --bg-soft: #1d2021; --surface: #32302f; --surface-2: #3c3836;
+  --panel-soft: rgba(250, 189, 47, .08); --line: #504945;
+  --text: #ebdbb2; --muted: #d5c4a1; --muted-2: #b0a08a;
+  --accent: #fabd2f; --accent-2: #fe8019; --accent-3: #b8bb26;
+  --accent-rgb: 250, 189, 47; --accent-2-rgb: 254, 128, 25; --on-accent: #1d2021;
+  --grid-line: rgba(250, 189, 47, .06);
+  --header-bg: rgba(40, 40, 40, .8); --header-bg-scrolled: rgba(40, 40, 40, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(250, 189, 47, .22); --color-scheme: dark;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="nord"] {
+  --bg: #2e3440; --bg-soft: #272c36; --surface: #343b49; --surface-2: #3b4252;
+  --panel-soft: rgba(136, 192, 208, .08); --line: #4c566a;
+  --text: #eceff4; --muted: #d8dee9; --muted-2: #a8b3c6;
+  --accent: #88c0d0; --accent-2: #b48ead; --accent-3: #a3be8c;
+  --accent-rgb: 136, 192, 208; --accent-2-rgb: 180, 142, 173; --on-accent: #2e3440;
+  --grid-line: rgba(136, 192, 208, .06);
+  --header-bg: rgba(46, 52, 64, .8); --header-bg-scrolled: rgba(46, 52, 64, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(136, 192, 208, .22); --color-scheme: dark;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="kanagawa"] {
+  --bg: #1f1f28; --bg-soft: #16161d; --surface: #2a2a37; --surface-2: #363646;
+  --panel-soft: rgba(126, 156, 216, .08); --line: #54546d;
+  --text: #dcd7ba; --muted: #c8c093; --muted-2: #a29e88;
+  --accent: #7e9cd8; --accent-2: #957fb8; --accent-3: #98bb6c;
+  --accent-rgb: 126, 156, 216; --accent-2-rgb: 149, 127, 184; --on-accent: #16161d;
+  --grid-line: rgba(126, 156, 216, .06);
+  --header-bg: rgba(31, 31, 40, .8); --header-bg-scrolled: rgba(31, 31, 40, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(126, 156, 216, .22); --color-scheme: dark;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="rose-pine"] {
+  --bg: #191724; --bg-soft: #14121f; --surface: #1f1d2e; --surface-2: #26233a;
+  --panel-soft: rgba(196, 167, 231, .08); --line: #403d52;
+  --text: #e0def4; --muted: #a9a5c4; --muted-2: #8e8aa8;
+  --accent: #c4a7e7; --accent-2: #eb6f92; --accent-3: #9ccfd8;
+  --accent-rgb: 196, 167, 231; --accent-2-rgb: 235, 111, 146; --on-accent: #191724;
+  --grid-line: rgba(196, 167, 231, .06);
+  --header-bg: rgba(25, 23, 36, .8); --header-bg-scrolled: rgba(25, 23, 36, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(196, 167, 231, .22); --color-scheme: dark;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="everforest"] {
+  --bg: #2d353b; --bg-soft: #232a2e; --surface: #343f44; --surface-2: #3d484d;
+  --panel-soft: rgba(167, 192, 128, .08); --line: #475258;
+  --text: #d3c6aa; --muted: #b9b09a; --muted-2: #a8b3ab;
+  --accent: #a7c080; --accent-2: #d699b6; --accent-3: #7fbbb3;
+  --accent-rgb: 167, 192, 128; --accent-2-rgb: 214, 153, 182; --on-accent: #232a2e;
+  --grid-line: rgba(167, 192, 128, .06);
+  --header-bg: rgba(45, 53, 59, .8); --header-bg-scrolled: rgba(45, 53, 59, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(167, 192, 128, .22); --color-scheme: dark;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="catppuccin-latte"] {
+  --bg: #eff1f5; --bg-soft: #e6e9ef; --surface: #ffffff; --surface-2: #e6e9ef;
+  --panel-soft: rgba(26, 94, 230, .08); --line: #bcc0cc;
+  --text: #4c4f69; --muted: #5c5f77; --muted-2: #666a80;
+  --accent: #1a5ee6; --accent-2: #8839ef; --accent-3: #2f7d1f;
+  --accent-rgb: 26, 94, 230; --accent-2-rgb: 136, 57, 239; --on-accent: #ffffff;
+  --grid-line: rgba(26, 94, 230, .06);
+  --header-bg: rgba(239, 241, 245, .8); --header-bg-scrolled: rgba(239, 241, 245, .94);
+  --shadow: 0 10px 28px rgba(76,79,105,.16); --shadow-sm: 0 1px 0 rgba(76,79,105,.12);
+  --timeline-dot-ring: rgba(26, 94, 230, .22); --color-scheme: light;
+}
+
+/* Al cambiar de tema, un fundido corto (la clase la pone y quita omarchy-effects.js) */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-skin="omarchy"].omx-cambiando *,
+  :root[data-skin="omarchy"].omx-cambiando *::before,
+  :root[data-skin="omarchy"].omx-cambiando *::after {
+    transition: background-color .3s ease, border-color .3s ease, color .3s ease, fill .3s ease, stroke .3s ease !important;
+  }
+}
+
+/* ---------- Fondo: "wallpaper" con dos halos de los colores del tema ---------- */
+:root[data-skin="omarchy"] body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 45% at 12% -5%, rgba(var(--accent-rgb), .13), transparent 70%),
+    radial-gradient(ellipse 55% 40% at 96% 0%, rgba(var(--accent-2-rgb), .10), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+/* ---------- Capa de formas: bordes finos, esquinas suaves, sin sombras duras ---------- */
+:root[data-skin="omarchy"] :is(
+  .about-card,
+  .about-photo,
+  .btn,
+  .card,
+  .card-grade,
+  .card-icon,
+  .cert-card,
+  .cert-card__badge,
+  .certs-counter,
+  .climb-hold,
+  .climb-hold__label,
+  .climb-photo img,
+  .climbing-links__icon,
+  .climbing-links__item,
+  .climbing-links__zone,
+  .contact-aside,
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea,
+  .contact-form-wrap,
+  .filter-btn,
+  .footer-qr img,
+  .form-check__box,
+  .form-success,
+  .github-activity__card,
+  .grades-legend .chip,
+  .hero-eyebrow,
+  .language-select,
+  .like-card,
+  .logo-mark,
+  .main-nav,
+  .mouse,
+  .nav-cta,
+  .nav-toggle,
+  .news-item,
+  .news-source,
+  .project-card,
+  .project-card__grade,
+  .project-card__icon,
+  .project-card__stack li,
+  .project-preview,
+  .projects-note,
+  .skill-icon,
+  .skip-link,
+  .social-link,
+  .stack-list li,
+  .stat,
+  .tag,
+  .terminal,
+  .theme-toggle,
+  .to-top,
+  .weather-widget,
+  .weather-widget__search input,
+  .weather-widget__search-button,
+  .weather-widget__verdict,
+  .work-demo video
+) { border-width: 1px; border-color: var(--line); }
+:root[data-skin="omarchy"] :is(
+  .btn,
+  .card-grade,
+  .card-icon,
+  .cert-card__badge,
+  .certs-counter,
+  .climb-hold__label,
+  .climbing-links__icon,
+  .climbing-links__item,
+  .climbing-links__zone,
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea,
+  .filter-btn,
+  .form-check__box,
+  .grades-legend .chip,
+  .language-select,
+  .logo-mark,
+  .mouse,
+  .nav-link,
+  .nav-toggle,
+  .news-source,
+  .project-card__grade,
+  .project-card__icon,
+  .project-card__stack li,
+  .project-preview__tag,
+  .skip-link,
+  .social-link,
+  .stack-list li,
+  .stat,
+  .tag,
+  .theme-toggle,
+  .to-top,
+  .weather-widget__search input,
+  .weather-widget__search-button
+) { border-radius: var(--radius-sm); }
+:root[data-skin="omarchy"] :is(
+  .about-card,
+  .about-photo,
+  .card,
+  .cert-card,
+  .climb-photo img,
+  .contact-aside,
+  .contact-form-wrap,
+  .footer-qr img,
+  .form-success,
+  .github-activity__card,
+  .hero-eyebrow,
+  .like-card,
+  .main-nav,
+  .nav-cta,
+  .news-item,
+  .project-card,
+  .project-preview,
+  .projects-note,
+  .skill-icon,
+  .terminal,
+  .weather-widget,
+  .weather-widget__verdict,
+  .work-demo video
+) { border-radius: var(--radius); }
+:root[data-skin="omarchy"] :is(
+  .btn,
+  .card-grade,
+  .certs-counter,
+  .climb-hold__label,
+  .climbing-links__icon,
+  .climbing-links__item,
+  .filter-btn,
+  .footer-qr img,
+  .form-check__box,
+  .github-activity__card,
+  .hero-eyebrow,
+  .language-select,
+  .logo-mark,
+  .nav-cta,
+  .nav-toggle,
+  .project-card__grade,
+  .projects-note,
+  .skill-icon,
+  .social-link,
+  .stack-list li,
+  .stat,
+  .theme-toggle,
+  .to-top,
+  .weather-widget__search-button
+) { box-shadow: var(--shadow-sm); }
+:root[data-skin="omarchy"] :is(
+  .about-card,
+  .about-photo,
+  .card,
+  .cert-card,
+  .climb-photo img,
+  .contact-aside,
+  .contact-form-wrap,
+  .form-success,
+  .like-card,
+  .main-nav,
+  .news-item,
+  .project-card,
+  .project-preview,
+  .terminal,
+  .weather-widget,
+  .work-demo video
+) { box-shadow: var(--shadow); }
+
+/* ---------- Ventanas (paneles grandes) + borde de la ventana con foco ---------- */
+:root[data-skin="omarchy"] :is(
+  .about-card,
+  .card,
+  .cert-card,
+  .contact-aside,
+  .contact-form-wrap,
+  .github-activity__card,
+  .like-card,
+  .news-item,
+  .project-card,
+  .project-preview,
+  .projects-note,
+  .terminal,
+  .weather-widget,
+  .form-success
+) {
+  --win-bg: var(--surface);
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--win-bg), var(--win-bg)) padding-box,
+    linear-gradient(var(--line), var(--line)) border-box;
+}
+:root[data-skin="omarchy"] .terminal { --win-bg: var(--bg-soft); }
+:root[data-skin="omarchy"] :is(
+  .about-card,
+  .card,
+  .cert-card,
+  .contact-aside,
+  .contact-form-wrap,
+  .github-activity__card,
+  .like-card,
+  .news-item,
+  .project-card,
+  .project-preview,
+  .projects-note,
+  .terminal,
+  .weather-widget,
+  .form-success
+):is(:hover, :focus-within) {
+  background:
+    linear-gradient(var(--win-bg), var(--win-bg)) padding-box,
+    linear-gradient(135deg, var(--accent), var(--accent-2)) border-box;
+  box-shadow: var(--shadow), 0 0 24px rgba(var(--accent-rgb), .16);
+}
+
+/* ---------- Tipografía ---------- */
+:root[data-skin="omarchy"] :is(h1, h2, h3, h4) { letter-spacing: -.02em; }
+:root[data-skin="omarchy"] .section-head h2::before { content: "❯ "; color: var(--accent); }
+
+/* ---------- Botones ---------- */
+:root[data-skin="omarchy"] .btn {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--line);
+  font-family: var(--mono); font-size: .85rem; letter-spacing: 0;
+  transition: border-color .15s var(--ease), color .15s var(--ease), box-shadow .15s var(--ease), background .15s var(--ease);
+}
+:root[data-skin="omarchy"] .btn:hover {
+  border-color: var(--accent); color: var(--accent); transform: none;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+:root[data-skin="omarchy"] .btn-primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+:root[data-skin="omarchy"] .btn-primary:hover {
+  background: var(--accent); color: var(--on-accent); filter: brightness(1.1);
+  box-shadow: var(--btn-primary-shadow-hover);
+}
+
+/* ---------- Cabecera = barra Waybar ---------- */
+:root[data-skin="omarchy"] .site-header {
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+:root[data-skin="omarchy"] .site-header.is-scrolled { background: var(--header-bg-scrolled); }
+:root[data-skin="omarchy"] .site-header .container { width: min(100% - 2.5rem, 1400px); }
+:root[data-skin="omarchy"] .header-inner { padding: .4rem 0; }
+:root[data-skin="omarchy"] .site-header.is-scrolled .header-inner { padding: .3rem 0; }
+
+:root[data-skin="omarchy"] .logo-mark {
+  width: 30px; height: 30px; background: transparent; color: var(--accent);
+  border: 1px solid var(--accent); box-shadow: none;
+}
+:root[data-skin="omarchy"] .logo-text { font-family: var(--mono); font-size: .85rem; font-weight: 700; letter-spacing: -.01em; }
+
+/* Navegación = workspaces numerados (1, 2, 3…) */
+:root[data-skin="omarchy"] .nav-list { counter-reset: ws; gap: .15rem; }
+:root[data-skin="omarchy"] .nav-link {
+  counter-increment: ws;
+  display: inline-flex; align-items: center;
+  padding: .3rem .45rem;
+  font: 500 .76rem/1.2 var(--font);
+  color: var(--muted);
+  border: 1px solid transparent;
+  box-shadow: none; background: transparent;
+}
+:root[data-skin="omarchy"] .nav-link::before {
+  content: counter(ws);
+  display: inline-grid; place-items: center;
+  min-width: 1.35em; height: 1.35em; margin-right: .4em; padding: 0 .2em;
+  border-radius: 3px;
+  background: rgba(var(--accent-rgb), .16); color: var(--accent);
+  font: 700 .66rem/1 var(--mono);
+}
+:root[data-skin="omarchy"] .nav-link:hover { color: var(--text); background: var(--panel-soft); border-color: var(--line); }
+:root[data-skin="omarchy"] .nav-link[aria-current="true"],
+:root[data-skin="omarchy"] .nav-link[aria-current="page"]:not(.nav-cta) {
+  color: var(--on-accent); background: var(--accent); border-color: var(--accent); font-weight: 700;
+}
+:root[data-skin="omarchy"] .nav-link[aria-current="true"]::before,
+:root[data-skin="omarchy"] .nav-link[aria-current="page"]:not(.nav-cta)::before {
+  background: var(--on-accent); color: var(--accent);
+}
+:root[data-skin="omarchy"] .nav-link[aria-current="true"]::after,
+:root[data-skin="omarchy"] .nav-link[aria-current="page"]:not(.nav-cta)::after { content: none; }
+:root[data-skin="omarchy"] .nav-cta { background: transparent; color: var(--accent); border: 1px solid var(--accent); box-shadow: none; }
+:root[data-skin="omarchy"] .nav-cta:hover { background: var(--accent); color: var(--on-accent); transform: none; box-shadow: none; }
+:root[data-skin="omarchy"] .nav-cta:hover::before { background: var(--on-accent); color: var(--accent); }
+
+/* Módulos de la derecha */
+:root[data-skin="omarchy"] .header-actions { gap: .4rem; }
+:root[data-skin="omarchy"] .language-select {
+  height: 36px; background: var(--surface); color: var(--text); font: 700 .72rem var(--mono);
+}
+:root[data-skin="omarchy"] .theme-toggle { display: none; }   /* manda el tema de Omarchy */
+
+/* Menú colapsado: panel flotante tipo ventana. Se colapsa antes (1300px) que el resto de skins
+   porque los números de workspace y los módulos necesitan más ancho. */
+@media (max-width: 1299px) {
+  :root[data-skin="omarchy"] .nav-toggle { display: block; }
+  :root[data-skin="omarchy"] .main-nav {
+    position: fixed; inset: 62px 1rem auto 1rem; z-index: 40;
+    background: var(--surface); border: 2px solid var(--accent); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: .6rem;
+    transform: translateY(-10px); opacity: 0; pointer-events: none;
+    transition: opacity .2s var(--ease), transform .2s var(--ease);
+  }
+  :root[data-skin="omarchy"] .main-nav.is-open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  :root[data-skin="omarchy"] .nav-list { flex-direction: column; align-items: stretch; }
+  :root[data-skin="omarchy"] .nav-link { display: flex; padding: .65rem .8rem; font-size: .85rem; }
+}
+@media (min-width: 721px) and (max-width: 1299px) {
+  :root[data-skin="omarchy"] .main-nav { left: auto; width: min(340px, calc(100% - 2rem)); }
+}
+
+/* ---------- Pie ---------- */
+:root[data-skin="omarchy"] .site-footer { background: var(--bg-soft); border-top: 1px solid var(--line); }
+:root[data-skin="omarchy"] .site-footer :is(h3, small) { font-family: var(--mono); }
+
+/* ---------- Barra de escalada: el escalador pasa a ser un prompt ❯_ ---------- */
+:root[data-skin="omarchy"] .climb-climber {
+  width: auto; height: auto; min-width: 0;
+  border-radius: 0; background: transparent; box-shadow: none;
+  font: 700 15px/1 var(--mono); color: var(--accent); white-space: nowrap;
+  text-shadow: 0 0 10px rgba(var(--accent-rgb), .55);
+}
+:root[data-skin="omarchy"] .climb-climber::before { content: "❯"; }
+:root[data-skin="omarchy"] .climb-climber::after { content: "_"; }
+:root[data-skin="omarchy"] .climb-hold.is-active { box-shadow: 0 0 0 4px rgba(var(--accent-rgb), .22); }
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-skin="omarchy"] .climb-climber::after { animation: omx-blink 1.1s steps(1) infinite; }
+  @keyframes omx-blink { 50% { opacity: 0; } }
+
+  /* Las ventanas se "abren" como en Hyprland (popin): zoom corto + fundido */
+  :root[data-skin="omarchy"] .reveal {
+    opacity: 0; transform: scale(.95);
+    transition: opacity .28s cubic-bezier(.22, 1, .36, 1), transform .28s cubic-bezier(.22, 1, .36, 1);
+  }
+  :root[data-skin="omarchy"] .reveal.is-visible { opacity: 1; transform: none; }
+}

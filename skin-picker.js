@@ -38,9 +38,8 @@
   const IDS = SKINS.map((s) => s.id);
   const CLAVE = "skin";
 
-  // Fuentes que necesita cada skin (topo usa las que ya carga la página)
+  // Fuentes que necesita cada skin (topo, omarchy y matrix usan las que ya carga la página)
   const FUENTES = {
-    omarchy: "family=Sora:wght@600;700",
     minecraft: "family=Press+Start+2P&family=VT323"
   };
 
