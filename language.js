@@ -40,6 +40,8 @@
     ["Noticias de", "Notícies sobre", "News about"],
     ["Inteligencia Artificial", "Intel·ligència Artificial", "Artificial Intelligence"],
     ["Los nombres que más están moviendo el sector de la IA esta semana, ordenados por momentum. Fuente: GNews.", "Els noms que més estan movent el sector de la IA esta setmana, ordenats per impuls. Font: GNews.", "The names moving the AI sector the most this week, ranked by momentum. Source: GNews."],
+    ["Las noticias de IA de los últimos días, agrupadas por tema: elige el que te interese y lee solo esas. Fuente: GNews.", "Les notícies d'IA dels últims dies, agrupades per tema: tria el que t'interesse i llig només eixes. Font: GNews.", "AI news from the past few days, grouped by topic: pick the one you like and read only those. Source: GNews."],
+    ["· cargando fecha…", "· carregant data…", "· loading date…"],
     ["¿Quieres ver", "Vols veure", "Want to see"],
     ["mi perfil completo", "el meu perfil complet", "my full profile"],
     ["Vuelve al portfolio para ver formación, experiencia y proyectos.", "Torna al portafolis per a veure formació, experiència i projectes.", "Go back to the portfolio to see my education, experience and projects."],
@@ -420,7 +422,20 @@
   const root = document.documentElement;
   let currentLanguage = "es";
 
-  const translated = (source, language) => dictionary.get(normalize(source))?.[language] || source;
+  // Texto que empieza por emoji (p. ej. "🧗 Zonas de escalada"): si el texto completo no está en el
+  // diccionario, se busca el resto sin el emoji y se conserva el emoji delante.
+  const EMOJI_DELANTE = /^([\p{Extended_Pictographic}\uFE0F\u200D]+)\s+(.+)$/u;
+  const translated = (source, language) => {
+    const texto = normalize(source);
+    const directa = dictionary.get(texto)?.[language];
+    if (directa) return directa;
+    const partes = texto.match(EMOJI_DELANTE);
+    if (partes) {
+      const resto = dictionary.get(partes[2])?.[language];
+      if (resto) return `${partes[1]} ${resto}`;
+    }
+    return source;
+  };
   window.portfolioTranslate = (source) => translated(source, currentLanguage);
 
   const applyLanguage = (language) => {

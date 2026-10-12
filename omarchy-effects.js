@@ -5,8 +5,9 @@
    matrix no crea nada, no escucha teclas y no gasta timers.
 
    Qué incluye:
-   1. TEMAS de Omarchy: tokyo-night, catppuccin, gruvbox, nord, kanagawa,
-      rose-pine, everforest y catppuccin-latte. Se guardan en localStorage
+   1. TEMAS de Omarchy (cada uno cambia también forma, tipografía y efectos):
+      tokyo-night, synthwave, retro, commodore, vantablack, kurenai, konbini y
+      lumon. Se guardan en localStorage
       ("omarchy-theme") y se aplican con data-omarchy-theme en <html>.
    2. Módulos de la barra (tipo Waybar): reloj, lanzador y selector de tema.
    3. LANZADOR tipo Walker: Ctrl+K (⌘K), "/" o Meta/Alt+Espacio.
@@ -42,80 +43,108 @@
         "#7aa2f7",
         "#bb9af7",
         "#9ece6a"
-      ]
+      ],
+      "kw": "tokyo night sobrio default"
     },
     {
-      "id": "catppuccin",
-      "name": "Catppuccin",
+      "id": "synthwave",
+      "name": "Synthwave '84",
       "c": [
-        "#1e1e2e",
-        "#89b4fa",
-        "#cba6f7",
-        "#a6e3a1"
-      ]
+        "#241b2f",
+        "#ff7edb",
+        "#36f9f6",
+        "#fede5d"
+      ],
+      "kw": "synthwave 84 neon rosa cian"
     },
     {
-      "id": "gruvbox",
-      "name": "Gruvbox",
+      "id": "retro",
+      "name": "Retro 82",
       "c": [
-        "#282828",
-        "#fabd2f",
-        "#fe8019",
-        "#b8bb26"
-      ]
+        "#100a02",
+        "#ffb000",
+        "#ff7a1a",
+        "#ffd45e"
+      ],
+      "kw": "retro 82 ambar crt scanlines"
     },
     {
-      "id": "nord",
-      "name": "Nord",
+      "id": "commodore",
+      "name": "C64",
       "c": [
-        "#2e3440",
-        "#88c0d0",
-        "#b48ead",
-        "#a3be8c"
-      ]
+        "#352879",
+        "#c8c1ff",
+        "#8bf0f8",
+        "#f2f58f"
+      ],
+      "kw": "c64 commodore azul basic"
     },
     {
-      "id": "kanagawa",
-      "name": "Kanagawa",
+      "id": "vantablack",
+      "name": "Vantablack",
       "c": [
-        "#1f1f28",
-        "#7e9cd8",
-        "#957fb8",
-        "#98bb6c"
-      ]
+        "#000000",
+        "#ffffff",
+        "#c8c8c8",
+        "#9a9a9a"
+      ],
+      "kw": "vantablack negro blanco monocromo"
     },
     {
-      "id": "rose-pine",
-      "name": "Rosé Pine",
+      "id": "kurenai",
+      "name": "Kurenai",
       "c": [
-        "#191724",
-        "#c4a7e7",
-        "#eb6f92",
-        "#9ccfd8"
-      ]
+        "#0d0709",
+        "#ef3b50",
+        "#e8c07d",
+        "#f0d9b5"
+      ],
+      "kw": "kurenai rojo japones serif"
     },
     {
-      "id": "everforest",
-      "name": "Everforest",
+      "id": "konbini",
+      "name": "Konbini",
       "c": [
-        "#2d353b",
-        "#a7c080",
-        "#d699b6",
-        "#7fbbb3"
-      ]
+        "#fff4e0",
+        "#c2255c",
+        "#0a8f84",
+        "#b35c00"
+      ],
+      "kw": "konbini kawaii claro pastel"
     },
     {
-      "id": "catppuccin-latte",
-      "name": "Catppuccin Latte",
+      "id": "lumon",
+      "name": "Lumon",
       "c": [
-        "#eff1f5",
-        "#1a5ee6",
-        "#8839ef",
+        "#edf3f1",
+        "#0b5fa5",
+        "#12806f",
         "#2f7d1f"
-      ]
+      ],
+      "kw": "lumon severance claro clinico"
     }
   ];
   const TEMA_DEFECTO = "tokyo-night";
+
+  // Fuentes de cada tema: se piden SOLO cuando se usa el tema (igual que hace skin-picker.js con Minecraft)
+  const FUENTES = {
+    synthwave: "family=Rajdhani:wght@600;700",
+    retro: "family=VT323",
+    commodore: "family=VT323",
+    kurenai: "family=Shippori+Mincho:wght@500;700",
+    konbini: "family=Nunito:wght@500;700;800",
+    lumon: "family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600"
+  };
+  function cargarFuentes(id) {
+    const f = FUENTES[id];
+    if (!f) return;
+    const href = "https://fonts.googleapis.com/css2?" + f + "&display=swap";
+    if (document.querySelector('link[href="' + href + '"]')) return;
+    const l = document.createElement("link");
+    l.rel = "stylesheet";
+    l.href = href;
+    document.head.appendChild(l);
+  }
   const temaPorId = (id) => TEMAS.find((t) => t.id === id) || TEMAS.find((t) => t.id === TEMA_DEFECTO);
 
   /* ---------- Textos ---------- */
@@ -218,7 +247,7 @@
 
     /* Avisos (Mako) */
     .omx-toasts {
-      position: fixed; top: 62px; right: 1rem; z-index: 9996;
+      position: fixed; top: calc(62px + var(--frame, 0px)); right: calc(1rem + var(--frame, 0px)); z-index: 9996;
       display: grid; gap: .5rem; width: min(340px, calc(100vw - 2rem)); pointer-events: none;
     }
     .omx-toast {
@@ -306,6 +335,7 @@
 
   function aplicarTema(id, avisar) {
     const t = temaPorId(id);
+    cargarFuentes(t.id);
     root.classList.add("omx-cambiando");
     root.setAttribute("data-omarchy-theme", t.id);
     guardar(CLAVE_TEMA, t.id);
@@ -364,7 +394,7 @@
     TEMAS.forEach((t) => {
       lista.push({
         grupo: tx("gTema"), ico: "◐", label: t.name + (t.id === actual ? "  ✓" : ""), tag: tx("gTema"),
-        kw: "tema theme color " + t.id, colores: t.c, run: () => aplicarTema(t.id, true)
+        kw: "tema theme color " + t.id + " " + (t.kw || ""), colores: t.c, run: () => aplicarTema(t.id, true)
       });
     });
     [["topo", "Topo"], ["omarchy", "Omarchy"], ["minecraft", "Minecraft"], ["matrix", "Matrix"]].forEach(([id, nombre]) => {
@@ -663,8 +693,10 @@
   let skinPrevia = root.getAttribute("data-skin") || "topo";
 
   function alEntrar() {
-    // Asegura el atributo del tema también si la página no lo traía del <head>
-    if (!root.hasAttribute("data-omarchy-theme")) root.setAttribute("data-omarchy-theme", temaActual().id);
+    // Atributo del tema siempre válido: si falta, o es de una versión anterior (nord, gruvbox…), se normaliza
+    const t0 = temaActual();
+    if (root.getAttribute("data-omarchy-theme") !== t0.id) root.setAttribute("data-omarchy-theme", t0.id);
+    cargarFuentes(t0.id);
     iniciarReloj();
     colorBarraNavegador();
     if (!leer(CLAVE_AVISO)) {
