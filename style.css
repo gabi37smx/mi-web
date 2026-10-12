@@ -5,6 +5,21 @@
    ============================================================ */
 
 /* ---- Variables de diseño ---- */
+/* ---- Monocraft · fuente Minecraft con soporte español ---- */
+@font-face {
+  font-family: 'Monocraft';
+  src: url('fonts/Monocraft.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Monocraft';
+  src: url('fonts/Monocraft-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 :root {
   --radius: 4px;
   --radius-sm: 4px;
@@ -1829,6 +1844,86 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
   font-family: var(--mono);
   grid-column: 1 / -1;
 }
+
+/* ---------- Noticias IA por temas ----------
+   Las tarjetas de tema son .news-item + .news-topic, los botones son .btn y .filter-btn:
+   cada skin ya los pinta. Aquí solo va la disposición (con variables, válida para todos). */
+.news-pick {
+  margin: 0 0 1rem;
+  font-family: var(--mono);
+  font-size: .85rem;
+  color: var(--muted);
+}
+.news-topics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+.news-topics > li { margin: 0; }
+.news-topic {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .6rem;
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+}
+.news-topic .news-title { margin: 0; }
+.news-topic__icon { font-size: 1.9rem; line-height: 1; }
+.news-topic:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+.news-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.news-topic-title {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .4rem;
+  font-size: clamp(1.2rem, 2.4vw, 1.7rem);
+}
+.news-topic-title:focus { outline: none; }
+.news-topic-title:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+
+.news-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .4rem .6rem;
+}
+a.news-source { text-decoration: none; }
+a.news-source:hover { color: var(--accent); }
+.news-time {
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--muted);
+}
+
+.news-others {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+}
+.news-others__label {
+  margin-right: .25rem;
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--muted);
+}
 /* ============================================================
    Logo SVG propio (GV): hereda el color del tema con currentColor
    ============================================================ */
@@ -1969,3 +2064,2943 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
 .climb-rail { top: 5.5rem; bottom: 1rem; height: auto; }
 .climb-rope { top: 0; height: 100%; }
 .climb-holds { top: 2.5%; height: 95%; }
+
+/* ============================================================================
+   SKINS · sistema de estilos visuales conmutables (data-skin en <html>)
+   ----------------------------------------------------------------------------
+   · topo (por defecto): es el CSS de arriba, SIN tocar. Si no hay data-skin o vale
+     "topo", no se aplica nada de lo que hay debajo.
+   · omarchy y minecraft solo SOBRESCRIBEN las mismas variables que ya usa topo
+     (--bg, --surface, --accent...) y añaden una capa de formas (radios, bordes, sombras).
+   · Cada skin tiene su versión clara y oscura: claro = :root[data-skin],
+     oscuro = :root[data-skin][data-theme="dark"].
+   · Los colores fijos de chips y etiquetas (grados V0-V6, tags, avisos del tiempo) se
+     dejan como están a propósito: son colores semánticos con su propio texto y
+     funcionan igual en cualquier skin.
+   ============================================================================ */
+
+/* ---------- Conmutador de skins (botón circular + rueda) ---------- */
+.skin-picker { position: relative; width: 44px; height: 44px; flex: none; z-index: 60; }
+.skin-picker__btn {
+  position: relative; width: 44px; height: 44px; padding: 0; display: grid; place-items: center;
+  border: 2px solid var(--text); border-radius: 50%;
+  background: var(--surface); color: var(--text); cursor: pointer;
+  box-shadow: 2px 2px 0 var(--text);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease), color .25s var(--ease);
+}
+.skin-picker__btn:hover { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--text); color: var(--accent); }
+.skin-picker__btn[aria-expanded="true"] { color: var(--accent); }
+.skin-picker svg { width: 22px; height: 22px; display: block; pointer-events: none; }
+/* En el botón solo se ve el icono del skin activo (sin JS y sin parpadeo) */
+.skin-picker__btn .skin-ico { display: none; }
+:root:not([data-skin="omarchy"]):not([data-skin="minecraft"]):not([data-skin="matrix"]) .skin-picker__btn .skin-ico--topo,
+:root[data-skin="omarchy"] .skin-picker__btn .skin-ico--omarchy,
+:root[data-skin="minecraft"] .skin-picker__btn .skin-ico--minecraft { display: block; }
+:root[data-skin="matrix"] .skin-picker__btn .skin-ico--matrix { display: block; }
+
+.skin-picker__wheel {
+  position: absolute; top: 0; left: 0; width: 44px; height: 44px; z-index: 5;
+  visibility: hidden; pointer-events: none; transition: visibility 0s linear .22s;
+}
+.skin-picker__wheel.is-open { visibility: visible; pointer-events: auto; transition-delay: 0s; }
+.skin-picker__opt {
+  position: absolute; top: 0; left: 0; width: 44px; height: 44px; padding: 0; display: grid; place-items: center;
+  border: 2px solid var(--text); border-radius: 50%;
+  background: var(--surface); color: var(--text); cursor: pointer;
+  box-shadow: 2px 2px 0 var(--text);
+  opacity: 0; transform: translate(0, 0) scale(.4);
+  transition: transform .22s cubic-bezier(.4,0,.2,1), opacity .22s cubic-bezier(.4,0,.2,1), color .2s;
+}
+.skin-picker__wheel.is-open .skin-picker__opt { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1); }
+.skin-picker__opt:hover { color: var(--accent); }
+/* Indicador del skin activo: anillo + punto */
+.skin-picker__opt[aria-checked="true"] { color: var(--accent); box-shadow: 0 0 0 3px var(--accent); }
+.skin-picker__opt[aria-checked="true"]::after {
+  content: ""; position: absolute; left: 50%; bottom: -11px; width: 6px; height: 6px; margin-left: -3px;
+  border-radius: 50%; background: var(--accent);
+}
+.skin-picker__btn:focus-visible, .skin-picker__opt:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.skin-picker__live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) {
+  .skin-picker__btn, .skin-picker__opt, .skin-picker__wheel { transition: none; }
+}
+
+/* ============================================================================
+   BLOQUE B · OMARCHY · CASOS ESPECIALES
+   ----------------------------------------------------------------------------
+   Overrides de componentes que:
+   · viven en style.css pero necesitan remate (.climb-*, .news-*, .weather-*,
+     .github-activity__*, .climbing-links__*), o
+   · viven inyectados en juego.js / chatbot.js (.arcade__*, .cordada-*) y se
+     sobrescriben desde aquí con especificidad (0,3,0) > (0,1,0) sin tocar JS.
+   Todo bajo :root[data-skin="omarchy"]. Topo intacto.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. JUEGO "VÍA DE BLOQUES" · .arcade__*
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .arcade__screen {
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-skin="omarchy"] .arcade__overlay {
+  border-radius: var(--radius);
+  background: rgba(15, 23, 42, .85);
+  color: #f1f5f9;
+  box-shadow: none;
+}
+:root[data-skin="omarchy"][data-theme="dark"] .arcade__overlay {
+  background: rgba(11, 15, 23, .85);
+}
+
+:root[data-skin="omarchy"] .arcade__overlay-title {
+  font-family: var(--display);
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+:root[data-skin="omarchy"] .arcade__overlay-text {
+  color: rgba(241, 245, 249, .78);
+  font-family: var(--font);
+}
+
+:root[data-skin="omarchy"] .arcade__toast {
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--mono);
+}
+
+:root[data-skin="omarchy"] .arcade__stats {
+  gap: .5rem;
+}
+
+:root[data-skin="omarchy"] .arcade__stat {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  padding: .6rem .8rem;
+}
+
+:root[data-skin="omarchy"] .arcade__stat dt {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+:root[data-skin="omarchy"] .arcade__stat dd {
+  font-family: var(--display);
+  color: var(--text);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.1;
+}
+
+:root[data-skin="omarchy"] .arcade__stats-row {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+:root[data-skin="omarchy"] .arcade__restart {
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  transition: color .2s var(--ease), transform .15s var(--ease), box-shadow .15s var(--ease);
+}
+:root[data-skin="omarchy"] .arcade__restart:hover {
+  color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+:root[data-skin="omarchy"] .arcade__next {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: .5rem;
+}
+
+:root[data-skin="omarchy"] .arcade__next canvas {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  display: block;
+}
+
+:root[data-skin="omarchy"] .arcade__pad {
+  gap: .4rem;
+}
+
+:root[data-skin="omarchy"] .arcade__btn {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease), color .2s var(--ease);
+}
+:root[data-skin="omarchy"] .arcade__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+  color: var(--accent);
+}
+:root[data-skin="omarchy"] .arcade__btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-skin="omarchy"] .arcade__keys {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .8rem;
+}
+
+/* ---------------------------------------------------------------------------
+   2. CHATBOT "CORDADA" · .cordada-*
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .cordada-burbuja {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+}
+:root[data-skin="omarchy"] .cordada-burbuja:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+:root[data-skin="omarchy"] .cordada-panel {
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+:root[data-skin="omarchy"] .cordada-cabecera {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+  padding: 1rem;
+}
+
+:root[data-skin="omarchy"] .cordada-titulo {
+  font-family: var(--display);
+  font-weight: 600;
+  color: var(--text);
+}
+
+:root[data-skin="omarchy"] .cordada-cerrar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  transition: color .2s var(--ease);
+}
+:root[data-skin="omarchy"] .cordada-cerrar:hover { color: var(--accent); }
+
+:root[data-skin="omarchy"] .cordada-msg {
+  padding: .75rem 1rem;
+  border-radius: 18px;
+  font-size: .95rem;
+  max-width: 85%;
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-skin="omarchy"] .cordada-msg--bot {
+  background: var(--surface-2);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+}
+
+:root[data-skin="omarchy"] .cordada-msg--usuario {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-bottom-right-radius: 4px;
+  margin-left: auto;
+}
+
+:root[data-skin="omarchy"] .cordada-escribiendo {
+  display: inline-flex;
+  gap: .25rem;
+  align-items: center;
+}
+
+:root[data-skin="omarchy"] .cordada-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: cordada-fade 1.2s infinite ease-in-out;
+}
+:root[data-skin="omarchy"] .cordada-punto:nth-child(2) { animation-delay: .15s; }
+:root[data-skin="omarchy"] .cordada-punto:nth-child(3) { animation-delay: .3s; }
+
+@keyframes cordada-fade {
+  0%, 80%, 100% { opacity: .3; transform: translateY(0); }
+  40%           { opacity: 1;  transform: translateY(-3px); }
+}
+
+:root[data-skin="omarchy"] .cordada-chips { display: none; }
+:root[data-skin="omarchy"] .cordada-chips.cordada-visibles { display: flex; flex-wrap: wrap; gap: .4rem; }
+
+:root[data-skin="omarchy"] .cordada-chip {
+  border-radius: 999px;
+  padding: .4rem .9rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--text);
+  transition: background .2s var(--ease), color .2s var(--ease);
+}
+:root[data-skin="omarchy"] .cordada-chip:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+:root[data-skin="omarchy"] .cordada-entrada {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  padding: .75rem;
+  gap: .5rem;
+}
+
+:root[data-skin="omarchy"] .cordada-campo {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: .65rem .9rem;
+  color: var(--text);
+  font-family: var(--font);
+  transition: box-shadow .15s var(--ease), border-color .15s var(--ease);
+}
+:root[data-skin="omarchy"] .cordada-campo:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .15);
+  border-color: var(--accent);
+}
+
+:root[data-skin="omarchy"] .cordada-enviar {
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 1px solid var(--line);
+  padding: .6rem 1rem;
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+}
+:root[data-skin="omarchy"] .cordada-enviar:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------------------------------------------------------------------------
+   3. BARRA LATERAL DE ESCALADA · .climb-*
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .climb-rail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--line);
+}
+
+:root[data-skin="omarchy"] .climb-rope { display: none; }
+
+:root[data-skin="omarchy"] .climb-hold {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted-2);
+  border: none;
+  box-shadow: none;
+  transition: width .2s var(--ease), height .2s var(--ease),
+              background .2s var(--ease), box-shadow .2s var(--ease);
+}
+:root[data-skin="omarchy"] .climb-hold::before { display: none; }
+
+:root[data-skin="omarchy"] .climb-hold:hover {
+  transform: none;
+  background: var(--accent);
+}
+
+:root[data-skin="omarchy"] .climb-hold.is-active {
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb), .18);
+}
+
+:root[data-skin="omarchy"] .climb-hold.is-passed {
+  background: rgba(var(--accent-rgb), .35);
+}
+
+:root[data-skin="omarchy"] .climb-hold__label {
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: .72rem;
+  padding: .2rem .5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-skin="omarchy"] .climb-climber {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow:
+    0 0 12px rgba(var(--accent-rgb), .55),
+    0 0 0 2px rgba(var(--accent-rgb), .25);
+  transform: translate(-50%, -50%);
+  transition: transform .2s linear;
+}
+
+:root[data-skin="omarchy"] .climb-climber svg { display: none; }
+
+/* ---------------------------------------------------------------------------
+   4. NOTICIAS IA · .news-*
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .news-item {
+  padding: 1.25rem;
+  border-radius: 16px;
+  transition: transform .25s cubic-bezier(.4, 0, .2, 1),
+              box-shadow .25s cubic-bezier(.4, 0, .2, 1);
+}
+:root[data-skin="omarchy"] .news-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+}
+:root[data-skin="omarchy"][data-theme="dark"] .news-item:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+}
+
+:root[data-skin="omarchy"] .news-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  border-radius: var(--radius-sm);
+}
+:root[data-skin="omarchy"] .news-link:focus-visible {
+  outline: 3px solid rgba(var(--accent-rgb), .5);
+  outline-offset: 3px;
+}
+
+:root[data-skin="omarchy"] .news-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text);
+  margin: 0 0 .75rem;
+  transition: color .2s var(--ease);
+}
+:root[data-skin="omarchy"] .news-title:hover { color: var(--accent); }
+
+:root[data-skin="omarchy"] .news-source {
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .72rem;
+  text-transform: uppercase;
+  padding: .2rem .6rem;
+  border: none;
+  display: inline-block;
+}
+
+:root[data-skin="omarchy"] :is(.news-loading, .news-empty) {
+  font-family: var(--mono);
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* ---------------------------------------------------------------------------
+   5. WIDGET DEL TIEMPO · .weather-widget__*
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .weather-widget {
+  padding: 1.5rem;
+}
+
+:root[data-skin="omarchy"] .weather-widget__head {
+  border-bottom: 1px solid var(--line);
+}
+
+:root[data-skin="omarchy"] .weather-widget__icon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-2);
+  font-size: 1.75rem;
+  flex: none;
+}
+
+:root[data-skin="omarchy"] .weather-widget__temp {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 2.5rem;
+  color: var(--accent);
+}
+
+:root[data-skin="omarchy"] .weather-widget__city {
+  font-family: var(--mono);
+  font-size: .8rem;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: .05em;
+}
+
+:root[data-skin="omarchy"] .weather-widget__meta li {
+  border-bottom: 1px solid var(--line);
+}
+
+:root[data-skin="omarchy"] .weather-widget__search-button {
+  width: 40px;
+  flex: 0 0 40px;
+  border-radius: 50%;
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-skin="omarchy"] .weather-widget__verdict {
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: .82rem;
+  border: none;
+  padding: .5rem .9rem;
+}
+:root[data-skin="omarchy"] .weather-widget__verdict.is-good {
+  background: #10b981;
+  color: #ffffff;
+}
+:root[data-skin="omarchy"] .weather-widget__verdict.is-bad {
+  background: #f59e0b;
+  color: #ffffff;
+}
+:root[data-skin="omarchy"][data-theme="dark"] .weather-widget__verdict.is-good {
+  background: #10b981;
+  color: #ffffff;
+}
+:root[data-skin="omarchy"][data-theme="dark"] .weather-widget__verdict.is-bad {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+/* ---------------------------------------------------------------------------
+   6. WIDGET GITHUB · .github-activity__*
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .github-activity {
+  border-top: 1px solid var(--line);
+  padding-top: 1.5rem;
+}
+
+:root[data-skin="omarchy"] .github-activity__card {
+  border-radius: 12px;
+  padding: 1rem;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+}
+:root[data-skin="omarchy"] .github-activity__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+}
+:root[data-skin="omarchy"][data-theme="dark"] .github-activity__card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+}
+
+:root[data-skin="omarchy"] .github-activity__name {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--text);
+}
+
+:root[data-skin="omarchy"] .github-activity__desc {
+  font-family: var(--font);
+  font-size: .85rem;
+  color: var(--muted);
+}
+
+:root[data-skin="omarchy"] .github-activity__meta {
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--muted-2);
+}
+
+/* ---------------------------------------------------------------------------
+   7. ZONAS DE ESCALADA · .climbing-links__*
+   --------------------------------------------------------------------------- */
+:root[data-skin="omarchy"] .climbing-links__zone {
+  border-radius: var(--radius-sm);
+  padding: .6rem .85rem;
+}
+
+:root[data-skin="omarchy"] .climbing-links__icon {
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+}
+:root[data-skin="omarchy"] .climbing-links__icon:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+:root[data-skin="omarchy"] .climbing-links__item {
+  border-radius: 999px;
+  padding: .55rem .85rem;
+  transition: background .2s var(--ease), color .2s var(--ease), transform .15s var(--ease);
+}
+:root[data-skin="omarchy"] .climbing-links__item:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+  transform: translateY(-1px);
+}
+
+/* ---------------------------------------------------------------------------
+   8. prefers-reduced-motion · todo lo nuevo del Bloque B
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-skin="omarchy"] .arcade__restart,
+  :root[data-skin="omarchy"] .arcade__btn,
+  :root[data-skin="omarchy"] .cordada-burbuja,
+  :root[data-skin="omarchy"] .cordada-cerrar,
+  :root[data-skin="omarchy"] .cordada-chip,
+  :root[data-skin="omarchy"] .cordada-campo,
+  :root[data-skin="omarchy"] .cordada-enviar,
+  :root[data-skin="omarchy"] .climb-hold,
+  :root[data-skin="omarchy"] .climb-climber,
+  :root[data-skin="omarchy"] .news-item,
+  :root[data-skin="omarchy"] .news-title,
+  :root[data-skin="omarchy"] .github-activity__card,
+  :root[data-skin="omarchy"] .climbing-links__icon,
+  :root[data-skin="omarchy"] .climbing-links__item {
+    transition: none;
+  }
+  :root[data-skin="omarchy"] .cordada-punto { animation: none; }
+  :root[data-skin="omarchy"] :is(
+    .arcade__btn:hover,
+    .arcade__btn:active,
+    .arcade__restart:hover,
+    .cordada-burbuja:hover,
+    .cordada-enviar:hover,
+    .news-item:hover,
+    .github-activity__card:hover,
+    .climbing-links__icon:hover,
+    .climbing-links__item:hover
+  ) { transform: none; }
+}
+
+/* ============================================================================
+   SKIN · MINECRAFT · BLOQUE CONSOLIDADO (v2)
+   ----------------------------------------------------------------------------
+   Un único bloque limpio. Sustituye a:
+     · variables Minecraft (light + dark)
+     · BLOQUE C1 (bisel + texturas + slots)
+     · BLOQUE C2 (Steve, torre, slots, stats)
+     · todos los fixes apilados (terminal, paleta Prismarine, nav, stats…)
+   Todo va bajo :root[data-skin="minecraft"]. Topo y Omarchy intactos.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1 · VARIABLES
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] {
+  font-size: 112.5%;
+  --radius: 0; --radius-sm: 0;
+  --font: "VT323", "Courier New", monospace;
+  --display: "Monocraft", "Courier New", monospace;
+  --mono: "VT323", "Courier New", monospace;
+
+  /* Light · Cabaña acuática (Prismarine / Copper / Sea Lantern) */
+  --bg:        #62A292;
+  --bg-soft:   #63AC9E;
+  --surface:   #ACC8BF;
+  --surface-2: #A0BFB5;
+  --panel-soft: rgba(26,26,26,.08);
+  --text:      #F4FBF8;
+  --muted:     #DCE9E4;
+  --muted-2:   #B8CFC7;
+  --line:      #345C4C;
+  --accent:    #345C4C;
+  --accent-2:  #52A385;
+  --accent-3:  #ACC8BF;
+  --accent-rgb: 52, 92, 76;
+  --accent-2-rgb: 82, 163, 133;
+  --on-accent: #F4FBF8;
+
+  --grid-line: rgba(26,26,26,.08);
+  --header-bg: rgba(98,162,146,.92);
+  --header-bg-scrolled: rgba(98,162,146,.98);
+
+  --shadow-sm: 2px 2px 0 #1a1a1a;
+  --shadow:    4px 4px 0 #1a1a1a;
+  --logo-shadow: 2px 2px 0 #1a1a1a;
+  --btn-primary-shadow: 3px 3px 0 #1a1a1a;
+  --btn-primary-shadow-hover: 5px 5px 0 #1a1a1a;
+  --card-glow: transparent;
+  --timeline-dot-ring: rgba(52,92,76,.25);
+  --color-scheme: light;
+
+  /* Bisel GUI Minecraft */
+  --mc-btn-bg:      #8b8b8b;
+  --mc-btn-bg-hover:#7a7a7a;
+  --mc-bevel-light: #b8b8b8;
+  --mc-bevel-dark:  #5a5a5a;
+  --mc-border-outer:#1a1a1a;
+  --mc-slot-bg:     #c6c6c6;
+
+  /* Colores puntuales del skin */
+  --mc-lava:   #FF8A1F;   /* naranja Lava (acento fuerte sobre fondo) */
+  --mc-red:    #8a1f14;   /* cuerda Redstone en light */
+  --mc-green:  #0E4F30;   /* verde musgo para terminal light */
+  --mc-red-t:  #7A1F14;   /* rojo oscuro terminal light */
+}
+
+:root[data-skin="minecraft"][data-theme="dark"] {
+  --bg:        #373737;
+  --bg-soft:   #2b2b2b;
+  --surface:   #4c4c4c;
+  --surface-2: #5a5a5a;
+  --panel-soft: rgba(233,236,236,.06);
+  --text:      #E9ECEC;
+  --muted:     #B5B5B5;
+  --muted-2:   #8A8A8A;
+  --line:      #1a1a1a;
+  --accent:    #5DECF5;
+  --accent-2:  #52A385;
+  --accent-3:  #F9D67D;
+  --accent-rgb: 93, 236, 245;
+  --accent-2-rgb: 82, 163, 133;
+  --on-accent: #1a1a1a;
+
+  --grid-line: rgba(233,236,236,.06);
+  --header-bg: rgba(26,26,26,.92);
+  --header-bg-scrolled: rgba(26,26,26,.98);
+
+  --shadow-sm: 2px 2px 0 #000;
+  --shadow:    4px 4px 0 #000;
+  --logo-shadow: 2px 2px 0 #000;
+  --btn-primary-shadow: 3px 3px 0 #000;
+  --btn-primary-shadow-hover: 5px 5px 0 #000;
+  --timeline-dot-ring: rgba(93,236,245,.2);
+  --color-scheme: dark;
+
+  --mc-btn-bg:      #4c4c4c;
+  --mc-btn-bg-hover:#5a5a5a;
+  --mc-bevel-light: #6b6b6b;
+  --mc-bevel-dark:  #2a2a2a;
+  --mc-border-outer:#000000;
+  --mc-slot-bg:     #2b2b2b;
+
+  --mc-lava:   #FF8A1F;
+  --mc-red:    #FF8A1F;
+  --mc-green:  #52A385;
+  --mc-red-t:  #FF8A1F;
+}
+
+/* ---------------------------------------------------------------------------
+   2 · BASE · esquinas rectas + tipografía Monocraft
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] *:not(.skin-picker *) { border-radius: 0; }
+:root[data-skin="minecraft"] :is(h1, h2, h3, h4) {
+  line-height: 1.4; letter-spacing: 0; text-transform: none;
+}
+:root[data-skin="minecraft"] h1 { font-size: clamp(1.4rem, 3.6vw, 2.1rem); }
+:root[data-skin="minecraft"] h2 { font-size: clamp(1.05rem, 2.6vw, 1.6rem); }
+:root[data-skin="minecraft"] h3 { font-size: .95rem; }
+:root[data-skin="minecraft"] h4 { font-size: .85rem; }
+
+:root[data-skin="minecraft"] .logo-mark { font-size: .65rem; line-height: 1.3; width: 42px; height: 42px; }
+:root[data-skin="minecraft"] .logo-text { font-size: .85rem; line-height: 1.2; letter-spacing: .02em; }
+:root[data-skin="minecraft"] .hero-title { font-size: clamp(1.56rem, 3.9vw, 3rem); line-height: 1.3; }
+:root[data-skin="minecraft"] .weather-widget__title { font-size: .63rem; line-height: 1.3; }
+:root[data-skin="minecraft"] .weather-widget__temp { font-size: 1.5rem; line-height: 1.3; }
+:root[data-skin="minecraft"] .contact-title,
+:root[data-skin="minecraft"] .projects-title { font-size: clamp(1.32rem, 3vw, 2.16rem); line-height: 1.3; }
+:root[data-skin="minecraft"] .project-card__title { font-size: .75rem; line-height: 1.3; }
+:root[data-skin="minecraft"] .project-preview h3 { font-size: .69rem; line-height: 1.3; }
+:root[data-skin="minecraft"] .news-title { font-size: .63rem; line-height: 1.3; }
+:root[data-skin="minecraft"] .skill-icon__label { font-size: .57rem; line-height: 1.3; }
+
+/* ---------------------------------------------------------------------------
+   3 · TEXTURAS DE FONDO · body + header
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] body {
+  background-color: var(--bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%2362A292'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23345C4C' opacity='.22'/%3E%3Crect x='3' y='1' width='1' height='1' fill='%23345C4C' opacity='.18'/%3E%3Crect x='6' y='0' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3Crect x='1' y='3' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%23345C4C' opacity='.18'/%3E%3Crect x='7' y='5' width='1' height='1' fill='%23345C4C' opacity='.18'/%3E%3Crect x='2' y='6' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3Crect x='5' y='7' width='1' height='1' fill='%23ACC8BF' opacity='.18'/%3E%3C/svg%3E");
+  background-size: 64px 64px;
+}
+:root[data-skin="minecraft"][data-theme="dark"] body {
+  background-color: var(--bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%23373737'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23272727' opacity='.55'/%3E%3Crect x='3' y='1' width='1' height='1' fill='%23272727' opacity='.5'/%3E%3Crect x='6' y='0' width='1' height='1' fill='%234a4a4a' opacity='.4'/%3E%3Crect x='1' y='3' width='1' height='1' fill='%234a4a4a' opacity='.4'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%23272727' opacity='.5'/%3E%3Crect x='7' y='5' width='1' height='1' fill='%23272727' opacity='.5'/%3E%3Crect x='2' y='6' width='1' height='1' fill='%234a4a4a' opacity='.4'/%3E%3Crect x='5' y='7' width='1' height='1' fill='%234a4a4a' opacity='.4'/%3E%3C/svg%3E");
+  background-size: 64px 64px;
+}
+
+:root[data-skin="minecraft"] .site-header {
+  border-bottom: 4px solid var(--mc-border-outer);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='none'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23000000' opacity='.08'/%3E%3Crect x='4' y='2' width='1' height='1' fill='%23ffffff' opacity='.06'/%3E%3Crect x='2' y='5' width='1' height='1' fill='%23000000' opacity='.08'/%3E%3Crect x='7' y='6' width='1' height='1' fill='%23ffffff' opacity='.06'/%3E%3C/svg%3E");
+  background-size: 16px 16px;
+}
+
+/* ---------------------------------------------------------------------------
+   4 · BOTONES · bisel 4-lados
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] :is(
+  .btn, .nav-cta, .nav-link, .filter-btn, .arcade__btn, .arcade__restart,
+  .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
+  .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn
+) {
+  background: var(--mc-btn-bg);
+  color: #1a1a1a;
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    3px 3px 0 2px rgba(0,0,0,.35);
+  border-radius: 0;
+  font-family: var(--display);
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  transition: transform 100ms steps(2), box-shadow 100ms steps(2);
+}
+:root[data-skin="minecraft"] .nav-link {
+  padding: .45rem .65rem;
+  font-size: .62rem;
+  white-space: nowrap;
+}
+:root[data-skin="minecraft"] .nav-cta {
+  padding: .5rem .85rem;
+  font-size: .68rem;
+}
+:root[data-skin="minecraft"] :is(
+  .btn, .nav-cta, .nav-link, .filter-btn, .arcade__btn, .arcade__restart,
+  .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
+  .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn
+):hover {
+  background: var(--mc-btn-bg-hover);
+  border-color:
+    var(--mc-bevel-dark)  var(--mc-bevel-light)
+    var(--mc-bevel-light) var(--mc-bevel-dark);
+  transform: translate(2px, 2px);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    1px 1px 0 2px rgba(0,0,0,.35);
+}
+
+/* Conmutador de skin: circular (es especial) */
+:root[data-skin="minecraft"] .skin-picker__btn,
+:root[data-skin="minecraft"] .skin-picker__opt { border-radius: 50%; }
+
+/* Iconos de los toggles en tinta oscura (light) */
+:root[data-skin="minecraft"] .theme-toggle .icon,
+:root[data-skin="minecraft"] .nav-toggle span { color: #1a1a1a; }
+:root[data-skin="minecraft"] .nav-toggle span { background: #1a1a1a; }
+
+/* Estado activo del nav-link */
+:root[data-skin="minecraft"] .nav-link[aria-current="true"],
+:root[data-skin="minecraft"] .nav-link[aria-current="page"]:not(.nav-cta) {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+:root[data-skin="minecraft"] .nav-link[aria-current="true"]::after,
+:root[data-skin="minecraft"] .nav-link[aria-current="page"]:not(.nav-cta)::after { content: none; }
+
+/* Dark: texto claro sobre gris oscuro */
+:root[data-skin="minecraft"][data-theme="dark"] :is(
+  .btn, .nav-cta, .nav-link, .filter-btn, .arcade__btn, .arcade__restart,
+  .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
+  .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn
+) { color: #E9ECEC; }
+:root[data-skin="minecraft"][data-theme="dark"] .theme-toggle .icon,
+:root[data-skin="minecraft"][data-theme="dark"] .nav-toggle span { color: #E9ECEC; }
+:root[data-skin="minecraft"][data-theme="dark"] .nav-toggle span { background: #E9ECEC; }
+
+/* ---------------------------------------------------------------------------
+   5 · TARJETAS / PANELES · bisel + elevación al hover
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] :is(
+  .card, .project-card, .cert-card, .like-card, .about-card,
+  .contact-form-wrap, .contact-aside, .news-item, .project-preview,
+  .weather-widget, .github-activity__card, .arcade__stat, .cordada-panel
+) {
+  background: var(--surface);
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    6px 6px 0 2px rgba(0,0,0,.35);
+}
+:root[data-skin="minecraft"] :is(
+  .card, .project-card, .cert-card, .like-card, .news-item,
+  .project-preview, .github-activity__card
+):hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    8px 8px 0 2px rgba(0,0,0,.35);
+  transition: transform 100ms steps(2), box-shadow 100ms steps(2);
+}
+:root[data-skin="minecraft"] :is(.about-card, .contact-form-wrap) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='none'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23000000' opacity='.05'/%3E%3Crect x='4' y='4' width='1' height='1' fill='%23ffffff' opacity='.05'/%3E%3C/svg%3E");
+  background-size: 16px 16px;
+}
+
+/* ---------------------------------------------------------------------------
+   6 · INPUTS · slot de inventario (bisel invertido, hundido)
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] :is(
+  .contact-form input, .contact-form select, .contact-form textarea,
+  .weather-widget__search input, .cordada-campo, .language-select
+) {
+  background: var(--mc-slot-bg);
+  color: #1a1a1a;
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-dark)  var(--mc-bevel-light)
+    var(--mc-bevel-light) var(--mc-bevel-dark);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    inset 2px 2px 0 rgba(0,0,0,.2);
+  font-family: var(--mono);
+  font-size: 1.05rem;
+}
+:root[data-skin="minecraft"] :is(
+  .contact-form input, .contact-form select, .contact-form textarea,
+  .weather-widget__search input, .cordada-campo, .language-select
+):focus {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--accent),
+    inset 2px 2px 0 rgba(0,0,0,.2);
+}
+:root[data-skin="minecraft"][data-theme="dark"] :is(
+  .contact-form input, .contact-form select, .contact-form textarea,
+  .weather-widget__search input, .cordada-campo, .language-select
+) {
+  background: var(--mc-slot-bg);
+  color: #E9ECEC;
+}
+:root[data-skin="minecraft"] :is(.contact-form input, .contact-form textarea)::placeholder { color: #4a4a4a; opacity: 1; }
+:root[data-skin="minecraft"][data-theme="dark"] :is(.contact-form input, .contact-form textarea)::placeholder { color: #b5b5b5; opacity: 1; }
+
+/* ---------------------------------------------------------------------------
+   7 · ICONOS COMO SLOTS
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] :is(
+  .card-icon, .project-card__icon, .cert-card__icon, .like-icon,
+  .skill-icon__svg, .news-source, .tag
+) {
+  background: var(--mc-slot-bg);
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-dark)  var(--mc-bevel-light)
+    var(--mc-bevel-light) var(--mc-bevel-dark);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    inset 2px 2px 0 rgba(0,0,0,.15);
+  color: #1a1a1a;
+  display: grid;
+  place-items: center;
+}
+:root[data-skin="minecraft"] :is(.card-icon, .project-card__icon) { width: 52px; height: 52px; font-size: 1.4rem; }
+:root[data-skin="minecraft"] .cert-card__icon { width: 48px; height: 48px; font-size: 1.6rem; }
+:root[data-skin="minecraft"] .like-icon { width: 52px; height: 52px; margin-bottom: .75rem; }
+:root[data-skin="minecraft"] .skill-icon__svg { width: 56px; height: 56px; padding: .5rem; }
+:root[data-skin="minecraft"][data-theme="dark"] :is(
+  .card-icon, .project-card__icon, .cert-card__icon, .like-icon, .skill-icon__svg
+) { background: var(--mc-slot-bg); color: #E9ECEC; }
+
+/* ---------------------------------------------------------------------------
+   8 · STATS · slots 3D
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] .stat {
+  background: var(--mc-slot-bg);
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    inset 3px 3px 0 rgba(0,0,0,.15),
+    4px 4px 0 2px rgba(0,0,0,.35);
+  padding: 1rem 1rem;
+  min-width: 0;
+}
+:root[data-skin="minecraft"] .stat strong {
+  display: block;
+  margin-bottom: .6rem;
+  font-size: clamp(1rem, 2.6vw, 1.5rem);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  color: var(--accent);
+  text-shadow: 1px 1px 0 #1a1a1a;
+}
+:root[data-skin="minecraft"] .stat span {
+  display: block;
+  line-height: 1.4;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+:root[data-skin="minecraft"][data-theme="dark"] .stat span { color: #E9ECEC; }
+@media (max-width: 900px) {
+  :root[data-skin="minecraft"] .stat strong { font-size: clamp(.95rem, 3.2vw, 1.3rem); }
+}
+
+/* ---------------------------------------------------------------------------
+   9 · TERMINAL · legible en light y dark
+   --------------------------------------------------------------------------- */
+/* Terminal light · tonos cálidos tipo fruta/zelda */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-prompt {
+  color: #1a1a1a;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-var {
+  color: #FF8A1F;          /* naranja Lava, más legible que el rojo oscuro */
+  font-weight: 700;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-fn,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-ok {
+  color: #B8860B;          /* amarillo plátano oscuro (cumple AA sobre Sea Lantern) */
+  font-weight: 700;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-cursor {
+  color: #1a1a1a;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-var  { color: var(--mc-red-t); font-weight: 700; }
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-fn,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-ok   { color: var(--mc-green); font-weight: 700; }
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .term-cursor { color: #1a1a1a; }
+
+:root[data-skin="minecraft"][data-theme="dark"] .term-prompt { color: #5DECF5; }
+:root[data-skin="minecraft"][data-theme="dark"] .term-var  { color: #FF8A1F; font-weight: 700; }
+:root[data-skin="minecraft"][data-theme="dark"] .term-fn   { color: #F9D67D; font-weight: 700; }
+:root[data-skin="minecraft"][data-theme="dark"] .term-ok   { color: #52A385; font-weight: 700; }
+:root[data-skin="minecraft"][data-theme="dark"] .term-cursor { color: #5DECF5; }
+
+/* ---------------------------------------------------------------------------
+   10 · LEGIBILIDAD · light: texto claro sobre Prismarine, oscuro sobre Sea Lantern
+   --------------------------------------------------------------------------- */
+/* Texto que vive sobre el fondo Prismarine del body */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
+  .hero-title, .section-head h2, .section-tag, .timeline-title, .timeline-item h4,
+  .stack-title, .site-footer h2, .contact-title, .projects-title,
+  .logo-text, .cta-inner h2, .accent-text, .hero-subtitle
+) { color: var(--text); }
+
+:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
+  .hero-desc, .timeline-item p, .site-footer p, .footer-bottom,
+  .contact-subtitle, .projects-subtitle, .hero-subtitle, .section-tag
+) { color: var(--muted); }
+
+:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
+  .hero-subtitle, .accent-text, .section-tag, .climbing-links__climbs,
+  .footer-links a:hover, .site-footer h3
+) { color: #F4FBF8; font-weight: 700; }
+
+/* Texto que vive dentro de tarjetas (fondo Sea Lantern claro) */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
+  .card, .card h3, .card-list li, .about-card, .about-card h3,
+  .about-text p, .about-text strong, .cert-card, .cert-card__title,
+  .cert-card__issuer, .like-card, .like-card h3, .like-card p,
+  .news-item, .news-title, .project-card, .project-card__title,
+  .project-card__desc, .project-preview, .project-preview h3,
+  .github-activity__card, .github-activity__name, .github-activity__desc,
+  .contact-form-wrap, .contact-aside, .contact-aside__title,
+  .contact-list, .contact-list a, .weather-widget, .weather-widget__title,
+  .stat, .stat span, .skill-icon, .skill-icon__label,
+  .climbing-links__zone, .climbing-links__zone strong,
+  .terminal, .terminal code, .terminal--typing,
+  .cordada-panel, .cordada-titulo, .cordada-msg,
+  .arcade__stat, .arcade__overlay-text,
+  .hero-eyebrow, .climb-hold__label,
+  .form-label, .form-check, .form-hint,
+  .tag, .card-grade, .cert-card__badge, .certs-counter,
+  .project-card__grade, .project-card__stack li, .stack-list li,
+  .grades-legend .chip, .news-source, .climbing-links__item,
+  .climbing-links__icon, .project-preview__tag,
+  .cordada-campo, .cordada-chip,
+  .weather-widget__search input
+) { color: #1a1a1a; }
+
+/* Acento dentro de tarjetas (fondo claro): Dark Prismarine oscuro */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) :is(
+  .card h3, .about-card h3, .contact-aside__title, .case-block__title,
+  .card-grade::after
+) { color: #345C4C; }
+
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .stat strong { color: #345C4C; }
+
+/* Dark: el acento es Diamond y ya contrasta sobre Deepslate */
+:root[data-skin="minecraft"][data-theme="dark"] :is(
+  .accent-text, .hero-subtitle, .section-tag, .stat strong
+) { color: var(--accent); }
+
+/* ---------------------------------------------------------------------------
+   11 · CTA BAND · light
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .cta-band {
+  background: #345C4C;
+  color: #F4FBF8;
+  border-color: #1a1a1a;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .cta-inner h2,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .cta-inner p { color: #F4FBF8; }
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .cta-inner h2 .accent-text { color: #52A385; }
+
+/* ---------------------------------------------------------------------------
+   12 · ESCALADA · barra lateral y presas
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] .climb-hold {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #1a1a1a;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  background-color: #7A7A7A;
+  background-image:
+    linear-gradient(90deg, transparent 47%, rgba(0,0,0,.15) 47%, rgba(0,0,0,.15) 53%, transparent 53%),
+    linear-gradient(0deg,  transparent 47%, rgba(0,0,0,.15) 47%, rgba(0,0,0,.15) 53%, transparent 53%);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform 100ms steps(2);
+}
+:root[data-skin="minecraft"] .climb-hold::before { display: none; }
+:root[data-skin="minecraft"] .climb-hold:first-child {
+  background-color: #5DECF5;
+  background-image:
+    radial-gradient(circle at 30% 30%, #F4FBF8 1.5px, transparent 1.5px),
+    radial-gradient(circle at 70% 60%, #F4FBF8 1.5px, transparent 1.5px),
+    radial-gradient(circle at 50% 80%, #F4FBF8 1px, transparent 1px),
+    linear-gradient(90deg, transparent 47%, rgba(0,0,0,.2) 47%, rgba(0,0,0,.2) 53%, transparent 53%);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4), 0 0 8px rgba(93,236,245,.6);
+}
+:root[data-skin="minecraft"] .climb-hold:nth-child(2) {
+  background-color: #F9D67D;
+  background-image:
+    radial-gradient(circle at 40% 40%, #FFE9A8 1.5px, transparent 1.5px),
+    radial-gradient(circle at 70% 70%, #FFE9A8 1.5px, transparent 1.5px);
+}
+:root[data-skin="minecraft"] .climb-hold:nth-child(3) {
+  background-color: #C9C9C9;
+  background-image: radial-gradient(circle at 50% 50%, #F4FBF8 1.5px, transparent 1.5px);
+}
+:root[data-skin="minecraft"] .climb-hold:nth-child(4) { background-color: #737969; }
+:root[data-skin="minecraft"] .climb-hold:nth-child(n+5) { background-color: #7A7A7A; }
+:root[data-skin="minecraft"] .climb-hold:last-child {
+  background-color: #735531;
+  background-image:
+    radial-gradient(circle at 30% 30%, #5A3A1E 1px, transparent 1px),
+    radial-gradient(circle at 70% 70%, #5A3A1E 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, #8A6A3F 1px, transparent 1px);
+}
+:root[data-skin="minecraft"] .climb-hold.is-active {
+  background-color: #FF8A1F;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4), 0 0 0 2px #FF8A1F, 0 0 12px rgba(255,138,31,.7);
+  transform: scale(1.15);
+}
+:root[data-skin="minecraft"] .climb-hold:hover {
+  transform: scale(1.15);
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4), 0 0 0 2px #F4FBF8;
+}
+
+:root[data-skin="minecraft"] .climb-hold__label {
+  background: #E4D5B0;
+  color: #1a1a1a;
+  border: 2px solid #1a1a1a;
+  font-family: var(--mono);
+  font-size: .78rem;
+  padding: .25rem .55rem;
+  box-shadow: 2px 2px 0 #1a1a1a, inset 1px 1px 0 rgba(255,255,255,.3), inset -1px -1px 0 rgba(0,0,0,.15);
+}
+:root[data-skin="minecraft"][data-theme="dark"] .climb-hold { border-color: #000; }
+:root[data-skin="minecraft"][data-theme="dark"] .climb-hold__label {
+  background: #4c4c4c; color: #E9ECEC; border-color: #000;
+  box-shadow: 2px 2px 0 #000;
+}
+
+/* Cuerda */
+:root[data-skin="minecraft"] .climb-rope { color: var(--mc-red); opacity: .9; }
+:root[data-skin="minecraft"][data-theme="dark"] .climb-rope { color: var(--mc-red); opacity: .7; }
+
+/* ---------------------------------------------------------------------------
+   13 · ESCALADOR (Steve) · SIN FILTER que pise el color
+   ----------------------------------------------------------------------------
+   El escalador lo pinta `escalador.js` con su propio SVG y su propio estilo.
+   Aquí SOLO definimos contenedor y, como mucho, un drop-shadow neutro.
+   NO usar `brightness(0) saturate(100%) invert(...)` — eso es lo que ponía
+   a Steve naranja. El color lo controla el JS con `currentColor`.
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] .climb-climber {
+  /* Sin filter de recoloreado. El JS ya le da color con currentColor. */
+  filter: none;
+}
+/* Contorno pixelado suave: solo si el JS no lo está pintando con su propio
+   filter. Si escalador.js mete estilos, esto queda inerte. */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .climb-climber {
+  filter:
+    drop-shadow(1px 0 0 #1a1a1a)
+    drop-shadow(-1px 0 0 #1a1a1a)
+    drop-shadow(0 1px 0 #1a1a1a)
+    drop-shadow(0 -1px 0 #1a1a1a);
+}
+:root[data-skin="minecraft"][data-theme="dark"] .climb-climber {
+  filter:
+    drop-shadow(1px 0 0 #000)
+    drop-shadow(-1px 0 0 #000)
+    drop-shadow(0 1px 0 #000)
+    drop-shadow(0 -1px 0 #000);
+}
+/* El saludo: mismo color, sin recolorear */
+:root[data-skin="minecraft"] .climb-climber.is-greeting { filter: none; }
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .climb-climber.is-greeting {
+  filter:
+    drop-shadow(1px 0 0 #1a1a1a) drop-shadow(-1px 0 0 #1a1a1a)
+    drop-shadow(0 1px 0 #1a1a1a) drop-shadow(0 -1px 0 #1a1a1a);
+}
+
+/* ---------------------------------------------------------------------------
+   14 · CURSOR PIXELADO
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] .cursor__hand {
+  width: 32px; height: 32px;
+  margin: -6px 0 0 -6px;
+  color: #F4FBF8;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .cursor__hand {
+  filter: drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000)
+          drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000);
+}
+:root[data-skin="minecraft"][data-theme="dark"] .cursor__hand {
+  color: #E9ECEC;
+  filter: drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000)
+          drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000);
+}
+:root[data-skin="minecraft"] .cursor.is-hovering .cursor__hand,
+:root[data-skin="minecraft"] .cursor.is-clicking .cursor__hand { color: #FF8A1F; }
+:root[data-skin="minecraft"] .cursor__hand svg {
+  image-rendering: pixelated;
+  shape-rendering: crispEdges;
+}
+
+/* ---------------------------------------------------------------------------
+   15 · RESPONSIVE
+   --------------------------------------------------------------------------- */
+@media (max-width: 1400px) {
+  :root[data-skin="minecraft"] .logo-text { font-size: .72rem; }
+  :root[data-skin="minecraft"] .nav-link { padding: .4rem .5rem; font-size: .55rem; }
+  :root[data-skin="minecraft"] .nav-cta  { padding: .45rem .7rem; font-size: .6rem; }
+}
+@media (max-width: 1240px) {
+  :root[data-skin="minecraft"] .logo-text { font-size: .85rem; }
+  :root[data-skin="minecraft"] .nav-list { gap: .4rem; }
+  :root[data-skin="minecraft"] .nav-link,
+  :root[data-skin="minecraft"] .nav-cta {
+    width: 100%; text-align: center;
+    padding: .8rem 1rem; font-size: .75rem;
+  }
+}
+@media (max-width: 720px) {
+  :root[data-skin="minecraft"] .climb-climber { width: 20px; height: 26px; }
+}
+
+/* ---------------------------------------------------------------------------
+   16 · prefers-reduced-motion
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-skin="minecraft"] :is(
+    .btn, .nav-cta, .nav-link, .filter-btn, .arcade__btn, .arcade__restart,
+    .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
+    .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn,
+    .card, .project-card, .cert-card, .like-card, .news-item,
+    .project-preview, .github-activity__card, .climb-hold
+  ) { transition: none; }
+  :root[data-skin="minecraft"] :is(
+    .btn, .nav-cta, .nav-link, .filter-btn, .arcade__btn, .arcade__restart,
+    .cordada-enviar, .weather-widget__search-button, .social-link, .to-top,
+    .language-select, .theme-toggle, .nav-toggle, .skin-picker__btn
+  ):hover { transform: none; }
+  :root[data-skin="minecraft"] :is(
+    .card, .project-card, .cert-card, .like-card, .news-item,
+    .project-preview, .github-activity__card, .climb-hold
+  ):hover { transform: none; }
+}
+/* ============================================================================
+   FIX · Nav estable · no baila entre idiomas ni skins
+   ============================================================================
+   Cada .nav-link tiene un min-width fijo por skin, así el menú no cambia
+   de tamaño cuando cambia el texto (ES/VA/EN) o la tipografía.
+   ============================================================================ */
+
+/* Base: Topo y Omarchy */
+.nav-link {
+  min-width: 6.5rem;   /* ajusta si algún idioma necesita más */
+  text-align: center;
+  justify-content: center;
+}
+
+/* Minecraft: fuente más ancha, necesita más espacio */
+:root[data-skin="minecraft"] .nav-link {
+  min-width: 7.5rem;
+}
+:root[data-skin="minecraft"] .nav-cta {
+  min-width: 6rem;
+}
+
+/* En pantallas medianas, reducir un poco para que quepa */
+@media (max-width: 1400px) {
+  .nav-link { min-width: 5.5rem; }
+  :root[data-skin="minecraft"] .nav-link { min-width: 6rem; }
+}
+
+/* En móvil, el nav es vertical: sin min-width */
+@media (max-width: 1240px) {
+  .nav-link,
+  :root[data-skin="minecraft"] .nav-link {
+    min-width: 0;
+  }
+}
+/* ============================================================================
+   FIX · Nav Minecraft: compactar para que no desborde con VA/EN
+   ============================================================================ */
+@media (min-width: 1241px) {
+  :root[data-skin="minecraft"] .nav-link,
+  :root[data-skin="minecraft"] .nav-cta {
+    font-size: .55rem;      /* un pelín más pequeño */
+    padding: .35rem .5rem;
+    letter-spacing: 0;
+  }
+}
+/* ============================================================================
+   FIX · Nav estable · todos los skins e idiomas
+   ----------------------------------------------------------------------------
+   Cada botón tiene un ancho MÍNIMO fijo, calculado para el idioma más largo
+   (castellano). Así el menú no baila al cambiar ES / VA / EN ni de skin.
+   En móvil el nav es vertical y se desactiva el min-width.
+   ============================================================================ */
+
+/* Base: Topo y Omarchy (fuente estrecha) */
+@media (min-width: 1241px) {
+  .nav-link {
+    min-width: 6rem;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* Minecraft: fuente Monocraft, más ancha → más min-width */
+@media (min-width: 1241px) {
+  :root[data-skin="minecraft"] .nav-link,
+  :root[data-skin="minecraft"] .nav-cta {
+    min-width: 7.2rem;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* Pantallas medianas: reducir un poco para que quepa sin desbordar */
+@media (min-width: 1241px) and (max-width: 1500px) {
+  .nav-link { min-width: 5.2rem; }
+  :root[data-skin="minecraft"] .nav-link,
+  :root[data-skin="minecraft"] .nav-cta { min-width: 6.2rem; }
+}
+
+/* Móvil / tablet: el nav se despliega vertical → sin min-width */
+@media (max-width: 1240px) {
+  .nav-link,
+  :root[data-skin="minecraft"] .nav-link,
+  :root[data-skin="minecraft"] .nav-cta {
+    min-width: 0;
+  }
+}
+/* ============================================================================
+   Cursor Minecraft · pico de diamante pixel art
+   ============================================================================ */
+
+/* El pico ya tiene sus colores: no aplicar currentColor ni filtro de mano */
+.cursor--minecraft .cursor__hand {
+  width: 44px;
+  height: 44px;
+  /* Hotspot: la punta de la hoja cae en el píxel (2,2) del viewBox.
+     Al escalar de 24 a 44px hay un factor ~1.83, y como el viewBox empieza
+     en (1,1), la punta queda cerca de (1.83, 1.83) → desplazamos el margen. */
+  margin: -2px 0 0 -2px;
+  color: initial;
+  filter: drop-shadow(1px 1px 0 rgba(0,0,0,.35));
+}
+
+/* Al hacer click, la espada hace un "tajo" corto */
+.cursor--minecraft.is-clicking .cursor__hand {
+  transform-origin: 2px 2px;    /* gira desde la punta */
+  animation: espada-tajo 120ms steps(2) 1;
+}
+
+/* En hover, la espada crece un pelín para feedback */
+.cursor--minecraft.is-hovering .cursor__hand {
+  width: 48px;
+  height: 48px;
+  margin: -2px 0 0 -2px;
+}
+
+/* Reduced motion: sin animación de pico */
+@media (prefers-reduced-motion: reduce) {
+  .cursor--minecraft.is-clicking .cursor__hand { animation: none; }
+}
+/* ============================================================================
+   Stack en formato slots de inventario (solo Minecraft)
+   ============================================================================
+   Convierte la lista de tecnologías en una rejilla 3 columnas donde cada
+   ítem es un slot de inventario Minecraft con bisel hundido, icono arriba
+   y nombre debajo. En Topo/Omarchy se ve la lista normal de chips.
+   ============================================================================ */
+
+/* Base: cada li ya tiene el estilo de chip de siempre (no cambia en topo/omarchy) */
+.stack-slot {
+  display: grid;
+  place-items: center;
+  gap: .25rem;
+  text-align: center;
+}
+
+.stack-slot__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  display: block;
+}
+
+.stack-slot__name {
+  display: block;
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* ---------------------------------------------------------------------------
+   Solo en Minecraft: rejilla 3 columnas + aspecto de slot
+   --------------------------------------------------------------------------- */
+:root[data-skin="minecraft"] .stack-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+  margin-top: 1.25rem;
+}
+
+:root[data-skin="minecraft"] .stack-slot {
+  /* Fondo base */
+  background-color: var(--mc-slot-bg);
+
+  /* Degradado interior: claro arriba, oscuro abajo (efecto de bloque sólido) */
+  background-image: linear-gradient(
+    180deg,
+    rgba(255,255,255,.12) 0%,
+    rgba(255,255,255,.04) 40%,
+    rgba(0,0,0,.12)       100%
+  );
+
+  /* Bisel NORMAL (elevado): luz arriba-izq, sombra abajo-der */
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
+
+  /* Sombra exterior fuerte + marco exterior + brillo interno arriba */
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),        /* marco negro que rodea el bloque */
+    inset 1px 1px 0 rgba(255,255,255,.25),   /* brillo superior interno */
+    inset -1px -1px 0 rgba(0,0,0,.25),       /* sombra inferior interna */
+    0 4px 0 rgba(0,0,0,.45);                 /* sombra externa que lo eleva */
+
+  padding: 1rem .5rem;
+  min-height: 100px;
+  color: #1a1a1a;
+  transition: transform 100ms steps(2), box-shadow 100ms steps(2);
+  will-change: transform, box-shadow;
+}
+
+:root[data-skin="minecraft"][data-theme="dark"] .stack-slot {
+  background-color: #4a4a4a;   /* gris medio, más visible */
+  background-image: linear-gradient(
+    180deg,
+    rgba(255,255,255,.1)  0%,
+    rgba(255,255,255,.03) 40%,
+    rgba(0,0,0,.25)       100%
+  );
+}
+
+/* Hover: el bloque se eleva un poco más */
+:root[data-skin="minecraft"] .stack-slot:hover {
+  transform: translate(0, -2px);
+  box-shadow:
+    0 0 0 2px var(--accent),                 /* marco de acento (brillo) */
+    inset 1px 1px 0 rgba(255,255,255,.3),
+    inset -1px -1px 0 rgba(0,0,0,.25),
+    0 6px 0 rgba(0,0,0,.5);                  /* sombra más grande = flota más */
+}
+
+/* Active (cuando pulsas): el bloque se hunde ligeramente */
+:root[data-skin="minecraft"] .stack-slot:active {
+  transform: translate(0, 1px);
+  box-shadow:
+    0 0 0 2px var(--accent),
+    inset 1px 1px 0 rgba(0,0,0,.2),
+    inset -1px -1px 0 rgba(255,255,255,.1),
+    0 1px 0 rgba(0,0,0,.4);                  /* sombra casi desaparece = hundido */
+}
+
+/* Hover: el slot se "ilumina" con el borde de acento */
+:root[data-skin="minecraft"] .stack-slot:hover {
+  transform: translate(0, -1px);   /* sube 1px, como si lo sacaras del inventario */
+  box-shadow:
+    0 0 0 2px var(--accent),        /* marco de acento */
+    inset 3px 3px 0 rgba(0,0,0,.35),
+    inset -2px -2px 0 rgba(255,255,255,.08),
+    inset 1px 1px 0 rgba(0,0,0,.4),
+    0 4px 0 rgba(0,0,0,.45);        /* sombra más grande = parece que flota */
+}
+
+/* En Minecraft el icono se ve más grande y el nombre en Monocraft */
+:root[data-skin="minecraft"] .stack-slot__icon {
+  font-size: 2rem;
+  /* Doble sombra: negra abajo-derecha (sombra real) + blanca arriba-izq (rebote) */
+  filter:
+    drop-shadow(1.5px 1.5px 0 rgba(0,0,0,.55))
+    drop-shadow(-1px -1px 0 rgba(255,255,255,.12));
+  margin-bottom: .4rem;
+  display: block;
+  transform: scale(1.08);   /* un pelín más grande */
+  transition: transform 100ms steps(2), filter 100ms steps(2);
+}
+
+/* En hover, el icono "salta" un poco (acompaña al relieve del slot) */
+:root[data-skin="minecraft"] .stack-slot:hover .stack-slot__icon {
+  transform: scale(1.15) translateY(-1px);
+  filter:
+    drop-shadow(2px 2px 0 rgba(0,0,0,.6))
+    drop-shadow(-1px -1px 0 rgba(255,255,255,.15));
+}
+
+:root[data-skin="minecraft"] .stack-slot__name {
+  font-family: var(--display);
+  font-size: .75rem;
+  letter-spacing: .03em;
+  line-height: 1.25;
+  color: #F4FBF8;
+  /* Texto con sombra dura tipo Minecraft: 1px negro abajo */
+  text-shadow: 1px 1px 0 rgba(0,0,0,.75);
+  padding: 0 .25rem;
+}
+
+/* En móvil: 2 columnas en lugar de 3 */
+@media (max-width: 520px) {
+  :root[data-skin="minecraft"] .stack-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-skin="minecraft"] .stack-slot { transition: none; }
+  :root[data-skin="minecraft"] .stack-slot:hover { transform: none; }
+}
+
+:root[data-skin="minecraft"][data-theme="dark"] .stack-slot {
+  background-image: linear-gradient(
+    180deg,
+    rgba(0,0,0,.4)   0%,
+    rgba(0,0,0,.15)  15%,
+    rgba(255,255,255,.03) 55%,
+    rgba(255,255,255,.06) 100%
+  );
+}
+/* ============================================================================
+   Minecraft · Tarjetas "Me gusta" con elevación al hover
+   ----------------------------------------------------------------------------
+   En reposo se ven como el resto de cards. Al pasar el ratón, se elevan 2px
+   y la sombra crece, como si las "sacaras del inventario". Solo Minecraft.
+   ============================================================================ */
+:root[data-skin="minecraft"] .like-card {
+  transition: transform 100ms steps(2), box-shadow 100ms steps(2);
+  will-change: transform, box-shadow;
+}
+
+:root[data-skin="minecraft"] .like-card:hover {
+  transform: translate(0, -2px);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),        /* marco exterior */
+    inset 1px 1px 0 rgba(255,255,255,.2),    /* brillo superior interno */
+    inset -1px -1px 0 rgba(0,0,0,.2),        /* sombra inferior interna */
+    0 8px 0 2px rgba(0,0,0,.4);              /* sombra externa fuerte */
+}
+
+/* Reduced motion: sin elevación */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-skin="minecraft"] .like-card { transition: none; }
+  :root[data-skin="minecraft"] .like-card:hover { transform: none; }
+}
+/* ============================================================================
+   Pista secreta del Konami (footer)
+   ============================================================================ */
+.footer-secreto {
+  margin: 1.25rem 0 0;
+  padding: .55rem .9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--muted-2);
+  background: transparent;
+  border: 2px dashed var(--line);
+  border-radius: 4px;
+  opacity: .75;
+  border-color: var(--muted-2); /* borde más definido */
+  transition: opacity .25s var(--ease);
+}
+.footer-secreto:hover { opacity: 1; }
+
+.footer-secreto__icono { font-size: 1rem; }
+.footer-secreto__teclas {
+  font-family: var(--mono);
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .05em;
+}
+
+/* Solo visible en Minecraft (opcional) */
+:root:not([data-skin="minecraft"]) .footer-secreto { display: none; }
+/* ============================================================================
+   Toggle de sonido (solo Minecraft)
+   ============================================================================ */
+.sound-toggle {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--text);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 2px 2px 0 var(--text);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease), color .25s var(--ease);
+}
+.sound-toggle:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--text);
+  color: var(--accent);
+}
+.sound-toggle[aria-pressed="true"] { color: var(--accent); }
+
+.sound-toggle .icon {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  transition: transform .3s var(--ease), opacity .2s var(--ease);
+}
+.sound-toggle .icon-sound-on  { transform: scale(0); opacity: 0; }
+.sound-toggle .icon-sound-off { transform: scale(1); opacity: 1; }
+.sound-toggle[aria-pressed="true"] .icon-sound-on  { transform: scale(1); opacity: 1; }
+.sound-toggle[aria-pressed="true"] .icon-sound-off { transform: scale(0); opacity: 0; }
+
+/* En Minecraft: bisel coherente */
+:root[data-skin="minecraft"] .sound-toggle {
+  background: var(--mc-btn-bg);
+  color: #1a1a1a;
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    3px 3px 0 2px rgba(0,0,0,.35);
+  border-radius: 0;
+}
+:root[data-skin="minecraft"] .sound-toggle:hover {
+  background: var(--mc-btn-bg-hover);
+  border-color:
+    var(--mc-bevel-dark)  var(--mc-bevel-light)
+    var(--mc-bevel-light) var(--mc-bevel-dark);
+  transform: translate(2px, 2px);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    1px 1px 0 2px rgba(0,0,0,.35);
+}
+:root[data-skin="minecraft"][data-theme="dark"] .sound-toggle { color: #E9ECEC; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sound-toggle { transition: none; }
+  .sound-toggle:hover { transform: none; }
+}
+/* QR del footer en Minecraft · bisel coherente */
+:root[data-skin="minecraft"] .footer-qr img {
+  border: 3px solid;
+  border-color:
+    var(--mc-bevel-light) var(--mc-bevel-dark)
+    var(--mc-bevel-dark)  var(--mc-bevel-light);
+  box-shadow:
+    0 0 0 2px var(--mc-border-outer),
+    4px 4px 0 rgba(0,0,0,.4);
+  padding: .5rem;
+  background: var(--mc-slot-bg);
+  image-rendering: pixelated;
+}
+/* ============================================================================
+   FIX · Terminal Minecraft light (blindado al final)
+   ============================================================================ */
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal .term-var,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-var {
+  color: #02873c !important;   /* naranja Lava */
+  font-weight: 700 !important;
+}
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal .term-fn,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-fn,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal .term-ok,
+:root[data-skin="minecraft"]:not([data-theme="dark"]) .terminal--typing .term-ok {
+  color: #aa800e !important;   /* amarillo plátano oscuro */
+  font-weight: 700 !important;
+}
+/* ============================================================================
+   Minecraft · Badges V0-V6 con marco reforzado para que destaquen
+   ============================================================================ */
+:root[data-skin="minecraft"] .card-grade,
+:root[data-skin="minecraft"] .grades-legend .chip {
+  border: 2px solid #1a1a1a;
+  box-shadow:
+    0 0 0 2px #1a1a1a,          /* marco externo grueso */
+    3px 3px 0 rgba(0,0,0,.55),  /* sombra dura */
+    inset 1px 1px 0 rgba(255,255,255,.35);   /* brillo interno */
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+/* Hover: se levanta un poco */
+:root[data-skin="minecraft"] .card-grade:hover {
+  transform: translate(-1px, -1px);
+  box-shadow:
+    0 0 0 2px #1a1a1a,
+    5px 5px 0 rgba(0,0,0,.6),
+    inset 1px 1px 0 rgba(255,255,255,.35);
+}
+/* ============================================================================
+   Minecraft · Noticias IA: source legible en dark
+   ============================================================================ */
+:root[data-skin="minecraft"][data-theme="dark"] .news-source {
+  background: #F4FBF8;    /* fondo claro tipo blanco perla */
+  color: #1a1a1a;          /* texto oscuro */
+  border: 2px solid #1a1a1a;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: .25rem .55rem;
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,.6),
+    2px 2px 0 rgba(0,0,0,.5);
+}
+
+/* ============================================================================
+   SKIN · MATRIX
+   ----------------------------------------------------------------------------
+   Estética: la película Matrix (1999). Verde fósforo, terminal, monocromo,
+   monoespaciado, efecto CRT. Sin imágenes externas.
+   Todo va bajo :root[data-skin="matrix"]. Topo, Omarchy y Minecraft intactos.
+   Solo tema oscuro: el conmutador claro/oscuro se oculta en este skin.
+   ============================================================================ */
+
+/* ---------- Variables · Matrix dark (único tema) ---------- */
+:root[data-skin="matrix"],
+:root[data-skin="matrix"][data-theme="dark"],
+:root[data-skin="matrix"][data-theme="light"] {
+  --radius: 0;
+  --radius-sm: 0;
+
+  --font: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+  --display: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+  --mono: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+
+  /* Fondos: negros con matiz verde muy sutil */
+  --bg:        #0a0f0a;
+  --bg-soft:   #0d140d;
+  --surface:   #0f180f;
+  --surface-2: #12201a;
+  --panel-soft: rgba(0, 255, 65, .04);
+
+  /* Texto: verde fósforo con distintos niveles */
+  --text:      #00FF41;
+  --muted:     #00c434;
+  --muted-2:   #00a02d;   /* antes #008a26 (contraste 4.3:1); ahora ≥5.5:1 sobre --bg */
+
+  /* Líneas */
+  --line:      #00a82d;
+
+  /* Acentos */
+  --accent:    #00FF41;
+  --accent-2:  #7CFFA8;
+  --accent-3:  #4A8A4A;
+  --accent-rgb: 0, 255, 65;
+  --accent-2-rgb: 124, 255, 168;
+  --on-accent: #0a0f0a;
+
+  /* Grid y header */
+  --grid-line: rgba(0, 255, 65, .06);
+  --header-bg: rgba(10, 15, 10, .88);
+  --header-bg-scrolled: rgba(10, 15, 10, .98);
+
+  /* Sombras: glow verde en vez de sombra dura */
+  --shadow-sm: 0 0 6px rgba(0, 255, 65, .18);
+  --shadow:    0 0 16px rgba(0, 255, 65, .25);
+  --logo-shadow: 0 0 8px rgba(0, 255, 65, .45);
+  --btn-primary-shadow: 0 0 12px rgba(0, 255, 65, .35);
+  --btn-primary-shadow-hover: 0 0 20px rgba(0, 255, 65, .55);
+  --card-glow: 0 0 0 1px rgba(0, 255, 65, .35), 0 0 20px rgba(0, 255, 65, .08);
+  --timeline-dot-ring: rgba(0, 255, 65, .3);
+
+  --color-scheme: dark;
+}
+
+/* ---------- Reset dentro de Matrix ----------
+   Igual que Minecraft: esquinas rectas en todo MENOS en el conmutador de skins
+   (que tiene que seguir siendo circular). Sin !important para poder excluirlo. */
+:root[data-skin="matrix"] *:not(.skin-picker *) { border-radius: 0; }
+
+/* Skin solo oscuro: el botón sol/luna no hace nada aquí, se oculta */
+:root[data-skin="matrix"] .theme-toggle { display: none; }
+
+/* ---------- Tipografía y espaciado ---------- */
+:root[data-skin="matrix"] body {
+  font-family: var(--font);
+  letter-spacing: .02em;
+  text-rendering: optimizeLegibility;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(0, 255, 65, .05), transparent 60%),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 65, .04) 0px,
+      rgba(0, 255, 65, .04) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+}
+:root[data-skin="matrix"] :is(h1, h2, h3, h4) {
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+:root[data-skin="matrix"] h1 {
+  font-size: clamp(1.8rem, 4.2vw, 3.2rem);
+  text-shadow: 0 0 12px rgba(0, 255, 65, .55), 0 0 2px rgba(0, 255, 65, .9);
+}
+:root[data-skin="matrix"] h2 {
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  text-shadow: 0 0 8px rgba(0, 255, 65, .4);
+}
+:root[data-skin="matrix"] h3 {
+  font-size: 1.1rem;
+  text-shadow: 0 0 4px rgba(0, 255, 65, .3);
+}
+:root[data-skin="matrix"] h4 { font-size: .95rem; }
+
+/* ---------- Header ---------- */
+:root[data-skin="matrix"] .site-header {
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 65, .06) 0px,
+      rgba(0, 255, 65, .06) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+}
+
+/* ---------- Nav ---------- */
+:root[data-skin="matrix"] .nav-link {
+  color: var(--muted);
+  border: 1px solid transparent;
+  padding: .45rem .75rem;
+  font-size: .82rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  transition: color .15s var(--ease), border-color .15s var(--ease), background .15s var(--ease);
+}
+:root[data-skin="matrix"] .nav-link:hover {
+  color: var(--text);
+  border-color: var(--line);
+  background: var(--panel-soft);
+  text-shadow: 0 0 6px rgba(0, 255, 65, .55);
+}
+:root[data-skin="matrix"] .nav-link[aria-current="true"],
+:root[data-skin="matrix"] .nav-link[aria-current="page"]:not(.nav-cta) {
+  color: var(--bg);
+  background: var(--accent);
+  text-shadow: none;
+  font-weight: 700;
+}
+:root[data-skin="matrix"] .nav-link[aria-current="true"]::after,
+:root[data-skin="matrix"] .nav-link[aria-current="page"]:not(.nav-cta)::after {
+  content: none;
+}
+:root[data-skin="matrix"] .nav-cta {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 12px rgba(0, 255, 65, .3), inset 0 0 6px rgba(0, 255, 65, .15);
+}
+:root[data-skin="matrix"] .nav-cta:hover {
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 0 0 20px rgba(0, 255, 65, .6);
+}
+
+/* ---------- Logo ---------- */
+:root[data-skin="matrix"] .logo-mark {
+  background: var(--bg);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 10px rgba(0, 255, 65, .5), inset 0 0 6px rgba(0, 255, 65, .25);
+  font-family: var(--display);
+}
+:root[data-skin="matrix"] .logo-text {
+  color: var(--text);
+  text-shadow: 0 0 6px rgba(0, 255, 65, .5);
+  font-family: var(--display);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* ---------- Botones generales ---------- */
+:root[data-skin="matrix"] .btn {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: .75rem 1.35rem;
+  font-family: var(--display);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  box-shadow: 0 0 12px rgba(0, 255, 65, .2), inset 0 0 6px rgba(0, 255, 65, .08);
+  transition: background .15s var(--ease), color .15s var(--ease), box-shadow .2s var(--ease);
+}
+:root[data-skin="matrix"] .btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 0 0 22px rgba(0, 255, 65, .7);
+  transform: none;
+}
+:root[data-skin="matrix"] .btn-primary { background: var(--accent); color: var(--bg); }
+:root[data-skin="matrix"] .btn-primary:hover {
+  background: var(--accent-2);
+  color: var(--bg);
+}
+:root[data-skin="matrix"] .btn-ghost { background: transparent; }
+
+/* ---------- Tarjetas y paneles ---------- */
+:root[data-skin="matrix"] :is(
+  .card, .project-card, .cert-card, .like-card, .about-card,
+  .contact-form-wrap, .contact-aside, .news-item, .project-preview,
+  .weather-widget, .stat, .github-activity__card, .arcade__stat,
+  .cordada-panel, .terminal, .hero-eyebrow
+) {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow:
+    var(--card-glow),
+    inset 0 0 0 1px rgba(0, 255, 65, .05);
+}
+/* position: relative SOLO donde no hay ya un position propio.
+   .contact-aside es sticky y .cordada-panel (chatbot) es fixed: ambos ya sirven
+   de referencia para las esquinas, y forzarles relative los rompería. */
+:root[data-skin="matrix"] :is(
+  .card, .project-card, .cert-card, .like-card, .about-card,
+  .contact-form-wrap, .news-item, .project-preview,
+  .weather-widget, .stat, .github-activity__card
+) {
+  position: relative;
+}
+/* Esquinas decorativas tipo terminal */
+:root[data-skin="matrix"] :is(
+  .card, .project-card, .cert-card, .like-card, .about-card,
+  .contact-form-wrap, .contact-aside, .news-item, .project-preview,
+  .weather-widget, .stat, .github-activity__card, .cordada-panel
+)::before {
+  content: "┌";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  color: var(--accent);
+  font-size: 1rem;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 0 6px rgba(0, 255, 65, .6);
+}
+:root[data-skin="matrix"] :is(
+  .card, .project-card, .cert-card, .like-card, .about-card,
+  .contact-form-wrap, .contact-aside, .news-item, .project-preview,
+  .weather-widget, .stat, .github-activity__card, .cordada-panel
+)::after {
+  content: "┘";
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  color: var(--accent);
+  font-size: 1rem;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 0 6px rgba(0, 255, 65, .6);
+}
+
+/* ---------- Inputs ---------- */
+:root[data-skin="matrix"] :is(
+  .contact-form input, .contact-form select, .contact-form textarea,
+  .weather-widget__search input, .cordada-campo, .language-select
+) {
+  background: #000;
+  color: var(--text);
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  box-shadow: inset 0 0 8px rgba(0, 255, 65, .15);
+  caret-color: var(--accent);
+}
+:root[data-skin="matrix"] :is(
+  .contact-form input, .contact-form select, .contact-form textarea,
+  .weather-widget__search input, .cordada-campo, .language-select
+):focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 0 12px rgba(0, 255, 65, .45), inset 0 0 10px rgba(0, 255, 65, .2);
+}
+:root[data-skin="matrix"] :is(.contact-form input, .contact-form textarea)::placeholder {
+  color: var(--muted-2);
+  opacity: 1;
+}
+
+/* ---------- Slots de Stack ---------- */
+:root[data-skin="matrix"] .stack-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .6rem;
+  margin-top: 1.25rem;
+}
+:root[data-skin="matrix"] .stack-slot {
+  background: #000;
+  border: 1px solid var(--line);
+  padding: 1rem .5rem;
+  min-height: 96px;
+  color: var(--text);
+  font-family: var(--mono);
+  text-align: center;
+  box-shadow: inset 0 0 10px rgba(0, 255, 65, .12);
+  transition: border-color .15s var(--ease), box-shadow .2s var(--ease);
+}
+:root[data-skin="matrix"] .stack-slot:hover {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 12px rgba(0, 255, 65, .25), 0 0 18px rgba(0, 255, 65, .35);
+}
+:root[data-skin="matrix"] .stack-slot__icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 0 4px rgba(0, 255, 65, .35));
+  margin-bottom: .35rem;
+}
+:root[data-skin="matrix"] .stack-slot__name {
+  font-family: var(--mono);
+  font-size: .78rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Badges V0-V6 (monocromo a propósito) ---------- */
+:root[data-skin="matrix"] :is(.card-grade, .grades-legend .chip) {
+  background: #000;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 8px rgba(0, 255, 65, .35);
+  font-family: var(--mono);
+  font-weight: 700;
+}
+
+/* ---------- Footer ---------- */
+:root[data-skin="matrix"] .site-footer {
+  border-top: 1px solid var(--line);
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 65, .04) 0px,
+      rgba(0, 255, 65, .04) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+}
+:root[data-skin="matrix"] .site-footer h3 {
+  color: var(--accent);
+  font-family: var(--display);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 6px rgba(0, 255, 65, .4);
+}
+:root[data-skin="matrix"] .social-link {
+  border: 1px solid var(--line);
+  color: var(--text);
+  box-shadow: 0 0 8px rgba(0, 255, 65, .15);
+}
+:root[data-skin="matrix"] .social-link:hover {
+  color: var(--bg);
+  background: var(--accent);
+  box-shadow: 0 0 16px rgba(0, 255, 65, .6);
+}
+:root[data-skin="matrix"] .footer-qr img {
+  border: 1px solid var(--accent);
+  padding: .35rem;
+  background: #000;
+  box-shadow: 0 0 16px rgba(0, 255, 65, .35);
+  image-rendering: pixelated;
+}
+
+/* ---------- Barra de escalada ---------- */
+:root[data-skin="matrix"] .climb-rope { color: var(--accent-2); opacity: .5; }
+:root[data-skin="matrix"] .climb-hold {
+  border: 1px solid var(--line);
+  background: #000;
+  box-shadow: 0 0 8px rgba(0, 255, 65, .25);
+}
+:root[data-skin="matrix"] .climb-hold::before {
+  background: var(--accent);
+  opacity: .35;
+}
+:root[data-skin="matrix"] .climb-hold:hover::before,
+:root[data-skin="matrix"] .climb-hold.is-active::before {
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(0, 255, 65, .8);
+}
+:root[data-skin="matrix"] .climb-hold.is-active {
+  background: rgba(0, 255, 65, .15);
+  border-color: var(--accent);
+}
+:root[data-skin="matrix"] .climb-hold__label {
+  background: #000;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  box-shadow: 0 0 10px rgba(0, 255, 65, .45);
+}
+
+/* Escalador (muñeco de líneas) en Matrix */
+:root[data-skin="matrix"] .climb-climber {
+  filter:
+    drop-shadow(0 0 4px rgba(0, 255, 65, .8))
+    drop-shadow(0 0 8px rgba(0, 255, 65, .45));
+  color: var(--accent);
+}
+:root[data-skin="matrix"] .climb-climber .relleno {
+  fill: var(--accent);
+}
+
+/* ---------- Cursor ---------- */
+:root[data-skin="matrix"] .cursor__hand {
+  color: var(--accent);
+  filter:
+    drop-shadow(0 0 4px rgba(0, 255, 65, .9))
+    drop-shadow(0 0 8px rgba(0, 255, 65, .5));
+}
+:root[data-skin="matrix"] .cursor.is-hovering .cursor__hand {
+  color: var(--accent-2);
+}
+
+/* ---------- Terminal ---------- */
+:root[data-skin="matrix"] .terminal {
+  background: #000;
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 20px rgba(0, 255, 65, .25), inset 0 0 12px rgba(0, 255, 65, .1);
+}
+:root[data-skin="matrix"] .terminal code,
+:root[data-skin="matrix"] .terminal--typing {
+  color: var(--text);
+}
+:root[data-skin="matrix"] .term-prompt { color: var(--accent-2); }
+:root[data-skin="matrix"] .term-var    { color: var(--accent-2); font-weight: 700; }
+:root[data-skin="matrix"] .term-fn,
+:root[data-skin="matrix"] .term-ok     { color: var(--accent); font-weight: 700; }
+:root[data-skin="matrix"] .term-cursor { color: var(--accent); }
+
+/* ---------- CTA band ---------- */
+:root[data-skin="matrix"] .cta-band {
+  background: #000;
+  color: var(--text);
+  border-top: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+}
+:root[data-skin="matrix"] .cta-inner h2 { color: var(--accent); }
+:root[data-skin="matrix"] .cta-inner p { color: var(--muted); }
+:root[data-skin="matrix"] .cta-inner .btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(0, 255, 65, .5);
+}
+
+/* ---------- Skin picker (conmutador) ---------- */
+:root[data-skin="matrix"] .skin-picker__btn,
+:root[data-skin="matrix"] .skin-picker__opt {
+  background: #000;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 8px rgba(0, 255, 65, .35);
+}
+:root[data-skin="matrix"] .skin-picker__btn:hover,
+:root[data-skin="matrix"] .skin-picker__opt:hover {
+  color: var(--accent-2);
+  box-shadow: 0 0 14px rgba(0, 255, 65, .6);
+}
+/* Opción activa: el anillo de la base lo pisaba la regla de arriba (debe ir DESPUÉS del hover) */
+:root[data-skin="matrix"] .skin-picker__opt[aria-checked="true"] {
+  box-shadow: 0 0 0 2px var(--accent), 0 0 14px rgba(0, 255, 65, .6);
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-skin="matrix"] *,
+  :root[data-skin="matrix"] *::before,
+  :root[data-skin="matrix"] *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+  :root[data-skin="matrix"] .nav-link:hover,
+  :root[data-skin="matrix"] .btn:hover,
+  :root[data-skin="matrix"] .social-link:hover,
+  :root[data-skin="matrix"] .stack-slot:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   MATRIX · EXTRAS (CSS puro)
+   Cursor de bloque de terminal, glitch al hover y huecos para la lluvia de código.
+   La lluvia, el botón y la secuencia "Wake up, Neo" están en matrix-effects.js.
+   ============================================================================ */
+
+/* ---------- Cursor: bloque de terminal parpadeante ----------
+   script.js sigue pintando su mano SVG; aquí se oculta y se dibuja un bloque con ::before.
+   Hover = bloque hueco (como una terminal sin foco). Clic = bloque relleno claro. */
+:root[data-skin="matrix"] .cursor__hand {
+  width: 11px;
+  height: 20px;
+  margin: -10px 0 0 -5px;
+}
+:root[data-skin="matrix"] .cursor__hand svg { display: none; }
+:root[data-skin="matrix"] .cursor__hand::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  animation: matrix-caret 1.06s step-end infinite;
+}
+:root[data-skin="matrix"] .cursor.is-hovering .cursor__hand::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--accent-2);
+  animation: none;
+}
+:root[data-skin="matrix"] .cursor.is-clicking .cursor__hand::before {
+  background: var(--accent-2);
+  box-shadow: none;
+  animation: none;
+}
+@keyframes matrix-caret {
+  0%   { opacity: 1; }
+  50%  { opacity: .1; }
+}
+
+/* ---------- Glitch al hover (solo títulos y logo, solo con movimiento permitido) ----------
+   Usa la propiedad `translate` (independiente de `transform`) para no chocar con el efecto
+   magnético del título del hero, que mueve el elemento con transform desde JS. */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-skin="matrix"] :is(.logo-text, .hero-title, .section-head h2, .projects-title, .cta-inner h2):hover {
+    animation: matrix-glitch .45s steps(1, end) 1;
+  }
+}
+@keyframes matrix-glitch {
+  15% { translate: -2px 0;  text-shadow:  3px 0 0 rgba(124, 255, 168, .85), -3px 0 0 rgba(0, 255, 65, .45); }
+  30% { translate: 2px 1px; text-shadow: -3px 0 0 rgba(124, 255, 168, .85),  3px 0 0 rgba(0, 160, 45, .6); }
+  45% { translate: -1px -1px; text-shadow: 2px 0 0 rgba(0, 255, 65, .7), -2px 0 0 rgba(124, 255, 168, .6); }
+  60% { translate: 3px 0;   text-shadow: -4px 0 0 rgba(124, 255, 168, .8), 4px 0 0 rgba(0, 255, 65, .4); }
+  75% { translate: 0 0;     text-shadow:  1px 0 0 rgba(124, 255, 168, .7); }
+}
+
+/* ---------- Dejar ver la lluvia de código (canvas con z-index: -1) ----------
+   El fondo del hero y de las secciones alternas era opaco y la tapaba. */
+:root[data-skin="matrix"] .hero-bg { background: transparent; }
+:root[data-skin="matrix"] .section-alt { background: rgba(13, 20, 13, .78); }
+
+/* ============================================================================
+   SKIN · OMARCHY (v2) · escritorio Hyprland
+   ----------------------------------------------------------------------------
+   Qué es: un escritorio tipo Omarchy (Arch + Hyprland + Waybar + Walker + Mako).
+   · Cada panel es una "ventana" con hueco y borde de 2px; la que tiene el foco
+     (ratón encima o foco de teclado) lleva el borde de acento en degradado:
+     "focus follows mouse", como Hyprland.
+   · La cabecera es una barra tipo Waybar: la navegación son workspaces numerados.
+   · Temas de Omarchy (data-omarchy-theme): tokyo-night (por defecto), catppuccin,
+     gruvbox, nord, kanagawa, rose-pine, everforest y catppuccin-latte (claro).
+     El selector claro/oscuro de la web se oculta en este skin: manda el tema.
+   · El lanzador (Ctrl+K), los avisos, fastfetch y el reloj viven en omarchy-effects.js.
+   Todo bajo :root[data-skin="omarchy"]. Topo, Minecraft y Matrix intactos.
+   ============================================================================ */
+
+/* ---------- Variables comunes + paleta por defecto (Tokyo Night) ---------- */
+:root[data-skin="omarchy"],
+:root[data-skin="omarchy"][data-theme="dark"],
+:root[data-skin="omarchy"][data-theme="light"] {
+  --radius: 10px; --radius-sm: 6px;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --display: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --logo-shadow: none; --btn-primary-shadow: none;
+  --btn-primary-shadow-hover: 0 0 0 1px var(--accent), 0 0 18px rgba(var(--accent-rgb), .4);
+  --card-glow: transparent;
+  --win-bw: 2px; --ctl-bw: 1px;
+  --win-shadow: var(--shadow);
+  --win-glow: 0 0 24px rgba(var(--accent-rgb), .16);
+  --win-active: linear-gradient(135deg, var(--accent), var(--accent-2));
+  --text-glow: none; --tt: none; --h-track: -.02em;
+  --nav-fs: .76rem; --nav-track: 0; --fscale: 1; --frame: 0px;
+  --bg: #1a1b26; --bg-soft: #16161e; --surface: #1f2335; --surface-2: #24283b;
+  --panel-soft: rgba(122, 162, 247, .08); --line: #3b4261;
+  --text: #c0caf5; --muted: #a9b1d6; --muted-2: #8a93bd;
+  --accent: #7aa2f7; --accent-2: #bb9af7; --accent-3: #9ece6a;
+  --accent-rgb: 122, 162, 247; --accent-2-rgb: 187, 154, 247; --on-accent: #16161e;
+  --grid-line: rgba(122, 162, 247, .06);
+  --header-bg: rgba(26, 27, 38, .8); --header-bg-scrolled: rgba(26, 27, 38, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(122, 162, 247, .22); --color-scheme: dark;
+}
+
+/* ---------- Temas de Omarchy ---------- */
+:root[data-skin="omarchy"][data-omarchy-theme="tokyo-night"] {
+  --bg: #1a1b26; --bg-soft: #16161e; --surface: #1f2335; --surface-2: #24283b;
+  --panel-soft: rgba(122, 162, 247, .08); --line: #3b4261;
+  --text: #c0caf5; --muted: #a9b1d6; --muted-2: #8a93bd;
+  --accent: #7aa2f7; --accent-2: #bb9af7; --accent-3: #9ece6a;
+  --accent-rgb: 122, 162, 247; --accent-2-rgb: 187, 154, 247; --on-accent: #16161e;
+  --grid-line: rgba(122, 162, 247, .06);
+  --header-bg: rgba(26, 27, 38, .8); --header-bg-scrolled: rgba(26, 27, 38, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(122, 162, 247, .22); --color-scheme: dark;
+
+}
+:root[data-skin="omarchy"][data-omarchy-theme="synthwave"] {
+  --bg: #241b2f; --bg-soft: #1b1325; --surface: #2b2139; --surface-2: #34294a;
+  --panel-soft: rgba(255, 126, 219, .08); --line: #6a4a9c;
+  --text: #f6efff; --muted: #d3c7ea; --muted-2: #ab9dcb;
+  --accent: #ff7edb; --accent-2: #36f9f6; --accent-3: #fede5d;
+  --accent-rgb: 255, 126, 219; --accent-2-rgb: 54, 249, 246; --on-accent: #241b2f;
+  --grid-line: rgba(255, 126, 219, .06);
+  --header-bg: rgba(36, 27, 47, .8); --header-bg-scrolled: rgba(36, 27, 47, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(255, 126, 219, .22); --color-scheme: dark;
+  --radius: 4px; --radius-sm: 3px;
+  --display: "Rajdhani", "JetBrains Mono", ui-monospace, monospace;
+  --text-glow: 0 0 14px rgba(255, 126, 219, .55); --h-track: .02em;
+  --win-active: linear-gradient(135deg, #ff7edb, #36f9f6);
+  --win-glow: 0 0 30px rgba(255, 126, 219, .3);
+  --btn-primary-shadow-hover: 0 0 0 1px #ff7edb, 0 0 22px rgba(255, 126, 219, .6);
+}
+:root[data-skin="omarchy"][data-omarchy-theme="retro"] {
+  --bg: #100a02; --bg-soft: #0a0601; --surface: #1a1204; --surface-2: #251a06;
+  --panel-soft: rgba(255, 176, 0, .08); --line: #7a5208;
+  --text: #ffb000; --muted: #e09a00; --muted-2: #b87d00;
+  --accent: #ffb000; --accent-2: #ff7a1a; --accent-3: #ffd45e;
+  --accent-rgb: 255, 176, 0; --accent-2-rgb: 255, 122, 26; --on-accent: #100a02;
+  --grid-line: rgba(255, 176, 0, .06);
+  --header-bg: rgba(16, 10, 2, .8); --header-bg-scrolled: rgba(16, 10, 2, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(255, 176, 0, .22); --color-scheme: dark;
+  --radius: 0px; --radius-sm: 0px;
+  --font: "VT323", "JetBrains Mono", ui-monospace, monospace; --display: "VT323", "JetBrains Mono", ui-monospace, monospace; --mono: "VT323", "JetBrains Mono", ui-monospace, monospace;
+  --fscale: 1.22; --nav-fs: .85rem;
+  --text-glow: 0 0 9px rgba(255, 176, 0, .6); --h-track: 0;
+  --win-active: linear-gradient(#ffb000, #ffb000);
+  --win-glow: 0 0 22px rgba(255, 176, 0, .25);
+}
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] {
+  --bg: #352879; --bg-soft: #2b2062; --surface: #40328f; --surface-2: #4b3ba3;
+  --panel-soft: rgba(200, 193, 255, .08); --line: #9d92e6;
+  --text: #ebe8ff; --muted: #cfc9ff; --muted-2: #b9b1f7;
+  --accent: #c8c1ff; --accent-2: #8bf0f8; --accent-3: #f2f58f;
+  --accent-rgb: 200, 193, 255; --accent-2-rgb: 139, 240, 248; --on-accent: #2b2062;
+  --grid-line: rgba(200, 193, 255, .06);
+  --header-bg: rgba(53, 40, 121, .8); --header-bg-scrolled: rgba(53, 40, 121, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(200, 193, 255, .22); --color-scheme: dark;
+  --radius: 0px; --radius-sm: 0px;
+  --font: "VT323", "JetBrains Mono", ui-monospace, monospace; --display: "VT323", "JetBrains Mono", ui-monospace, monospace; --mono: "VT323", "JetBrains Mono", ui-monospace, monospace;
+  --fscale: 1.22; --nav-fs: .85rem; --nav-track: .04em;
+  --win-bw: 4px; --ctl-bw: 2px; --tt: uppercase; --h-track: .02em;
+  --win-active: linear-gradient(#f2f58f, #f2f58f);
+  --win-shadow: 5px 5px 0 #1f1650; --shadow-sm: 3px 3px 0 #1f1650; --win-glow: 0 0 0 transparent;
+  --frame: clamp(8px, 1.8vw, 22px);
+}
+:root[data-skin="omarchy"][data-omarchy-theme="vantablack"] {
+  --bg: #000000; --bg-soft: #000000; --surface: #0b0b0b; --surface-2: #161616;
+  --panel-soft: rgba(255, 255, 255, .08); --line: #d9d9d9;
+  --text: #ffffff; --muted: #d4d4d4; --muted-2: #b0b0b0;
+  --accent: #ffffff; --accent-2: #c8c8c8; --accent-3: #9a9a9a;
+  --accent-rgb: 255, 255, 255; --accent-2-rgb: 200, 200, 200; --on-accent: #000000;
+  --grid-line: rgba(255, 255, 255, .06);
+  --header-bg: rgba(0, 0, 0, .8); --header-bg-scrolled: rgba(0, 0, 0, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(255, 255, 255, .22); --color-scheme: dark;
+  --radius: 0px; --radius-sm: 0px;
+  --font: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --win-bw: 3px; --ctl-bw: 2px; --tt: uppercase; --h-track: .04em;
+  --nav-fs: .68rem; --nav-track: .04em;
+  --win-active: linear-gradient(#ffffff, #ffffff);
+  --win-shadow: none; --shadow-sm: none; --win-glow: 0 0 0 transparent;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="kurenai"] {
+  --bg: #0d0709; --bg-soft: #080405; --surface: #170d10; --surface-2: #211216;
+  --panel-soft: rgba(239, 59, 80, .08); --line: #6b2030;
+  --text: #f5ebe6; --muted: #d6c2bb; --muted-2: #b09a94;
+  --accent: #ef3b50; --accent-2: #e8c07d; --accent-3: #f0d9b5;
+  --accent-rgb: 239, 59, 80; --accent-2-rgb: 232, 192, 125; --on-accent: #0d0709;
+  --grid-line: rgba(239, 59, 80, .06);
+  --header-bg: rgba(13, 7, 9, .8); --header-bg-scrolled: rgba(13, 7, 9, .94);
+  --shadow: 0 10px 28px rgba(0,0,0,.42); --shadow-sm: 0 1px 0 rgba(0,0,0,.28);
+  --timeline-dot-ring: rgba(239, 59, 80, .22); --color-scheme: dark;
+  --radius: 2px; --radius-sm: 2px;
+  --display: "Shippori Mincho", "Noto Serif JP", Georgia, "Times New Roman", serif;
+  --win-bw: 1px; --h-track: .01em;
+  --win-active: linear-gradient(135deg, #ef3b50, #e8c07d);
+  --win-glow: 0 0 26px rgba(239, 59, 80, .22);
+}
+:root[data-skin="omarchy"][data-omarchy-theme="konbini"] {
+  --bg: #fff4e0; --bg-soft: #ffe9c7; --surface: #ffffff; --surface-2: #ffeef4;
+  --panel-soft: rgba(194, 37, 92, .08); --line: #2b2140;
+  --text: #2b2140; --muted: #4d3f68; --muted-2: #5e5079;
+  --accent: #c2255c; --accent-2: #0a8f84; --accent-3: #b35c00;
+  --accent-rgb: 194, 37, 92; --accent-2-rgb: 10, 143, 132; --on-accent: #ffffff;
+  --grid-line: rgba(194, 37, 92, .06);
+  --header-bg: rgba(255, 244, 224, .8); --header-bg-scrolled: rgba(255, 244, 224, .94);
+  --shadow: 0 10px 28px rgba(76,79,105,.16); --shadow-sm: 0 1px 0 rgba(76,79,105,.12);
+  --timeline-dot-ring: rgba(194, 37, 92, .22); --color-scheme: light;
+  --radius: 22px; --radius-sm: 14px;
+  --font: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --win-bw: 3px; --ctl-bw: 2px; --h-track: -.01em; --nav-fs: .78rem;
+  --win-shadow: 5px 5px 0 #2b2140; --shadow-sm: 2px 2px 0 #2b2140; --win-glow: 0 0 0 transparent;
+  --win-active: linear-gradient(135deg, #c2255c, #0a8f84);
+  --btn-primary-shadow-hover: 3px 3px 0 #2b2140;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="lumon"] {
+  --bg: #edf3f1; --bg-soft: #e1ebe8; --surface: #fbfdfc; --surface-2: #e4edea;
+  --panel-soft: rgba(11, 95, 165, .08); --line: #8ea8a0;
+  --text: #12313b; --muted: #3a5660; --muted-2: #4d6670;
+  --accent: #0b5fa5; --accent-2: #12806f; --accent-3: #2f7d1f;
+  --accent-rgb: 11, 95, 165; --accent-2-rgb: 18, 128, 111; --on-accent: #ffffff;
+  --grid-line: rgba(11, 95, 165, .06);
+  --header-bg: rgba(237, 243, 241, .8); --header-bg-scrolled: rgba(237, 243, 241, .94);
+  --shadow: 0 10px 28px rgba(76,79,105,.16); --shadow-sm: 0 1px 0 rgba(76,79,105,.12);
+  --timeline-dot-ring: rgba(11, 95, 165, .22); --color-scheme: light;
+  --radius: 0px; --radius-sm: 0px;
+  --font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --tt: uppercase; --h-track: .08em; --nav-fs: .66rem; --nav-track: .08em;
+  --win-active: linear-gradient(135deg, #0b5fa5, #12806f);
+  --win-shadow: 0 2px 0 rgba(18, 49, 59, .08); --win-glow: 0 0 0 transparent;
+}
+
+/* Al cambiar de tema, un fundido corto (la clase la pone y quita omarchy-effects.js) */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-skin="omarchy"].omx-cambiando *,
+  :root[data-skin="omarchy"].omx-cambiando *::before,
+  :root[data-skin="omarchy"].omx-cambiando *::after {
+    transition: background-color .3s ease, border-color .3s ease, color .3s ease, fill .3s ease, stroke .3s ease !important;
+  }
+}
+
+/* ---------- Fondo: "wallpaper" con dos halos de los colores del tema ---------- */
+:root[data-skin="omarchy"] body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 45% at 12% -5%, rgba(var(--accent-rgb), .13), transparent 70%),
+    radial-gradient(ellipse 55% 40% at 96% 0%, rgba(var(--accent-2-rgb), .10), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+/* ---------- Capa de formas: bordes finos, esquinas suaves, sin sombras duras ---------- */
+:root[data-skin="omarchy"] :is(
+  .about-card,
+  .about-photo,
+  .btn,
+  .card,
+  .card-grade,
+  .card-icon,
+  .cert-card,
+  .cert-card__badge,
+  .certs-counter,
+  .climb-hold,
+  .climb-hold__label,
+  .climb-photo img,
+  .climbing-links__icon,
+  .climbing-links__item,
+  .climbing-links__zone,
+  .contact-aside,
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea,
+  .contact-form-wrap,
+  .filter-btn,
+  .footer-qr img,
+  .form-check__box,
+  .form-success,
+  .github-activity__card,
+  .grades-legend .chip,
+  .hero-eyebrow,
+  .language-select,
+  .like-card,
+  .logo-mark,
+  .main-nav,
+  .mouse,
+  .nav-cta,
+  .nav-toggle,
+  .news-item,
+  .news-source,
+  .project-card,
+  .project-card__grade,
+  .project-card__icon,
+  .project-card__stack li,
+  .project-preview,
+  .projects-note,
+  .skill-icon,
+  .skip-link,
+  .social-link,
+  .stack-list li,
+  .stat,
+  .tag,
+  .terminal,
+  .theme-toggle,
+  .to-top,
+  .weather-widget,
+  .weather-widget__search input,
+  .weather-widget__search-button,
+  .weather-widget__verdict,
+  .work-demo video
+) { border-width: var(--ctl-bw); border-color: var(--line); }
+:root[data-skin="omarchy"] :is(
+  .btn,
+  .card-grade,
+  .card-icon,
+  .cert-card__badge,
+  .certs-counter,
+  .climb-hold__label,
+  .climbing-links__icon,
+  .climbing-links__item,
+  .climbing-links__zone,
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea,
+  .filter-btn,
+  .form-check__box,
+  .grades-legend .chip,
+  .language-select,
+  .logo-mark,
+  .mouse,
+  .nav-link,
+  .nav-toggle,
+  .news-source,
+  .project-card__grade,
+  .project-card__icon,
+  .project-card__stack li,
+  .project-preview__tag,
+  .skip-link,
+  .social-link,
+  .stack-list li,
+  .stat,
+  .tag,
+  .theme-toggle,
+  .to-top,
+  .weather-widget__search input,
+  .weather-widget__search-button
+) { border-radius: var(--radius-sm); }
+:root[data-skin="omarchy"] :is(
+  .about-card,
+  .about-photo,
+  .card,
+  .cert-card,
+  .climb-photo img,
+  .contact-aside,
+  .contact-form-wrap,
+  .footer-qr img,
+  .form-success,
+  .github-activity__card,
+  .hero-eyebrow,
+  .like-card,
+  .main-nav,
+  .nav-cta,
+  .news-item,
+  .project-card,
+  .project-preview,
+  .projects-note,
+  .skill-icon,
+  .terminal,
+  .weather-widget,
+  .weather-widget__verdict,
+  .work-demo video
+) { border-radius: var(--radius); }
+:root[data-skin="omarchy"] :is(
+  .btn,
+  .card-grade,
+  .certs-counter,
+  .climb-hold__label,
+  .climbing-links__icon,
+  .climbing-links__item,
+  .filter-btn,
+  .footer-qr img,
+  .form-check__box,
+  .github-activity__card,
+  .hero-eyebrow,
+  .language-select,
+  .logo-mark,
+  .nav-cta,
+  .nav-toggle,
+  .project-card__grade,
+  .projects-note,
+  .skill-icon,
+  .social-link,
+  .stack-list li,
+  .stat,
+  .theme-toggle,
+  .to-top,
+  .weather-widget__search-button
+) { box-shadow: var(--shadow-sm); }
+:root[data-skin="omarchy"] :is(
+  .about-card,
+  .about-photo,
+  .card,
+  .cert-card,
+  .climb-photo img,
+  .contact-aside,
+  .contact-form-wrap,
+  .form-success,
+  .like-card,
+  .main-nav,
+  .news-item,
+  .project-card,
+  .project-preview,
+  .terminal,
+  .weather-widget,
+  .work-demo video
+) { box-shadow: var(--win-shadow); }
+
+/* ---------- Ventanas (paneles grandes) + borde de la ventana con foco ---------- */
+:root[data-skin="omarchy"] :is(
+  .about-card,
+  .card,
+  .cert-card,
+  .contact-aside,
+  .contact-form-wrap,
+  .github-activity__card,
+  .like-card,
+  .news-item,
+  .project-card,
+  .project-preview,
+  .projects-note,
+  .terminal,
+  .weather-widget,
+  .form-success
+) {
+  --win-bg: var(--surface);
+  border: var(--win-bw) solid transparent;
+  background:
+    linear-gradient(var(--win-bg), var(--win-bg)) padding-box,
+    linear-gradient(var(--line), var(--line)) border-box;
+}
+:root[data-skin="omarchy"] .terminal { --win-bg: var(--bg-soft); }
+:root[data-skin="omarchy"] :is(
+  .about-card,
+  .card,
+  .cert-card,
+  .contact-aside,
+  .contact-form-wrap,
+  .github-activity__card,
+  .like-card,
+  .news-item,
+  .project-card,
+  .project-preview,
+  .projects-note,
+  .terminal,
+  .weather-widget,
+  .form-success
+):is(:hover, :focus-within) {
+  background:
+    linear-gradient(var(--win-bg), var(--win-bg)) padding-box,
+    var(--win-active) border-box;
+  box-shadow: var(--win-shadow), var(--win-glow);
+}
+
+/* ---------- Tipografía ---------- */
+:root[data-skin="omarchy"] { font-size: calc(100% * var(--fscale)); }
+:root[data-skin="omarchy"] :is(h1, h2, h3, h4) { letter-spacing: var(--h-track); text-transform: var(--tt); text-shadow: var(--text-glow); }
+:root[data-skin="omarchy"] :is(.nav-link, .btn, .filter-btn, .tag, .card-grade, .climb-hold__label, .logo-text) { text-transform: var(--tt); }
+:root[data-skin="omarchy"] .section-head h2::before { content: "❯ "; color: var(--accent); }
+
+/* ---------- Botones ---------- */
+:root[data-skin="omarchy"] .btn {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--line);
+  font-family: var(--mono); font-size: .85rem; letter-spacing: 0;
+  transition: border-color .15s var(--ease), color .15s var(--ease), box-shadow .15s var(--ease), background .15s var(--ease);
+}
+:root[data-skin="omarchy"] .btn:hover {
+  border-color: var(--accent); color: var(--accent); transform: none;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+:root[data-skin="omarchy"] .btn-primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+:root[data-skin="omarchy"] .btn-primary:hover {
+  background: var(--accent); color: var(--on-accent); filter: brightness(1.1);
+  box-shadow: var(--btn-primary-shadow-hover);
+}
+
+/* ---------- Cabecera = barra Waybar ---------- */
+:root[data-skin="omarchy"] .site-header {
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+:root[data-skin="omarchy"] .site-header.is-scrolled { background: var(--header-bg-scrolled); }
+:root[data-skin="omarchy"] .site-header .container { width: min(100% - 2.5rem, 1400px); }
+:root[data-skin="omarchy"] .header-inner { padding: .4rem 0; }
+:root[data-skin="omarchy"] .site-header.is-scrolled .header-inner { padding: .3rem 0; }
+
+:root[data-skin="omarchy"] .logo-mark {
+  width: 30px; height: 30px; background: transparent; color: var(--accent);
+  border: 1px solid var(--accent); box-shadow: none;
+}
+:root[data-skin="omarchy"] .logo-text { font-family: var(--mono); font-size: .85rem; font-weight: 700; letter-spacing: -.01em; }
+
+/* Navegación = workspaces numerados (1, 2, 3…) */
+:root[data-skin="omarchy"] .nav-list { counter-reset: ws; gap: .15rem; }
+:root[data-skin="omarchy"] .nav-link {
+  counter-increment: ws;
+  display: inline-flex; align-items: center;
+  padding: .3rem .45rem;
+  font: 500 var(--nav-fs)/1.2 var(--font); letter-spacing: var(--nav-track);
+  color: var(--muted);
+  border: 1px solid transparent;
+  box-shadow: none; background: transparent;
+}
+:root[data-skin="omarchy"] .nav-link::before {
+  content: counter(ws);
+  display: inline-grid; place-items: center;
+  min-width: 1.35em; height: 1.35em; margin-right: .4em; padding: 0 .2em;
+  border-radius: 3px;
+  background: rgba(var(--accent-rgb), .16); color: var(--accent);
+  font: 700 .66rem/1 var(--mono);
+}
+:root[data-skin="omarchy"] .nav-link:hover { color: var(--text); background: var(--panel-soft); border-color: var(--line); }
+:root[data-skin="omarchy"] .nav-link[aria-current="true"],
+:root[data-skin="omarchy"] .nav-link[aria-current="page"]:not(.nav-cta) {
+  color: var(--on-accent); background: var(--accent); border-color: var(--accent); font-weight: 700;
+}
+:root[data-skin="omarchy"] .nav-link[aria-current="true"]::before,
+:root[data-skin="omarchy"] .nav-link[aria-current="page"]:not(.nav-cta)::before {
+  background: var(--on-accent); color: var(--accent);
+}
+:root[data-skin="omarchy"] .nav-link[aria-current="true"]::after,
+:root[data-skin="omarchy"] .nav-link[aria-current="page"]:not(.nav-cta)::after { content: none; }
+:root[data-skin="omarchy"] .nav-cta { background: transparent; color: var(--accent); border: 1px solid var(--accent); box-shadow: none; }
+:root[data-skin="omarchy"] .nav-cta:hover { background: var(--accent); color: var(--on-accent); transform: none; box-shadow: none; }
+:root[data-skin="omarchy"] .nav-cta:hover::before { background: var(--on-accent); color: var(--accent); }
+
+/* Módulos de la derecha */
+:root[data-skin="omarchy"] .header-actions { gap: .4rem; }
+:root[data-skin="omarchy"] .language-select {
+  height: 36px; background: var(--surface); color: var(--text); font: 700 .72rem var(--mono);
+}
+:root[data-skin="omarchy"] .theme-toggle { display: none; }   /* manda el tema de Omarchy */
+
+/* Menú colapsado: panel flotante tipo ventana. Se colapsa antes (1300px) que el resto de skins
+   porque los números de workspace y los módulos necesitan más ancho. */
+@media (max-width: 1299px) {
+  :root[data-skin="omarchy"] .nav-toggle { display: block; }
+  :root[data-skin="omarchy"] .main-nav {
+    position: fixed; inset: 62px 1rem auto 1rem; z-index: 40;
+    background: var(--surface); border: 2px solid var(--accent); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: .6rem;
+    transform: translateY(-10px); opacity: 0; pointer-events: none;
+    transition: opacity .2s var(--ease), transform .2s var(--ease);
+  }
+  :root[data-skin="omarchy"] .main-nav.is-open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  :root[data-skin="omarchy"] .nav-list { flex-direction: column; align-items: stretch; }
+  :root[data-skin="omarchy"] .nav-link { display: flex; padding: .65rem .8rem; font-size: .85rem; }
+}
+@media (min-width: 721px) and (max-width: 1299px) {
+  :root[data-skin="omarchy"] .main-nav { left: auto; width: min(340px, calc(100% - 2rem)); }
+}
+
+/* El fondo del hero y de las secciones alternas deja ver los efectos del tema */
+:root[data-skin="omarchy"] .hero-bg { background: transparent; }
+:root[data-skin="omarchy"] .section-alt { background: var(--bg-soft); background: color-mix(in srgb, var(--bg-soft) 78%, transparent); }
+
+/* ---------- Pie ---------- */
+:root[data-skin="omarchy"] .site-footer { background: var(--bg-soft); border-top: 1px solid var(--line); }
+:root[data-skin="omarchy"] .site-footer :is(h3, small) { font-family: var(--mono); }
+
+/* ---------- Barra de escalada: el escalador pasa a ser un prompt ❯_ ---------- */
+:root[data-skin="omarchy"] .climb-climber {
+  width: auto; height: auto; min-width: 0;
+  border-radius: 0; background: transparent; box-shadow: none;
+  font: 700 15px/1 var(--mono); color: var(--accent); white-space: nowrap;
+  text-shadow: 0 0 10px rgba(var(--accent-rgb), .55);
+}
+:root[data-skin="omarchy"] .climb-climber::before { content: "❯"; }
+:root[data-skin="omarchy"] .climb-climber::after { content: "_"; }
+:root[data-skin="omarchy"] .climb-hold.is-active { box-shadow: 0 0 0 4px rgba(var(--accent-rgb), .22); }
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-skin="omarchy"] .climb-climber::after { animation: omx-blink 1.1s steps(1) infinite; }
+  @keyframes omx-blink { 50% { opacity: 0; } }
+
+  /* Las ventanas se "abren" como en Hyprland (popin): zoom corto + fundido */
+  :root[data-skin="omarchy"] .reveal {
+    opacity: 0; transform: scale(.95);
+    transition: opacity .28s cubic-bezier(.22, 1, .36, 1), transform .28s cubic-bezier(.22, 1, .36, 1);
+  }
+  :root[data-skin="omarchy"] .reveal.is-visible { opacity: 1; transform: none; }
+}
+
+
+/* ============================================================================
+   PERSONALIDAD DE CADA TEMA · efectos más allá del color
+   (las variables --radius, --win-bw, --tt, fuentes… están en cada bloque de tema)
+   ============================================================================ */
+
+/* Synthwave '84: suelo de rejilla en perspectiva al fondo */
+:root[data-skin="omarchy"][data-omarchy-theme="synthwave"] body::after {
+  content: ""; position: fixed; left: -50%; right: -50%; bottom: 0; height: 44vh;
+  z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(to bottom, transparent 0%, rgba(255, 126, 219, .16) 100%),
+    repeating-linear-gradient(90deg, rgba(54, 249, 246, .55) 0 1px, transparent 1px 60px),
+    repeating-linear-gradient(0deg, rgba(54, 249, 246, .55) 0 1px, transparent 1px 44px);
+  transform: perspective(420px) rotateX(63deg); transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 8%, transparent 85%);
+          mask-image: linear-gradient(to top, #000 8%, transparent 85%);
+}
+
+/* Retro 82: monitor CRT ámbar (scanlines + viñeta por encima, brillo en el texto) */
+:root[data-skin="omarchy"][data-omarchy-theme="retro"] body { text-shadow: 0 0 3px rgba(255, 176, 0, .4); }
+:root[data-skin="omarchy"][data-omarchy-theme="retro"] body::after {
+  content: ""; position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, .18) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, .45) 100%);
+}
+:root[data-skin="omarchy"][data-omarchy-theme="retro"] :is(h1, h2, h3, h4, .logo-text) { font-weight: 400; }
+
+/* C64: marco grueso de color alrededor de toda la pantalla y todo en mayúsculas */
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] body { text-transform: uppercase; }
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] body::before {
+  content: ""; position: fixed; inset: 0; z-index: 44; pointer-events: none;
+  border: var(--frame) solid #9d92e6;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] .site-header { top: var(--frame); left: var(--frame); right: var(--frame); }
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] .main-nav { top: calc(62px + var(--frame)); }
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] :is(h1, h2, h3, h4, .logo-text) { font-weight: 400; }
+
+/* Vantablack: el panel con foco se INVIERTE (blanco sobre negro). Se redefinen las variables
+   dentro del panel para que todo lo que contiene se invierta con él. */
+:root[data-skin="omarchy"][data-omarchy-theme="vantablack"] :is(.about-card, .card, .cert-card, .contact-aside, .contact-form-wrap, .github-activity__card, .like-card, .news-item, .project-card, .project-preview, .projects-note, .terminal, .weather-widget, .form-success):is(:hover, :focus-within) {
+  --win-bg: #ffffff;
+  --text: #000000; --muted: #262626; --muted-2: #404040; --line: #000000;
+  --accent: #000000; --accent-2: #222222; --accent-rgb: 0, 0, 0; --on-accent: #ffffff;
+  --surface: #ffffff; --surface-2: #ececec; --bg-soft: #f2f2f2; --panel-soft: rgba(0, 0, 0, .06);
+  color: #000000; text-shadow: none;
+}
+
+/* Kurenai: sello rojo (hanko) en los títulos, barra superior carmesí, logo relleno */
+:root[data-skin="omarchy"][data-omarchy-theme="kurenai"] .section-head h2::before {
+  content: ""; display: inline-block; width: .5em; height: .5em; margin-right: .55em;
+  background: var(--accent); vertical-align: .05em;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="kurenai"] .site-header { border-bottom: 2px solid var(--accent); }
+:root[data-skin="omarchy"][data-omarchy-theme="kurenai"] .logo-mark { background: var(--accent); color: var(--on-accent); }
+
+/* Konbini: fondo de lunares, títulos gruesos y paneles "pegatina" que se levantan al pasar el ratón */
+:root[data-skin="omarchy"][data-omarchy-theme="konbini"] body {
+  background-image:
+    radial-gradient(rgba(194, 37, 92, .13) 2px, transparent 2.6px),
+    radial-gradient(ellipse 70% 45% at 12% -5%, rgba(var(--accent-rgb), .13), transparent 70%),
+    radial-gradient(ellipse 55% 40% at 96% 0%, rgba(var(--accent-2-rgb), .10), transparent 70%);
+  background-size: 24px 24px, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="konbini"] :is(h1, h2, h3, h4) { font-weight: 800; }
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-skin="omarchy"][data-omarchy-theme="konbini"] :is(.about-card, .card, .cert-card, .contact-aside, .contact-form-wrap, .github-activity__card, .like-card, .news-item, .project-card, .project-preview, .projects-note, .terminal, .weather-widget, .form-success):is(:hover, :focus-within) {
+    --win-shadow: 8px 8px 0 #2b2140; transform: translate(-2px, -2px);
+  }
+}
+
+/* Lumon: papel cuadriculado, banda azul en la cabecera, mayúsculas espaciadas */
+:root[data-skin="omarchy"][data-omarchy-theme="lumon"] body {
+  background-image:
+    linear-gradient(rgba(11, 95, 165, .07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 95, 165, .07) 1px, transparent 1px);
+  background-size: 32px 32px; background-repeat: repeat;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="lumon"] .site-header { box-shadow: inset 0 3px 0 var(--accent); }
+
+/* Temas de navegación ancha: el menú se colapsa hasta 1399px */
+@media (max-width: 1399px) {
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .nav-toggle { display: block; }
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .main-nav {
+    position: fixed; inset: 62px 1rem auto 1rem; z-index: 40;
+    background: var(--surface); border: var(--win-bw) solid var(--accent); border-radius: var(--radius);
+    box-shadow: var(--win-shadow); padding: .6rem;
+    transform: translateY(-10px); opacity: 0; pointer-events: none;
+    transition: opacity .2s var(--ease), transform .2s var(--ease);
+  }
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .main-nav.is-open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .nav-list { flex-direction: column; align-items: stretch; }
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .nav-link { display: flex; padding: .65rem .8rem; font-size: .85rem; }
+}
+@media (min-width: 721px) and (max-width: 1399px) {
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .main-nav { left: auto; width: min(340px, calc(100% - 2rem)); }
+}
