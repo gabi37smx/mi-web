@@ -1,15 +1,13 @@
 /* ============================================================================
    juego-escalada.js · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
-   · Fase 3.4: cofres + esqueletos + cráneos + monedas + petróleo
-   · Fase 3.5: sistema de pantallas + tipos + procedural al azar
-   · Fase 3.6: menú inicio + instrucciones + game over con resumen + botones
-   · Fase 3.6.1: murciélagos por tipo + águilas + ESC confirmar + altura acumulada
-   · Fase 3.6.2: navegación por teclado + foco visible en menús
-   · Fase 4: paletas por skin (Topo / Omarchy / Minecraft / Matrix)
-   · Fase 5: fullscreen + móvil + responsive + reduced-motion
-   · Fase 6: integrado en la sección #juego (visible, no oculto)
-   · Fase 7: traducción ES/VA/EN + créditos + pie del HUD
+   · Fase 3.4 → 3.6: mecánicas + decoraciones + pantallas + menús
+   · Fase 4: paletas por skin
+   · Fase 5: fullscreen + móvil + responsive
+   · Fase 6: integrado en #juego
+   · Fase 7: traducción ES/VA/EN + créditos
+   · Fase 8.1: Valencia + Madrid + París
+   · Fase 8.1.1: botón ☰ MENÚ flotante (iOS-friendly) + monumentos rediseñados
    ============================================================================ */
 
 (function juegoEscalada() {
@@ -23,269 +21,109 @@
   // ============================================================================
   const TRADUCCIONES = {
     es: {
-      // HUD
-      hud_altura: "Altura",
-      hud_fragmentos: "Fragmentos",
-      hud_vidas: "Vidas",
-      hud_record: "Récord",
-      hud_m: "m",
-      hud_p: "P",
-
-      // Menú
-      menu_titulo: "VÍA AL CIELO",
-      menu_subtitulo: "Un juego de escalada vertical",
-      menu_record: "Récord",
-      menu_empezar: "▶  EMPEZAR",
-      menu_instrucciones: "?  CÓMO JUGAR",
-      menu_creditos: "★  CRÉDITOS",
-      menu_fullscreen: "⛶  PANTALLA COMPLETA",
-      menu_ayuda: "↑↓ / Tab para moverte · ENTER para elegir",
-
-      // Instrucciones
+      hud_altura: "Altura", hud_fragmentos: "Fragmentos", hud_vidas: "Vidas", hud_record: "Récord", hud_m: "m", hud_p: "P",
+      menu_titulo: "VÍA AL CIELO", menu_subtitulo: "Un juego de escalada vertical", menu_record: "Récord",
+      menu_empezar: "▶  EMPEZAR", menu_instrucciones: "?  CÓMO JUGAR", menu_creditos: "★  CRÉDITOS",
+      menu_fullscreen: "⛶  PANTALLA COMPLETA", menu_ayuda: "↑↓ / Tab para moverte · ENTER para elegir",
       inst_titulo: "CÓMO JUGAR",
       inst_lineas: [
-        "MOVER:    ← →  o  A / D",
-        "SALTAR:   ESPACIO  o  ↑  o  W",
+        "MOVER:    ← →  o  A / D", "SALTAR:   ESPACIO  o  ↑  o  W",
         "DOBLE SALTO: pulsa salto otra vez en el aire",
-        "SALIR:    ESC (pregunta si quieres salir)",
-        "FULLSCREEN: F o botón ⛶ en el menú",
-        "",
-        "OBJETIVO:",
-        "· Sube lo más alto posible",
+        "SALIR:    ESC o botón ☰ arriba izquierda",
+        "FULLSCREEN: F o botón ⛶ en el menú", "",
+        "OBJETIVO:", "· Sube lo más alto posible",
         "· Coge los 3 fragmentos de código de cada pantalla",
-        "· Si coges los 3, ganas 1 vida (máx. 5)",
-        "",
-        "VIDAS:",
-        "· Empiezas con 3 vidas",
-        "· Caída > 90 m → pierdes 1 vida",
-        "· 0 vidas → Game Over",
-        "",
-        "PANTALLAS:",
-        "· Cada 220 m cambias de pantalla",
-        "· Hay 4 ambientes distintos",
+        "· Si coges los 3, ganas 1 vida (máx. 5)", "",
+        "VIDAS:", "· Empiezas con 3 vidas", "· Caída > 90 m → pierdes 1 vida", "· 0 vidas → Game Over", "",
+        "PANTALLAS:", "· Cada 220 m cambias de pantalla", "· Viajas por el mundo entero",
       ],
       inst_volver: "Pulsa ENTER o ESC para volver",
-
-      // Créditos
-      cred_titulo: "CRÉDITOS",
-      cred_juego: "VÍA AL CIELO",
-      cred_subtitulo: "Un juego de escalada vertical",
-      cred_creado: "Creado por",
-      cred_autor: "Gabriel Vidal Badia",
+      cred_titulo: "CRÉDITOS", cred_juego: "VÍA AL CIELO", cred_subtitulo: "Un juego de escalada vertical",
+      cred_creado: "Creado por", cred_autor: "Gabriel Vidal Badia",
       cred_hecho: "Hecho con HTML, CSS y JavaScript puros",
       cred_inspirado: "Inspirado en Minecraft, la escalada y Matrix",
-      cred_gracias: "Gracias por jugar",
-      cred_version: "Versión",
-      cred_volver: "Pulsa ENTER o ESC para volver",
-
-      // Game Over
-      go_titulo: "GAME OVER",
-      go_resumen: "RESUMEN",
-      go_altura_max: "Altura máxima",
-      go_fragmentos: "Fragmentos",
-      go_pantalla: "Pantalla",
-      go_record: "Récord",
-      go_nuevo_record: "¡NUEVO RÉCORD!",
-      go_reintentar: "↻  REINTENTAR",
-      go_menu: "←  MENÚ",
-      go_fullscreen: "⛶  PANTALLA COMPLETA",
-
-      // Confirmar salida
-      salir_titulo: "¿SALIR DE LA PARTIDA?",
-      salir_msg1: "Perderás el progreso de esta partida.",
-      salir_msg2: "¿Seguro que quieres salir al menú?",
-      salir_si: "SÍ (S)",
-      salir_no: "NO (N)",
-      salir_fullscreen: "⛶  SALIR PANTALLA COMPLETA",
-      salir_ayuda: "↑↓ / Tab para moverte · ENTER para elegir",
-
-      // Transición
+      cred_gracias: "Gracias por jugar", cred_version: "Versión", cred_volver: "Pulsa ENTER o ESC para volver",
+      go_titulo: "GAME OVER", go_resumen: "RESUMEN", go_altura_max: "Altura máxima", go_fragmentos: "Fragmentos",
+      go_pantalla: "Pantalla", go_record: "Récord", go_nuevo_record: "¡NUEVO RÉCORD!",
+      go_reintentar: "↻  REINTENTAR", go_menu: "←  MENÚ", go_fullscreen: "⛶  PANTALLA COMPLETA",
+      salir_titulo: "¿SALIR DE LA PARTIDA?", salir_msg1: "Perderás el progreso de esta partida.",
+      salir_msg2: "¿Seguro que quieres salir al menú?", salir_si: "SÍ (S)", salir_no: "NO (N)",
+      salir_fullscreen: "⛶  SALIR PANTALLA COMPLETA", salir_ayuda: "↑↓ / Tab para moverte · ENTER para elegir",
       pantalla: "PANTALLA",
-      pantalla_cueva: "Cueva",
-      pantalla_grieta: "Grieta",
-      pantalla_aire: "Aire libre",
-      pantalla_infinito: "Infinito",
-
-      // Pie del HUD
-      pie: "Vía al Cielo · v:70.0 · por Gabriel Vidal Badia",
+      pantalla_cueva: "Cueva", pantalla_grieta: "Grieta", pantalla_aire: "Aire libre", pantalla_infinito: "Infinito",
+      pantalla_valencia: "Valencia", pantalla_madrid: "Madrid", pantalla_paris: "París",
+      pie: "Vía al Cielo · v:71.1 · por Gabriel Vidal Badia",
     },
     val: {
-      // HUD
-      hud_altura: "Alçada",
-      hud_fragmentos: "Fragments",
-      hud_vidas: "Vides",
-      hud_record: "Rècord",
-      hud_m: "m",
-      hud_p: "P",
-
-      // Menú
-      menu_titulo: "VIA AL CEL",
-      menu_subtitulo: "Un joc d'escalada vertical",
-      menu_record: "Rècord",
-      menu_empezar: "▶  COMENÇAR",
-      menu_instrucciones: "?  COM JUGAR",
-      menu_creditos: "★  CRÈDITS",
-      menu_fullscreen: "⛶  PANTALLA COMPLETA",
-      menu_ayuda: "↑↓ / Tab per moure't · ENTER per triar",
-
-      // Instrucciones
+      hud_altura: "Alçada", hud_fragmentos: "Fragments", hud_vidas: "Vides", hud_record: "Rècord", hud_m: "m", hud_p: "P",
+      menu_titulo: "VIA AL CEL", menu_subtitulo: "Un joc d'escalada vertical", menu_record: "Rècord",
+      menu_empezar: "▶  COMENÇAR", menu_instrucciones: "?  COM JUGAR", menu_creditos: "★  CRÈDITS",
+      menu_fullscreen: "⛶  PANTALLA COMPLETA", menu_ayuda: "↑↓ / Tab per moure't · ENTER per triar",
       inst_titulo: "COM JUGAR",
       inst_lineas: [
-        "MOURE:    ← →  o  A / D",
-        "SALTAR:   ESPAI  o  ↑  o  W",
+        "MOURE:    ← →  o  A / D", "SALTAR:   ESPAI  o  ↑  o  W",
         "DOBLE SALT: prem salt una altra volta en l'aire",
-        "EIXIR:    ESC (pregunta si vols eixir)",
-        "FULLSCREEN: F o botó ⛶ al menú",
-        "",
-        "OBJECTIU:",
-        "· Puja el més alt possible",
+        "EIXIR:    ESC o botó ☰ dalt esquerra",
+        "FULLSCREEN: F o botó ⛶ al menú", "",
+        "OBJECTIU:", "· Puja el més alt possible",
         "· Agafa els 3 fragments de codi de cada pantalla",
-        "· Si n'agafes els 3, guanyes 1 vida (màx. 5)",
-        "",
-        "VIDES:",
-        "· Comences amb 3 vides",
-        "· Caiguda > 90 m → perds 1 vida",
-        "· 0 vides → Game Over",
-        "",
-        "PANTALLES:",
-        "· Cada 220 m canvies de pantalla",
-        "· Hi ha 4 ambients diferents",
+        "· Si n'agafes els 3, guanyes 1 vida (màx. 5)", "",
+        "VIDES:", "· Comences amb 3 vides", "· Caiguda > 90 m → perds 1 vida", "· 0 vides → Game Over", "",
+        "PANTALLES:", "· Cada 220 m canvies de pantalla", "· Viatges pel món sencer",
       ],
       inst_volver: "Prem ENTER o ESC per a tornar",
-
-      // Créditos
-      cred_titulo: "CRÈDITS",
-      cred_juego: "VIA AL CEL",
-      cred_subtitulo: "Un joc d'escalada vertical",
-      cred_creado: "Creat per",
-      cred_autor: "Gabriel Vidal Badia",
+      cred_titulo: "CRÈDITS", cred_juego: "VIA AL CEL", cred_subtitulo: "Un joc d'escalada vertical",
+      cred_creado: "Creat per", cred_autor: "Gabriel Vidal Badia",
       cred_hecho: "Fet amb HTML, CSS i JavaScript purs",
       cred_inspirado: "Inspirat en Minecraft, l'escalada i Matrix",
-      cred_gracias: "Gràcies per jugar",
-      cred_version: "Versió",
-      cred_volver: "Prem ENTER o ESC per a tornar",
-
-      // Game Over
-      go_titulo: "GAME OVER",
-      go_resumen: "RESUM",
-      go_altura_max: "Alçada màxima",
-      go_fragmentos: "Fragments",
-      go_pantalla: "Pantalla",
-      go_record: "Rècord",
-      go_nuevo_record: "NOU RÈCORD!",
-      go_reintentar: "↻  REINTENTAR",
-      go_menu: "←  MENÚ",
-      go_fullscreen: "⛶  PANTALLA COMPLETA",
-
-      // Confirmar salida
-      salir_titulo: "EIXIR DE LA PARTIDA?",
-      salir_msg1: "Perdràs el progrés d'esta partida.",
-      salir_msg2: "Segur que vols eixir al menú?",
-      salir_si: "SÍ (S)",
-      salir_no: "NO (N)",
-      salir_fullscreen: "⛶  EIXIR PANTALLA COMPLETA",
-      salir_ayuda: "↑↓ / Tab per moure't · ENTER per triar",
-
-      // Transición
+      cred_gracias: "Gràcies per jugar", cred_version: "Versió", cred_volver: "Prem ENTER o ESC per a tornar",
+      go_titulo: "GAME OVER", go_resumen: "RESUM", go_altura_max: "Alçada màxima", go_fragmentos: "Fragments",
+      go_pantalla: "Pantalla", go_record: "Rècord", go_nuevo_record: "NOU RÈCORD!",
+      go_reintentar: "↻  REINTENTAR", go_menu: "←  MENÚ", go_fullscreen: "⛶  PANTALLA COMPLETA",
+      salir_titulo: "EIXIR DE LA PARTIDA?", salir_msg1: "Perdràs el progrés d'esta partida.",
+      salir_msg2: "Segur que vols eixir al menú?", salir_si: "SÍ (S)", salir_no: "NO (N)",
+      salir_fullscreen: "⛶  EIXIR PANTALLA COMPLETA", salir_ayuda: "↑↓ / Tab per moure't · ENTER per triar",
       pantalla: "PANTALLA",
-      pantalla_cueva: "Cova",
-      pantalla_grieta: "Esquerda",
-      pantalla_aire: "Aire lliure",
-      pantalla_infinito: "Infinit",
-
-      // Pie del HUD
-      pie: "Via al Cel · v:70.0 · per Gabriel Vidal Badia",
+      pantalla_cueva: "Cova", pantalla_grieta: "Esquerda", pantalla_aire: "Aire lliure", pantalla_infinito: "Infinit",
+      pantalla_valencia: "València", pantalla_madrid: "Madrid", pantalla_paris: "París",
+      pie: "Via al Cel · v:71.1 · per Gabriel Vidal Badia",
     },
     en: {
-      // HUD
-      hud_altura: "Height",
-      hud_fragmentos: "Fragments",
-      hud_vidas: "Lives",
-      hud_record: "Record",
-      hud_m: "m",
-      hud_p: "P",
-
-      // Menú
-      menu_titulo: "PATH TO THE SKY",
-      menu_subtitulo: "A vertical climbing game",
-      menu_record: "Record",
-      menu_empezar: "▶  START",
-      menu_instrucciones: "?  HOW TO PLAY",
-      menu_creditos: "★  CREDITS",
-      menu_fullscreen: "⛶  FULLSCREEN",
-      menu_ayuda: "↑↓ / Tab to move · ENTER to choose",
-
-      // Instrucciones
+      hud_altura: "Height", hud_fragmentos: "Fragments", hud_vidas: "Lives", hud_record: "Record", hud_m: "m", hud_p: "P",
+      menu_titulo: "PATH TO THE SKY", menu_subtitulo: "A vertical climbing game", menu_record: "Record",
+      menu_empezar: "▶  START", menu_instrucciones: "?  HOW TO PLAY", menu_creditos: "★  CREDITS",
+      menu_fullscreen: "⛶  FULLSCREEN", menu_ayuda: "↑↓ / Tab to move · ENTER to choose",
       inst_titulo: "HOW TO PLAY",
       inst_lineas: [
-        "MOVE:     ← →  or  A / D",
-        "JUMP:     SPACE  or  ↑  or  W",
+        "MOVE:     ← →  or  A / D", "JUMP:     SPACE  or  ↑  or  W",
         "DOUBLE JUMP: press jump again in mid-air",
-        "QUIT:     ESC (asks if you want to quit)",
-        "FULLSCREEN: F or the ⛶ button in the menu",
-        "",
-        "GOAL:",
-        "· Climb as high as you can",
+        "QUIT:     ESC or ☰ button top-left",
+        "FULLSCREEN: F or the ⛶ button in the menu", "",
+        "GOAL:", "· Climb as high as you can",
         "· Collect the 3 code fragments on each screen",
-        "· If you get all 3, you earn 1 life (max. 5)",
-        "",
-        "LIVES:",
-        "· You start with 3 lives",
-        "· Fall > 90 m → lose 1 life",
-        "· 0 lives → Game Over",
-        "",
-        "SCREENS:",
-        "· Every 220 m you change screen",
-        "· There are 4 different environments",
+        "· If you get all 3, you earn 1 life (max. 5)", "",
+        "LIVES:", "· You start with 3 lives", "· Fall > 90 m → lose 1 life", "· 0 lives → Game Over", "",
+        "SCREENS:", "· Every 220 m you change screen", "· You travel the world",
       ],
       inst_volver: "Press ENTER or ESC to go back",
-
-      // Credits
-      cred_titulo: "CREDITS",
-      cred_juego: "PATH TO THE SKY",
-      cred_subtitulo: "A vertical climbing game",
-      cred_creado: "Created by",
-      cred_autor: "Gabriel Vidal Badia",
+      cred_titulo: "CREDITS", cred_juego: "PATH TO THE SKY", cred_subtitulo: "A vertical climbing game",
+      cred_creado: "Created by", cred_autor: "Gabriel Vidal Badia",
       cred_hecho: "Made with plain HTML, CSS and JavaScript",
       cred_inspirado: "Inspired by Minecraft, climbing and Matrix",
-      cred_gracias: "Thanks for playing",
-      cred_version: "Version",
-      cred_volver: "Press ENTER or ESC to go back",
-
-      // Game Over
-      go_titulo: "GAME OVER",
-      go_resumen: "SUMMARY",
-      go_altura_max: "Max height",
-      go_fragmentos: "Fragments",
-      go_pantalla: "Screen",
-      go_record: "Record",
-      go_nuevo_record: "NEW RECORD!",
-      go_reintentar: "↻  RETRY",
-      go_menu: "←  MENU",
-      go_fullscreen: "⛶  FULLSCREEN",
-
-      // Confirmar salida
-      salir_titulo: "QUIT THE GAME?",
-      salir_msg1: "You'll lose your progress in this run.",
-      salir_msg2: "Are you sure you want to return to the menu?",
-      salir_si: "YES (Y)",
-      salir_no: "NO (N)",
-      salir_fullscreen: "⛶  EXIT FULLSCREEN",
-      salir_ayuda: "↑↓ / Tab to move · ENTER to choose",
-
-      // Transición
+      cred_gracias: "Thanks for playing", cred_version: "Version", cred_volver: "Press ENTER or ESC to go back",
+      go_titulo: "GAME OVER", go_resumen: "SUMMARY", go_altura_max: "Max height", go_fragmentos: "Fragments",
+      go_pantalla: "Screen", go_record: "Record", go_nuevo_record: "NEW RECORD!",
+      go_reintentar: "↻  RETRY", go_menu: "←  MENU", go_fullscreen: "⛶  FULLSCREEN",
+      salir_titulo: "QUIT THE GAME?", salir_msg1: "You'll lose your progress in this run.",
+      salir_msg2: "Are you sure you want to return to the menu?", salir_si: "YES (Y)", salir_no: "NO (N)",
+      salir_fullscreen: "⛶  EXIT FULLSCREEN", salir_ayuda: "↑↓ / Tab to move · ENTER to choose",
       pantalla: "SCREEN",
-      pantalla_cueva: "Cave",
-      pantalla_grieta: "Crevice",
-      pantalla_aire: "Open air",
-      pantalla_infinito: "Infinite",
-
-      // Pie del HUD
-      pie: "Path to the Sky · v:70.0 · by Gabriel Vidal Badia",
+      pantalla_cueva: "Cave", pantalla_grieta: "Crevice", pantalla_aire: "Open air", pantalla_infinito: "Infinite",
+      pantalla_valencia: "Valencia", pantalla_madrid: "Madrid", pantalla_paris: "Paris",
+      pie: "Path to the Sky · v:71.1 · by Gabriel Vidal Badia",
     },
   };
 
-  // ---------- Idioma ----------
   function idiomaActual() {
     try {
       const ls = localStorage.getItem("language");
@@ -342,13 +180,21 @@
     mediaReduced.addEventListener("change", (e) => { reducedMotion = e.matches; });
   }
 
+  // ---------- Detección de iOS ----------
+  // iPhone no soporta Fullscreen API. iPad sí. Detectamos iPhone/iPod específicamente.
+  const esIPhone = /iPhone|iPod/.test(navigator.userAgent) ||
+                   (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1 && !/iPad/.test(navigator.userAgent));
+
   // ---------- Fullscreen API ----------
   const fullscreenSoportado = !!(
-    document.fullscreenEnabled ||
-    document.webkitFullscreenEnabled ||
-    document.mozFullScreenEnabled ||
-    document.msFullscreenEnabled
+    !esIPhone && (
+      document.fullscreenEnabled ||
+      document.webkitFullscreenEnabled ||
+      document.mozFullScreenEnabled ||
+      document.msFullscreenEnabled
+    )
   );
+
   function estaEnFullscreen() {
     return !!(document.fullscreenElement ||
               document.webkitFullscreenElement ||
@@ -357,9 +203,7 @@
   }
   function pedirFullscreen(el) {
     if (el.requestFullscreen) {
-      return el.requestFullscreen({ navigationUI: "hide" }).catch(() => {
-        return el.requestFullscreen();
-      });
+      return el.requestFullscreen({ navigationUI: "hide" }).catch(() => el.requestFullscreen());
     }
     if (el.webkitRequestFullscreen) return Promise.resolve(el.webkitRequestFullscreen());
     if (el.mozRequestFullScreen) return Promise.resolve(el.mozRequestFullScreen());
@@ -367,10 +211,8 @@
     return Promise.reject(new Error("Fullscreen no soportado"));
   }
   function salirFullscreen() {
-    const fn = document.exitFullscreen ||
-               document.webkitExitFullscreen ||
-               document.mozCancelFullScreen ||
-               document.msExitFullscreen;
+    const fn = document.exitFullscreen || document.webkitExitFullscreen ||
+               document.mozCancelFullScreen || document.msExitFullscreen;
     if (fn) return fn.call(document);
     return Promise.reject(new Error("Exit fullscreen no soportado"));
   }
@@ -397,13 +239,11 @@
       presa: "#6a4a3a", presaLuz: "#a07a60",
       texto: "#f2ede3", textoSuave: "#d4c4b0",
       acento: "#c94a2a", acentoSuave: "#e07050",
-      hudFondo: "transparent", hudAcento: "#c94a2a",
       menuFondo: "rgba(20, 10, 8, 0.92)",
       botonFondo: "201, 74, 42", botonBorde: "232, 120, 80",
       botonSecFondo: "80, 50, 40", botonSecBorde: "140, 100, 80",
       panelFondo: "rgba(30, 15, 10, 0.95)", panelBorde: "201, 74, 42",
-      transicionTexto: "#f2ede3",
-      vinyeta: "rgba(0,0,0,0.5)",
+      transicionTexto: "#f2ede3", vinyeta: "rgba(0,0,0,0.5)",
       bloques: false, lluviaMatrix: false,
     },
     omarchy: {
@@ -412,13 +252,11 @@
       presa: "#2a3a5a", presaLuz: "#5a8ae0",
       texto: "#e8f0ff", textoSuave: "#a0b8e0",
       acento: "#3a8ae0", acentoSuave: "#60b0ff",
-      hudFondo: "transparent", hudAcento: "#60b0ff",
       menuFondo: "rgba(5, 10, 30, 0.92)",
       botonFondo: "58, 138, 224", botonBorde: "96, 176, 255",
       botonSecFondo: "20, 40, 80", botonSecBorde: "80, 140, 220",
       panelFondo: "rgba(10, 20, 50, 0.95)", panelBorde: "96, 176, 255",
-      transicionTexto: "#e8f0ff",
-      vinyeta: "rgba(0,0,20,0.5)",
+      transicionTexto: "#e8f0ff", vinyeta: "rgba(0,0,20,0.5)",
       bloques: false, lluviaMatrix: false,
     },
     minecraft: {
@@ -427,13 +265,11 @@
       presa: "#3a8a90", presaLuz: "#7ac0c8",
       texto: "#e0fff0", textoSuave: "#a0e0d0",
       acento: "#2ad0a0", acentoSuave: "#60ffd0",
-      hudFondo: "transparent", hudAcento: "#2ad0a0",
       menuFondo: "rgba(6, 30, 34, 0.92)",
       botonFondo: "42, 208, 160", botonBorde: "96, 255, 208",
       botonSecFondo: "20, 60, 60", botonSecBorde: "60, 160, 150",
       panelFondo: "rgba(10, 40, 44, 0.95)", panelBorde: "42, 208, 160",
-      transicionTexto: "#e0fff0",
-      vinyeta: "rgba(0,0,0,0.55)",
+      transicionTexto: "#e0fff0", vinyeta: "rgba(0,0,0,0.55)",
       bloques: true, lluviaMatrix: false,
     },
     matrix: {
@@ -442,13 +278,11 @@
       presa: "#0d3a0d", presaLuz: "#40ff40",
       texto: "#c8ffc8", textoSuave: "#80ff80",
       acento: "#00ff41", acentoSuave: "#80ff80",
-      hudFondo: "transparent", hudAcento: "#00ff41",
       menuFondo: "rgba(0, 10, 0, 0.92)",
       botonFondo: "0, 180, 60", botonBorde: "0, 255, 65",
       botonSecFondo: "10, 40, 10", botonSecBorde: "0, 120, 40",
       panelFondo: "rgba(0, 20, 0, 0.95)", panelBorde: "0, 255, 65",
-      transicionTexto: "#00ff41",
-      vinyeta: "rgba(0,0,0,0.3)",
+      transicionTexto: "#00ff41", vinyeta: "rgba(0,0,0,0.3)",
       bloques: false, lluviaMatrix: true,
     },
   };
@@ -462,23 +296,14 @@
   }
 
   // ---------- Lluvia Matrix ----------
-  const matrixLluvia = {
-    cols: [],
-    chars: "アカサタナハマヤラワ0123456789ABCDEFabcdef<>{}[]()=+-*/;:",
-    inicializado: false,
-  };
+  const matrixLluvia = { cols: [], chars: "アカサタナハマヤラワ0123456789ABCDEFabcdef<>{}[]()=+-*/;:", inicializado: false };
   function initMatrixLluvia() {
     if (matrixLluvia.inicializado) return;
     matrixLluvia.cols = [];
     const anchoChar = 14;
     const total = Math.floor(ANCHO / anchoChar);
     for (let i = 0; i < total; i++) {
-      matrixLluvia.cols.push({
-        x: i * anchoChar + 4,
-        y: Math.random() * -ALTO,
-        vel: 1 + Math.random() * 3,
-        largo: 8 + Math.floor(Math.random() * 20),
-      });
+      matrixLluvia.cols.push({ x: i * anchoChar + 4, y: Math.random() * -ALTO, vel: 1 + Math.random() * 3, largo: 8 + Math.floor(Math.random() * 20) });
     }
     matrixLluvia.inicializado = true;
   }
@@ -489,11 +314,7 @@
     ctx.textBaseline = "top";
     for (const col of matrixLluvia.cols) {
       col.y += col.vel;
-      if (col.y - col.largo * 16 > ALTO) {
-        col.y = -col.largo * 16;
-        col.vel = 1 + Math.random() * 3;
-        col.largo = 8 + Math.floor(Math.random() * 20);
-      }
+      if (col.y - col.largo * 16 > ALTO) { col.y = -col.largo * 16; col.vel = 1 + Math.random() * 3; col.largo = 8 + Math.floor(Math.random() * 20); }
       for (let k = 0; k < col.largo; k++) {
         const cy = col.y - k * 16;
         if (cy < -16 || cy > ALTO) continue;
@@ -509,20 +330,20 @@
   }
 
   // ---------- Tipos de pantalla ----------
-  // El nombre se resuelve con tx("pantalla_" + tipo) para traducirlo.
   const TIPOS_PANTALLA = {
-    cueva: { id: 1, decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true },
-    grieta: { id: 2, decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"], murcielagos: 15, vinyetaFuerte: true },
-    aire: { id: 3, decoraciones: ["nube", "montana", "arbol", "pajaro", "aguila"], murcielagos: 0, vinyetaFuerte: false },
-    infinito: { id: 4, decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true },
+    cueva: { id: 1, categoria: "cueva", fondo: "#1a1410", fondo2: "#2e2620", fondoAbajo: "#1a1410", suelo: "#4a3a30", sueloLuz: "#6a5545", presa: "#5a4a3e", presaLuz: "#8a7565", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true, degradado: false },
+    grieta: { id: 2, categoria: "cueva", fondo: "#2a1f18", fondo2: "#3a2e26", fondoAbajo: "#2a1f18", suelo: "#5a4a3e", sueloLuz: "#8a7565", presa: "#6a5a4e", presaLuz: "#9a8575", decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"], murcielagos: 15, vinyetaFuerte: true, degradado: false },
+    aire: { id: 3, categoria: "aire", fondo: "#87CEEB", fondo2: "#5a9ec9", fondoAbajo: "#a0d8ef", suelo: "#6a8a4a", sueloLuz: "#8aaa6a", presa: "#7a6a5a", presaLuz: "#aa9a8a", decoraciones: ["nube", "montana", "arbol", "pajaro", "aguila"], murcielagos: 0, vinyetaFuerte: false, degradado: false },
+    infinito: { id: 4, categoria: "cueva", fondo: "#1a1410", fondo2: "#2e2620", fondoAbajo: "#1a1410", suelo: "#4a3a30", sueloLuz: "#6a5545", presa: "#5a4a3e", presaLuz: "#8a7565", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true, degradado: false },
+
+    valencia: { id: 10, categoria: "ciudad", fondo: "#87CEEB", fondo2: "#5fa8d8", fondoAbajo: "#f0c890", suelo: "#c9a875", sueloLuz: "#e8c898", presa: "#b08060", presaLuz: "#d0a080", decoraciones: ["falla-ninot", "falla-fallera", "miguelete", "nube-ciudad", "paloma-blanca", "confeti"], murcielagos: 0, vinyetaFuerte: false, degradado: true },
+    madrid: { id: 11, categoria: "ciudad", fondo: "#9ec5e8", fondo2: "#6a9bc5", fondoAbajo: "#d4c0a0", suelo: "#a08868", sueloLuz: "#c8b090", presa: "#907860", presaLuz: "#b0a080", decoraciones: ["puerta-alcala", "cibeles", "oso-madrono", "nube-ciudad", "paloma"], murcielagos: 0, vinyetaFuerte: false, degradado: true },
+    paris: { id: 12, categoria: "ciudad", fondo: "#b8c8d8", fondo2: "#8aa8c0", fondoAbajo: "#e8d0b0", suelo: "#8a7a6a", sueloLuz: "#a89888", presa: "#7a6a5a", presaLuz: "#9a8a7a", decoraciones: ["torre-eiffel", "nube-ciudad", "paloma-blanca"], murcielagos: 0, vinyetaFuerte: false, degradado: true },
   };
 
   const CATALOGO_PANTALLAS = [
-    { tipo: "cueva" },
-    { tipo: "cueva" },
-    { tipo: "grieta" },
-    { tipo: "grieta" },
-    { tipo: "aire" },
+    { tipo: "cueva" }, { tipo: "cueva" }, { tipo: "grieta" }, { tipo: "grieta" }, { tipo: "aire" },
+    { tipo: "valencia" }, { tipo: "madrid" }, { tipo: "paris" },
   ];
 
   function tipoDePantalla(numero) {
@@ -530,13 +351,11 @@
       const tipo = CATALOGO_PANTALLAS[numero - 1].tipo;
       return TIPOS_PANTALLA[tipo] ? tipo : "cueva";
     }
-    const tipos = ["cueva", "grieta", "aire", "infinito"];
+    const tipos = ["cueva", "grieta", "aire", "infinito", "valencia", "madrid", "paris"];
     return tipos[Math.floor(Math.random() * tipos.length)];
   }
   function nombreDePantalla(numero) {
-    const tipo = (numero <= CATALOGO_PANTALLAS.length)
-      ? CATALOGO_PANTALLAS[numero - 1].tipo
-      : tipoDePantalla(numero);
+    const tipo = (numero <= CATALOGO_PANTALLAS.length) ? CATALOGO_PANTALLAS[numero - 1].tipo : tipoDePantalla(numero);
     return tx("pantalla_" + tipo);
   }
   function tipoActual() {
@@ -554,31 +373,25 @@
 
   // ---------- Estado ----------
   const estado = {
-    modo: "menu",
-    modoAnterior: null,
-    opcionActiva: 0,
+    modo: "menu", modoAnterior: null, opcionActiva: 0,
     personaje: {
-      x: ANCHO / 2 - STEVE_ANCHO / 2,
-      y: Y_SUELO_JUGABLE,
+      x: ANCHO / 2 - STEVE_ANCHO / 2, y: Y_SUELO_JUGABLE,
       ancho: STEVE_ANCHO, alto: STEVE_ALTO,
       velX: 0, velY: 0,
       enSuelo: false, saltando: false,
       dobleSaltoDisponible: true, saltoSuelto: true,
       frame: "parado", mirandoDerecha: true,
       ultimaPlataforma: null,
-      alturaMaximaVuelo: Y_SUELO_JUGABLE,
-      dañoTiempo: 0,
+      alturaMaximaVuelo: Y_SUELO_JUGABLE, dañoTiempo: 0,
     },
     plataformas: [], decoraciones: [], murcielagos: [],
-    fragmentos: [], popups: [], popupGrande: null,
-    conjuntoActual: null,
+    fragmentos: [], popups: [], popupGrande: null, conjuntoActual: null,
     teclas: { izquierda: false, derecha: false, salto: false },
     camara: { y: CAMARA_INICIAL, alturaMaxima: 0, record: 0 },
     vidas: VIDAS_INICIALES,
     fragmentosRecogidos: 0, fragmentosTotales: 0,
     pantalla: 1, tipoPantalla: "cueva",
-    transicion: null,
-    gameOver: false, bonusVidaDado: false,
+    transicion: null, gameOver: false, bonusVidaDado: false,
   };
 
   // ---------- Opciones de menú ----------
@@ -628,11 +441,18 @@
       else if (opcion === "salir-fullscreen") salirPantallaCompleta();
     }
   }
-  function enfocada(nombreOpcion) {
-    return opcionActual() === nombreOpcion;
+  function enfocada(nombreOpcion) { return opcionActual() === nombreOpcion; }
+
+  // ---------- Actualizar clase "jugando" en el contenedor ----------
+  // Esto controla la visibilidad del botón ☰.
+  function actualizarClaseJugando() {
+    if (!contenedor) return;
+    const visible = estado.modo === "jugando" || estado.modo === "confirmar-salida";
+    if (visible) contenedor.classList.add("jugando");
+    else contenedor.classList.remove("jugando");
   }
 
-  // ---------- Fullscreen: helpers ----------
+  // ---------- Fullscreen helpers ----------
   function entrarPantallaCompleta() {
     if (!fullscreenSoportado) return;
     pedirFullscreen(contenedor)
@@ -668,7 +488,6 @@
       document.documentElement.style.overflow = "";
     }
   }
-
   setInterval(() => {
     const jugando = estado.modo === "jugando" || estado.modo === "confirmar-salida";
     const visible = contenedor && contenedor.style.display !== "none" && document.body.contains(contenedor);
@@ -719,13 +538,9 @@
     candidatas.forEach((plat) => {
       if (plat.tieneFragmento) {
         estado.fragmentos.push({
-          x: plat.x + plat.ancho / 2,
-          y: plat.y - 30,
-          frase: plat.fraseCodigo,
-          indiceTrozo: plat.indiceTrozo,
-          plataforma: plat,
-          recogido: false,
-          tiempo: Math.random() * 6.28,
+          x: plat.x + plat.ancho / 2, y: plat.y - 30,
+          frase: plat.fraseCodigo, indiceTrozo: plat.indiceTrozo,
+          plataforma: plat, recogido: false, tiempo: Math.random() * 6.28,
         });
       }
     });
@@ -741,6 +556,7 @@
     const decor = [];
     function permitido(t) { return permitidas.indexOf(t) !== -1; }
 
+    // --- Cueva / grieta / infinito ---
     if (permitido("estalactita")) {
       for (let i = 0; i < 55; i++) decor.push({ tipo: "estalactita", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, largo: 25 + Math.random() * 60, ancho: 10 + Math.random() * 14 });
     }
@@ -777,6 +593,8 @@
     if (permitido("grieta-luz")) {
       for (let i = 0; i < 22; i++) decor.push({ tipo: "grieta-luz", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, largo: 40 + Math.random() * 80, ancho: 3 + Math.random() * 4 });
     }
+
+    // --- Aire libre ---
     if (permitido("nube")) {
       for (let i = 0; i < 28; i++) decor.push({ tipo: "nube", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, ancho: 60 + Math.random() * 80, alto: 20 + Math.random() * 20, vel: 0.2 + Math.random() * 0.4 });
     }
@@ -792,6 +610,56 @@
     if (permitido("aguila")) {
       for (let i = 0; i < 6; i++) decor.push({ tipo: "aguila", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, tam: 22 + Math.random() * 8, vel: 0.15 + Math.random() * 0.2, tiempo: Math.random() * 10 });
     }
+
+    // --- Ciudades · Nubes ---
+    if (permitido("nube-ciudad")) {
+      for (let i = 0; i < 18; i++) decor.push({ tipo: "nube-ciudad", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, ancho: 80 + Math.random() * 120, alto: 22 + Math.random() * 20, vel: 0.15 + Math.random() * 0.3 });
+    }
+
+    // --- Valencia ---
+    if (permitido("falla-ninot")) {
+      for (let i = 0; i < 5; i++) decor.push({ tipo: "falla-ninot", x: 60 + Math.random() * (ANCHO - 120), y: -300 - Math.random() * DECO_RANGO_OBJETO, tiempo: Math.random() * 6.28 });
+    }
+    if (permitido("falla-fallera")) {
+      for (let i = 0; i < 5; i++) decor.push({ tipo: "falla-fallera", x: 60 + Math.random() * (ANCHO - 120), y: -400 - Math.random() * DECO_RANGO_OBJETO, tiempo: Math.random() * 6.28 });
+    }
+    if (permitido("miguelete")) {
+      for (let i = 0; i < 4; i++) decor.push({ tipo: "miguelete", x: 80 + Math.random() * (ANCHO - 160), y: -500 - Math.random() * DECO_RANGO_PEQUENO });
+    }
+    if (permitido("confeti")) {
+      for (let i = 0; i < 25; i++) decor.push({ tipo: "confeti", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, tam: 3 + Math.random() * 4, vel: 0.5 + Math.random() * 1.5, color: Math.floor(Math.random() * 5), tiempo: Math.random() * 6.28 });
+    }
+
+    // --- Madrid ---
+    if (permitido("puerta-alcala")) {
+      for (let i = 0; i < 4; i++) decor.push({ tipo: "puerta-alcala", x: 80 + Math.random() * (ANCHO - 160), y: -400 - Math.random() * DECO_RANGO_PEQUENO });
+    }
+    if (permitido("cibeles")) {
+      for (let i = 0; i < 4; i++) decor.push({ tipo: "cibeles", x: 80 + Math.random() * (ANCHO - 160), y: -500 - Math.random() * DECO_RANGO_PEQUENO });
+    }
+    if (permitido("oso-madrono")) {
+      for (let i = 0; i < 6; i++) decor.push({ tipo: "oso-madrono", x: 60 + Math.random() * (ANCHO - 120), y: -350 - Math.random() * DECO_RANGO_OBJETO });
+    }
+
+    // --- París ---
+    if (permitido("torre-eiffel")) {
+      for (let i = 0; i < 4; i++) decor.push({ tipo: "torre-eiffel", x: 100 + Math.random() * (ANCHO - 200), y: -450 - Math.random() * DECO_RANGO_PEQUENO });
+    }
+
+    // --- Palomas ---
+    if (permitido("paloma") || permitido("paloma-blanca")) {
+      const cantidad = permitido("paloma-blanca") ? 14 : 12;
+      for (let i = 0; i < cantidad; i++) {
+        decor.push({
+          tipo: permitido("paloma-blanca") ? "paloma-blanca" : "paloma",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          vel: 0.3 + Math.random() * 0.5,
+          tiempo: Math.random() * 10,
+        });
+      }
+    }
+
     estado.decoraciones = decor;
   }
 
@@ -800,11 +668,7 @@
     const cantidad = tipo.murcielagos || 0;
     const bats = [];
     for (let i = 0; i < cantidad; i++) {
-      bats.push({
-        x: 40 + Math.random() * (ANCHO - 80),
-        y: -200 - i * 90 - Math.random() * 60,
-        despierto: 0, mirandoDerecha: Math.random() > 0.5, tiempo: Math.random() * 10,
-      });
+      bats.push({ x: 40 + Math.random() * (ANCHO - 80), y: -200 - i * 90 - Math.random() * 60, despierto: 0, mirandoDerecha: Math.random() > 0.5, tiempo: Math.random() * 10 });
     }
     estado.murcielagos = bats;
   }
@@ -823,6 +687,7 @@
   contenedor.setAttribute("translate", "no");
   contenedor.innerHTML = `
     <button class="juego-escalada__salir-fullscreen" type="button" aria-label="Salir de pantalla completa" title="Salir de pantalla completa">✕</button>
+    <button class="juego-escalada__menu-flotante" type="button" aria-label="Menú" title="Menú">☰</button>
     <div class="juego-escalada__info notranslate" translate="no">
       <span><span data-i18n="hud_altura">Altura</span>: <strong id="je-altura">0</strong> <span data-i18n="hud_m">m</span></span>
       <span><span data-i18n="hud_fragmentos">Fragmentos</span>: <strong id="je-frags">0/0</strong></span>
@@ -857,44 +722,35 @@
   const elRecord = contenedor.querySelector("#je-record");
   const elFooter = contenedor.querySelector("#je-footer");
   const btnSalirFullscreen = contenedor.querySelector(".juego-escalada__salir-fullscreen");
+  const btnMenuFlotante = contenedor.querySelector(".juego-escalada__menu-flotante");
 
   btnSalirFullscreen.addEventListener("click", () => salirPantallaCompleta());
+  btnMenuFlotante.addEventListener("click", () => pedirConfirmacionSalida());
 
   // ---------- i18n en el DOM del juego ----------
   function aplicarIdiomaAlJuego() {
-    // HUD (spans con data-i18n)
     contenedor.querySelectorAll("[data-i18n]").forEach((el) => {
       const clave = el.getAttribute("data-i18n");
       el.textContent = tx(clave);
     });
-    // Pie del HUD
     if (elFooter) elFooter.textContent = tx("pie");
-    // Botón salir fullscreen (aria/title)
     btnSalirFullscreen.setAttribute("aria-label", tx("salir_fullscreen"));
     btnSalirFullscreen.setAttribute("title", tx("salir_fullscreen"));
-    // Botones táctiles
-    const btns = contenedor.querySelectorAll(".juego-escalada__btn");
-    if (btns[0]) btns[0].setAttribute("aria-label", "Izquierda");
-    if (btns[1]) btns[1].setAttribute("aria-label", "Saltar");
-    if (btns[2]) btns[2].setAttribute("aria-label", "Derecha");
+    btnMenuFlotante.setAttribute("aria-label", tx("salir_titulo"));
+    btnMenuFlotante.setAttribute("title", tx("salir_titulo"));
   }
   aplicarIdiomaAlJuego();
 
   // ---------- Observadores ----------
-  // Cambio de skin
   const observerSkin = new MutationObserver(() => { aplicarColoresHUD(); });
   observerSkin.observe(document.documentElement, { attributes: true, attributeFilter: ["data-skin"] });
 
-  // Cambio de idioma · evento que dispara language.js
-  document.addEventListener("portfolio:languagechange", () => {
-    aplicarIdiomaAlJuego();
-  });
-  // Cambio de idioma · fallback (si language.js no está cargado)
+  document.addEventListener("portfolio:languagechange", () => { aplicarIdiomaAlJuego(); });
   window.addEventListener("storage", (e) => {
     if (e.key === "language") aplicarIdiomaAlJuego();
   });
 
-  // ---------- HUD con colores de skin ----------
+  // ---------- HUD colores ----------
   function aplicarColoresHUD() {
     const p = paletaActual();
     const info = contenedor.querySelector(".juego-escalada__info");
@@ -918,9 +774,7 @@
     window.visualViewport.addEventListener("scroll", ajustarAlturaFullscreen);
   }
   window.addEventListener("resize", ajustarAlturaFullscreen);
-  window.addEventListener("orientationchange", () => {
-    setTimeout(ajustarAlturaFullscreen, 150);
-  });
+  window.addEventListener("orientationchange", () => { setTimeout(ajustarAlturaFullscreen, 150); });
 
   // ---------- Teclado ----------
   document.addEventListener("keydown", (e) => {
@@ -1006,12 +860,10 @@
     const escalaY = ALTO / rect.height;
     const mx = (e.clientX - rect.left) * escalaX;
     const my = (e.clientY - rect.top) * escalaY;
-
     function dentro(btn) {
       if (!btn) return false;
       return mx >= btn.x && mx <= btn.x + btn.w && my >= btn.y && my <= btn.y + btn.h;
     }
-
     if (estado.modo === "menu") {
       if (dentro(estado._btnEmpezar)) { estado.opcionActiva = 0; iniciarPartidaDesdeMenu(); }
       else if (dentro(estado._btnInstrucciones)) { estado.opcionActiva = 1; estado.modo = "instrucciones"; }
@@ -1037,11 +889,13 @@
     estado.teclas.izquierda = false;
     estado.teclas.derecha = false;
     estado.teclas.salto = false;
+    actualizarClaseJugando();
     actualizarBloqueoScroll();
   }
   function cancelarSalida() {
     estado.modo = estado.modoAnterior || "jugando";
     estado.modoAnterior = null;
+    actualizarClaseJugando();
     actualizarBloqueoScroll();
   }
   function salirAlMenu() {
@@ -1059,13 +913,21 @@
     p.alturaMaximaVuelo = Y_SUELO_JUGABLE;
     p.dañoTiempo = 0;
     estado.camara.y = CAMARA_INICIAL;
+    actualizarClaseJugando();
     actualizarBloqueoScroll();
   }
 
   // ---------- Respawn ----------
   function respawn() {
     const p = estado.personaje;
-    if (estado.vidas <= 0) { estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0; actualizarBloqueoScroll(); return; }
+    if (estado.vidas <= 0) {
+      estado.gameOver = true;
+      estado.modo = "gameover";
+      estado.opcionActiva = 0;
+      actualizarClaseJugando();
+      actualizarBloqueoScroll();
+      return;
+    }
     let respawnPlat = null;
     let mejorDist = Infinity;
     for (const plat of estado.plataformas) {
@@ -1137,6 +999,7 @@
     estado.modo = "jugando";
     estado.opcionActiva = 0;
     reiniciarPartida();
+    actualizarClaseJugando();
     actualizarBloqueoScroll();
   }
   function reiniciarPartida() {
@@ -1229,7 +1092,14 @@
     if (caida > UMBRAL_CAIDA_PX && estado.vidas > 0) {
       estado.vidas--;
       p.dañoTiempo = 30;
-      if (estado.vidas <= 0) { estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0; actualizarBloqueoScroll(); return; }
+      if (estado.vidas <= 0) {
+        estado.gameOver = true;
+        estado.modo = "gameover";
+        estado.opcionActiva = 0;
+        actualizarClaseJugando();
+        actualizarBloqueoScroll();
+        return;
+      }
     }
     p.alturaMaximaVuelo = p.y;
   }
@@ -1321,14 +1191,10 @@
     const bota = "#3A2E1E";
     const ojo = "#1a1a1a";
     const cont = "#1a1a1a";
-
     ctx.save();
     if (!mirando) { ctx.translate(x + 26, y); ctx.scale(-1, 1); x = 0; y = 0; }
-
-    ctx.fillStyle = cont;
-    ctx.fillRect(x - 1, y - 1, 28, 44);
-    ctx.fillStyle = piel;
-    ctx.fillRect(x, y, 26, 16);
+    ctx.fillStyle = cont; ctx.fillRect(x - 1, y - 1, 28, 44);
+    ctx.fillStyle = piel; ctx.fillRect(x, y, 26, 16);
     ctx.fillStyle = pelo;
     ctx.fillRect(x, y, 26, 5);
     ctx.fillRect(x, y + 5, 3, 4);
@@ -1339,12 +1205,9 @@
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(x + 7, y + 9, 1, 1);
     ctx.fillRect(x + 18, y + 9, 1, 1);
-    ctx.fillStyle = ojo;
-    ctx.fillRect(x + 10, y + 12, 6, 1);
-    ctx.fillStyle = cont;
-    ctx.fillRect(x + 4, y + 16, 18, 14);
-    ctx.fillStyle = camiseta;
-    ctx.fillRect(x + 5, y + 16, 16, 13);
+    ctx.fillStyle = ojo; ctx.fillRect(x + 10, y + 12, 6, 1);
+    ctx.fillStyle = cont; ctx.fillRect(x + 4, y + 16, 18, 14);
+    ctx.fillStyle = camiseta; ctx.fillRect(x + 5, y + 16, 16, 13);
     ctx.fillStyle = cont;
     if (frame === "parado") {
       ctx.fillRect(x + 1, y + 17, 3, 11);
@@ -1436,8 +1299,7 @@
     ctx.beginPath();
     ctx.arc(fx, y, 22, 0, Math.PI * 2);
     ctx.fill();
-    const ancho = 16;
-    const alto = 16;
+    const ancho = 16, alto = 16;
     ctx.fillStyle = "#1a1a1a";
     ctx.fillRect(fx - ancho / 2 - 1, y - alto / 2 - 1, ancho + 2, alto + 2);
     ctx.fillStyle = "#3a6ea5";
@@ -1493,8 +1355,7 @@
     let alpha = 1;
     if (t < 20) alpha = t / 20;
     if (t > duracion - 30) alpha = (duracion - t) / 30;
-    const anchoPanel = 520;
-    const altoPanel = 280;
+    const anchoPanel = 520, altoPanel = 280;
     const px = (ANCHO - anchoPanel) / 2;
     const py = (ALTO - altoPanel) / 2;
     ctx.fillStyle = "rgba(0, 0, 0, " + (alpha * 0.9) + ")";
@@ -1531,14 +1392,24 @@
   function dibujarFondo() {
     const pal = paletaActual();
     const tipo = tipoActual();
-    ctx.fillStyle = pal.fondo;
-    ctx.fillRect(0, 0, ANCHO, ALTO);
+
+    if (tipo.degradado) {
+      const grad = ctx.createLinearGradient(0, 0, 0, ALTO);
+      grad.addColorStop(0, tipo.fondo);
+      grad.addColorStop(0.65, tipo.fondo2);
+      grad.addColorStop(1, tipo.fondoAbajo || tipo.fondo2);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, ANCHO, ALTO);
+    } else {
+      ctx.fillStyle = tipo.fondo;
+      ctx.fillRect(0, 0, ANCHO, ALTO);
+    }
 
     if (pal.lluviaMatrix) dibujarMatrixLluvia();
 
     const camY = estado.camara.y;
 
-    if (estado.tipoPantalla !== "aire") {
+    if (tipo.categoria === "cueva") {
       const alpha = pal.lluviaMatrix ? 0.15 : 0.35;
       for (let i = 0; i < 25; i++) {
         const x = (i * 37) % ANCHO;
@@ -1558,8 +1429,9 @@
 
     for (const d of estado.decoraciones) {
       const dy = d.y - camY;
-      if (dy + 200 < 0 || dy - 200 > ALTO) continue;
+      if (dy + 300 < 0 || dy - 300 > ALTO) continue;
 
+      // --- Cueva ---
       if (d.tipo === "estalactita") {
         ctx.fillStyle = "rgba(0,0,0,0.55)";
         ctx.beginPath();
@@ -1585,12 +1457,6 @@
         ctx.lineTo(d.x + d.ancho, dy + d.largo);
         ctx.closePath();
         ctx.fill();
-      } else if (d.tipo === "esqueleto") {
-        const hueso = "#d8d0b8";
-        const huesoSombra = "#a89f88";
-        ctx.fillStyle = hueso;
-        ctx.beginPath();               // ← ASEGÚRATE DE QUE ESTA LÍNEA ESTÁ
-        ctx.ellipse(d.x + 12, dy + 12, 14, 10, 0, 0, Math.PI * 2);
       } else if (d.tipo === "musgo") {
         ctx.fillStyle = "rgba(80, 160, 80, 0.35)";
         ctx.beginPath();
@@ -1635,8 +1501,7 @@
         ctx.fillStyle = "#1a1008";
         ctx.fillRect(d.x + d.ancho / 2 - 1, dy + 10, 2, 3);
       } else if (d.tipo === "esqueleto") {
-        const hueso = "#d8d0b8";
-        const huesoSombra = "#a89f88";
+        const hueso = "#d8d0b8", huesoSombra = "#a89f88";
         ctx.fillStyle = hueso;
         ctx.beginPath();
         ctx.ellipse(d.x + 12, dy + 12, 14, 10, 0, 0, Math.PI * 2);
@@ -1648,16 +1513,12 @@
         ctx.fillStyle = hueso;
         ctx.fillRect(d.x + 2, dy + 18, 22, 4);
         ctx.fillStyle = huesoSombra;
-        for (let k = 0; k < 5; k++) {
-          const bx = d.x + 30 + k * 12;
-          ctx.fillRect(bx, dy + 14, 6, 6);
-        }
+        for (let k = 0; k < 5; k++) ctx.fillRect(d.x + 30 + k * 12, dy + 14, 6, 6);
         ctx.strokeStyle = hueso;
         ctx.lineWidth = 3;
         for (let k = 0; k < 4; k++) {
-          const bx = d.x + 34 + k * 12;
           ctx.beginPath();
-          ctx.arc(bx, dy + 14, 8, Math.PI, 0);
+          ctx.arc(d.x + 34 + k * 12, dy + 14, 8, Math.PI, 0);
           ctx.stroke();
         }
         ctx.fillStyle = hueso;
@@ -1684,9 +1545,7 @@
         ctx.fillStyle = "#c8c0a8";
         ctx.fillRect(d.x - t * 0.5, dy + t * 0.5, t, t * 0.3);
         ctx.fillStyle = "#2a2218";
-        for (let k = 0; k < 3; k++) {
-          ctx.fillRect(d.x - t * 0.4 + k * t * 0.3, dy + t * 0.5, 1.5, t * 0.3);
-        }
+        for (let k = 0; k < 3; k++) ctx.fillRect(d.x - t * 0.4 + k * t * 0.3, dy + t * 0.5, 1.5, t * 0.3);
       } else if (d.tipo === "moneda") {
         const giro = Math.abs(Math.cos(Date.now() / 400 + d.tiempo));
         const anchoVisible = d.tam * giro;
@@ -1738,6 +1597,8 @@
         ctx.fillRect(d.x, dy, d.ancho, d.largo * 0.4);
         ctx.fillStyle = "rgba(255, 255, 255, " + (0.6 + pulso * 0.4) + ")";
         ctx.fillRect(d.x + 1, dy + d.largo * 0.1, 1, d.largo * 0.2);
+
+      // --- Aire libre ---
       } else if (d.tipo === "nube") {
         d.x += d.vel * 0.3;
         if (d.x > ANCHO + 100) d.x = -100;
@@ -1826,6 +1687,530 @@
         ctx.lineTo(d.x + t * 0.4, dy + planeo + t * 0.05);
         ctx.closePath();
         ctx.fill();
+
+      // --- Ciudades ---
+      } else if (d.tipo === "nube-ciudad") {
+        d.x += d.vel * 0.25;
+        if (d.x > ANCHO + 150) d.x = -150;
+        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+        ctx.beginPath();
+        ctx.ellipse(d.x, dy, d.ancho / 2, d.alto / 2, 0, 0, Math.PI * 2);
+        ctx.ellipse(d.x + d.ancho * 0.22, dy - d.alto * 0.15, d.ancho * 0.32, d.alto * 0.4, 0, 0, Math.PI * 2);
+        ctx.ellipse(d.x - d.ancho * 0.22, dy - d.alto * 0.1, d.ancho * 0.28, d.alto * 0.35, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+      // --- VALENCIA · Falla grande y reconocible ---
+      } else if (d.tipo === "falla-ninot") {
+        const x = d.x, y0 = dy;
+        // Pedestal (base de la falla)
+        ctx.fillStyle = "#8a5a3a";
+        ctx.fillRect(x - 22, y0 + 46, 44, 8);
+        ctx.fillStyle = "#a87a4a";
+        ctx.fillRect(x - 18, y0 + 40, 36, 6);
+        // Cuerpo de la falla (figura central grande, colores vivos)
+        // Faldón rojo con vuelo
+        ctx.fillStyle = "#c92a4a";
+        ctx.beginPath();
+        ctx.moveTo(x - 18, y0 + 40);
+        ctx.lineTo(x + 18, y0 + 40);
+        ctx.lineTo(x + 12, y0 + 4);
+        ctx.lineTo(x - 12, y0 + 4);
+        ctx.closePath();
+        ctx.fill();
+        // Detalles dorados en el faldón
+        ctx.fillStyle = "#e8b84a";
+        ctx.fillRect(x - 14, y0 + 14, 28, 3);
+        ctx.fillRect(x - 12, y0 + 26, 24, 3);
+        // Flores en el faldón
+        ctx.fillStyle = "#f2c84a";
+        ctx.beginPath();
+        ctx.arc(x, y0 + 20, 2, 0, Math.PI * 2);
+        ctx.arc(x - 6, y0 + 32, 2, 0, Math.PI * 2);
+        ctx.arc(x + 6, y0 + 32, 2, 0, Math.PI * 2);
+        ctx.fill();
+        // Torso (blusa blanca con detalles)
+        ctx.fillStyle = "#f2ede3";
+        ctx.fillRect(x - 10, y0 - 12, 20, 18);
+        // Detalle rojo en el pecho
+        ctx.fillStyle = "#c92a4a";
+        ctx.fillRect(x - 8, y0 - 6, 16, 3);
+        // Cabeza
+        ctx.fillStyle = "#C9A27E";
+        ctx.beginPath();
+        ctx.arc(x, y0 - 22, 11, 0, Math.PI * 2);
+        ctx.fill();
+        // Pelo/moño grande
+        ctx.fillStyle = "#3a1a1a";
+        ctx.beginPath();
+        ctx.arc(x, y0 - 28, 10, Math.PI, 0);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y0 - 34, 6, 0, Math.PI * 2);
+        ctx.fill();
+        // Ojos
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(x - 5, y0 - 24, 3, 3);
+        ctx.fillRect(x + 2, y0 - 24, 3, 3);
+        // Boca
+        ctx.fillRect(x - 2, y0 - 16, 4, 1);
+        // Brazos abiertos (acogiendo)
+        ctx.strokeStyle = "#C9A27E";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(x - 10, y0 - 6);
+        ctx.lineTo(x - 22, y0 + 4);
+        ctx.lineTo(x - 22, y0 + 14);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x + 10, y0 - 6);
+        ctx.lineTo(x + 22, y0 + 4);
+        ctx.lineTo(x + 22, y0 + 14);
+        ctx.stroke();
+        ctx.lineCap = "butt";
+
+      } else if (d.tipo === "falla-fallera") {
+        const x = d.x, y0 = dy;
+        // Falda larga con vuelo (traje de fallera)
+        ctx.fillStyle = "#8a2a4a";
+        ctx.beginPath();
+        ctx.moveTo(x - 22, y0 + 48);
+        ctx.lineTo(x + 22, y0 + 48);
+        ctx.lineTo(x + 10, y0 + 4);
+        ctx.lineTo(x - 10, y0 + 4);
+        ctx.closePath();
+        ctx.fill();
+        // Detalles dorados
+        ctx.fillStyle = "#f2c84a";
+        ctx.fillRect(x - 18, y0 + 20, 36, 3);
+        ctx.fillRect(x - 20, y0 + 34, 40, 3);
+        // Flores en la falda
+        ctx.beginPath();
+        ctx.arc(x - 8, y0 + 28, 2, 0, Math.PI * 2);
+        ctx.arc(x + 8, y0 + 28, 2, 0, Math.PI * 2);
+        ctx.arc(x, y0 + 40, 2, 0, Math.PI * 2);
+        ctx.fill();
+        // Delantal blanco
+        ctx.fillStyle = "#f2ede3";
+        ctx.beginPath();
+        ctx.moveTo(x - 8, y0 + 4);
+        ctx.lineTo(x + 8, y0 + 4);
+        ctx.lineTo(x + 6, y0 + 28);
+        ctx.lineTo(x - 6, y0 + 28);
+        ctx.closePath();
+        ctx.fill();
+        // Torso (blusa blanca con manga corta)
+        ctx.fillStyle = "#f2ede3";
+        ctx.fillRect(x - 9, y0 - 10, 18, 16);
+        // Cabeza
+        ctx.fillStyle = "#C9A27E";
+        ctx.beginPath();
+        ctx.arc(x, y0 - 20, 9, 0, Math.PI * 2);
+        ctx.fill();
+        // Pelo recogido
+        ctx.fillStyle = "#2a1a0a";
+        ctx.beginPath();
+        ctx.arc(x, y0 - 24, 9, Math.PI, 0);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x + 8, y0 - 22, 4, 0, Math.PI * 2);
+        ctx.fill();
+        // Peineta dorada (arco visible)
+        ctx.strokeStyle = "#e8b84a";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(x, y0 - 28, 11, Math.PI + 0.2, -0.2);
+        ctx.stroke();
+        // Ojos
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(x - 4, y0 - 22, 2, 2);
+        ctx.fillRect(x + 2, y0 - 22, 2, 2);
+        // Brazos
+        ctx.strokeStyle = "#C9A27E";
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(x - 9, y0 - 4);
+        ctx.lineTo(x - 16, y0 + 6);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x + 9, y0 - 4);
+        ctx.lineTo(x + 16, y0 + 6);
+        ctx.stroke();
+        ctx.lineCap = "butt";
+
+      } else if (d.tipo === "miguelete") {
+        // Miguelete: torre octogonal del campanario de Valencia
+        const x = d.x, y0 = dy;
+        const anchoTorre = 40;
+        const altoTorre = 120;
+        // Cuerpo de la torre (octogonal, aproximado como un trapecio)
+        ctx.fillStyle = "#d8c8a8";
+        ctx.beginPath();
+        ctx.moveTo(x - anchoTorre / 2, y0 + altoTorre);
+        ctx.lineTo(x - anchoTorre / 2 + 4, y0 + 14);
+        ctx.lineTo(x - anchoTorre / 2 + 8, y0);
+        ctx.lineTo(x + anchoTorre / 2 - 8, y0);
+        ctx.lineTo(x + anchoTorre / 2 - 4, y0 + 14);
+        ctx.lineTo(x + anchoTorre / 2, y0 + altoTorre);
+        ctx.closePath();
+        ctx.fill();
+        // Sombra lateral derecha para dar volumen
+        ctx.fillStyle = "rgba(0,0,0,0.18)";
+        ctx.beginPath();
+        ctx.moveTo(x + 6, y0 + 14);
+        ctx.lineTo(x + anchoTorre / 2 - 4, y0 + 14);
+        ctx.lineTo(x + anchoTorre / 2, y0 + altoTorre);
+        ctx.lineTo(x + 6, y0 + altoTorre);
+        ctx.closePath();
+        ctx.fill();
+        // Campanario: dos huecos grandes y claros
+        ctx.fillStyle = "#1a1a1a";
+        // Hueco 1
+        ctx.beginPath();
+        ctx.arc(x, y0 + 28, 7, 0, Math.PI * 2);
+        ctx.fill();
+        // Hueco 2
+        ctx.beginPath();
+        ctx.arc(x, y0 + 60, 7, 0, Math.PI * 2);
+        ctx.fill();
+        // Campanas visibles (amarillas)
+        ctx.fillStyle = "#e8b84a";
+        ctx.beginPath();
+        ctx.arc(x, y0 + 28, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y0 + 60, 3, 0, Math.PI * 2);
+        ctx.fill();
+        // Líneas horizontales decorativas
+        ctx.strokeStyle = "rgba(0,0,0,0.25)";
+        ctx.lineWidth = 1;
+        for (let k = 1; k < 7; k++) {
+          ctx.beginPath();
+          ctx.moveTo(x - anchoTorre / 2 + 4, y0 + 14 + k * 14);
+          ctx.lineTo(x + anchoTorre / 2 - 4, y0 + 14 + k * 14);
+          ctx.stroke();
+        }
+        // Tejado (triángulo claro)
+        ctx.fillStyle = "#8a5a3a";
+        ctx.beginPath();
+        ctx.moveTo(x - anchoTorre / 2 - 4, y0);
+        ctx.lineTo(x + anchoTorre / 2 + 4, y0);
+        ctx.lineTo(x, y0 - 14);
+        ctx.closePath();
+        ctx.fill();
+        // Cruz de hierro encima
+        ctx.strokeStyle = "#3a2a1a";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, y0 - 14);
+        ctx.lineTo(x, y0 - 24);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x - 4, y0 - 20);
+        ctx.lineTo(x + 4, y0 - 20);
+        ctx.stroke();
+
+      } else if (d.tipo === "confeti") {
+        d.y += d.vel;
+        if (d.y > ALTO + 20 + camY) {
+          d.y = -20 - Math.random() * 400 - camY;
+          d.x = Math.random() * ANCHO;
+        }
+        const coloresConfeti = ["#e84a4a", "#f2c84a", "#4aa8e8", "#6ac84a", "#c84ae8"];
+        ctx.fillStyle = coloresConfeti[d.color] || "#f2c84a";
+        ctx.save();
+        ctx.translate(d.x, dy);
+        ctx.rotate((Date.now() / 500 + d.tiempo) % (Math.PI * 2));
+        ctx.fillRect(-d.tam / 2, -d.tam / 4, d.tam, d.tam / 2);
+        ctx.restore();
+
+      // --- MADRID ---
+      } else if (d.tipo === "puerta-alcala") {
+        // Puerta de Alcalá: arco central grande + 2 arcos laterales + frontón
+        const x = d.x, y0 = dy;
+        const anchoP = 120;
+        const altoP = 100;
+        // Base
+        ctx.fillStyle = "#d8c8a8";
+        ctx.fillRect(x - anchoP / 2, y0 + altoP - 20, anchoP, 20);
+        // Cuerpo principal
+        ctx.fillStyle = "#e8d8b8";
+        ctx.fillRect(x - anchoP / 2 + 6, y0 + 12, anchoP - 12, altoP - 32);
+        // Arco central (grande)
+        ctx.fillStyle = "#4a4030";
+        ctx.beginPath();
+        ctx.moveTo(x - 18, y0 + altoP - 20);
+        ctx.lineTo(x - 18, y0 + 36);
+        ctx.arc(x, y0 + 36, 18, Math.PI, 0);
+        ctx.lineTo(x + 18, y0 + altoP - 20);
+        ctx.closePath();
+        ctx.fill();
+        // Arco izquierdo
+        ctx.beginPath();
+        ctx.moveTo(x - 46, y0 + altoP - 20);
+        ctx.lineTo(x - 46, y0 + 48);
+        ctx.arc(x - 40, y0 + 48, 6, Math.PI, 0);
+        ctx.lineTo(x - 34, y0 + altoP - 20);
+        ctx.closePath();
+        ctx.fill();
+        // Arco derecho
+        ctx.beginPath();
+        ctx.moveTo(x + 34, y0 + altoP - 20);
+        ctx.lineTo(x + 34, y0 + 48);
+        ctx.arc(x + 40, y0 + 48, 6, Math.PI, 0);
+        ctx.lineTo(x + 46, y0 + altoP - 20);
+        ctx.closePath();
+        ctx.fill();
+        // Cornisa superior
+        ctx.fillStyle = "#c8b890";
+        ctx.fillRect(x - anchoP / 2 - 6, y0 + 6, anchoP + 12, 8);
+        // Frontón triangular (parte superior)
+        ctx.fillStyle = "#e8d8b8";
+        ctx.beginPath();
+        ctx.moveTo(x - 30, y0 + 6);
+        ctx.lineTo(x + 30, y0 + 6);
+        ctx.lineTo(x, y0 - 12);
+        ctx.closePath();
+        ctx.fill();
+        // Detalles del frontón
+        ctx.strokeStyle = "rgba(0,0,0,0.25)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x - 26, y0 + 4);
+        ctx.lineTo(x + 26, y0 + 4);
+        ctx.stroke();
+        // Columnas visibles en la fachada
+        ctx.fillStyle = "rgba(0,0,0,0.15)";
+        ctx.fillRect(x - anchoP / 2 + 14, y0 + 12, 3, altoP - 32);
+        ctx.fillRect(x + anchoP / 2 - 17, y0 + 12, 3, altoP - 32);
+
+      } else if (d.tipo === "cibeles") {
+        // Fuente de Cibeles: diosa sobre carro tirado por 2 leones
+        const x = d.x, y0 = dy;
+        // Base escalonada (3 niveles)
+        ctx.fillStyle = "#d8d0c0";
+        ctx.fillRect(x - 32, y0 + 26, 64, 8);
+        ctx.fillRect(x - 28, y0 + 18, 56, 8);
+        ctx.fillRect(x - 22, y0 + 10, 44, 8);
+        // Leones grandes (dos, muy visibles)
+        // León izquierdo
+        ctx.fillStyle = "#a87a4a";
+        ctx.beginPath();
+        ctx.ellipse(x - 14, y0 - 2, 10, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x - 20, y0 - 6, 6, 0, Math.PI * 2);
+        ctx.fill();
+        // Melena del león izquierdo
+        ctx.fillStyle = "#8a5a2a";
+        ctx.beginPath();
+        ctx.arc(x - 20, y0 - 6, 7, Math.PI, 0);
+        ctx.fill();
+        // Ojo león izquierdo
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(x - 22, y0 - 7, 1.5, 1.5);
+        // León derecho
+        ctx.fillStyle = "#a87a4a";
+        ctx.beginPath();
+        ctx.ellipse(x + 14, y0 - 2, 10, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x + 20, y0 - 6, 6, 0, Math.PI * 2);
+        ctx.fill();
+        // Melena del león derecho
+        ctx.fillStyle = "#8a5a2a";
+        ctx.beginPath();
+        ctx.arc(x + 20, y0 - 6, 7, Math.PI, 0);
+        ctx.fill();
+        // Ojo león derecho
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(x + 21, y0 - 7, 1.5, 1.5);
+        // Carro (encima de los leones)
+        ctx.fillStyle = "#b89860";
+        ctx.fillRect(x - 16, y0 - 14, 32, 10);
+        // Detalles del carro
+        ctx.fillStyle = "#8a6a3a";
+        ctx.fillRect(x - 16, y0 - 14, 32, 2);
+        // Diosa Cibeles (figura central)
+        ctx.fillStyle = "#f0e8d8";
+        // Cuerpo
+        ctx.fillRect(x - 5, y0 - 30, 10, 16);
+        // Cabeza
+        ctx.beginPath();
+        ctx.arc(x, y0 - 34, 5, 0, Math.PI * 2);
+        ctx.fill();
+        // Corona
+        ctx.fillStyle = "#e8b84a";
+        ctx.beginPath();
+        ctx.arc(x, y0 - 38, 3, 0, Math.PI * 2);
+        ctx.fill();
+        // Brazos
+        ctx.strokeStyle = "#f0e8d8";
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(x - 5, y0 - 24);
+        ctx.lineTo(x - 12, y0 - 20);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x + 5, y0 - 24);
+        ctx.lineTo(x + 12, y0 - 28);
+        ctx.stroke();
+        ctx.lineCap = "butt";
+
+      } else if (d.tipo === "oso-madrono") {
+        // Oso y Madroño: estatua de bronce
+        const x = d.x, y0 = dy;
+        // Pedestal de piedra
+        ctx.fillStyle = "#a89880";
+        ctx.fillRect(x - 14, y0 + 18, 28, 10);
+        ctx.fillStyle = "#c8b890";
+        ctx.fillRect(x - 12, y0 + 10, 24, 8);
+        // Árbol (madroño) grande
+        // Tronco
+        ctx.fillStyle = "#5a3a1a";
+        ctx.fillRect(x + 4, y0 - 8, 4, 20);
+        // Copa del árbol
+        ctx.fillStyle = "#2a6a2a";
+        ctx.beginPath();
+        ctx.arc(x + 6, y0 - 14, 12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#3a8a3a";
+        ctx.beginPath();
+        ctx.arc(x + 4, y0 - 16, 8, 0, Math.PI * 2);
+        ctx.fill();
+        // Frutos rojos del madroño
+        ctx.fillStyle = "#c92a2a";
+        ctx.beginPath();
+        ctx.arc(x + 2, y0 - 14, 2, 0, Math.PI * 2);
+        ctx.arc(x + 10, y0 - 12, 2, 0, Math.PI * 2);
+        ctx.arc(x + 6, y0 - 18, 2, 0, Math.PI * 2);
+        ctx.fill();
+        // Oso de pie, apoyado en el árbol
+        ctx.fillStyle = "#3a1e0a";
+        // Cuerpo
+        ctx.beginPath();
+        ctx.ellipse(x - 6, y0 + 6, 8, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Cabeza
+        ctx.beginPath();
+        ctx.arc(x - 6, y0 - 6, 6, 0, Math.PI * 2);
+        ctx.fill();
+        // Orejas
+        ctx.beginPath();
+        ctx.arc(x - 10, y0 - 10, 2, 0, Math.PI * 2);
+        ctx.arc(x - 2, y0 - 10, 2, 0, Math.PI * 2);
+        ctx.fill();
+        // Ojos
+        ctx.fillStyle = "#f0e8d8";
+        ctx.fillRect(x - 8, y0 - 7, 1.5, 1.5);
+        ctx.fillRect(x - 4, y0 - 7, 1.5, 1.5);
+        // Hocico
+        ctx.fillStyle = "#2a1a08";
+        ctx.beginPath();
+        ctx.arc(x - 6, y0 - 4, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        // Patas delanteras apoyadas en el árbol
+        ctx.fillStyle = "#3a1e0a";
+        ctx.fillRect(x - 1, y0 - 2, 4, 8);
+        ctx.fillRect(x - 1, y0 + 6, 4, 6);
+        // Patas traseras
+        ctx.fillRect(x - 12, y0 + 12, 4, 6);
+        ctx.fillRect(x - 7, y0 + 12, 4, 6);
+
+      // --- PARÍS · Torre Eiffel detallada ---
+      } else if (d.tipo === "torre-eiffel") {
+        const x = d.x, y0 = dy;
+        const altoTorre = 180;
+        const anchoBase = 70;
+        // Sombra bajo la torre
+        ctx.fillStyle = "rgba(0,0,0,0.15)";
+        ctx.beginPath();
+        ctx.ellipse(x, y0 + altoTorre + 4, anchoBase * 0.7, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // 4 patas (dos visibles desde el frente, dos ligeramente detrás)
+        // Patas traseras (más oscuras)
+        ctx.strokeStyle = "#3a2e22";
+        ctx.lineWidth = 5;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(x - anchoBase / 2 + 8, y0 + altoTorre);
+        ctx.quadraticCurveTo(x - anchoBase / 4, y0 + altoTorre * 0.55, x - 2, y0 + 20);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x + anchoBase / 2 - 8, y0 + altoTorre);
+        ctx.quadraticCurveTo(x + anchoBase / 4, y0 + altoTorre * 0.55, x + 2, y0 + 20);
+        ctx.stroke();
+        // Patas delanteras (más claras)
+        ctx.strokeStyle = "#5a4a3a";
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(x - anchoBase / 2, y0 + altoTorre);
+        ctx.quadraticCurveTo(x - anchoBase / 4, y0 + altoTorre * 0.5, x, y0 + 20);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x + anchoBase / 2, y0 + altoTorre);
+        ctx.quadraticCurveTo(x + anchoBase / 4, y0 + altoTorre * 0.5, x, y0 + 20);
+        ctx.stroke();
+        ctx.lineCap = "butt";
+        // Piso 1 (abajo, grande) - línea horizontal
+        ctx.fillStyle = "#5a4a3a";
+        ctx.fillRect(x - anchoBase * 0.35, y0 + altoTorre * 0.7, anchoBase * 0.7, 4);
+        // Detalles piso 1 (X decorativas)
+        ctx.strokeStyle = "#5a4a3a";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x - anchoBase * 0.3, y0 + altoTorre * 0.7);
+        ctx.lineTo(x - anchoBase * 0.15, y0 + altoTorre * 0.5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x + anchoBase * 0.3, y0 + altoTorre * 0.7);
+        ctx.lineTo(x + anchoBase * 0.15, y0 + altoTorre * 0.5);
+        ctx.stroke();
+        // Piso 2 (medio)
+        ctx.fillStyle = "#5a4a3a";
+        ctx.fillRect(x - anchoBase * 0.22, y0 + altoTorre * 0.48, anchoBase * 0.44, 3);
+        // Piso 3 (arriba)
+        ctx.fillRect(x - 10, y0 + 26, 20, 3);
+        // Antena
+        ctx.fillRect(x - 1, y0 - 12, 2, 40);
+        // Cruz superior
+        ctx.fillRect(x - 5, y0 - 6, 10, 2);
+        // Puntitos luminosos amarillos (parpadean)
+        const brillo = 0.5 + Math.sin(Date.now() / 500) * 0.5;
+        ctx.fillStyle = "rgba(255, 240, 130, " + (0.7 + brillo * 0.3) + ")";
+        ctx.beginPath();
+        ctx.arc(x, y0 + 40, 2.5, 0, Math.PI * 2);
+        ctx.arc(x, y0 + 70, 2.5, 0, Math.PI * 2);
+        ctx.arc(x, y0 + 100, 2.5, 0, Math.PI * 2);
+        ctx.arc(x, y0 + 130, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        // Halo de luz
+        ctx.fillStyle = "rgba(255, 240, 130, " + (brillo * 0.15) + ")";
+        ctx.beginPath();
+        ctx.arc(x, y0 + altoTorre / 2, anchoBase / 2 + 10, 0, Math.PI * 2);
+        ctx.fill();
+
+      // --- Animales ---
+      } else if (d.tipo === "paloma" || d.tipo === "paloma-blanca") {
+        d.x += d.vel * 0.4;
+        if (d.x > ANCHO + 40) d.x = -40;
+        d.tiempo += 0.2;
+        const aleteo = Math.sin(d.tiempo * 5) * 2;
+        const color = d.tipo === "paloma-blanca" ? "#f8f8f8" : "#888888";
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.ellipse(d.x, dy, 5, 3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(d.x - 2, dy - aleteo, 5, 2, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(d.x + 4, dy - 1, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#e8a030";
+        ctx.fillRect(d.x + 6, dy - 1, 2, 1);
       }
     }
 
@@ -1996,7 +2381,7 @@
     dibujarPopupGrande();
     dibujarTransicion();
 
-    // ---- Menú ----
+    // Menú
     if (estado.modo === "menu") {
       ctx.fillStyle = pal.menuFondo;
       ctx.fillRect(0, 0, ANCHO, ALTO);
@@ -2012,10 +2397,8 @@
       ctx.font = "16px monospace";
       ctx.fillText(tx("menu_record") + ": " + estado.camara.record + " " + tx("hud_m"), ANCHO / 2, ALTO / 2 - 110);
 
-      const btnW = 280;
-      const btnH = 50;
+      const btnW = 280, btnH = 50, sep = 12;
       let by = ALTO / 2 - 50;
-      const sep = 12;
 
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_empezar"), enfocada("empezar"), pal.botonFondo, pal.botonBorde);
       estado._btnEmpezar = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
@@ -2045,7 +2428,7 @@
       ctx.textBaseline = "alphabetic";
     }
 
-    // ---- Instrucciones ----
+    // Instrucciones
     if (estado.modo === "instrucciones") {
       ctx.fillStyle = pal.menuFondo;
       ctx.fillRect(0, 0, ANCHO, ALTO);
@@ -2072,87 +2455,58 @@
       ctx.textBaseline = "alphabetic";
     }
 
-    // ---- Créditos ----
+    // Créditos
     if (estado.modo === "creditos") {
       ctx.fillStyle = pal.menuFondo;
       ctx.fillRect(0, 0, ANCHO, ALTO);
-
       ctx.fillStyle = pal.acento;
       ctx.font = "bold 40px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(tx("cred_titulo"), ANCHO / 2, 100);
-
-      // Panel
-      const px = ANCHO / 2 - 240;
-      const py = 160;
-      const pw = 480;
-      const ph = 420;
-
+      const px = ANCHO / 2 - 240, py = 160, pw = 480, ph = 420;
       ctx.fillStyle = pal.panelFondo;
       ctx.fillRect(px, py, pw, ph);
       ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.8)";
       ctx.lineWidth = 3;
       ctx.strokeRect(px, py, pw, ph);
-
-      // Título del juego
       ctx.fillStyle = pal.texto;
       ctx.font = "bold 28px monospace";
       ctx.fillText(tx("cred_juego"), ANCHO / 2, py + 50);
-
-      // Subtítulo
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "15px monospace";
       ctx.fillText(tx("cred_subtitulo"), ANCHO / 2, py + 80);
-
-      // Línea separadora
       ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.4)";
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(px + 40, py + 100);
       ctx.lineTo(px + pw - 40, py + 100);
       ctx.stroke();
-
-      // Creado por
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "16px monospace";
       ctx.fillText(tx("cred_creado"), ANCHO / 2, py + 140);
-
       ctx.fillStyle = pal.acento;
       ctx.font = "bold 24px monospace";
       ctx.fillText(tx("cred_autor"), ANCHO / 2, py + 175);
-
-      // Hecho con
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "15px monospace";
       ctx.fillText(tx("cred_hecho"), ANCHO / 2, py + 220);
-
-      // Inspirado
       ctx.fillText(tx("cred_inspirado"), ANCHO / 2, py + 245);
-
-      // Gracias
       ctx.fillStyle = pal.acento;
       ctx.font = "bold 20px monospace";
       ctx.fillText(tx("cred_gracias"), ANCHO / 2, py + 300);
-
-      // Versión
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "13px monospace";
-      ctx.fillText(tx("cred_version") + ": v:70.0", ANCHO / 2, py + 340);
-
-      // Año
+      ctx.fillText(tx("cred_version") + ": v:71.1", ANCHO / 2, py + 340);
       ctx.fillText("© 2026", ANCHO / 2, py + 365);
-
-      // Volver
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "14px monospace";
       ctx.fillText(tx("cred_volver"), ANCHO / 2, ALTO - 40);
-
       ctx.textAlign = "start";
       ctx.textBaseline = "alphabetic";
     }
 
-    // ---- Game Over ----
+    // Game Over
     if (estado.modo === "gameover") {
       ctx.fillStyle = pal.menuFondo;
       ctx.fillRect(0, 0, ANCHO, ALTO);
@@ -2161,10 +2515,7 @@
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(tx("go_titulo"), ANCHO / 2, 160);
-      const px = ANCHO / 2 - 200;
-      const py = 230;
-      const pw = 400;
-      const ph = 220;
+      const px = ANCHO / 2 - 200, py = 230, pw = 400, ph = 220;
       ctx.fillStyle = pal.panelFondo;
       ctx.fillRect(px, py, pw, ph);
       ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.8)";
@@ -2184,19 +2535,14 @@
       if (nuevoRecord) ctx.fillText(tx("go_nuevo_record"), ANCHO / 2, py + 185);
       else ctx.fillText(tx("go_record") + ":  " + estado.camara.record + " " + tx("hud_m"), ANCHO / 2, py + 185);
 
-      const btnW = 280;
-      const btnH = 50;
+      const btnW = 280, btnH = 50, sep = 12;
       let by = py + ph + 30;
-      const sep = 12;
-
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_reintentar"), enfocada("reintentar"), pal.botonFondo, pal.botonBorde);
       estado._btnReintentar = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
-
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_menu"), enfocada("menu"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnMenu = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
-
       if (fullscreenSoportado && !estaEnFullscreen()) {
         dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_fullscreen"), enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
@@ -2207,14 +2553,11 @@
       ctx.textBaseline = "alphabetic";
     }
 
-    // ---- Confirmar salida ----
+    // Confirmar salida
     if (estado.modo === "confirmar-salida") {
       ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
       ctx.fillRect(0, 0, ANCHO, ALTO);
-      const px = ANCHO / 2 - 220;
-      const py = ALTO / 2 - 160;
-      const pw = 440;
-      const ph = 320;
+      const px = ANCHO / 2 - 220, py = ALTO / 2 - 160, pw = 440, ph = 320;
       ctx.fillStyle = pal.panelFondo;
       ctx.fillRect(px, py, pw, ph);
       ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.9)";
@@ -2229,20 +2572,15 @@
       ctx.font = "15px monospace";
       ctx.fillText(tx("salir_msg1"), ANCHO / 2, py + 80);
       ctx.fillText(tx("salir_msg2"), ANCHO / 2, py + 105);
-
-      const btnW = 160;
-      const btnH = 50;
+      const btnW = 160, btnH = 50, sep = 20;
       let by = py + 140;
-      const sep = 20;
       const btnSiX = ANCHO / 2 - btnW - sep / 2;
       const btnNoX = ANCHO / 2 + sep / 2;
-
       dibujarBoton(btnSiX, by, btnW, btnH, tx("salir_si"), enfocada("si"), "220, 80, 80", "255, 120, 120");
       dibujarBoton(btnNoX, by, btnW, btnH, tx("salir_no"), enfocada("no"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnSiSalir = { x: btnSiX, y: by, w: btnW, h: btnH };
       estado._btnNoSalir = { x: btnNoX, y: by, w: btnW, h: btnH };
       by += btnH + 20;
-
       if (fullscreenSoportado && estaEnFullscreen()) {
         const btnFullW = 340;
         dibujarBoton(ANCHO / 2 - btnFullW / 2, by, btnFullW, btnH, tx("salir_fullscreen"), enfocada("salir-fullscreen"), pal.botonSecFondo, pal.botonSecBorde);
@@ -2250,7 +2588,6 @@
       } else {
         estado._btnSalirFullscreen = null;
       }
-
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "13px monospace";
       ctx.textAlign = "center";
@@ -2279,12 +2616,12 @@
   estado.camara.y = CAMARA_INICIAL;
   estado.modo = "menu";
   estado.opcionActiva = 0;
+  actualizarClaseJugando();
   requestAnimationFrame(loop);
 
-  // ---------- API pública + debug ----------
+  // ---------- API pública ----------
   window.__juegoEscalada = {
-    estado,
-    contenedor,
+    estado, contenedor,
     saltarA(numero, tipoForzado) {
       estado.pantalla = numero;
       estado.tipoPantalla = tipoForzado || tipoDePantalla(numero);
@@ -2309,36 +2646,23 @@
       crearPlataformas();
       crearDecoraciones();
       crearMurcielagos();
+      actualizarClaseJugando();
       actualizarBloqueoScroll();
-      console.log("Saltado a P" + numero + " · tipo: " + estado.tipoPantalla + " · skin: " + skinActual());
+      console.log("Saltado a P" + numero + " · tipo: " + estado.tipoPantalla);
     },
     tiposDisponibles() { return Object.keys(TIPOS_PANTALLA); },
-    catalogo() {
-      return CATALOGO_PANTALLAS.map((p, i) => ({ numero: i + 1, tipo: p.tipo }));
-    },
+    catalogo() { return CATALOGO_PANTALLAS.map((p, i) => ({ numero: i + 1, tipo: p.tipo })); },
     skinsDisponibles() { return Object.keys(PALETAS_SKIN); },
     idiomasDisponibles() { return Object.keys(TRADUCCIONES); },
     idiomaActual,
+    esIPhone,
+    fullscreenSoportado,
     entrarFullscreen() { entrarPantallaCompleta(); },
     salirFullscreen() { salirPantallaCompleta(); },
     estaEnFullscreen,
-    infoViewport() {
-      return {
-        innerHeight: window.innerHeight,
-        innerWidth: window.innerWidth,
-        visualViewportHeight: window.visualViewport ? window.visualViewport.height : null,
-        visualViewportWidth: window.visualViewport ? window.visualViewport.width : null,
-        alturaJuegoCSS: contenedor.style.getPropertyValue("--altura-juego"),
-        enFullscreen: estaEnFullscreen(),
-        canvasRect: canvas.getBoundingClientRect(),
-        contenedorRect: contenedor.getBoundingClientRect(),
-        bodyOverflow: document.body.style.overflow,
-      };
-    },
     desbloquearScroll() {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
-      console.log("Scroll desbloqueado");
     },
   };
 })();
