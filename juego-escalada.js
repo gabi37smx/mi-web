@@ -8,6 +8,8 @@
    · Fase 3.6.2: navegación por teclado + foco visible en menús
    · Fase 4: paletas por skin (Topo / Omarchy / Minecraft / Matrix)
    · Fase 5: fullscreen + móvil + responsive + reduced-motion
+   · Fix fullscreen iOS + Android (visualViewport + safe-area + 100dvh)
+   · Fix: notranslate + watchdog scroll + ESC fullscreen limpio
    · Preparado para: campaña por el mundo (países + sitios de escalada)
    · Caída: quita 1 vida SOLO al tocar suelo, si la caída > 90 m
    ============================================================================ */
@@ -72,11 +74,14 @@
               document.msFullscreenElement);
   }
   function pedirFullscreen(el) {
-    const fn = el.requestFullscreen ||
-               el.webkitRequestFullscreen ||
-               el.mozRequestFullScreen ||
-               el.msRequestFullscreen;
-    if (fn) return fn.call(el);
+    if (el.requestFullscreen) {
+      return el.requestFullscreen({ navigationUI: "hide" }).catch(() => {
+        return el.requestFullscreen();
+      });
+    }
+    if (el.webkitRequestFullscreen) return Promise.resolve(el.webkitRequestFullscreen());
+    if (el.mozRequestFullScreen) return Promise.resolve(el.mozRequestFullScreen());
+    if (el.msRequestFullscreen) return Promise.resolve(el.msRequestFullscreen());
     return Promise.reject(new Error("Fullscreen no soportado"));
   }
   function salirFullscreen() {
@@ -86,6 +91,21 @@
                document.msExitFullscreen;
     if (fn) return fn.call(document);
     return Promise.reject(new Error("Exit fullscreen no soportado"));
+  }
+
+  // Ajusta la altura del contenedor en fullscreen con visualViewport
+  function ajustarAlturaFullscreen() {
+    if (!estaEnFullscreen()) {
+      if (contenedor) contenedor.style.removeProperty("--altura-juego");
+      return;
+    }
+    let h;
+    if (window.visualViewport && window.visualViewport.height) {
+      h = Math.round(window.visualViewport.height);
+    } else {
+      h = Math.round(window.innerHeight);
+    }
+    if (contenedor) contenedor.style.setProperty("--altura-juego", h + "px");
   }
 
   // ---------- Paletas por skin ----------
@@ -279,7 +299,6 @@
   };
 
   // ---------- Opciones de menú ----------
-  // Se generan dinámicamente porque "pantalla completa" depende del navegador.
   function opcionesMenuActual() {
     if (estado.modo === "menu") {
       const op = ["empezar", "instrucciones"];
@@ -332,34 +351,51 @@
   // ---------- Fullscreen: helpers ----------
   function entrarPantallaCompleta() {
     if (!fullscreenSoportado) return;
-    pedirFullscreen(contenedor).catch(() => {
-      // Si falla, no hacemos nada (algunos navegadores requieren gesto del usuario)
-    });
+    pedirFullscreen(contenedor)
+      .then(() => {
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock("portrait").catch(() => {});
+        }
+        ajustarAlturaFullscreen();
+      })
+      .catch(() => {});
   }
   function salirPantallaCompleta() {
-    if (!fullscreenSoportado) return;
-    salirFullscreen().catch(() => {});
+    if (!fullscreenSoportado) return Promise.resolve();
+    return salirFullscreen().finally(() => {
+      contenedor.style.removeProperty("--altura-juego");
+      // Limpieza por si el navegador deja overflow:hidden colgado
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    });
   }
-  // Refresca la opción activa cuando cambia el fullscreen (por si la lista cambia)
   function ajustarFocoTrasFullscreen() {
     const n = numOpciones();
     if (estado.opcionActiva >= n) estado.opcionActiva = Math.max(0, n - 1);
   }
-  ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((ev) => {
-    document.addEventListener(ev, () => {
-      ajustarFocoTrasFullscreen();
-    });
-  });
 
   // ---------- Bloqueo de scroll en móvil durante la partida ----------
   function actualizarBloqueoScroll() {
     const jugando = estado.modo === "jugando" || estado.modo === "confirmar-salida";
-    if (jugando) {
+    const visible = contenedor && contenedor.style.display !== "none" && document.body.contains(contenedor);
+    if (jugando && visible) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     }
   }
+
+  // Watchdog: si por lo que sea el body queda bloqueado y no estamos jugando, lo desbloquea.
+  // (evita que Google Translate u otra extensión deje la web sin scroll)
+  setInterval(() => {
+    const jugando = estado.modo === "jugando" || estado.modo === "confirmar-salida";
+    const visible = contenedor && contenedor.style.display !== "none" && document.body.contains(contenedor);
+    if ((!jugando || !visible) && document.body.style.overflow === "hidden") {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+  }, 1000);
 
   // ---------- Plataformas ----------
   function crearPlataformas() {
@@ -502,17 +538,18 @@
 
   // ---------- DOM ----------
   const contenedor = document.createElement("div");
-  contenedor.className = "juego-escalada";
+  contenedor.className = "juego-escalada notranslate";
+  contenedor.setAttribute("translate", "no");
   contenedor.innerHTML = `
     <button class="juego-escalada__salir-fullscreen" type="button" aria-label="Salir de pantalla completa" title="Salir de pantalla completa">✕</button>
-    <div class="juego-escalada__info">
+    <div class="juego-escalada__info notranslate" translate="no">
       <span>Altura: <strong id="je-altura">0</strong> m</span>
       <span>Fragmentos: <strong id="je-frags">0/0</strong></span>
       <span>Vidas: <strong id="je-vidas">♥♥♥</strong></span>
       <span>Récord: <strong id="je-record">0</strong> m</span>
     </div>
-    <canvas class="juego-escalada__canvas" width="${ANCHO}" height="${ALTO}"></canvas>
-    <div class="juego-escalada__controles">
+    <canvas class="juego-escalada__canvas notranslate" translate="no" width="${ANCHO}" height="${ALTO}"></canvas>
+    <div class="juego-escalada__controles notranslate" translate="no">
       <button class="juego-escalada__btn" data-accion="izquierda" aria-label="Izquierda">←</button>
       <button class="juego-escalada__btn" data-accion="salto" aria-label="Saltar">↑</button>
       <button class="juego-escalada__btn" data-accion="derecha" aria-label="Derecha">→</button>
@@ -545,6 +582,22 @@
   const observerSkin = new MutationObserver(() => { aplicarColoresHUD(); });
   observerSkin.observe(document.documentElement, { attributes: true, attributeFilter: ["data-skin"] });
 
+  // ---------- Fullscreen listeners ----------
+  ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((ev) => {
+    document.addEventListener(ev, () => {
+      ajustarFocoTrasFullscreen();
+      ajustarAlturaFullscreen();
+    });
+  });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", ajustarAlturaFullscreen);
+    window.visualViewport.addEventListener("scroll", ajustarAlturaFullscreen);
+  }
+  window.addEventListener("resize", ajustarAlturaFullscreen);
+  window.addEventListener("orientationchange", () => {
+    setTimeout(ajustarAlturaFullscreen, 150);
+  });
+
   // ---------- Teclado ----------
   document.addEventListener("keydown", (e) => {
     const enMenu = estado.modo === "menu" || estado.modo === "gameover" || estado.modo === "confirmar-salida";
@@ -576,8 +629,15 @@
     }
     if (e.key === "Escape") {
       e.preventDefault();
-      if (estaEnFullscreen()) salirPantallaCompleta();
-      else pedirConfirmacionSalida();
+      if (estaEnFullscreen()) {
+        salirPantallaCompleta().finally(() => {
+          document.body.style.overflow = "";
+          document.documentElement.style.overflow = "";
+          actualizarBloqueoScroll();
+        });
+      } else {
+        pedirConfirmacionSalida();
+      }
       return;
     }
     if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") { estado.teclas.izquierda = true; e.preventDefault(); }
@@ -1865,5 +1925,24 @@
     entrarFullscreen() { entrarPantallaCompleta(); },
     salirFullscreen() { salirPantallaCompleta(); },
     estaEnFullscreen,
+    infoViewport() {
+      return {
+        innerHeight: window.innerHeight,
+        innerWidth: window.innerWidth,
+        visualViewportHeight: window.visualViewport ? window.visualViewport.height : null,
+        visualViewportWidth: window.visualViewport ? window.visualViewport.width : null,
+        alturaJuegoCSS: contenedor.style.getPropertyValue("--altura-juego"),
+        enFullscreen: estaEnFullscreen(),
+        canvasRect: canvas.getBoundingClientRect(),
+        contenedorRect: contenedor.getBoundingClientRect(),
+        bodyOverflow: document.body.style.overflow,
+      };
+    },
+    // Útil si el scroll se queda bloqueado: llamar a mano desde consola
+    desbloquearScroll() {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      console.log("Scroll desbloqueado");
+    },
   };
 })();

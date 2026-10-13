@@ -2,11 +2,13 @@
    juego-escalada.css · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
    · Fase 5: responsive móvil + pantalla completa + reduced-motion
+   · Fix fullscreen iOS + Android (100dvh, visualViewport, safe-area)
+   · Fix HUD vertical 2x2 + notranslate (Google Translate)
    ============================================================================ */
 
 /* Contenedor principal (oculto por defecto hasta que se muestra desde la web) */
 .juego-escalada {
-  display: none;               /* Se pone a "flex" cuando arranca el juego */
+  display: none;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
@@ -16,19 +18,30 @@
   box-shadow: 4px 4px 0 var(--text);
   max-width: 640px;
   margin: 2rem auto;
-  position: relative;          /* para el botón flotante de fullscreen */
+  position: relative;
+  box-sizing: border-box;
 }
 
-/* En modo pantalla completa ocupamos todo */
+/* En modo pantalla completa ocupamos todo el viewport visible */
 .juego-escalada:fullscreen,
 .juego-escalada:-webkit-full-screen {
   max-width: none;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;                          /* fallback navegadores viejos */
+  height: 100dvh;                         /* dinámica: iOS 15.4+, Chrome 108+ */
+  height: var(--altura-juego, 100dvh);    /* sobreescribible por JS con visualViewport */
   margin: 0;
-  padding: 1rem;
-  justify-content: center;
+  padding: .5rem;
+  gap: .5rem;
+  justify-content: space-between;
   background: var(--bg);
+  overflow: hidden;
+  box-sizing: border-box;
+  /* Respeta notch / isla dinámica / punch-hole */
+  padding-top: max(.5rem, env(safe-area-inset-top));
+  padding-bottom: max(.5rem, env(safe-area-inset-bottom));
+  padding-left: max(.5rem, env(safe-area-inset-left));
+  padding-right: max(.5rem, env(safe-area-inset-right));
 }
 
 /* Canvas del juego */
@@ -45,12 +58,16 @@
   touch-action: none;
 }
 
-/* En pantalla completa el canvas puede crecer */
+/* En pantalla completa el canvas se adapta y nunca se sale */
 .juego-escalada:fullscreen .juego-escalada__canvas,
 .juego-escalada:-webkit-full-screen .juego-escalada__canvas {
-  max-width: none;
-  max-height: calc(100vh - 4rem);
+  flex: 1 1 auto;
+  min-height: 0;
   width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
   aspect-ratio: 3 / 4;
 }
 
@@ -120,6 +137,8 @@
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  top: max(.75rem, env(safe-area-inset-top));
+  right: max(.75rem, env(safe-area-inset-right));
 }
 
 .juego-escalada__salir-fullscreen:active {
@@ -127,7 +146,6 @@
   box-shadow: 0 0 0 var(--text);
 }
 
-/* Solo aparece cuando estamos en pantalla completa */
 .juego-escalada:fullscreen .juego-escalada__salir-fullscreen,
 .juego-escalada:-webkit-full-screen .juego-escalada__salir-fullscreen {
   display: flex;
@@ -136,10 +154,55 @@
 }
 
 /* ============================================================================
+   FULLSCREEN · Compactar HUD y controles
+   ============================================================================ */
+
+/* HUD en fullscreen: grid de 4 columnas (landscape) o 2x2 (portrait) */
+.juego-escalada:fullscreen .juego-escalada__info,
+.juego-escalada:-webkit-full-screen .juego-escalada__info {
+  padding: 0 .25rem;
+  font-size: .72rem;
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0 .25rem;
+  width: 100%;
+  text-align: center;
+  line-height: 1.15;
+}
+
+.juego-escalada:fullscreen .juego-escalada__info span,
+.juego-escalada:-webkit-full-screen .juego-escalada__info span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* En vertical (portrait) el HUD va en 2x2 compacto */
+@media (orientation: portrait) {
+  .juego-escalada:fullscreen .juego-escalada__info,
+  .juego-escalada:-webkit-full-screen .juego-escalada__info {
+    grid-template-columns: repeat(2, 1fr);
+    font-size: .72rem;
+  }
+}
+
+.juego-escalada:fullscreen .juego-escalada__controles,
+.juego-escalada:-webkit-full-screen .juego-escalada__controles {
+  flex: 0 0 auto;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.juego-escalada:fullscreen .juego-escalada__btn,
+.juego-escalada:-webkit-full-screen .juego-escalada__btn {
+  padding: .6rem .4rem;
+  font-size: 1.1rem;
+}
+
+/* ============================================================================
    RESPONSIVE · MÓVIL Y TABLET
    ============================================================================ */
 
-/* Móvil y tablet: mostrar botones táctiles */
 @media (max-width: 720px) {
   .juego-escalada {
     padding: .75rem .5rem;
@@ -169,7 +232,6 @@
   }
 }
 
-/* Móviles muy estrechos */
 @media (max-width: 420px) {
   .juego-escalada__info {
     font-size: .7rem;
@@ -184,7 +246,6 @@
   }
 }
 
-/* Móvil en apaisado (landscape) */
 @media (max-width: 900px) and (orientation: landscape) {
   .juego-escalada__canvas {
     max-height: 70vh;
