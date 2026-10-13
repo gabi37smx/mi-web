@@ -2,10 +2,12 @@
    juego-escalada.js · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
    · Fase 3.4: cofres + esqueletos + cráneos + monedas + petróleo
-   · Fase 3.5.1: sistema de pantallas (estructura + transición preparada)
+   · Fase 3.5.1: sistema de pantallas
+   · Fase 3.5.2: transición al llegar a 220 m
+   · Fase 3.5.3: grieta + aire libre (nubes, montañas, árboles, pájaros)
+   · Fase 3.5.4: pantalla 6+ procedural al azar entre tipos
+   · Fix: decoraciones hasta 220 m (4600 px)
    · Caída: quita 1 vida SOLO al tocar suelo, si la caída > 90 m
-   · Suelo sólido de lado a lado
-   · Último corazón en rojo
    ============================================================================ */
 
 (function juegoEscalada() {
@@ -41,28 +43,78 @@
   // Umbral de caída: si cae más de esto al tocar suelo, pierde vida
   const UMBRAL_CAIDA_PX = 1800; // 90 m
 
+  // Metros para cambiar de pantalla
+  const METROS_FIN_PANTALLA = 220;
+
+  // Rango vertical de decoración por pantalla (en px, ~ 230 m)
+  const DECO_RANGO = 4600;
+  const DECO_RANGO_OBJETO = 4200;
+  const DECO_RANGO_PEQUENO = 4000;
+
   // ---------- Tipos de pantalla ----------
   const TIPOS_PANTALLA = {
-    cueva:    { id: 1, nombre: "Cueva",      fondo: "#1a1410", techo: "#2e2620" },
-    grieta:   { id: 2, nombre: "Grieta",     fondo: "#2a1f18", techo: "#3a2e26" },
-    aire:     { id: 3, nombre: "Aire libre", fondo: "#87CEEB", techo: "#5a9ec9" },
-    infinito: { id: 4, nombre: "Infinito",   fondo: "#1a1410", techo: "#2e2620" },
+    cueva: {
+      id: 1, nombre: "Cueva",
+      fondo: "#1a1410",
+      fondo2: "#2e2620",
+      suelo: "#4a3a30",
+      sueloLuz: "#6a5545",
+      presa: "#5a4a3e",
+      presaLuz: "#8a7565",
+      decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"],
+    },
+    grieta: {
+      id: 2, nombre: "Grieta",
+      fondo: "#2a1f18",
+      fondo2: "#3a2e26",
+      suelo: "#5a4a3e",
+      sueloLuz: "#8a7565",
+      presa: "#6a5a4e",
+      presaLuz: "#9a8575",
+      decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"],
+    },
+    aire: {
+      id: 3, nombre: "Aire libre",
+      fondo: "#87CEEB",
+      fondo2: "#5a9ec9",
+      suelo: "#6a8a4a",
+      sueloLuz: "#8aaa6a",
+      presa: "#7a6a5a",
+      presaLuz: "#aa9a8a",
+      decoraciones: ["nube", "montana", "arbol", "pajaro"],
+    },
+    infinito: {
+      id: 4, nombre: "Infinito",
+      fondo: "#1a1410",
+      fondo2: "#2e2620",
+      suelo: "#4a3a30",
+      sueloLuz: "#6a5545",
+      presa: "#5a4a3e",
+      presaLuz: "#8a7565",
+      decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"],
+    },
   };
 
-  // Secuencia de pantallas (las 5 primeras fijas, luego infinito)
+  // Secuencia de pantallas (las 5 primeras fijas, luego al azar)
   const SECUENCIA_PANTALLAS = [
-    "cueva",    // Pantalla 1
-    "cueva",    // Pantalla 2
-    "grieta",   // Pantalla 3
-    "grieta",   // Pantalla 4
-    "aire",     // Pantalla 5
+    "cueva",
+    "cueva",
+    "grieta",
+    "grieta",
+    "aire",
   ];
 
   function tipoDePantalla(numero) {
     if (numero <= SECUENCIA_PANTALLAS.length) {
       return SECUENCIA_PANTALLAS[numero - 1];
     }
-    return "infinito";
+    // A partir de la pantalla 6: al azar entre todos los tipos
+    const tipos = ["cueva", "grieta", "aire", "infinito"];
+    return tipos[Math.floor(Math.random() * tipos.length)];
+  }
+
+  function tipoActual() {
+    return TIPOS_PANTALLA[estado.tipoPantalla] || TIPOS_PANTALLA.cueva;
   }
 
   // ---------- Conjuntos temáticos ----------
@@ -141,7 +193,6 @@
     estado.tipoPantalla = tipoDePantalla(estado.pantalla);
     const plats = [];
 
-    // Suelo sólido de lado a lado (el fondo de la pantalla)
     plats.push({ x: 0, y: SUELO_Y, ancho: ANCHO, alto: SUELO_ALTO, tipo: "suelo" });
 
     let y = -180;
@@ -165,7 +216,6 @@
       y -= separacionY;
     }
 
-    // Elegir 3 plataformas al azar
     const candidatas = plats.filter((p) => p.tipo === "presa");
     const indicesElegidos = [];
     while (indicesElegidos.length < FRAGMENTOS_POR_PANTALLA && indicesElegidos.length < candidatas.length) {
@@ -173,10 +223,8 @@
       if (!indicesElegidos.includes(idx)) indicesElegidos.push(idx);
     }
 
-    // Elegir conjunto temático al azar
     estado.conjuntoActual = CONJUNTOS[Math.floor(Math.random() * CONJUNTOS.length)];
 
-    // Asignar trozos del conjunto
     indicesElegidos.forEach((idx, i) => {
       candidatas[idx].tieneFragmento = true;
       candidatas[idx].fraseCodigo = estado.conjuntoActual.trozos[i];
@@ -185,7 +233,6 @@
 
     estado.plataformas = plats;
 
-    // Crear los objetos "fragmento" encima de las plataformas marcadas
     estado.fragmentos = [];
     candidatas.forEach((plat) => {
       if (plat.tieneFragmento) {
@@ -208,106 +255,193 @@
 
   // ---------- Decoraciones ----------
   function crearDecoraciones() {
+    const tipo = tipoActual();
+    const permitidas = tipo.decoraciones;
     const decor = [];
-    for (let i = 0; i < 30; i++) {
-      decor.push({
-        tipo: "estalactita",
-        x: Math.random() * ANCHO,
-        y: -Math.random() * 2200 - 100,
-        largo: 25 + Math.random() * 60,
-        ancho: 10 + Math.random() * 14,
-      });
+
+    function permitido(t) { return permitidas.indexOf(t) !== -1; }
+
+    // Cueva / infinito
+    if (permitido("estalactita")) {
+      for (let i = 0; i < 55; i++) {
+        decor.push({
+          tipo: "estalactita",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          largo: 25 + Math.random() * 60,
+          ancho: 10 + Math.random() * 14,
+        });
+      }
     }
-    for (let i = 0; i < 15; i++) {
-      decor.push({
-        tipo: "estalagmita",
-        x: Math.random() * ANCHO,
-        y: -Math.random() * 2200 - 100,
-        largo: 20 + Math.random() * 40,
-        ancho: 8 + Math.random() * 12,
-      });
+    if (permitido("estalagmita")) {
+      for (let i = 0; i < 30; i++) {
+        decor.push({
+          tipo: "estalagmita",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          largo: 20 + Math.random() * 40,
+          ancho: 8 + Math.random() * 12,
+        });
+      }
     }
-    for (let i = 0; i < 25; i++) {
-      decor.push({
-        tipo: "musgo",
-        x: Math.random() * ANCHO,
-        y: -Math.random() * 2200 - 100,
-        ancho: 40 + Math.random() * 60,
-        alto: 20 + Math.random() * 30,
-      });
+    if (permitido("musgo")) {
+      for (let i = 0; i < 45; i++) {
+        decor.push({
+          tipo: "musgo",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          ancho: 40 + Math.random() * 60,
+          alto: 20 + Math.random() * 30,
+        });
+      }
     }
-    for (let i = 0; i < 35; i++) {
-      decor.push({
-        tipo: "roca",
-        x: Math.random() * ANCHO,
-        y: -Math.random() * 2200 - 100,
-        ancho: 12 + Math.random() * 20,
-        alto: 10 + Math.random() * 16,
-      });
+    if (permitido("roca")) {
+      for (let i = 0; i < 60; i++) {
+        decor.push({
+          tipo: "roca",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          ancho: 12 + Math.random() * 20,
+          alto: 10 + Math.random() * 16,
+        });
+      }
     }
-    for (let i = 0; i < 20; i++) {
-      decor.push({
-        tipo: "gota",
-        x: Math.random() * ANCHO,
-        y: -Math.random() * 2200 - 100,
-        ancho: 3,
-        alto: 6,
-      });
+    if (permitido("gota")) {
+      for (let i = 0; i < 40; i++) {
+        decor.push({
+          tipo: "gota",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          ancho: 3,
+          alto: 6,
+        });
+      }
+    }
+    if (permitido("cofre")) {
+      for (let i = 0; i < 14; i++) {
+        decor.push({
+          tipo: "cofre",
+          x: 60 + Math.random() * (ANCHO - 120),
+          y: -300 - Math.random() * DECO_RANGO_OBJETO,
+          ancho: 34,
+          alto: 22,
+          abierto: Math.random() > 0.5,
+          tiempo: Math.random() * 6.28,
+        });
+      }
+    }
+    if (permitido("esqueleto")) {
+      for (let i = 0; i < 8; i++) {
+        decor.push({
+          tipo: "esqueleto",
+          x: 80 + Math.random() * (ANCHO - 200),
+          y: -400 - Math.random() * DECO_RANGO_PEQUENO,
+          ancho: 90 + Math.random() * 40,
+          alto: 50 + Math.random() * 20,
+        });
+      }
+    }
+    if (permitido("craneo")) {
+      for (let i = 0; i < 18; i++) {
+        decor.push({
+          tipo: "craneo",
+          x: 40 + Math.random() * (ANCHO - 80),
+          y: -350 - Math.random() * DECO_RANGO_OBJETO,
+          tam: 10 + Math.random() * 6,
+        });
+      }
+    }
+    if (permitido("moneda")) {
+      for (let i = 0; i < 24; i++) {
+        decor.push({
+          tipo: "moneda",
+          x: 40 + Math.random() * (ANCHO - 80),
+          y: -300 - Math.random() * DECO_RANGO_OBJETO,
+          tam: 6 + Math.random() * 4,
+          tiempo: Math.random() * 6.28,
+        });
+      }
+    }
+    if (permitido("petroleo")) {
+      for (let i = 0; i < 10; i++) {
+        decor.push({
+          tipo: "petroleo",
+          x: 80 + Math.random() * (ANCHO - 160),
+          y: -350 - Math.random() * DECO_RANGO_OBJETO,
+          ancho: 60 + Math.random() * 80,
+          alto: 14 + Math.random() * 10,
+        });
+      }
     }
 
-    // ▼ DECORACIONES ESPECIALES (Fase 3.4)
-
-    for (let i = 0; i < 8; i++) {
-      decor.push({
-        tipo: "cofre",
-        x: 60 + Math.random() * (ANCHO - 120),
-        y: -300 - Math.random() * 2000,
-        ancho: 34,
-        alto: 22,
-        abierto: Math.random() > 0.5,
-        tiempo: Math.random() * 6.28,
-      });
+    // Grieta
+    if (permitido("cristal")) {
+      for (let i = 0; i < 32; i++) {
+        decor.push({
+          tipo: "cristal",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          tam: 8 + Math.random() * 14,
+          tiempo: Math.random() * 6.28,
+        });
+      }
+    }
+    if (permitido("grieta-luz")) {
+      for (let i = 0; i < 22; i++) {
+        decor.push({
+          tipo: "grieta-luz",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          largo: 40 + Math.random() * 80,
+          ancho: 3 + Math.random() * 4,
+        });
+      }
     }
 
-    for (let i = 0; i < 4; i++) {
-      decor.push({
-        tipo: "esqueleto",
-        x: 80 + Math.random() * (ANCHO - 200),
-        y: -400 - Math.random() * 1900,
-        ancho: 90 + Math.random() * 40,
-        alto: 50 + Math.random() * 20,
-      });
+    // Aire libre
+    if (permitido("nube")) {
+      for (let i = 0; i < 28; i++) {
+        decor.push({
+          tipo: "nube",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          ancho: 60 + Math.random() * 80,
+          alto: 20 + Math.random() * 20,
+          vel: 0.2 + Math.random() * 0.4,
+        });
+      }
     }
-
-    for (let i = 0; i < 10; i++) {
-      decor.push({
-        tipo: "craneo",
-        x: 40 + Math.random() * (ANCHO - 80),
-        y: -350 - Math.random() * 2000,
-        tam: 10 + Math.random() * 6,
-      });
+    if (permitido("montana")) {
+      for (let i = 0; i < 16; i++) {
+        decor.push({
+          tipo: "montana",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          ancho: 120 + Math.random() * 100,
+          alto: 80 + Math.random() * 60,
+        });
+      }
     }
-
-    for (let i = 0; i < 14; i++) {
-      decor.push({
-        tipo: "moneda",
-        x: 40 + Math.random() * (ANCHO - 80),
-        y: -300 - Math.random() * 2000,
-        tam: 6 + Math.random() * 4,
-        tiempo: Math.random() * 6.28,
-      });
+    if (permitido("arbol")) {
+      for (let i = 0; i < 36; i++) {
+        decor.push({
+          tipo: "arbol",
+          x: 20 + Math.random() * (ANCHO - 40),
+          y: -Math.random() * DECO_RANGO - 100,
+          alto: 40 + Math.random() * 40,
+        });
+      }
     }
-
-    for (let i = 0; i < 6; i++) {
-      decor.push({
-        tipo: "petroleo",
-        x: 80 + Math.random() * (ANCHO - 160),
-        y: -350 - Math.random() * 2000,
-        ancho: 60 + Math.random() * 80,
-        alto: 14 + Math.random() * 10,
-      });
+    if (permitido("pajaro")) {
+      for (let i = 0; i < 24; i++) {
+        decor.push({
+          tipo: "pajaro",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          tiempo: Math.random() * 10,
+        });
+      }
     }
-    // ▲ FIN DECORACIONES ESPECIALES
 
     estado.decoraciones = decor;
   }
@@ -497,7 +631,8 @@
     ctx.font = "bold 36px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("PANTALLA " + estado.pantalla, ANCHO / 2, ALTO / 2);
+    const tipo = TIPOS_PANTALLA[estado.tipoPantalla] || TIPOS_PANTALLA.cueva;
+    ctx.fillText("PANTALLA " + estado.pantalla + " · " + tipo.nombre, ANCHO / 2, ALTO / 2);
     ctx.textAlign = "start";
     ctx.textBaseline = "alphabetic";
   }
@@ -701,6 +836,13 @@
     const objetivo = p.y - ALTO * 0.4;
     estado.camara.y += (objetivo - estado.camara.y) * 0.15;
     if (estado.camara.y > CAMARA_INICIAL) estado.camara.y = CAMARA_INICIAL;
+
+    // Detección de fin de pantalla
+    const alturaActual = Math.max(0, Math.round((Y_SUELO_JUGABLE - p.y) / PX_POR_METRO));
+    if (alturaActual >= METROS_FIN_PANTALLA) {
+      iniciarTransicion();
+      return;
+    }
 
     // Altura y récord
     const altura = Math.max(0, Math.round((Y_SUELO_JUGABLE - p.y) / PX_POR_METRO));
@@ -983,31 +1125,33 @@
 
   // ---------- Fondo ----------
   function dibujarFondo() {
-    const tipo = TIPOS_PANTALLA[estado.tipoPantalla] || TIPOS_PANTALLA.cueva;
+    const tipo = tipoActual();
 
     ctx.fillStyle = tipo.fondo;
     ctx.fillRect(0, 0, ANCHO, ALTO);
 
     const camY = estado.camara.y;
-    for (let i = 0; i < 25; i++) {
-      const x = (i * 37) % ANCHO;
-      const yBase = ((i * 91) % 400) - 400;
-      ctx.fillStyle = "rgba(90, 70, 55, 0.35)";
-      ctx.fillRect(x, yBase - camY, 2, ALTO + 400);
-    }
 
-    for (let i = 0; i < 40; i++) {
-      const x = (i * 173) % ANCHO;
-      const y = ((i * 213) % 2400) - 2400 - camY;
-      if (y > -80 && y < ALTO + 80) {
-        ctx.fillStyle = "rgba(60, 45, 35, 0.5)";
-        ctx.fillRect(x, y, 5, 5);
+    if (estado.tipoPantalla !== "aire") {
+      for (let i = 0; i < 25; i++) {
+        const x = (i * 37) % ANCHO;
+        const yBase = ((i * 91) % 400) - 400;
+        ctx.fillStyle = "rgba(90, 70, 55, 0.35)";
+        ctx.fillRect(x, yBase - camY, 2, ALTO + 400);
+      }
+      for (let i = 0; i < 40; i++) {
+        const x = (i * 173) % ANCHO;
+        const y = ((i * 213) % 2400) - 2400 - camY;
+        if (y > -80 && y < ALTO + 80) {
+          ctx.fillStyle = "rgba(60, 45, 35, 0.5)";
+          ctx.fillRect(x, y, 5, 5);
+        }
       }
     }
 
     for (const d of estado.decoraciones) {
       const dy = d.y - camY;
-      if (dy + 120 < 0 || dy - 120 > ALTO) continue;
+      if (dy + 200 < 0 || dy - 200 > ALTO) continue;
 
       if (d.tipo === "estalactita") {
         ctx.fillStyle = "#2e2620";
@@ -1162,14 +1306,93 @@
         ctx.beginPath();
         ctx.ellipse(d.x + d.ancho * 0.2, dy + 2, d.ancho * 0.2, d.alto * 0.2, 0, 0, Math.PI * 2);
         ctx.fill();
+
+      } else if (d.tipo === "cristal") {
+        const brillo = 0.5 + Math.sin(Date.now() / 400 + d.tiempo) * 0.5;
+        ctx.fillStyle = "rgba(180, 220, 255, " + (0.6 + brillo * 0.4) + ")";
+        ctx.beginPath();
+        ctx.moveTo(d.x, dy - d.tam);
+        ctx.lineTo(d.x + d.tam * 0.6, dy);
+        ctx.lineTo(d.x, dy + d.tam);
+        ctx.lineTo(d.x - d.tam * 0.6, dy);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "rgba(255, 255, 255, " + (brillo * 0.6) + ")";
+        ctx.beginPath();
+        ctx.moveTo(d.x, dy - d.tam * 0.6);
+        ctx.lineTo(d.x + d.tam * 0.25, dy - d.tam * 0.1);
+        ctx.lineTo(d.x, dy + d.tam * 0.2);
+        ctx.closePath();
+        ctx.fill();
+
+      } else if (d.tipo === "grieta-luz") {
+        const pulso = 0.5 + Math.sin(Date.now() / 500 + d.x) * 0.5;
+        ctx.fillStyle = "rgba(255, 230, 150, " + (0.2 + pulso * 0.3) + ")";
+        ctx.fillRect(d.x, dy, d.ancho, d.largo);
+        ctx.fillStyle = "rgba(255, 250, 200, " + (0.4 + pulso * 0.4) + ")";
+        ctx.fillRect(d.x, dy, d.ancho, d.largo * 0.4);
+        ctx.fillStyle = "rgba(255, 255, 255, " + (0.6 + pulso * 0.4) + ")";
+        ctx.fillRect(d.x + 1, dy + d.largo * 0.1, 1, d.largo * 0.2);
+
+      } else if (d.tipo === "nube") {
+        d.x += d.vel * 0.3;
+        if (d.x > ANCHO + 100) d.x = -100;
+        ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+        ctx.beginPath();
+        ctx.ellipse(d.x, dy, d.ancho / 2, d.alto / 2, 0, 0, Math.PI * 2);
+        ctx.ellipse(d.x + d.ancho * 0.25, dy - d.alto * 0.15, d.ancho * 0.35, d.alto * 0.4, 0, 0, Math.PI * 2);
+        ctx.ellipse(d.x - d.ancho * 0.25, dy - d.alto * 0.1, d.ancho * 0.3, d.alto * 0.35, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+      } else if (d.tipo === "montana") {
+        ctx.fillStyle = "rgba(90, 110, 130, 0.7)";
+        ctx.beginPath();
+        ctx.moveTo(d.x - d.ancho / 2, dy + d.alto / 2);
+        ctx.lineTo(d.x, dy - d.alto / 2);
+        ctx.lineTo(d.x + d.ancho / 2, dy + d.alto / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+        ctx.beginPath();
+        ctx.moveTo(d.x - d.ancho * 0.12, dy - d.alto * 0.15);
+        ctx.lineTo(d.x, dy - d.alto / 2);
+        ctx.lineTo(d.x + d.ancho * 0.12, dy - d.alto * 0.15);
+        ctx.closePath();
+        ctx.fill();
+
+      } else if (d.tipo === "arbol") {
+        ctx.fillStyle = "#5a3a1a";
+        ctx.fillRect(d.x - 2, dy, 4, d.alto * 0.4);
+        ctx.fillStyle = "#2a6a2a";
+        ctx.beginPath();
+        ctx.arc(d.x, dy, d.alto * 0.35, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#3a8a3a";
+        ctx.beginPath();
+        ctx.arc(d.x - d.alto * 0.1, dy - d.alto * 0.1, d.alto * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+
+      } else if (d.tipo === "pajaro") {
+        d.tiempo += 0.15;
+        const aleteo = Math.sin(d.tiempo * 3) * 3;
+        ctx.strokeStyle = "rgba(30, 30, 30, 0.8)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(d.x - 6, dy + aleteo, 6, Math.PI, 0);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(d.x + 6, dy - aleteo, 6, Math.PI, 0);
+        ctx.stroke();
       }
     }
 
-    const grad = ctx.createRadialGradient(ANCHO / 2, ALTO / 2, 150, ANCHO / 2, ALTO / 2, ANCHO);
-    grad.addColorStop(0, "rgba(0,0,0,0)");
-    grad.addColorStop(1, "rgba(0,0,0,0.5)");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, ANCHO, ALTO);
+    if (estado.tipoPantalla !== "aire") {
+      const grad = ctx.createRadialGradient(ANCHO / 2, ALTO / 2, 150, ANCHO / 2, ALTO / 2, ANCHO);
+      grad.addColorStop(0, "rgba(0,0,0,0)");
+      grad.addColorStop(1, "rgba(0,0,0,0.5)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, ANCHO, ALTO);
+    }
   }
 
   // ---------- Render ----------
@@ -1177,6 +1400,7 @@
     dibujarFondo();
 
     const p = estado.personaje;
+    const tipo = tipoActual();
 
     let siguientePresa = null;
     let distMin = Infinity;
@@ -1195,13 +1419,13 @@
       ctx.fillRect(plat.x + 4, py + 4, plat.ancho, plat.alto);
 
       if (plat.tipo === "suelo") {
-        ctx.fillStyle = "#4a3a30";
+        ctx.fillStyle = tipo.suelo;
         ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
-        ctx.fillStyle = "#6a5545";
+        ctx.fillStyle = tipo.sueloLuz;
         ctx.fillRect(plat.x, py, plat.ancho, 4);
       } else {
         const radio = 10;
-        ctx.fillStyle = "#5a4a3e";
+        ctx.fillStyle = tipo.presa;
         ctx.beginPath();
         ctx.moveTo(plat.x + radio, py);
         ctx.lineTo(plat.x + plat.ancho - radio, py);
@@ -1214,7 +1438,7 @@
         ctx.quadraticCurveTo(plat.x, py, plat.x + radio, py);
         ctx.fill();
 
-        ctx.fillStyle = "#8a7565";
+        ctx.fillStyle = tipo.presaLuz;
         ctx.fillRect(plat.x + radio, py, plat.ancho - radio * 2, 3);
 
         if ((plat.x + plat.y) % 3 === 0) {
