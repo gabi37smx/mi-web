@@ -8,7 +8,7 @@
 
 /* Contenedor principal (oculto por defecto hasta que se muestra desde la web) */
 .juego-escalada {
-  display: none;
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;

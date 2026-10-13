@@ -10,6 +10,7 @@
    · Fase 5: fullscreen + móvil + responsive + reduced-motion
    · Fix fullscreen iOS + Android (visualViewport + safe-area + 100dvh)
    · Fix: notranslate + watchdog scroll + ESC fullscreen limpio
+   · Fase 6: integrado en la sección #juego (visible, no oculto)
    · Preparado para: campaña por el mundo (países + sitios de escalada)
    · Caída: quita 1 vida SOLO al tocar suelo, si la caída > 90 m
    ============================================================================ */
@@ -93,7 +94,6 @@
     return Promise.reject(new Error("Exit fullscreen no soportado"));
   }
 
-  // Ajusta la altura del contenedor en fullscreen con visualViewport
   function ajustarAlturaFullscreen() {
     if (!estaEnFullscreen()) {
       if (contenedor) contenedor.style.removeProperty("--altura-juego");
@@ -364,7 +364,6 @@
     if (!fullscreenSoportado) return Promise.resolve();
     return salirFullscreen().finally(() => {
       contenedor.style.removeProperty("--altura-juego");
-      // Limpieza por si el navegador deja overflow:hidden colgado
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     });
@@ -386,8 +385,6 @@
     }
   }
 
-  // Watchdog: si por lo que sea el body queda bloqueado y no estamos jugando, lo desbloquea.
-  // (evita que Google Translate u otra extensión deje la web sin scroll)
   setInterval(() => {
     const jugando = estado.modo === "jugando" || estado.modo === "confirmar-salida";
     const visible = contenedor && contenedor.style.display !== "none" && document.body.contains(contenedor);
@@ -555,7 +552,17 @@
       <button class="juego-escalada__btn" data-accion="derecha" aria-label="Derecha">→</button>
     </div>
   `;
-  document.body.appendChild(contenedor);
+
+  // ▼▼▼ FASE 6 · Montar el juego dentro de #juego-root si existe ▼▼▼
+  const raizJuego = document.getElementById("juego-root");
+  if (raizJuego) {
+    raizJuego.appendChild(contenedor);
+    contenedor.style.display = "flex";
+  } else {
+    document.body.appendChild(contenedor);
+    contenedor.style.display = "flex";
+  }
+  // ▲▲▲ FIN FASE 6 ▲▲▲
 
   const canvas = contenedor.querySelector(".juego-escalada__canvas");
   const ctx = canvas.getContext("2d");
@@ -1913,7 +1920,6 @@
       crearPlataformas();
       crearDecoraciones();
       crearMurcielagos();
-      contenedor.style.display = "flex";
       actualizarBloqueoScroll();
       console.log("Saltado a P" + numero + " · tipo: " + estado.tipoPantalla + " · skin: " + skinActual());
     },
@@ -1938,7 +1944,6 @@
         bodyOverflow: document.body.style.overflow,
       };
     },
-    // Útil si el scroll se queda bloqueado: llamar a mano desde consola
     desbloquearScroll() {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
