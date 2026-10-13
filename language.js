@@ -411,6 +411,7 @@
     // ▼ NUEVO: textos del vídeo demo "Así trabajo" (Tutorial 4 · Paso 5)
     ["Así trabajo: le pido una mejora a la IA, la integro en mi web y compruebo el resultado. 30 segundos, sin cortes.", "Així treballe: li demane una millora a la IA, la integre en la meua web i comprove el resultat. 30 segons, sense talls.", "How I work: I ask the AI for an improvement, integrate it into my site and check the result. 30 seconds, no cuts."],
     ["Demostración de 30 segundos: le pido una mejora a la IA, la pego en mi web y compruebo el resultado", "Demostració de 30 segons: li demane una millora a la IA, la pegue en la meua web i comprove el resultat", "30-second demo: I ask the AI for an improvement, paste it into my site and check the result"],
+    ['Juego "Vía al Cielo" creado por Gabriel Vidal Badia · v:70.0', 'Joc "Via al Cel" creat per Gabriel Vidal Badia · v:70.0', '"Path to the Sky" game created by Gabriel Vidal Badia · v:70.0'],
   ];
 
   const normalize = (text) => text.replace(/\s+/g, " ").trim();
@@ -484,4 +485,5 @@
   languageSelect?.addEventListener("change", () => {
     applyLanguage(languageSelect.value);
   });
+  
 })();

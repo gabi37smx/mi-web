@@ -4,9 +4,10 @@
    · Fase 5: responsive móvil + pantalla completa + reduced-motion
    · Fix fullscreen iOS + Android (100dvh, visualViewport, safe-area)
    · Fix HUD vertical 2x2 + notranslate (Google Translate)
+   · Fase 7: pie del HUD con créditos
    ============================================================================ */
 
-/* Contenedor principal (oculto por defecto hasta que se muestra desde la web) */
+/* Contenedor principal */
 .juego-escalada {
   display: flex;
   flex-direction: column;
@@ -27,9 +28,9 @@
 .juego-escalada:-webkit-full-screen {
   max-width: none;
   width: 100vw;
-  height: 100vh;                          /* fallback navegadores viejos */
-  height: 100dvh;                         /* dinámica: iOS 15.4+, Chrome 108+ */
-  height: var(--altura-juego, 100dvh);    /* sobreescribible por JS con visualViewport */
+  height: 100vh;
+  height: 100dvh;
+  height: var(--altura-juego, 100dvh);
   margin: 0;
   padding: .5rem;
   gap: .5rem;
@@ -37,7 +38,6 @@
   background: var(--bg);
   overflow: hidden;
   box-sizing: border-box;
-  /* Respeta notch / isla dinámica / punch-hole */
   padding-top: max(.5rem, env(safe-area-inset-top));
   padding-bottom: max(.5rem, env(safe-area-inset-bottom));
   padding-left: max(.5rem, env(safe-area-inset-left));
@@ -58,7 +58,7 @@
   touch-action: none;
 }
 
-/* En pantalla completa el canvas se adapta y nunca se sale */
+/* En pantalla completa el canvas se adapta */
 .juego-escalada:fullscreen .juego-escalada__canvas,
 .juego-escalada:-webkit-full-screen .juego-escalada__canvas {
   flex: 1 1 auto;
@@ -86,6 +86,19 @@
 
 .juego-escalada__info strong {
   font-weight: 700;
+}
+
+/* Pie del HUD (créditos) */
+.juego-escalada__footer {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: .7rem;
+  color: var(--muted);
+  opacity: .7;
+  margin-top: .25rem;
+  letter-spacing: .02em;
 }
 
 /* Botones de control (móvil) */
@@ -154,10 +167,9 @@
 }
 
 /* ============================================================================
-   FULLSCREEN · Compactar HUD y controles
+   FULLSCREEN · Compactar HUD, controles y ocultar pie de créditos
    ============================================================================ */
 
-/* HUD en fullscreen: grid de 4 columnas (landscape) o 2x2 (portrait) */
 .juego-escalada:fullscreen .juego-escalada__info,
 .juego-escalada:-webkit-full-screen .juego-escalada__info {
   padding: 0 .25rem;
@@ -178,7 +190,6 @@
   text-overflow: ellipsis;
 }
 
-/* En vertical (portrait) el HUD va en 2x2 compacto */
 @media (orientation: portrait) {
   .juego-escalada:fullscreen .juego-escalada__info,
   .juego-escalada:-webkit-full-screen .juego-escalada__info {
@@ -197,6 +208,12 @@
 .juego-escalada:-webkit-full-screen .juego-escalada__btn {
   padding: .6rem .4rem;
   font-size: 1.1rem;
+}
+
+/* El pie de créditos se oculta en fullscreen (para no robar sitio al canvas) */
+.juego-escalada:fullscreen .juego-escalada__footer,
+.juego-escalada:-webkit-full-screen .juego-escalada__footer {
+  display: none;
 }
 
 /* ============================================================================
@@ -243,6 +260,9 @@
   .juego-escalada__btn {
     font-size: 1.4rem;
     padding: 1rem .25rem;
+  }
+  .juego-escalada__footer {
+    font-size: .65rem;
   }
 }
 

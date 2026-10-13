@@ -8,11 +8,8 @@
    · Fase 3.6.2: navegación por teclado + foco visible en menús
    · Fase 4: paletas por skin (Topo / Omarchy / Minecraft / Matrix)
    · Fase 5: fullscreen + móvil + responsive + reduced-motion
-   · Fix fullscreen iOS + Android (visualViewport + safe-area + 100dvh)
-   · Fix: notranslate + watchdog scroll + ESC fullscreen limpio
    · Fase 6: integrado en la sección #juego (visible, no oculto)
-   · Preparado para: campaña por el mundo (países + sitios de escalada)
-   · Caída: quita 1 vida SOLO al tocar suelo, si la caída > 90 m
+   · Fase 7: traducción ES/VA/EN + créditos + pie del HUD
    ============================================================================ */
 
 (function juegoEscalada() {
@@ -20,6 +17,290 @@
 
   if (window.__juegoEscaladaCargado) return;
   window.__juegoEscaladaCargado = true;
+
+  // ============================================================================
+  // i18n · Traducciones del juego (ES / VA / EN)
+  // ============================================================================
+  const TRADUCCIONES = {
+    es: {
+      // HUD
+      hud_altura: "Altura",
+      hud_fragmentos: "Fragmentos",
+      hud_vidas: "Vidas",
+      hud_record: "Récord",
+      hud_m: "m",
+      hud_p: "P",
+
+      // Menú
+      menu_titulo: "VÍA AL CIELO",
+      menu_subtitulo: "Un juego de escalada vertical",
+      menu_record: "Récord",
+      menu_empezar: "▶  EMPEZAR",
+      menu_instrucciones: "?  CÓMO JUGAR",
+      menu_creditos: "★  CRÉDITOS",
+      menu_fullscreen: "⛶  PANTALLA COMPLETA",
+      menu_ayuda: "↑↓ / Tab para moverte · ENTER para elegir",
+
+      // Instrucciones
+      inst_titulo: "CÓMO JUGAR",
+      inst_lineas: [
+        "MOVER:    ← →  o  A / D",
+        "SALTAR:   ESPACIO  o  ↑  o  W",
+        "DOBLE SALTO: pulsa salto otra vez en el aire",
+        "SALIR:    ESC (pregunta si quieres salir)",
+        "FULLSCREEN: F o botón ⛶ en el menú",
+        "",
+        "OBJETIVO:",
+        "· Sube lo más alto posible",
+        "· Coge los 3 fragmentos de código de cada pantalla",
+        "· Si coges los 3, ganas 1 vida (máx. 5)",
+        "",
+        "VIDAS:",
+        "· Empiezas con 3 vidas",
+        "· Caída > 90 m → pierdes 1 vida",
+        "· 0 vidas → Game Over",
+        "",
+        "PANTALLAS:",
+        "· Cada 220 m cambias de pantalla",
+        "· Hay 4 ambientes distintos",
+      ],
+      inst_volver: "Pulsa ENTER o ESC para volver",
+
+      // Créditos
+      cred_titulo: "CRÉDITOS",
+      cred_juego: "VÍA AL CIELO",
+      cred_subtitulo: "Un juego de escalada vertical",
+      cred_creado: "Creado por",
+      cred_autor: "Gabriel Vidal Badia",
+      cred_hecho: "Hecho con HTML, CSS y JavaScript puros",
+      cred_inspirado: "Inspirado en Minecraft, la escalada y Matrix",
+      cred_gracias: "Gracias por jugar",
+      cred_version: "Versión",
+      cred_volver: "Pulsa ENTER o ESC para volver",
+
+      // Game Over
+      go_titulo: "GAME OVER",
+      go_resumen: "RESUMEN",
+      go_altura_max: "Altura máxima",
+      go_fragmentos: "Fragmentos",
+      go_pantalla: "Pantalla",
+      go_record: "Récord",
+      go_nuevo_record: "¡NUEVO RÉCORD!",
+      go_reintentar: "↻  REINTENTAR",
+      go_menu: "←  MENÚ",
+      go_fullscreen: "⛶  PANTALLA COMPLETA",
+
+      // Confirmar salida
+      salir_titulo: "¿SALIR DE LA PARTIDA?",
+      salir_msg1: "Perderás el progreso de esta partida.",
+      salir_msg2: "¿Seguro que quieres salir al menú?",
+      salir_si: "SÍ (S)",
+      salir_no: "NO (N)",
+      salir_fullscreen: "⛶  SALIR PANTALLA COMPLETA",
+      salir_ayuda: "↑↓ / Tab para moverte · ENTER para elegir",
+
+      // Transición
+      pantalla: "PANTALLA",
+      pantalla_cueva: "Cueva",
+      pantalla_grieta: "Grieta",
+      pantalla_aire: "Aire libre",
+      pantalla_infinito: "Infinito",
+
+      // Pie del HUD
+      pie: "Vía al Cielo · v:70.0 · por Gabriel Vidal Badia",
+    },
+    val: {
+      // HUD
+      hud_altura: "Alçada",
+      hud_fragmentos: "Fragments",
+      hud_vidas: "Vides",
+      hud_record: "Rècord",
+      hud_m: "m",
+      hud_p: "P",
+
+      // Menú
+      menu_titulo: "VIA AL CEL",
+      menu_subtitulo: "Un joc d'escalada vertical",
+      menu_record: "Rècord",
+      menu_empezar: "▶  COMENÇAR",
+      menu_instrucciones: "?  COM JUGAR",
+      menu_creditos: "★  CRÈDITS",
+      menu_fullscreen: "⛶  PANTALLA COMPLETA",
+      menu_ayuda: "↑↓ / Tab per moure't · ENTER per triar",
+
+      // Instrucciones
+      inst_titulo: "COM JUGAR",
+      inst_lineas: [
+        "MOURE:    ← →  o  A / D",
+        "SALTAR:   ESPAI  o  ↑  o  W",
+        "DOBLE SALT: prem salt una altra volta en l'aire",
+        "EIXIR:    ESC (pregunta si vols eixir)",
+        "FULLSCREEN: F o botó ⛶ al menú",
+        "",
+        "OBJECTIU:",
+        "· Puja el més alt possible",
+        "· Agafa els 3 fragments de codi de cada pantalla",
+        "· Si n'agafes els 3, guanyes 1 vida (màx. 5)",
+        "",
+        "VIDES:",
+        "· Comences amb 3 vides",
+        "· Caiguda > 90 m → perds 1 vida",
+        "· 0 vides → Game Over",
+        "",
+        "PANTALLES:",
+        "· Cada 220 m canvies de pantalla",
+        "· Hi ha 4 ambients diferents",
+      ],
+      inst_volver: "Prem ENTER o ESC per a tornar",
+
+      // Créditos
+      cred_titulo: "CRÈDITS",
+      cred_juego: "VIA AL CEL",
+      cred_subtitulo: "Un joc d'escalada vertical",
+      cred_creado: "Creat per",
+      cred_autor: "Gabriel Vidal Badia",
+      cred_hecho: "Fet amb HTML, CSS i JavaScript purs",
+      cred_inspirado: "Inspirat en Minecraft, l'escalada i Matrix",
+      cred_gracias: "Gràcies per jugar",
+      cred_version: "Versió",
+      cred_volver: "Prem ENTER o ESC per a tornar",
+
+      // Game Over
+      go_titulo: "GAME OVER",
+      go_resumen: "RESUM",
+      go_altura_max: "Alçada màxima",
+      go_fragmentos: "Fragments",
+      go_pantalla: "Pantalla",
+      go_record: "Rècord",
+      go_nuevo_record: "NOU RÈCORD!",
+      go_reintentar: "↻  REINTENTAR",
+      go_menu: "←  MENÚ",
+      go_fullscreen: "⛶  PANTALLA COMPLETA",
+
+      // Confirmar salida
+      salir_titulo: "EIXIR DE LA PARTIDA?",
+      salir_msg1: "Perdràs el progrés d'esta partida.",
+      salir_msg2: "Segur que vols eixir al menú?",
+      salir_si: "SÍ (S)",
+      salir_no: "NO (N)",
+      salir_fullscreen: "⛶  EIXIR PANTALLA COMPLETA",
+      salir_ayuda: "↑↓ / Tab per moure't · ENTER per triar",
+
+      // Transición
+      pantalla: "PANTALLA",
+      pantalla_cueva: "Cova",
+      pantalla_grieta: "Esquerda",
+      pantalla_aire: "Aire lliure",
+      pantalla_infinito: "Infinit",
+
+      // Pie del HUD
+      pie: "Via al Cel · v:70.0 · per Gabriel Vidal Badia",
+    },
+    en: {
+      // HUD
+      hud_altura: "Height",
+      hud_fragmentos: "Fragments",
+      hud_vidas: "Lives",
+      hud_record: "Record",
+      hud_m: "m",
+      hud_p: "P",
+
+      // Menú
+      menu_titulo: "PATH TO THE SKY",
+      menu_subtitulo: "A vertical climbing game",
+      menu_record: "Record",
+      menu_empezar: "▶  START",
+      menu_instrucciones: "?  HOW TO PLAY",
+      menu_creditos: "★  CREDITS",
+      menu_fullscreen: "⛶  FULLSCREEN",
+      menu_ayuda: "↑↓ / Tab to move · ENTER to choose",
+
+      // Instrucciones
+      inst_titulo: "HOW TO PLAY",
+      inst_lineas: [
+        "MOVE:     ← →  or  A / D",
+        "JUMP:     SPACE  or  ↑  or  W",
+        "DOUBLE JUMP: press jump again in mid-air",
+        "QUIT:     ESC (asks if you want to quit)",
+        "FULLSCREEN: F or the ⛶ button in the menu",
+        "",
+        "GOAL:",
+        "· Climb as high as you can",
+        "· Collect the 3 code fragments on each screen",
+        "· If you get all 3, you earn 1 life (max. 5)",
+        "",
+        "LIVES:",
+        "· You start with 3 lives",
+        "· Fall > 90 m → lose 1 life",
+        "· 0 lives → Game Over",
+        "",
+        "SCREENS:",
+        "· Every 220 m you change screen",
+        "· There are 4 different environments",
+      ],
+      inst_volver: "Press ENTER or ESC to go back",
+
+      // Credits
+      cred_titulo: "CREDITS",
+      cred_juego: "PATH TO THE SKY",
+      cred_subtitulo: "A vertical climbing game",
+      cred_creado: "Created by",
+      cred_autor: "Gabriel Vidal Badia",
+      cred_hecho: "Made with plain HTML, CSS and JavaScript",
+      cred_inspirado: "Inspired by Minecraft, climbing and Matrix",
+      cred_gracias: "Thanks for playing",
+      cred_version: "Version",
+      cred_volver: "Press ENTER or ESC to go back",
+
+      // Game Over
+      go_titulo: "GAME OVER",
+      go_resumen: "SUMMARY",
+      go_altura_max: "Max height",
+      go_fragmentos: "Fragments",
+      go_pantalla: "Screen",
+      go_record: "Record",
+      go_nuevo_record: "NEW RECORD!",
+      go_reintentar: "↻  RETRY",
+      go_menu: "←  MENU",
+      go_fullscreen: "⛶  FULLSCREEN",
+
+      // Confirmar salida
+      salir_titulo: "QUIT THE GAME?",
+      salir_msg1: "You'll lose your progress in this run.",
+      salir_msg2: "Are you sure you want to return to the menu?",
+      salir_si: "YES (Y)",
+      salir_no: "NO (N)",
+      salir_fullscreen: "⛶  EXIT FULLSCREEN",
+      salir_ayuda: "↑↓ / Tab to move · ENTER to choose",
+
+      // Transición
+      pantalla: "SCREEN",
+      pantalla_cueva: "Cave",
+      pantalla_grieta: "Crevice",
+      pantalla_aire: "Open air",
+      pantalla_infinito: "Infinite",
+
+      // Pie del HUD
+      pie: "Path to the Sky · v:70.0 · by Gabriel Vidal Badia",
+    },
+  };
+
+  // ---------- Idioma ----------
+  function idiomaActual() {
+    try {
+      const ls = localStorage.getItem("language");
+      if (ls === "es" || ls === "val" || ls === "en") return ls;
+    } catch (e) {}
+    const htmlLang = document.documentElement.getAttribute("lang") || "";
+    if (htmlLang.startsWith("ca")) return "val";
+    if (htmlLang.startsWith("en")) return "en";
+    return "es";
+  }
+  function tx(clave) {
+    const idioma = idiomaActual();
+    const paquete = TRADUCCIONES[idioma] || TRADUCCIONES.es;
+    return paquete[clave] != null ? paquete[clave] : (TRADUCCIONES.es[clave] || clave);
+  }
 
   // ---------- Configuración ----------
   const ANCHO = 600;
@@ -228,19 +509,20 @@
   }
 
   // ---------- Tipos de pantalla ----------
+  // El nombre se resuelve con tx("pantalla_" + tipo) para traducirlo.
   const TIPOS_PANTALLA = {
-    cueva: { id: 1, nombre: "Cueva", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true },
-    grieta: { id: 2, nombre: "Grieta", decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"], murcielagos: 15, vinyetaFuerte: true },
-    aire: { id: 3, nombre: "Aire libre", decoraciones: ["nube", "montana", "arbol", "pajaro", "aguila"], murcielagos: 0, vinyetaFuerte: false },
-    infinito: { id: 4, nombre: "Infinito", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true },
+    cueva: { id: 1, decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true },
+    grieta: { id: 2, decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"], murcielagos: 15, vinyetaFuerte: true },
+    aire: { id: 3, decoraciones: ["nube", "montana", "arbol", "pajaro", "aguila"], murcielagos: 0, vinyetaFuerte: false },
+    infinito: { id: 4, decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true },
   };
 
   const CATALOGO_PANTALLAS = [
-    { tipo: "cueva",    nombre: "Cueva" },
-    { tipo: "cueva",    nombre: "Cueva" },
-    { tipo: "grieta",   nombre: "Grieta" },
-    { tipo: "grieta",   nombre: "Grieta" },
-    { tipo: "aire",     nombre: "Aire libre" },
+    { tipo: "cueva" },
+    { tipo: "cueva" },
+    { tipo: "grieta" },
+    { tipo: "grieta" },
+    { tipo: "aire" },
   ];
 
   function tipoDePantalla(numero) {
@@ -252,9 +534,10 @@
     return tipos[Math.floor(Math.random() * tipos.length)];
   }
   function nombreDePantalla(numero) {
-    if (numero <= CATALOGO_PANTALLAS.length) return CATALOGO_PANTALLAS[numero - 1].nombre;
-    const tipo = tipoDePantalla(numero);
-    return TIPOS_PANTALLA[tipo] ? TIPOS_PANTALLA[tipo].nombre : "Pantalla";
+    const tipo = (numero <= CATALOGO_PANTALLAS.length)
+      ? CATALOGO_PANTALLAS[numero - 1].tipo
+      : tipoDePantalla(numero);
+    return tx("pantalla_" + tipo);
   }
   function tipoActual() {
     return TIPOS_PANTALLA[estado.tipoPantalla] || TIPOS_PANTALLA.cueva;
@@ -301,7 +584,7 @@
   // ---------- Opciones de menú ----------
   function opcionesMenuActual() {
     if (estado.modo === "menu") {
-      const op = ["empezar", "instrucciones"];
+      const op = ["empezar", "instrucciones", "creditos"];
       if (fullscreenSoportado && !estaEnFullscreen()) op.push("pantalla-completa");
       return op;
     }
@@ -333,6 +616,7 @@
     if (estado.modo === "menu") {
       if (opcion === "empezar") iniciarPartidaDesdeMenu();
       else if (opcion === "instrucciones") estado.modo = "instrucciones";
+      else if (opcion === "creditos") estado.modo = "creditos";
       else if (opcion === "pantalla-completa") entrarPantallaCompleta();
     } else if (estado.modo === "gameover") {
       if (opcion === "reintentar") iniciarPartidaDesdeMenu();
@@ -373,7 +657,7 @@
     if (estado.opcionActiva >= n) estado.opcionActiva = Math.max(0, n - 1);
   }
 
-  // ---------- Bloqueo de scroll en móvil durante la partida ----------
+  // ---------- Bloqueo de scroll ----------
   function actualizarBloqueoScroll() {
     const jugando = estado.modo === "jugando" || estado.modo === "confirmar-salida";
     const visible = contenedor && contenedor.style.display !== "none" && document.body.contains(contenedor);
@@ -540,10 +824,10 @@
   contenedor.innerHTML = `
     <button class="juego-escalada__salir-fullscreen" type="button" aria-label="Salir de pantalla completa" title="Salir de pantalla completa">✕</button>
     <div class="juego-escalada__info notranslate" translate="no">
-      <span>Altura: <strong id="je-altura">0</strong> m</span>
-      <span>Fragmentos: <strong id="je-frags">0/0</strong></span>
-      <span>Vidas: <strong id="je-vidas">♥♥♥</strong></span>
-      <span>Récord: <strong id="je-record">0</strong> m</span>
+      <span><span data-i18n="hud_altura">Altura</span>: <strong id="je-altura">0</strong> <span data-i18n="hud_m">m</span></span>
+      <span><span data-i18n="hud_fragmentos">Fragmentos</span>: <strong id="je-frags">0/0</strong></span>
+      <span><span data-i18n="hud_vidas">Vidas</span>: <strong id="je-vidas">♥♥♥</strong></span>
+      <span><span data-i18n="hud_record">Récord</span>: <strong id="je-record">0</strong> <span data-i18n="hud_m">m</span></span>
     </div>
     <canvas class="juego-escalada__canvas notranslate" translate="no" width="${ANCHO}" height="${ALTO}"></canvas>
     <div class="juego-escalada__controles notranslate" translate="no">
@@ -551,9 +835,11 @@
       <button class="juego-escalada__btn" data-accion="salto" aria-label="Saltar">↑</button>
       <button class="juego-escalada__btn" data-accion="derecha" aria-label="Derecha">→</button>
     </div>
+    <div class="juego-escalada__footer notranslate" translate="no">
+      <span id="je-footer"></span>
+    </div>
   `;
 
-  // ▼▼▼ FASE 6 · Montar el juego dentro de #juego-root si existe ▼▼▼
   const raizJuego = document.getElementById("juego-root");
   if (raizJuego) {
     raizJuego.appendChild(contenedor);
@@ -562,7 +848,6 @@
     document.body.appendChild(contenedor);
     contenedor.style.display = "flex";
   }
-  // ▲▲▲ FIN FASE 6 ▲▲▲
 
   const canvas = contenedor.querySelector(".juego-escalada__canvas");
   const ctx = canvas.getContext("2d");
@@ -570,9 +855,44 @@
   const elFrags = contenedor.querySelector("#je-frags");
   const elVidas = contenedor.querySelector("#je-vidas");
   const elRecord = contenedor.querySelector("#je-record");
+  const elFooter = contenedor.querySelector("#je-footer");
   const btnSalirFullscreen = contenedor.querySelector(".juego-escalada__salir-fullscreen");
 
   btnSalirFullscreen.addEventListener("click", () => salirPantallaCompleta());
+
+  // ---------- i18n en el DOM del juego ----------
+  function aplicarIdiomaAlJuego() {
+    // HUD (spans con data-i18n)
+    contenedor.querySelectorAll("[data-i18n]").forEach((el) => {
+      const clave = el.getAttribute("data-i18n");
+      el.textContent = tx(clave);
+    });
+    // Pie del HUD
+    if (elFooter) elFooter.textContent = tx("pie");
+    // Botón salir fullscreen (aria/title)
+    btnSalirFullscreen.setAttribute("aria-label", tx("salir_fullscreen"));
+    btnSalirFullscreen.setAttribute("title", tx("salir_fullscreen"));
+    // Botones táctiles
+    const btns = contenedor.querySelectorAll(".juego-escalada__btn");
+    if (btns[0]) btns[0].setAttribute("aria-label", "Izquierda");
+    if (btns[1]) btns[1].setAttribute("aria-label", "Saltar");
+    if (btns[2]) btns[2].setAttribute("aria-label", "Derecha");
+  }
+  aplicarIdiomaAlJuego();
+
+  // ---------- Observadores ----------
+  // Cambio de skin
+  const observerSkin = new MutationObserver(() => { aplicarColoresHUD(); });
+  observerSkin.observe(document.documentElement, { attributes: true, attributeFilter: ["data-skin"] });
+
+  // Cambio de idioma · evento que dispara language.js
+  document.addEventListener("portfolio:languagechange", () => {
+    aplicarIdiomaAlJuego();
+  });
+  // Cambio de idioma · fallback (si language.js no está cargado)
+  window.addEventListener("storage", (e) => {
+    if (e.key === "language") aplicarIdiomaAlJuego();
+  });
 
   // ---------- HUD con colores de skin ----------
   function aplicarColoresHUD() {
@@ -582,12 +902,9 @@
     [elAltura, elFrags, elVidas, elRecord].forEach((el) => {
       if (el) el.style.color = p.hudAcento;
     });
+    if (elFooter) elFooter.style.color = p.textoSuave;
   }
   aplicarColoresHUD();
-
-  // ---------- Observador de skin ----------
-  const observerSkin = new MutationObserver(() => { aplicarColoresHUD(); });
-  observerSkin.observe(document.documentElement, { attributes: true, attributeFilter: ["data-skin"] });
 
   // ---------- Fullscreen listeners ----------
   ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((ev) => {
@@ -615,10 +932,11 @@
     if (estado.modo === "menu") {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activarOpcionActiva(); }
       else if (e.key === "i" || e.key === "I") { e.preventDefault(); estado.modo = "instrucciones"; }
+      else if (e.key === "c" || e.key === "C") { e.preventDefault(); estado.modo = "creditos"; }
       else if (e.key === "f" || e.key === "F") { e.preventDefault(); entrarPantallaCompleta(); }
       return;
     }
-    if (estado.modo === "instrucciones") {
+    if (estado.modo === "instrucciones" || estado.modo === "creditos") {
       if (e.key === "Enter" || e.key === " " || e.key === "Escape") { e.preventDefault(); estado.modo = "menu"; estado.opcionActiva = 1; }
       return;
     }
@@ -697,6 +1015,7 @@
     if (estado.modo === "menu") {
       if (dentro(estado._btnEmpezar)) { estado.opcionActiva = 0; iniciarPartidaDesdeMenu(); }
       else if (dentro(estado._btnInstrucciones)) { estado.opcionActiva = 1; estado.modo = "instrucciones"; }
+      else if (dentro(estado._btnCreditos)) { estado.opcionActiva = 2; estado.modo = "creditos"; }
       else if (dentro(estado._btnPantallaCompleta)) entrarPantallaCompleta();
     } else if (estado.modo === "gameover") {
       if (dentro(estado._btnReintentar)) { estado.opcionActiva = 0; iniciarPartidaDesdeMenu(); }
@@ -807,7 +1126,7 @@
     ctx.font = "bold 36px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("PANTALLA " + estado.pantalla + " · " + nombreDePantalla(estado.pantalla), ANCHO / 2, ALTO / 2);
+    ctx.fillText(tx("pantalla") + " " + estado.pantalla + " · " + nombreDePantalla(estado.pantalla), ANCHO / 2, ALTO / 2);
     ctx.globalAlpha = 1;
     ctx.textAlign = "start";
     ctx.textBaseline = "alphabetic";
@@ -980,7 +1299,7 @@
       bat.tiempo += 0.1;
     }
 
-    elAltura.textContent = altura + " m · P" + estado.pantalla;
+    elAltura.textContent = altura + " " + tx("hud_m") + " · " + tx("hud_p") + estado.pantalla;
     elFrags.textContent = estado.fragmentosRecogidos + "/" + estado.fragmentosTotales;
     let corazones = "";
     for (let i = 0; i < estado.vidas; i++) {
@@ -1266,6 +1585,12 @@
         ctx.lineTo(d.x + d.ancho, dy + d.largo);
         ctx.closePath();
         ctx.fill();
+      } else if (d.tipo === "esqueleto") {
+        const hueso = "#d8d0b8";
+        const huesoSombra = "#a89f88";
+        ctx.fillStyle = hueso;
+        ctx.beginPath();               // ← ASEGÚRATE DE QUE ESTA LÍNEA ESTÁ
+        ctx.ellipse(d.x + 12, dy + 12, 14, 10, 0, 0, Math.PI * 2);
       } else if (d.tipo === "musgo") {
         ctx.fillStyle = "rgba(80, 160, 80, 0.35)";
         ctx.beginPath();
@@ -1589,7 +1914,7 @@
     ctx.lineWidth = foco ? 4 : 2;
     ctx.strokeRect(x, y, w, h);
     ctx.fillStyle = foco ? "#ffffff" : "rgba(230, 240, 250, 0.85)";
-    ctx.font = "bold " + (foco ? 24 : 22) + "px monospace";
+    ctx.font = "bold " + (foco ? 22 : 20) + "px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(texto, x + w / 2, y + h / 2);
@@ -1679,29 +2004,33 @@
       ctx.font = "bold 56px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("VÍA AL CIELO", ANCHO / 2, ALTO / 2 - 200);
+      ctx.fillText(tx("menu_titulo"), ANCHO / 2, ALTO / 2 - 200);
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "18px monospace";
-      ctx.fillText("Un juego de escalada vertical", ANCHO / 2, ALTO / 2 - 150);
+      ctx.fillText(tx("menu_subtitulo"), ANCHO / 2, ALTO / 2 - 150);
       ctx.fillStyle = pal.acento;
       ctx.font = "16px monospace";
-      ctx.fillText("Récord: " + estado.camara.record + " m", ANCHO / 2, ALTO / 2 - 110);
+      ctx.fillText(tx("menu_record") + ": " + estado.camara.record + " " + tx("hud_m"), ANCHO / 2, ALTO / 2 - 110);
 
-      const btnW = 260;
-      const btnH = 55;
-      let by = ALTO / 2 - 40;
-      const sep = 15;
+      const btnW = 280;
+      const btnH = 50;
+      let by = ALTO / 2 - 50;
+      const sep = 12;
 
-      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "▶  EMPEZAR", enfocada("empezar"), pal.botonFondo, pal.botonBorde);
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_empezar"), enfocada("empezar"), pal.botonFondo, pal.botonBorde);
       estado._btnEmpezar = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
 
-      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "?  CÓMO JUGAR", enfocada("instrucciones"), pal.botonSecFondo, pal.botonSecBorde);
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_instrucciones"), enfocada("instrucciones"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnInstrucciones = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
 
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_creditos"), enfocada("creditos"), pal.botonSecFondo, pal.botonSecBorde);
+      estado._btnCreditos = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
+      by += btnH + sep;
+
       if (fullscreenSoportado && !estaEnFullscreen()) {
-        dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "⛶  PANTALLA COMPLETA", enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
+        dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_fullscreen"), enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
         by += btnH + sep;
       } else {
@@ -1711,7 +2040,7 @@
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "13px monospace";
       ctx.textAlign = "center";
-      ctx.fillText("↑↓ / Tab para moverte · ENTER para elegir", ANCHO / 2, by + 10);
+      ctx.fillText(tx("menu_ayuda"), ANCHO / 2, by + 10);
       ctx.textAlign = "start";
       ctx.textBaseline = "alphabetic";
     }
@@ -1724,30 +2053,10 @@
       ctx.font = "bold 36px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("CÓMO JUGAR", ANCHO / 2, 60);
+      ctx.fillText(tx("inst_titulo"), ANCHO / 2, 60);
       ctx.font = "16px monospace";
       ctx.textAlign = "left";
-      const lineas = [
-        "MOVER:    ← →  o  A / D",
-        "SALTAR:   ESPACIO  o  ↑  o  W",
-        "DOBLE SALTO: pulsa salto otra vez en el aire",
-        "SALIR:    ESC (pregunta si quieres salir)",
-        "FULLSCREEN: F o botón ⛶ en el menú",
-        "",
-        "OBJETIVO:",
-        "· Sube lo más alto posible",
-        "· Coge los 3 fragmentos de código de cada pantalla",
-        "· Si coges los 3, ganas 1 vida (máx. 5)",
-        "",
-        "VIDAS:",
-        "· Empiezas con 3 vidas",
-        "· Caída > 90 m → pierdes 1 vida",
-        "· 0 vidas → Game Over",
-        "",
-        "PANTALLAS:",
-        "· Cada 220 m cambias de pantalla",
-        "· Hay 4 ambientes distintos",
-      ];
+      const lineas = tx("inst_lineas");
       let yTexto = 120;
       for (const linea of lineas) {
         if (linea.endsWith(":")) { ctx.fillStyle = pal.acento; ctx.font = "bold 16px monospace"; }
@@ -1758,7 +2067,87 @@
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "14px monospace";
       ctx.textAlign = "center";
-      ctx.fillText("Pulsa ENTER o ESC para volver", ANCHO / 2, ALTO - 40);
+      ctx.fillText(tx("inst_volver"), ANCHO / 2, ALTO - 40);
+      ctx.textAlign = "start";
+      ctx.textBaseline = "alphabetic";
+    }
+
+    // ---- Créditos ----
+    if (estado.modo === "creditos") {
+      ctx.fillStyle = pal.menuFondo;
+      ctx.fillRect(0, 0, ANCHO, ALTO);
+
+      ctx.fillStyle = pal.acento;
+      ctx.font = "bold 40px monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(tx("cred_titulo"), ANCHO / 2, 100);
+
+      // Panel
+      const px = ANCHO / 2 - 240;
+      const py = 160;
+      const pw = 480;
+      const ph = 420;
+
+      ctx.fillStyle = pal.panelFondo;
+      ctx.fillRect(px, py, pw, ph);
+      ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.8)";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(px, py, pw, ph);
+
+      // Título del juego
+      ctx.fillStyle = pal.texto;
+      ctx.font = "bold 28px monospace";
+      ctx.fillText(tx("cred_juego"), ANCHO / 2, py + 50);
+
+      // Subtítulo
+      ctx.fillStyle = pal.textoSuave;
+      ctx.font = "15px monospace";
+      ctx.fillText(tx("cred_subtitulo"), ANCHO / 2, py + 80);
+
+      // Línea separadora
+      ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.4)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(px + 40, py + 100);
+      ctx.lineTo(px + pw - 40, py + 100);
+      ctx.stroke();
+
+      // Creado por
+      ctx.fillStyle = pal.textoSuave;
+      ctx.font = "16px monospace";
+      ctx.fillText(tx("cred_creado"), ANCHO / 2, py + 140);
+
+      ctx.fillStyle = pal.acento;
+      ctx.font = "bold 24px monospace";
+      ctx.fillText(tx("cred_autor"), ANCHO / 2, py + 175);
+
+      // Hecho con
+      ctx.fillStyle = pal.textoSuave;
+      ctx.font = "15px monospace";
+      ctx.fillText(tx("cred_hecho"), ANCHO / 2, py + 220);
+
+      // Inspirado
+      ctx.fillText(tx("cred_inspirado"), ANCHO / 2, py + 245);
+
+      // Gracias
+      ctx.fillStyle = pal.acento;
+      ctx.font = "bold 20px monospace";
+      ctx.fillText(tx("cred_gracias"), ANCHO / 2, py + 300);
+
+      // Versión
+      ctx.fillStyle = pal.textoSuave;
+      ctx.font = "13px monospace";
+      ctx.fillText(tx("cred_version") + ": v:70.0", ANCHO / 2, py + 340);
+
+      // Año
+      ctx.fillText("© 2026", ANCHO / 2, py + 365);
+
+      // Volver
+      ctx.fillStyle = pal.textoSuave;
+      ctx.font = "14px monospace";
+      ctx.fillText(tx("cred_volver"), ANCHO / 2, ALTO - 40);
+
       ctx.textAlign = "start";
       ctx.textBaseline = "alphabetic";
     }
@@ -1771,7 +2160,7 @@
       ctx.font = "bold 52px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("GAME OVER", ANCHO / 2, 160);
+      ctx.fillText(tx("go_titulo"), ANCHO / 2, 160);
       const px = ANCHO / 2 - 200;
       const py = 230;
       const pw = 400;
@@ -1783,33 +2172,33 @@
       ctx.strokeRect(px, py, pw, ph);
       ctx.fillStyle = pal.texto;
       ctx.font = "bold 22px monospace";
-      ctx.fillText("RESUMEN", ANCHO / 2, py + 30);
+      ctx.fillText(tx("go_resumen"), ANCHO / 2, py + 30);
       ctx.font = "18px monospace";
       ctx.fillStyle = pal.textoSuave;
-      ctx.fillText("Altura máxima:  " + estado.camara.alturaMaxima + " m", ANCHO / 2, py + 80);
-      ctx.fillText("Fragmentos:  " + estado.fragmentosRecogidos + "/" + estado.fragmentosTotales, ANCHO / 2, py + 115);
-      ctx.fillText("Pantalla:  P" + estado.pantalla, ANCHO / 2, py + 150);
+      ctx.fillText(tx("go_altura_max") + ":  " + estado.camara.alturaMaxima + " " + tx("hud_m"), ANCHO / 2, py + 80);
+      ctx.fillText(tx("go_fragmentos") + ":  " + estado.fragmentosRecogidos + "/" + estado.fragmentosTotales, ANCHO / 2, py + 115);
+      ctx.fillText(tx("go_pantalla") + ":  " + tx("hud_p") + estado.pantalla, ANCHO / 2, py + 150);
       ctx.fillStyle = pal.acento;
       ctx.font = "bold 18px monospace";
       const nuevoRecord = estado.camara.alturaMaxima >= estado.camara.record && estado.camara.alturaMaxima > 0;
-      if (nuevoRecord) ctx.fillText("¡NUEVO RÉCORD!", ANCHO / 2, py + 185);
-      else ctx.fillText("Récord:  " + estado.camara.record + " m", ANCHO / 2, py + 185);
+      if (nuevoRecord) ctx.fillText(tx("go_nuevo_record"), ANCHO / 2, py + 185);
+      else ctx.fillText(tx("go_record") + ":  " + estado.camara.record + " " + tx("hud_m"), ANCHO / 2, py + 185);
 
-      const btnW = 260;
-      const btnH = 52;
+      const btnW = 280;
+      const btnH = 50;
       let by = py + ph + 30;
-      const sep = 15;
+      const sep = 12;
 
-      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "↻  REINTENTAR", enfocada("reintentar"), pal.botonFondo, pal.botonBorde);
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_reintentar"), enfocada("reintentar"), pal.botonFondo, pal.botonBorde);
       estado._btnReintentar = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
 
-      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "←  MENÚ", enfocada("menu"), pal.botonSecFondo, pal.botonSecBorde);
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_menu"), enfocada("menu"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnMenu = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
 
       if (fullscreenSoportado && !estaEnFullscreen()) {
-        dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "⛶  PANTALLA COMPLETA", enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
+        dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_fullscreen"), enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       } else {
         estado._btnPantallaCompleta = null;
@@ -1832,14 +2221,14 @@
       ctx.lineWidth = 3;
       ctx.strokeRect(px, py, pw, ph);
       ctx.fillStyle = pal.acento;
-      ctx.font = "bold 26px monospace";
+      ctx.font = "bold 24px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("¿SALIR DE LA PARTIDA?", ANCHO / 2, py + 45);
+      ctx.fillText(tx("salir_titulo"), ANCHO / 2, py + 45);
       ctx.fillStyle = pal.textoSuave;
-      ctx.font = "16px monospace";
-      ctx.fillText("Perderás el progreso de esta partida.", ANCHO / 2, py + 80);
-      ctx.fillText("¿Seguro que quieres salir al menú?", ANCHO / 2, py + 105);
+      ctx.font = "15px monospace";
+      ctx.fillText(tx("salir_msg1"), ANCHO / 2, py + 80);
+      ctx.fillText(tx("salir_msg2"), ANCHO / 2, py + 105);
 
       const btnW = 160;
       const btnH = 50;
@@ -1848,15 +2237,15 @@
       const btnSiX = ANCHO / 2 - btnW - sep / 2;
       const btnNoX = ANCHO / 2 + sep / 2;
 
-      dibujarBoton(btnSiX, by, btnW, btnH, "SÍ (S)", enfocada("si"), "220, 80, 80", "255, 120, 120");
-      dibujarBoton(btnNoX, by, btnW, btnH, "NO (N)", enfocada("no"), pal.botonSecFondo, pal.botonSecBorde);
+      dibujarBoton(btnSiX, by, btnW, btnH, tx("salir_si"), enfocada("si"), "220, 80, 80", "255, 120, 120");
+      dibujarBoton(btnNoX, by, btnW, btnH, tx("salir_no"), enfocada("no"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnSiSalir = { x: btnSiX, y: by, w: btnW, h: btnH };
       estado._btnNoSalir = { x: btnNoX, y: by, w: btnW, h: btnH };
       by += btnH + 20;
 
       if (fullscreenSoportado && estaEnFullscreen()) {
         const btnFullW = 340;
-        dibujarBoton(ANCHO / 2 - btnFullW / 2, by, btnFullW, btnH, "⛶  SALIR PANTALLA COMPLETA", enfocada("salir-fullscreen"), pal.botonSecFondo, pal.botonSecBorde);
+        dibujarBoton(ANCHO / 2 - btnFullW / 2, by, btnFullW, btnH, tx("salir_fullscreen"), enfocada("salir-fullscreen"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnSalirFullscreen = { x: ANCHO / 2 - btnFullW / 2, y: by, w: btnFullW, h: btnH };
       } else {
         estado._btnSalirFullscreen = null;
@@ -1865,7 +2254,7 @@
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "13px monospace";
       ctx.textAlign = "center";
-      ctx.fillText("↑↓ / Tab para moverte · ENTER para elegir", ANCHO / 2, py + ph - 15);
+      ctx.fillText(tx("salir_ayuda"), ANCHO / 2, py + ph - 15);
       ctx.textAlign = "start";
       ctx.textBaseline = "alphabetic";
     }
@@ -1925,9 +2314,11 @@
     },
     tiposDisponibles() { return Object.keys(TIPOS_PANTALLA); },
     catalogo() {
-      return CATALOGO_PANTALLAS.map((p, i) => ({ numero: i + 1, tipo: p.tipo, nombre: p.nombre }));
+      return CATALOGO_PANTALLAS.map((p, i) => ({ numero: i + 1, tipo: p.tipo }));
     },
     skinsDisponibles() { return Object.keys(PALETAS_SKIN); },
+    idiomasDisponibles() { return Object.keys(TRADUCCIONES); },
+    idiomaActual,
     entrarFullscreen() { entrarPantallaCompleta(); },
     salirFullscreen() { salirPantallaCompleta(); },
     estaEnFullscreen,
