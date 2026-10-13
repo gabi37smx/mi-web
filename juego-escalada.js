@@ -2,11 +2,9 @@
    juego-escalada.js · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
    · Fase 3.4: cofres + esqueletos + cráneos + monedas + petróleo
-   · Fase 3.5.1: sistema de pantallas
-   · Fase 3.5.2: transición al llegar a 220 m
-   · Fase 3.5.3: grieta + aire libre (nubes, montañas, árboles, pájaros)
-   · Fase 3.5.4: pantalla 6+ procedural al azar entre tipos
-   · Fix: decoraciones hasta 220 m (4600 px)
+   · Fase 3.5: sistema de pantallas + tipos + procedural al azar
+   · Fase 3.6: menú inicio + instrucciones + game over con resumen + botones
+   · Fase 3.6.1: murciélagos por tipo + águilas + ESC confirmar salida + altura acumulada
    · Caída: quita 1 vida SOLO al tocar suelo, si la caída > 90 m
    ============================================================================ */
 
@@ -40,13 +38,9 @@
   const VIDAS_MAX = 5;
   const FRAGMENTOS_POR_PANTALLA = 3;
 
-  // Umbral de caída: si cae más de esto al tocar suelo, pierde vida
   const UMBRAL_CAIDA_PX = 1800; // 90 m
-
-  // Metros para cambiar de pantalla
   const METROS_FIN_PANTALLA = 220;
 
-  // Rango vertical de decoración por pantalla (en px, ~ 230 m)
   const DECO_RANGO = 4600;
   const DECO_RANGO_OBJETO = 4200;
   const DECO_RANGO_PEQUENO = 4000;
@@ -62,6 +56,7 @@
       presa: "#5a4a3e",
       presaLuz: "#8a7565",
       decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"],
+      murcielagos: 25,
     },
     grieta: {
       id: 2, nombre: "Grieta",
@@ -72,6 +67,7 @@
       presa: "#6a5a4e",
       presaLuz: "#9a8575",
       decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"],
+      murcielagos: 15,
     },
     aire: {
       id: 3, nombre: "Aire libre",
@@ -81,7 +77,8 @@
       sueloLuz: "#8aaa6a",
       presa: "#7a6a5a",
       presaLuz: "#aa9a8a",
-      decoraciones: ["nube", "montana", "arbol", "pajaro"],
+      decoraciones: ["nube", "montana", "arbol", "pajaro", "aguila"],
+      murcielagos: 0,
     },
     infinito: {
       id: 4, nombre: "Infinito",
@@ -92,10 +89,10 @@
       presa: "#5a4a3e",
       presaLuz: "#8a7565",
       decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"],
+      murcielagos: 25,
     },
   };
 
-  // Secuencia de pantallas (las 5 primeras fijas, luego al azar)
   const SECUENCIA_PANTALLAS = [
     "cueva",
     "cueva",
@@ -108,7 +105,6 @@
     if (numero <= SECUENCIA_PANTALLAS.length) {
       return SECUENCIA_PANTALLAS[numero - 1];
     }
-    // A partir de la pantalla 6: al azar entre todos los tipos
     const tipos = ["cueva", "grieta", "aire", "infinito"];
     return tipos[Math.floor(Math.random() * tipos.length)];
   }
@@ -148,6 +144,8 @@
 
   // ---------- Estado ----------
   const estado = {
+    modo: "menu",              // "menu" | "instrucciones" | "jugando" | "gameover" | "confirmar-salida"
+    modoAnterior: null,
     personaje: {
       x: ANCHO / 2 - STEVE_ANCHO / 2,
       y: Y_SUELO_JUGABLE,
@@ -261,7 +259,6 @@
 
     function permitido(t) { return permitidas.indexOf(t) !== -1; }
 
-    // Cueva / infinito
     if (permitido("estalactita")) {
       for (let i = 0; i < 55; i++) {
         decor.push({
@@ -374,7 +371,6 @@
       }
     }
 
-    // Grieta
     if (permitido("cristal")) {
       for (let i = 0; i < 32; i++) {
         decor.push({
@@ -398,7 +394,6 @@
       }
     }
 
-    // Aire libre
     if (permitido("nube")) {
       for (let i = 0; i < 28; i++) {
         decor.push({
@@ -442,14 +437,28 @@
         });
       }
     }
+    if (permitido("aguila")) {
+      for (let i = 0; i < 6; i++) {
+        decor.push({
+          tipo: "aguila",
+          x: Math.random() * ANCHO,
+          y: -Math.random() * DECO_RANGO - 100,
+          tam: 22 + Math.random() * 8,
+          vel: 0.15 + Math.random() * 0.2,
+          tiempo: Math.random() * 10,
+        });
+      }
+    }
 
     estado.decoraciones = decor;
   }
 
-  // ---------- Murciélagos ----------
+  // ---------- Murciélagos (solo si el tipo los permite) ----------
   function crearMurcielagos() {
+    const tipo = tipoActual();
+    const cantidad = tipo.murcielagos || 0;
     const bats = [];
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < cantidad; i++) {
       bats.push({
         x: 40 + Math.random() * (ANCHO - 80),
         y: -200 - i * 90 - Math.random() * 60,
@@ -500,6 +509,53 @@
 
   // ---------- Teclado ----------
   document.addEventListener("keydown", (e) => {
+    // Menú
+    if (estado.modo === "menu") {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        iniciarPartidaDesdeMenu();
+      } else if (e.key === "i" || e.key === "I") {
+        e.preventDefault();
+        estado.modo = "instrucciones";
+      }
+      return;
+    }
+    // Instrucciones
+    if (estado.modo === "instrucciones") {
+      if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
+        e.preventDefault();
+        estado.modo = "menu";
+      }
+      return;
+    }
+    // Game Over
+    if (estado.modo === "gameover") {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        iniciarPartidaDesdeMenu();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        estado.modo = "menu";
+      }
+      return;
+    }
+    // Confirmar salida
+    if (estado.modo === "confirmar-salida") {
+      if (e.key === "Enter" || e.key === "s" || e.key === "S" || e.key === "y" || e.key === "Y") {
+        e.preventDefault();
+        salirAlMenu();
+      } else if (e.key === "Escape" || e.key === "n" || e.key === "N") {
+        e.preventDefault();
+        cancelarSalida();
+      }
+      return;
+    }
+    // Jugando
+    if (e.key === "Escape") {
+      e.preventDefault();
+      pedirConfirmacionSalida();
+      return;
+    }
     if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") { estado.teclas.izquierda = true; e.preventDefault(); }
     if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") { estado.teclas.derecha = true; e.preventDefault(); }
     if (e.key === " " || e.key === "ArrowUp" || e.key === "w" || e.key === "W") { estado.teclas.salto = true; e.preventDefault(); }
@@ -511,10 +567,6 @@
       estado.teclas.salto = false;
       estado.personaje.saltoSuelto = true;
     }
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (estado.gameOver && e.key === "Enter") reiniciarPartida();
   });
 
   // ---------- Botones táctiles ----------
@@ -538,12 +590,84 @@
     btn.addEventListener("pointercancel", desactivar);
   });
 
+  // ---------- Clicks en canvas ----------
+  canvas.addEventListener("click", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const escalaX = ANCHO / rect.width;
+    const escalaY = ALTO / rect.height;
+    const mx = (e.clientX - rect.left) * escalaX;
+    const my = (e.clientY - rect.top) * escalaY;
+
+    function dentro(btn) {
+      if (!btn) return false;
+      return mx >= btn.x && mx <= btn.x + btn.w &&
+             my >= btn.y && my <= btn.y + btn.h;
+    }
+
+    if (estado.modo === "menu") {
+      if (dentro(estado._btnEmpezar)) {
+        iniciarPartidaDesdeMenu();
+      } else if (dentro(estado._btnInstrucciones)) {
+        estado.modo = "instrucciones";
+      }
+    } else if (estado.modo === "gameover") {
+      if (dentro(estado._btnReintentar)) {
+        iniciarPartidaDesdeMenu();
+      } else if (dentro(estado._btnMenu)) {
+        estado.modo = "menu";
+      }
+    } else if (estado.modo === "confirmar-salida") {
+      if (dentro(estado._btnSiSalir)) {
+        salirAlMenu();
+      } else if (dentro(estado._btnNoSalir)) {
+        cancelarSalida();
+      }
+    }
+  });
+
+  // ---------- Confirmar salida ----------
+  function pedirConfirmacionSalida() {
+    if (estado.modo !== "jugando") return;
+    estado.modoAnterior = estado.modo;
+    estado.modo = "confirmar-salida";
+    // soltar teclas para que no se quede corriendo al volver
+    estado.teclas.izquierda = false;
+    estado.teclas.derecha = false;
+    estado.teclas.salto = false;
+  }
+
+  function cancelarSalida() {
+    estado.modo = estado.modoAnterior || "jugando";
+    estado.modoAnterior = null;
+  }
+
+  function salirAlMenu() {
+    estado.modo = "menu";
+    estado.modoAnterior = null;
+    estado.gameOver = false;
+    // Reset del personaje para que la próxima partida empiece limpia
+    const p = estado.personaje;
+    p.x = ANCHO / 2 - STEVE_ANCHO / 2;
+    p.y = Y_SUELO_JUGABLE;
+    p.velX = 0;
+    p.velY = 0;
+    p.enSuelo = false;
+    p.saltando = false;
+    p.dobleSaltoDisponible = true;
+    p.saltoSuelto = true;
+    p.frame = "parado";
+    p.alturaMaximaVuelo = Y_SUELO_JUGABLE;
+    p.dañoTiempo = 0;
+    estado.camara.y = CAMARA_INICIAL;
+  }
+
   // ---------- Respawn ----------
   function respawn() {
     const p = estado.personaje;
 
     if (estado.vidas <= 0) {
       estado.gameOver = true;
+      estado.modo = "gameover";
       return;
     }
 
@@ -603,6 +727,7 @@
   }
 
   function actualizarTransicion() {
+    if (estado.modo !== "jugando") return false;
     if (!estado.transicion) return false;
     estado.transicion.tiempo++;
     if (estado.transicion.tiempo > estado.transicion.duracion) {
@@ -637,8 +762,15 @@
     ctx.textBaseline = "alphabetic";
   }
 
+  // ---------- Iniciar partida desde menú ----------
+  function iniciarPartidaDesdeMenu() {
+    estado.modo = "jugando";
+    reiniciarPartida();
+  }
+
   // ---------- Reiniciar partida ----------
   function reiniciarPartida() {
+    estado.modo = "jugando";
     estado.vidas = VIDAS_INICIALES;
     estado.fragmentosRecogidos = 0;
     estado.gameOver = false;
@@ -775,6 +907,7 @@
 
       if (estado.vidas <= 0) {
         estado.gameOver = true;
+        estado.modo = "gameover";
         return;
       }
     }
@@ -785,6 +918,7 @@
   // ---------- Física ----------
   function actualizarFisica() {
     const p = estado.personaje;
+    if (estado.modo !== "jugando") return;
     if (estado.gameOver) return;
     if (actualizarTransicion()) return;
 
@@ -832,24 +966,22 @@
     comprobarFragmentos();
     comprobarCaida();
 
-    // Cámara
     const objetivo = p.y - ALTO * 0.4;
     estado.camara.y += (objetivo - estado.camara.y) * 0.15;
     if (estado.camara.y > CAMARA_INICIAL) estado.camara.y = CAMARA_INICIAL;
 
-    // Detección de fin de pantalla
-    const alturaActual = Math.max(0, Math.round((Y_SUELO_JUGABLE - p.y) / PX_POR_METRO));
-    if (alturaActual >= METROS_FIN_PANTALLA) {
+    // Altura en pantalla actual (para saber cuándo pasar)
+    const alturaEnPantalla = Math.max(0, Math.round((Y_SUELO_JUGABLE - p.y) / PX_POR_METRO));
+    if (alturaEnPantalla >= METROS_FIN_PANTALLA) {
       iniciarTransicion();
       return;
     }
 
-    // Altura y récord
-    const altura = Math.max(0, Math.round((Y_SUELO_JUGABLE - p.y) / PX_POR_METRO));
+    // Altura ACUMULADA (para el HUD y el récord)
+    const altura = (estado.pantalla - 1) * METROS_FIN_PANTALLA + alturaEnPantalla;
     if (altura > estado.camara.alturaMaxima) estado.camara.alturaMaxima = altura;
     if (altura > estado.camara.record) { estado.camara.record = altura; guardarRecord(); }
 
-    // Murciélagos
     for (const bat of estado.murcielagos) {
       const dist = Math.abs(bat.y - p.y) + Math.abs(bat.x - p.x) * 0.5;
       if (dist < 120) bat.despierto = Math.min(1, bat.despierto + 0.15);
@@ -857,7 +989,6 @@
       bat.tiempo += 0.1;
     }
 
-    // HUD
     elAltura.textContent = altura + " m · P" + estado.pantalla;
     elFrags.textContent = estado.fragmentosRecogidos + "/" + estado.fragmentosTotales;
     let corazones = "";
@@ -1383,6 +1514,55 @@
         ctx.beginPath();
         ctx.arc(d.x + 6, dy - aleteo, 6, Math.PI, 0);
         ctx.stroke();
+
+      } else if (d.tipo === "aguila") {
+        d.x += d.vel * 0.4;
+        if (d.x > ANCHO + 80) d.x = -80;
+        d.tiempo += 0.04;
+        const planeo = Math.sin(d.tiempo) * 2;
+        const t = d.tam;
+        // Cuerpo
+        ctx.fillStyle = "#3a2a1a";
+        ctx.beginPath();
+        ctx.ellipse(d.x, dy + planeo, t * 0.4, t * 0.18, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Cola
+        ctx.beginPath();
+        ctx.moveTo(d.x - t * 0.4, dy + planeo);
+        ctx.lineTo(d.x - t * 0.7, dy + planeo - t * 0.1);
+        ctx.lineTo(d.x - t * 0.7, dy + planeo + t * 0.1);
+        ctx.closePath();
+        ctx.fill();
+        // Cabeza
+        ctx.fillStyle = "#e0d0a0";
+        ctx.beginPath();
+        ctx.arc(d.x + t * 0.4, dy + planeo, t * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+        // Pico
+        ctx.fillStyle = "#d4a017";
+        ctx.beginPath();
+        ctx.moveTo(d.x + t * 0.55, dy + planeo);
+        ctx.lineTo(d.x + t * 0.72, dy + planeo + t * 0.03);
+        ctx.lineTo(d.x + t * 0.55, dy + planeo + t * 0.06);
+        ctx.closePath();
+        ctx.fill();
+        // Ojo
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(d.x + t * 0.4, dy + planeo - t * 0.05, 1.5, 1.5);
+        // Alas extendidas
+        ctx.fillStyle = "#2a1e12";
+        ctx.beginPath();
+        ctx.moveTo(d.x - t * 0.05, dy + planeo - t * 0.05);
+        ctx.lineTo(d.x - t * 0.9, dy + planeo - t * 0.25);
+        ctx.lineTo(d.x - t * 0.5, dy + planeo + t * 0.05);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(d.x - t * 0.05, dy + planeo - t * 0.05);
+        ctx.lineTo(d.x + t * 0.7, dy + planeo - t * 0.25);
+        ctx.lineTo(d.x + t * 0.4, dy + planeo + t * 0.05);
+        ctx.closePath();
+        ctx.fill();
       }
     }
 
@@ -1470,36 +1650,271 @@
       dibujarMurcielago(bat, bat.x, by);
     }
 
-    const px = p.x;
-    const py = p.y - estado.camara.y;
-    dibujarSteve(px, py, p.frame, p.mirandoDerecha, p.dañoTiempo);
+    if (estado.modo === "jugando" || estado.modo === "confirmar-salida") {
+      const px = p.x;
+      const py = p.y - estado.camara.y;
+      dibujarSteve(px, py, p.frame, p.mirandoDerecha, p.dañoTiempo);
 
-    if (!p.enSuelo && p.dobleSaltoDisponible) {
-      ctx.fillStyle = "#FFD700";
-      ctx.beginPath();
-      ctx.arc(px + p.ancho / 2, py - 8, 4, 0, Math.PI * 2);
-      ctx.fill();
+      if (!p.enSuelo && p.dobleSaltoDisponible) {
+        ctx.fillStyle = "#FFD700";
+        ctx.beginPath();
+        ctx.arc(px + p.ancho / 2, py - 8, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     dibujarPopups();
     dibujarPopupGrande();
     dibujarTransicion();
 
-    if (estado.gameOver) {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+    // ---- Menú de inicio ----
+    if (estado.modo === "menu") {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
       ctx.fillRect(0, 0, ANCHO, ALTO);
-      ctx.fillStyle = "#ff4444";
-      ctx.font = "bold 48px monospace";
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 56px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("GAME OVER", ANCHO / 2, ALTO / 2 - 40);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "20px monospace";
-      ctx.fillText("Altura: " + estado.camara.alturaMaxima + " m", ANCHO / 2, ALTO / 2 + 20);
-      ctx.fillText("Fragmentos: " + estado.fragmentosRecogidos + "/" + estado.fragmentosTotales, ANCHO / 2, ALTO / 2 + 50);
+      ctx.fillText("VÍA AL CIELO", ANCHO / 2, ALTO / 2 - 180);
+
+      ctx.fillStyle = "#a0c0e0";
+      ctx.font = "18px monospace";
+      ctx.fillText("Un juego de escalada vertical", ANCHO / 2, ALTO / 2 - 130);
+
+      ctx.fillStyle = "#ffd700";
       ctx.font = "16px monospace";
-      ctx.fillStyle = "#aaaaaa";
-      ctx.fillText("Pulsa ENTER para reintentar", ANCHO / 2, ALTO / 2 + 110);
+      ctx.fillText("Récord: " + estado.camara.record + " m", ANCHO / 2, ALTO / 2 - 90);
+
+      const btnW = 260;
+      const btnH = 60;
+      const btnY1 = ALTO / 2 - 10;
+      const brilloBtn1 = 0.7 + Math.sin(Date.now() / 300) * 0.3;
+
+      ctx.fillStyle = "rgba(80, 180, 255, " + (0.3 + brilloBtn1 * 0.3) + ")";
+      ctx.fillRect(ANCHO / 2 - btnW / 2, btnY1, btnW, btnH);
+      ctx.strokeStyle = "rgba(120, 220, 255, " + brilloBtn1 + ")";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(ANCHO / 2 - btnW / 2, btnY1, btnW, btnH);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 24px monospace";
+      ctx.fillText("▶  EMPEZAR", ANCHO / 2, btnY1 + btnH / 2);
+
+      ctx.fillStyle = "#888888";
+      ctx.font = "14px monospace";
+      ctx.fillText("Pulsa ENTER o toca el botón", ANCHO / 2, btnY1 + btnH + 30);
+
+      const btnY2 = btnY1 + btnH + 70;
+      ctx.fillStyle = "rgba(40, 60, 90, 0.7)";
+      ctx.fillRect(ANCHO / 2 - btnW / 2, btnY2, btnW, btnH);
+      ctx.strokeStyle = "rgba(100, 130, 170, 0.8)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(ANCHO / 2 - btnW / 2, btnY2, btnW, btnH);
+
+      ctx.fillStyle = "#c0d0e0";
+      ctx.font = "20px monospace";
+      ctx.fillText("?  CÓMO JUGAR", ANCHO / 2, btnY2 + btnH / 2);
+
+      estado._btnEmpezar = { x: ANCHO / 2 - btnW / 2, y: btnY1, w: btnW, h: btnH };
+      estado._btnInstrucciones = { x: ANCHO / 2 - btnW / 2, y: btnY2, w: btnW, h: btnH };
+
+      ctx.textAlign = "start";
+      ctx.textBaseline = "alphabetic";
+    }
+
+    // ---- Instrucciones ----
+    if (estado.modo === "instrucciones") {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+      ctx.fillRect(0, 0, ANCHO, ALTO);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 36px monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("CÓMO JUGAR", ANCHO / 2, 60);
+
+      ctx.font = "16px monospace";
+      ctx.textAlign = "left";
+      const lineas = [
+        "MOVER:    ← →  o  A / D",
+        "SALTAR:   ESPACIO  o  ↑  o  W",
+        "DOBLE SALTO: pulsa salto otra vez en el aire",
+        "SALIR:    ESC (pregunta si quieres salir)",
+        "",
+        "OBJETIVO:",
+        "· Sube lo más alto posible",
+        "· Coge los 3 fragmentos de código de cada pantalla",
+        "· Si coges los 3, ganas 1 vida (máx. 5)",
+        "",
+        "VIDAS:",
+        "· Empiezas con 3 vidas",
+        "· Caída > 90 m → pierdes 1 vida",
+        "· 0 vidas → Game Over",
+        "",
+        "PANTALLAS:",
+        "· Cada 220 m cambias de pantalla",
+        "· Hay 4 ambientes distintos",
+      ];
+
+      let yTexto = 120;
+      for (const linea of lineas) {
+        if (linea.endsWith(":")) {
+          ctx.fillStyle = "#ffd700";
+          ctx.font = "bold 16px monospace";
+        } else {
+          ctx.fillStyle = "#c0d0e0";
+          ctx.font = "15px monospace";
+        }
+        ctx.fillText(linea, 60, yTexto);
+        yTexto += 24;
+      }
+
+      ctx.fillStyle = "#888888";
+      ctx.font = "14px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("Pulsa ENTER o ESC para volver", ANCHO / 2, ALTO - 40);
+
+      ctx.textAlign = "start";
+      ctx.textBaseline = "alphabetic";
+    }
+
+    // ---- Game Over ----
+    if (estado.modo === "gameover") {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+      ctx.fillRect(0, 0, ANCHO, ALTO);
+
+      ctx.fillStyle = "#ff4444";
+      ctx.font = "bold 52px monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("GAME OVER", ANCHO / 2, 180);
+
+      const px = ANCHO / 2 - 200;
+      const py = 260;
+      const pw = 400;
+      const ph = 220;
+
+      ctx.fillStyle = "rgba(20, 30, 50, 0.9)";
+      ctx.fillRect(px, py, pw, ph);
+      ctx.strokeStyle = "rgba(120, 200, 255, 0.8)";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(px, py, pw, ph);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 22px monospace";
+      ctx.fillText("RESUMEN", ANCHO / 2, py + 30);
+
+      ctx.font = "18px monospace";
+      ctx.fillStyle = "#a0c0e0";
+      ctx.fillText("Altura máxima:  " + estado.camara.alturaMaxima + " m", ANCHO / 2, py + 80);
+      ctx.fillText("Fragmentos:  " + estado.fragmentosRecogidos + "/" + estado.fragmentosTotales, ANCHO / 2, py + 115);
+      ctx.fillText("Pantalla:  P" + estado.pantalla, ANCHO / 2, py + 150);
+
+      ctx.fillStyle = "#ffd700";
+      ctx.font = "bold 18px monospace";
+      const nuevoRecord = estado.camara.alturaMaxima >= estado.camara.record && estado.camara.alturaMaxima > 0;
+      if (nuevoRecord) {
+        ctx.fillText("¡NUEVO RÉCORD!", ANCHO / 2, py + 185);
+      } else {
+        ctx.fillText("Récord:  " + estado.camara.record + " m", ANCHO / 2, py + 185);
+      }
+
+      const btnW = 260;
+      const btnH = 55;
+      const btnY1 = py + ph + 40;
+      const btnY2 = btnY1 + btnH + 20;
+
+      const brilloBtn = 0.7 + Math.sin(Date.now() / 300) * 0.3;
+      ctx.fillStyle = "rgba(80, 180, 255, " + (0.3 + brilloBtn * 0.3) + ")";
+      ctx.fillRect(ANCHO / 2 - btnW / 2, btnY1, btnW, btnH);
+      ctx.strokeStyle = "rgba(120, 220, 255, " + brilloBtn + ")";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(ANCHO / 2 - btnW / 2, btnY1, btnW, btnH);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 22px monospace";
+      ctx.fillText("↻  REINTENTAR", ANCHO / 2, btnY1 + btnH / 2);
+
+      ctx.fillStyle = "rgba(40, 60, 90, 0.7)";
+      ctx.fillRect(ANCHO / 2 - btnW / 2, btnY2, btnW, btnH);
+      ctx.strokeStyle = "rgba(100, 130, 170, 0.8)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(ANCHO / 2 - btnW / 2, btnY2, btnW, btnH);
+      ctx.fillStyle = "#c0d0e0";
+      ctx.font = "20px monospace";
+      ctx.fillText("←  MENÚ", ANCHO / 2, btnY2 + btnH / 2);
+
+      estado._btnReintentar = { x: ANCHO / 2 - btnW / 2, y: btnY1, w: btnW, h: btnH };
+      estado._btnMenu = { x: ANCHO / 2 - btnW / 2, y: btnY2, w: btnW, h: btnH };
+
+      ctx.textAlign = "start";
+      ctx.textBaseline = "alphabetic";
+    }
+
+    // ---- Confirmar salida ----
+    if (estado.modo === "confirmar-salida") {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+      ctx.fillRect(0, 0, ANCHO, ALTO);
+
+      const px = ANCHO / 2 - 220;
+      const py = ALTO / 2 - 140;
+      const pw = 440;
+      const ph = 280;
+
+      ctx.fillStyle = "rgba(20, 30, 50, 0.95)";
+      ctx.fillRect(px, py, pw, ph);
+      ctx.strokeStyle = "rgba(255, 220, 100, 0.9)";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(px, py, pw, ph);
+
+      ctx.fillStyle = "#ffd700";
+      ctx.font = "bold 26px monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("¿SALIR DE LA PARTIDA?", ANCHO / 2, py + 50);
+
+      ctx.fillStyle = "#c0d0e0";
+      ctx.font = "16px monospace";
+      ctx.fillText("Perderás el progreso de esta partida.", ANCHO / 2, py + 90);
+      ctx.fillText("¿Seguro que quieres salir al menú?", ANCHO / 2, py + 115);
+
+      const btnW = 160;
+      const btnH = 55;
+      const btnY = py + 170;
+      const sep = 30;
+
+      const btnSiX = ANCHO / 2 - btnW - sep / 2;
+      const btnNoX = ANCHO / 2 + sep / 2;
+
+      const brilloSi = 0.7 + Math.sin(Date.now() / 250) * 0.3;
+
+      // Botón SÍ
+      ctx.fillStyle = "rgba(220, 80, 80, " + (0.3 + brilloSi * 0.3) + ")";
+      ctx.fillRect(btnSiX, btnY, btnW, btnH);
+      ctx.strokeStyle = "rgba(255, 120, 120, " + brilloSi + ")";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(btnSiX, btnY, btnW, btnH);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 22px monospace";
+      ctx.fillText("SÍ (S)", btnSiX + btnW / 2, btnY + btnH / 2);
+
+      // Botón NO
+      ctx.fillStyle = "rgba(40, 60, 90, 0.7)";
+      ctx.fillRect(btnNoX, btnY, btnW, btnH);
+      ctx.strokeStyle = "rgba(100, 130, 170, 0.9)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(btnNoX, btnY, btnW, btnH);
+      ctx.fillStyle = "#c0d0e0";
+      ctx.font = "bold 22px monospace";
+      ctx.fillText("NO (N)", btnNoX + btnW / 2, btnY + btnH / 2);
+
+      estado._btnSiSalir = { x: btnSiX, y: btnY, w: btnW, h: btnH };
+      estado._btnNoSalir = { x: btnNoX, y: btnY, w: btnW, h: btnH };
+
+      ctx.fillStyle = "#888888";
+      ctx.font = "13px monospace";
+      ctx.fillText("ENTER = sí · ESC = no", ANCHO / 2, py + ph - 25);
+
       ctx.textAlign = "start";
       ctx.textBaseline = "alphabetic";
     }
@@ -1522,6 +1937,7 @@
   crearMurcielagos();
   estado.personaje.y = Y_SUELO_JUGABLE;
   estado.camara.y = CAMARA_INICIAL;
+  estado.modo = "menu";
   requestAnimationFrame(loop);
 
   window.__juegoEscalada = { estado, contenedor };
