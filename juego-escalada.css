@@ -1,10 +1,12 @@
 /* ============================================================================
    juego-escalada.css · Juego de plataformas del escalador
+   ----------------------------------------------------------------------------
+   · Fase 5: responsive móvil + pantalla completa + reduced-motion
    ============================================================================ */
 
-/* Contenedor principal (oculto por ahora, hasta la Fase 6) */
+/* Contenedor principal (oculto por defecto hasta que se muestra desde la web) */
 .juego-escalada {
-  display: none;   /* Cambiar a "flex" en la Fase 6 */
+  display: none;               /* Se pone a "flex" cuando arranca el juego */
   flex-direction: column;
   align-items: center;
   gap: 1rem;
@@ -14,6 +16,19 @@
   box-shadow: 4px 4px 0 var(--text);
   max-width: 640px;
   margin: 2rem auto;
+  position: relative;          /* para el botón flotante de fullscreen */
+}
+
+/* En modo pantalla completa ocupamos todo */
+.juego-escalada:fullscreen,
+.juego-escalada:-webkit-full-screen {
+  max-width: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 1rem;
+  justify-content: center;
+  background: var(--bg);
 }
 
 /* Canvas del juego */
@@ -27,7 +42,16 @@
   border: 2px solid var(--text);
   box-shadow: 2px 2px 0 var(--text);
   image-rendering: pixelated;
-  touch-action: none;   /* evita scroll táctil dentro del canvas */
+  touch-action: none;
+}
+
+/* En pantalla completa el canvas puede crecer */
+.juego-escalada:fullscreen .juego-escalada__canvas,
+.juego-escalada:-webkit-full-screen .juego-escalada__canvas {
+  max-width: none;
+  max-height: calc(100vh - 4rem);
+  width: auto;
+  aspect-ratio: 3 / 4;
 }
 
 /* Info superior (altura, récord) */
@@ -39,14 +63,15 @@
   font-family: var(--mono);
   font-size: .85rem;
   color: var(--muted);
+  flex-wrap: wrap;
+  gap: .25rem .75rem;
 }
 
 .juego-escalada__info strong {
-  color: var(--accent);
   font-weight: 700;
 }
 
-/* Botones de control (solo en móvil, de momento ocultos) */
+/* Botones de control (móvil) */
 .juego-escalada__controles {
   display: none;
   gap: .5rem;
@@ -58,8 +83,34 @@
 
 .juego-escalada__btn {
   flex: 1;
-  padding: 1rem;
+  padding: 1.1rem;
   font-family: var(--display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 2px solid var(--text);
+  box-shadow: 2px 2px 0 var(--text);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.juego-escalada__btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--text);
+}
+
+/* Botón flotante para salir de pantalla completa */
+.juego-escalada__salir-fullscreen {
+  display: none;
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--on-accent);
@@ -68,16 +119,92 @@
   box-shadow: 2px 2px 0 var(--text);
   cursor: pointer;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.juego-escalada__btn:active {
+.juego-escalada__salir-fullscreen:active {
   transform: translate(2px, 2px);
   box-shadow: 0 0 0 var(--text);
 }
 
-/* En móvil, mostrar los botones de control */
+/* Solo aparece cuando estamos en pantalla completa */
+.juego-escalada:fullscreen .juego-escalada__salir-fullscreen,
+.juego-escalada:-webkit-full-screen .juego-escalada__salir-fullscreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================================
+   RESPONSIVE · MÓVIL Y TABLET
+   ============================================================================ */
+
+/* Móvil y tablet: mostrar botones táctiles */
 @media (max-width: 720px) {
+  .juego-escalada {
+    padding: .75rem .5rem;
+    margin: 1rem auto;
+    max-width: 100%;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .juego-escalada__info {
+    font-size: .75rem;
+    justify-content: space-around;
+  }
+
   .juego-escalada__controles {
     display: flex;
+  }
+
+  .juego-escalada__btn {
+    font-size: 1.6rem;
+    padding: 1.2rem .5rem;
+  }
+
+  .juego-escalada__canvas {
+    max-width: 100%;
+  }
+}
+
+/* Móviles muy estrechos */
+@media (max-width: 420px) {
+  .juego-escalada__info {
+    font-size: .7rem;
+  }
+  .juego-escalada__info span {
+    flex: 1 1 45%;
+    text-align: center;
+  }
+  .juego-escalada__btn {
+    font-size: 1.4rem;
+    padding: 1rem .25rem;
+  }
+}
+
+/* Móvil en apaisado (landscape) */
+@media (max-width: 900px) and (orientation: landscape) {
+  .juego-escalada__canvas {
+    max-height: 70vh;
+    width: auto;
+  }
+}
+
+/* ============================================================================
+   ACCESIBILIDAD · Reduced motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .juego-escalada,
+  .juego-escalada * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .juego-escalada__btn:active,
+  .juego-escalada__salir-fullscreen:active {
+    transform: none;
   }
 }

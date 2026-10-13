@@ -7,6 +7,7 @@
    · Fase 3.6.1: murciélagos por tipo + águilas + ESC confirmar + altura acumulada
    · Fase 3.6.2: navegación por teclado + foco visible en menús
    · Fase 4: paletas por skin (Topo / Omarchy / Minecraft / Matrix)
+   · Fase 5: fullscreen + móvil + responsive + reduced-motion
    · Preparado para: campaña por el mundo (países + sitios de escalada)
    · Caída: quita 1 vida SOLO al tocar suelo, si la caída > 90 m
    ============================================================================ */
@@ -48,9 +49,44 @@
   const DECO_RANGO_OBJETO = 4200;
   const DECO_RANGO_PEQUENO = 4000;
 
-  // ---------- Detección de reduced-motion ----------
-  const reducedMotion = window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // ---------- Reduced motion ----------
+  const mediaReduced = window.matchMedia
+    ? window.matchMedia("(prefers-reduced-motion: reduce)")
+    : { matches: false };
+  let reducedMotion = mediaReduced.matches;
+  if (mediaReduced.addEventListener) {
+    mediaReduced.addEventListener("change", (e) => { reducedMotion = e.matches; });
+  }
+
+  // ---------- Fullscreen API ----------
+  const fullscreenSoportado = !!(
+    document.fullscreenEnabled ||
+    document.webkitFullscreenEnabled ||
+    document.mozFullScreenEnabled ||
+    document.msFullscreenEnabled
+  );
+  function estaEnFullscreen() {
+    return !!(document.fullscreenElement ||
+              document.webkitFullscreenElement ||
+              document.mozFullScreenElement ||
+              document.msFullscreenElement);
+  }
+  function pedirFullscreen(el) {
+    const fn = el.requestFullscreen ||
+               el.webkitRequestFullscreen ||
+               el.mozRequestFullScreen ||
+               el.msRequestFullscreen;
+    if (fn) return fn.call(el);
+    return Promise.reject(new Error("Fullscreen no soportado"));
+  }
+  function salirFullscreen() {
+    const fn = document.exitFullscreen ||
+               document.webkitExitFullscreen ||
+               document.mozCancelFullScreen ||
+               document.msExitFullscreen;
+    if (fn) return fn.call(document);
+    return Promise.reject(new Error("Exit fullscreen no soportado"));
+  }
 
   // ---------- Paletas por skin ----------
   const PALETAS_SKIN = {
@@ -124,7 +160,7 @@
     return PALETAS_SKIN[skinActual()];
   }
 
-  // ---------- Lluvia Matrix (columnas de código) ----------
+  // ---------- Lluvia Matrix ----------
   const matrixLluvia = {
     cols: [],
     chars: "アカサタナハマヤラワ0123456789ABCDEFabcdef<>{}[]()=+-*/;:",
@@ -173,30 +209,10 @@
 
   // ---------- Tipos de pantalla ----------
   const TIPOS_PANTALLA = {
-    cueva: {
-      id: 1, nombre: "Cueva",
-      decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"],
-      murcielagos: 25,
-      vinyetaFuerte: true,
-    },
-    grieta: {
-      id: 2, nombre: "Grieta",
-      decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"],
-      murcielagos: 15,
-      vinyetaFuerte: true,
-    },
-    aire: {
-      id: 3, nombre: "Aire libre",
-      decoraciones: ["nube", "montana", "arbol", "pajaro", "aguila"],
-      murcielagos: 0,
-      vinyetaFuerte: false,
-    },
-    infinito: {
-      id: 4, nombre: "Infinito",
-      decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"],
-      murcielagos: 25,
-      vinyetaFuerte: true,
-    },
+    cueva: { id: 1, nombre: "Cueva", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true },
+    grieta: { id: 2, nombre: "Grieta", decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"], murcielagos: 15, vinyetaFuerte: true },
+    aire: { id: 3, nombre: "Aire libre", decoraciones: ["nube", "montana", "arbol", "pajaro", "aguila"], murcielagos: 0, vinyetaFuerte: false },
+    infinito: { id: 4, nombre: "Infinito", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true },
   };
 
   const CATALOGO_PANTALLAS = [
@@ -263,36 +279,86 @@
   };
 
   // ---------- Opciones de menú ----------
-  const OPCIONES_MENU = {
-    "menu": ["empezar", "instrucciones"],
-    "gameover": ["reintentar", "menu"],
-    "confirmar-salida": ["si", "no"],
-  };
-  function numOpciones() { const l = OPCIONES_MENU[estado.modo]; return l ? l.length : 0; }
+  // Se generan dinámicamente porque "pantalla completa" depende del navegador.
+  function opcionesMenuActual() {
+    if (estado.modo === "menu") {
+      const op = ["empezar", "instrucciones"];
+      if (fullscreenSoportado && !estaEnFullscreen()) op.push("pantalla-completa");
+      return op;
+    }
+    if (estado.modo === "gameover") {
+      const op = ["reintentar", "menu"];
+      if (fullscreenSoportado && !estaEnFullscreen()) op.push("pantalla-completa");
+      return op;
+    }
+    if (estado.modo === "confirmar-salida") {
+      const op = ["si", "no"];
+      if (fullscreenSoportado && estaEnFullscreen()) op.push("salir-fullscreen");
+      return op;
+    }
+    return [];
+  }
+  function numOpciones() { return opcionesMenuActual().length; }
   function moverFoco(delta) {
     const n = numOpciones();
     if (n === 0) return;
     estado.opcionActiva = (estado.opcionActiva + delta + n) % n;
   }
+  function opcionActual() {
+    const lista = opcionesMenuActual();
+    return lista[estado.opcionActiva] || null;
+  }
   function activarOpcionActiva() {
-    const lista = OPCIONES_MENU[estado.modo];
-    if (!lista) return;
-    const opcion = lista[estado.opcionActiva];
+    const opcion = opcionActual();
+    if (!opcion) return;
     if (estado.modo === "menu") {
       if (opcion === "empezar") iniciarPartidaDesdeMenu();
       else if (opcion === "instrucciones") estado.modo = "instrucciones";
+      else if (opcion === "pantalla-completa") entrarPantallaCompleta();
     } else if (estado.modo === "gameover") {
       if (opcion === "reintentar") iniciarPartidaDesdeMenu();
-      else if (opcion === "menu") estado.modo = "menu";
+      else if (opcion === "menu") { estado.modo = "menu"; estado.opcionActiva = 0; }
+      else if (opcion === "pantalla-completa") entrarPantallaCompleta();
     } else if (estado.modo === "confirmar-salida") {
       if (opcion === "si") salirAlMenu();
       else if (opcion === "no") cancelarSalida();
+      else if (opcion === "salir-fullscreen") salirPantallaCompleta();
     }
   }
   function enfocada(nombreOpcion) {
-    const lista = OPCIONES_MENU[estado.modo];
-    if (!lista) return false;
-    return lista[estado.opcionActiva] === nombreOpcion;
+    return opcionActual() === nombreOpcion;
+  }
+
+  // ---------- Fullscreen: helpers ----------
+  function entrarPantallaCompleta() {
+    if (!fullscreenSoportado) return;
+    pedirFullscreen(contenedor).catch(() => {
+      // Si falla, no hacemos nada (algunos navegadores requieren gesto del usuario)
+    });
+  }
+  function salirPantallaCompleta() {
+    if (!fullscreenSoportado) return;
+    salirFullscreen().catch(() => {});
+  }
+  // Refresca la opción activa cuando cambia el fullscreen (por si la lista cambia)
+  function ajustarFocoTrasFullscreen() {
+    const n = numOpciones();
+    if (estado.opcionActiva >= n) estado.opcionActiva = Math.max(0, n - 1);
+  }
+  ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((ev) => {
+    document.addEventListener(ev, () => {
+      ajustarFocoTrasFullscreen();
+    });
+  });
+
+  // ---------- Bloqueo de scroll en móvil durante la partida ----------
+  function actualizarBloqueoScroll() {
+    const jugando = estado.modo === "jugando" || estado.modo === "confirmar-salida";
+    if (jugando) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
   }
 
   // ---------- Plataformas ----------
@@ -304,7 +370,6 @@
     let y = -180;
     let xActual = 200;
     const TOTAL = 30;
-
     for (let i = 0; i < TOTAL; i++) {
       const progreso = i / TOTAL;
       const separacionY = 100 + Math.round(progreso * 80);
@@ -439,6 +504,7 @@
   const contenedor = document.createElement("div");
   contenedor.className = "juego-escalada";
   contenedor.innerHTML = `
+    <button class="juego-escalada__salir-fullscreen" type="button" aria-label="Salir de pantalla completa" title="Salir de pantalla completa">✕</button>
     <div class="juego-escalada__info">
       <span>Altura: <strong id="je-altura">0</strong> m</span>
       <span>Fragmentos: <strong id="je-frags">0/0</strong></span>
@@ -460,6 +526,9 @@
   const elFrags = contenedor.querySelector("#je-frags");
   const elVidas = contenedor.querySelector("#je-vidas");
   const elRecord = contenedor.querySelector("#je-record");
+  const btnSalirFullscreen = contenedor.querySelector(".juego-escalada__salir-fullscreen");
+
+  btnSalirFullscreen.addEventListener("click", () => salirPantallaCompleta());
 
   // ---------- HUD con colores de skin ----------
   function aplicarColoresHUD() {
@@ -473,9 +542,7 @@
   aplicarColoresHUD();
 
   // ---------- Observador de skin ----------
-  const observerSkin = new MutationObserver(() => {
-    aplicarColoresHUD();
-  });
+  const observerSkin = new MutationObserver(() => { aplicarColoresHUD(); });
   observerSkin.observe(document.documentElement, { attributes: true, attributeFilter: ["data-skin"] });
 
   // ---------- Teclado ----------
@@ -488,6 +555,7 @@
     if (estado.modo === "menu") {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activarOpcionActiva(); }
       else if (e.key === "i" || e.key === "I") { e.preventDefault(); estado.modo = "instrucciones"; }
+      else if (e.key === "f" || e.key === "F") { e.preventDefault(); entrarPantallaCompleta(); }
       return;
     }
     if (estado.modo === "instrucciones") {
@@ -497,6 +565,7 @@
     if (estado.modo === "gameover") {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activarOpcionActiva(); }
       else if (e.key === "Escape") { e.preventDefault(); estado.modo = "menu"; estado.opcionActiva = 0; }
+      else if (e.key === "f" || e.key === "F") { e.preventDefault(); entrarPantallaCompleta(); }
       return;
     }
     if (estado.modo === "confirmar-salida") {
@@ -505,7 +574,12 @@
       else if (e.key === "s" || e.key === "S" || e.key === "y" || e.key === "Y") { e.preventDefault(); salirAlMenu(); }
       return;
     }
-    if (e.key === "Escape") { e.preventDefault(); pedirConfirmacionSalida(); return; }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      if (estaEnFullscreen()) salirPantallaCompleta();
+      else pedirConfirmacionSalida();
+      return;
+    }
     if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") { estado.teclas.izquierda = true; e.preventDefault(); }
     if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") { estado.teclas.derecha = true; e.preventDefault(); }
     if (e.key === " " || e.key === "ArrowUp" || e.key === "w" || e.key === "W") { estado.teclas.salto = true; e.preventDefault(); }
@@ -556,12 +630,15 @@
     if (estado.modo === "menu") {
       if (dentro(estado._btnEmpezar)) { estado.opcionActiva = 0; iniciarPartidaDesdeMenu(); }
       else if (dentro(estado._btnInstrucciones)) { estado.opcionActiva = 1; estado.modo = "instrucciones"; }
+      else if (dentro(estado._btnPantallaCompleta)) entrarPantallaCompleta();
     } else if (estado.modo === "gameover") {
       if (dentro(estado._btnReintentar)) { estado.opcionActiva = 0; iniciarPartidaDesdeMenu(); }
       else if (dentro(estado._btnMenu)) { estado.opcionActiva = 1; estado.modo = "menu"; estado.opcionActiva = 0; }
+      else if (dentro(estado._btnPantallaCompleta)) entrarPantallaCompleta();
     } else if (estado.modo === "confirmar-salida") {
       if (dentro(estado._btnSiSalir)) { estado.opcionActiva = 0; salirAlMenu(); }
       else if (dentro(estado._btnNoSalir)) { estado.opcionActiva = 1; cancelarSalida(); }
+      else if (dentro(estado._btnSalirFullscreen)) salirPantallaCompleta();
     }
   });
 
@@ -574,10 +651,12 @@
     estado.teclas.izquierda = false;
     estado.teclas.derecha = false;
     estado.teclas.salto = false;
+    actualizarBloqueoScroll();
   }
   function cancelarSalida() {
     estado.modo = estado.modoAnterior || "jugando";
     estado.modoAnterior = null;
+    actualizarBloqueoScroll();
   }
   function salirAlMenu() {
     estado.modo = "menu";
@@ -594,12 +673,13 @@
     p.alturaMaximaVuelo = Y_SUELO_JUGABLE;
     p.dañoTiempo = 0;
     estado.camara.y = CAMARA_INICIAL;
+    actualizarBloqueoScroll();
   }
 
   // ---------- Respawn ----------
   function respawn() {
     const p = estado.personaje;
-    if (estado.vidas <= 0) { estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0; return; }
+    if (estado.vidas <= 0) { estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0; actualizarBloqueoScroll(); return; }
     let respawnPlat = null;
     let mejorDist = Infinity;
     for (const plat of estado.plataformas) {
@@ -671,6 +751,7 @@
     estado.modo = "jugando";
     estado.opcionActiva = 0;
     reiniciarPartida();
+    actualizarBloqueoScroll();
   }
   function reiniciarPartida() {
     estado.modo = "jugando";
@@ -762,7 +843,7 @@
     if (caida > UMBRAL_CAIDA_PX && estado.vidas > 0) {
       estado.vidas--;
       p.dañoTiempo = 30;
-      if (estado.vidas <= 0) { estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0; return; }
+      if (estado.vidas <= 0) { estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0; actualizarBloqueoScroll(); return; }
     }
     p.alturaMaximaVuelo = p.y;
   }
@@ -1064,19 +1145,13 @@
   function dibujarFondo() {
     const pal = paletaActual();
     const tipo = tipoActual();
-
-    // Base
     ctx.fillStyle = pal.fondo;
     ctx.fillRect(0, 0, ANCHO, ALTO);
 
-    // Lluvia Matrix (solo skin matrix)
-    if (pal.lluviaMatrix) {
-      dibujarMatrixLluvia();
-    }
+    if (pal.lluviaMatrix) dibujarMatrixLluvia();
 
     const camY = estado.camara.y;
 
-    // Textura de pared (cueva / grieta / infinito)
     if (estado.tipoPantalla !== "aire") {
       const alpha = pal.lluviaMatrix ? 0.15 : 0.35;
       for (let i = 0; i < 25; i++) {
@@ -1095,7 +1170,6 @@
       }
     }
 
-    // Decoraciones
     for (const d of estado.decoraciones) {
       const dy = d.y - camY;
       if (dy + 200 < 0 || dy - 200 > ALTO) continue;
@@ -1363,7 +1437,6 @@
       }
     }
 
-    // Viñeta según tipo y skin
     if (tipo.vinyetaFuerte || pal.lluviaMatrix) {
       const grad = ctx.createRadialGradient(ANCHO / 2, ALTO / 2, 150, ANCHO / 2, ALTO / 2, ANCHO);
       grad.addColorStop(0, "rgba(0,0,0,0)");
@@ -1373,20 +1446,16 @@
     }
   }
 
-  // ---------- Dibujo de plataforma según skin ----------
-  function dibujarPlataforma(plat, py, pal, tipo) {
+  // ---------- Plataforma ----------
+  function dibujarPlataforma(plat, py, pal) {
     if (plat.tipo === "suelo") {
       if (pal.bloques) {
-        // Suelo tipo bloque Minecraft
         ctx.fillStyle = pal.suelo;
         ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
-        // Bisel superior
         ctx.fillStyle = pal.sueloLuz;
         ctx.fillRect(plat.x, py, plat.ancho, 4);
-        // Bisel inferior más oscuro
         ctx.fillStyle = "rgba(0,0,0,0.35)";
         ctx.fillRect(plat.x, py + plat.alto - 4, plat.ancho, 4);
-        // Líneas verticales como bloques
         ctx.strokeStyle = "rgba(0,0,0,0.25)";
         ctx.lineWidth = 1;
         for (let bx = plat.x; bx < plat.x + plat.ancho; bx += 16) {
@@ -1403,20 +1472,15 @@
       }
     } else {
       if (pal.bloques) {
-        // Presa tipo bloque Minecraft (cubo con bisel)
         ctx.fillStyle = pal.presa;
         ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
-        // Bisel claro arriba
         ctx.fillStyle = pal.presaLuz;
         ctx.fillRect(plat.x, py, plat.ancho, 3);
-        // Bisel oscuro abajo
         ctx.fillStyle = "rgba(0,0,0,0.35)";
         ctx.fillRect(plat.x, py + plat.alto - 3, plat.ancho, 3);
-        // Borde
         ctx.strokeStyle = "rgba(0,0,0,0.5)";
         ctx.lineWidth = 1;
         ctx.strokeRect(plat.x + 0.5, py + 0.5, plat.ancho - 1, plat.alto - 1);
-        // Divisiones
         for (let bx = plat.x + 16; bx < plat.x + plat.ancho; bx += 16) {
           ctx.beginPath();
           ctx.moveTo(bx, py);
@@ -1443,15 +1507,41 @@
     }
   }
 
+  // ---------- Botón ----------
+  function dibujarBoton(x, y, w, h, texto, foco, colorBase, colorBorde) {
+    const brillo = 0.7 + Math.sin(Date.now() / 250) * 0.3;
+    const fondo = foco
+      ? "rgba(" + colorBase + ", " + (0.55 + brillo * 0.3) + ")"
+      : "rgba(" + colorBase + ", 0.35)";
+    const borde = foco
+      ? "rgba(" + colorBorde + ", " + brillo + ")"
+      : "rgba(" + colorBorde + ", 0.6)";
+    ctx.fillStyle = fondo;
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeStyle = borde;
+    ctx.lineWidth = foco ? 4 : 2;
+    ctx.strokeRect(x, y, w, h);
+    ctx.fillStyle = foco ? "#ffffff" : "rgba(230, 240, 250, 0.85)";
+    ctx.font = "bold " + (foco ? 24 : 22) + "px monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(texto, x + w / 2, y + h / 2);
+    if (foco) {
+      const parpadeo = 0.5 + Math.sin(Date.now() / 180) * 0.5;
+      ctx.fillStyle = "rgba(255, 255, 100, " + parpadeo + ")";
+      ctx.font = "bold 22px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText("▶", x - 26, y + h / 2);
+      ctx.textAlign = "center";
+    }
+  }
+
   // ---------- Render ----------
   function render() {
     const pal = paletaActual();
-
     dibujarFondo();
 
     const p = estado.personaje;
-    const tipo = tipoActual();
-
     let siguientePresa = null;
     let distMin = Infinity;
     for (const plat of estado.plataformas) {
@@ -1464,13 +1554,9 @@
     for (const plat of estado.plataformas) {
       const py = plat.y - estado.camara.y;
       if (py + plat.alto < 0 || py > ALTO) continue;
-
-      // Sombra
       ctx.fillStyle = "rgba(0,0,0,0.5)";
       ctx.fillRect(plat.x + 4, py + 4, plat.ancho, plat.alto);
-
-      dibujarPlataforma(plat, py, pal, tipo);
-
+      dibujarPlataforma(plat, py, pal);
       if (plat.tipo === "presa") {
         if ((plat.x + plat.y) % 3 === 0) {
           ctx.fillStyle = "rgba(70, 100, 60, 0.5)";
@@ -1526,29 +1612,39 @@
       ctx.font = "bold 56px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("VÍA AL CIELO", ANCHO / 2, ALTO / 2 - 180);
+      ctx.fillText("VÍA AL CIELO", ANCHO / 2, ALTO / 2 - 200);
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "18px monospace";
-      ctx.fillText("Un juego de escalada vertical", ANCHO / 2, ALTO / 2 - 130);
+      ctx.fillText("Un juego de escalada vertical", ANCHO / 2, ALTO / 2 - 150);
       ctx.fillStyle = pal.acento;
       ctx.font = "16px monospace";
-      ctx.fillText("Récord: " + estado.camara.record + " m", ANCHO / 2, ALTO / 2 - 90);
+      ctx.fillText("Récord: " + estado.camara.record + " m", ANCHO / 2, ALTO / 2 - 110);
 
       const btnW = 260;
-      const btnH = 60;
-      const btnY1 = ALTO / 2 - 10;
-      const btnY2 = btnY1 + btnH + 70;
+      const btnH = 55;
+      let by = ALTO / 2 - 40;
+      const sep = 15;
 
-      dibujarBoton(ANCHO / 2 - btnW / 2, btnY1, btnW, btnH, "▶  EMPEZAR", enfocada("empezar"), pal.botonFondo, pal.botonBorde);
-      dibujarBoton(ANCHO / 2 - btnW / 2, btnY2, btnW, btnH, "?  CÓMO JUGAR", enfocada("instrucciones"), pal.botonSecFondo, pal.botonSecBorde);
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "▶  EMPEZAR", enfocada("empezar"), pal.botonFondo, pal.botonBorde);
+      estado._btnEmpezar = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
+      by += btnH + sep;
+
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "?  CÓMO JUGAR", enfocada("instrucciones"), pal.botonSecFondo, pal.botonSecBorde);
+      estado._btnInstrucciones = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
+      by += btnH + sep;
+
+      if (fullscreenSoportado && !estaEnFullscreen()) {
+        dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "⛶  PANTALLA COMPLETA", enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
+        estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
+        by += btnH + sep;
+      } else {
+        estado._btnPantallaCompleta = null;
+      }
 
       ctx.fillStyle = pal.textoSuave;
-      ctx.font = "14px monospace";
+      ctx.font = "13px monospace";
       ctx.textAlign = "center";
-      ctx.fillText("↑↓ / Tab para moverte · ENTER para elegir", ANCHO / 2, btnY2 + btnH + 40);
-
-      estado._btnEmpezar = { x: ANCHO / 2 - btnW / 2, y: btnY1, w: btnW, h: btnH };
-      estado._btnInstrucciones = { x: ANCHO / 2 - btnW / 2, y: btnY2, w: btnW, h: btnH };
+      ctx.fillText("↑↓ / Tab para moverte · ENTER para elegir", ANCHO / 2, by + 10);
       ctx.textAlign = "start";
       ctx.textBaseline = "alphabetic";
     }
@@ -1569,6 +1665,7 @@
         "SALTAR:   ESPACIO  o  ↑  o  W",
         "DOBLE SALTO: pulsa salto otra vez en el aire",
         "SALIR:    ESC (pregunta si quieres salir)",
+        "FULLSCREEN: F o botón ⛶ en el menú",
         "",
         "OBJETIVO:",
         "· Sube lo más alto posible",
@@ -1607,9 +1704,9 @@
       ctx.font = "bold 52px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("GAME OVER", ANCHO / 2, 180);
+      ctx.fillText("GAME OVER", ANCHO / 2, 160);
       const px = ANCHO / 2 - 200;
-      const py = 260;
+      const py = 230;
       const pw = 400;
       const ph = 220;
       ctx.fillStyle = pal.panelFondo;
@@ -1632,14 +1729,24 @@
       else ctx.fillText("Récord:  " + estado.camara.record + " m", ANCHO / 2, py + 185);
 
       const btnW = 260;
-      const btnH = 55;
-      const btnY1 = py + ph + 40;
-      const btnY2 = btnY1 + btnH + 20;
-      dibujarBoton(ANCHO / 2 - btnW / 2, btnY1, btnW, btnH, "↻  REINTENTAR", enfocada("reintentar"), pal.botonFondo, pal.botonBorde);
-      dibujarBoton(ANCHO / 2 - btnW / 2, btnY2, btnW, btnH, "←  MENÚ", enfocada("menu"), pal.botonSecFondo, pal.botonSecBorde);
+      const btnH = 52;
+      let by = py + ph + 30;
+      const sep = 15;
 
-      estado._btnReintentar = { x: ANCHO / 2 - btnW / 2, y: btnY1, w: btnW, h: btnH };
-      estado._btnMenu = { x: ANCHO / 2 - btnW / 2, y: btnY2, w: btnW, h: btnH };
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "↻  REINTENTAR", enfocada("reintentar"), pal.botonFondo, pal.botonBorde);
+      estado._btnReintentar = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
+      by += btnH + sep;
+
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "←  MENÚ", enfocada("menu"), pal.botonSecFondo, pal.botonSecBorde);
+      estado._btnMenu = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
+      by += btnH + sep;
+
+      if (fullscreenSoportado && !estaEnFullscreen()) {
+        dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, "⛶  PANTALLA COMPLETA", enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
+        estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
+      } else {
+        estado._btnPantallaCompleta = null;
+      }
       ctx.textAlign = "start";
       ctx.textBaseline = "alphabetic";
     }
@@ -1649,9 +1756,9 @@
       ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
       ctx.fillRect(0, 0, ANCHO, ALTO);
       const px = ANCHO / 2 - 220;
-      const py = ALTO / 2 - 140;
+      const py = ALTO / 2 - 160;
       const pw = 440;
-      const ph = 280;
+      const ph = 320;
       ctx.fillStyle = pal.panelFondo;
       ctx.fillRect(px, py, pw, ph);
       ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.9)";
@@ -1661,62 +1768,39 @@
       ctx.font = "bold 26px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("¿SALIR DE LA PARTIDA?", ANCHO / 2, py + 50);
+      ctx.fillText("¿SALIR DE LA PARTIDA?", ANCHO / 2, py + 45);
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "16px monospace";
-      ctx.fillText("Perderás el progreso de esta partida.", ANCHO / 2, py + 90);
-      ctx.fillText("¿Seguro que quieres salir al menú?", ANCHO / 2, py + 115);
+      ctx.fillText("Perderás el progreso de esta partida.", ANCHO / 2, py + 80);
+      ctx.fillText("¿Seguro que quieres salir al menú?", ANCHO / 2, py + 105);
 
       const btnW = 160;
-      const btnH = 55;
-      const btnY = py + 170;
-      const sep = 30;
+      const btnH = 50;
+      let by = py + 140;
+      const sep = 20;
       const btnSiX = ANCHO / 2 - btnW - sep / 2;
       const btnNoX = ANCHO / 2 + sep / 2;
-      dibujarBoton(btnSiX, btnY, btnW, btnH, "SÍ (S)", enfocada("si"), "220, 80, 80", "255, 120, 120");
-      dibujarBoton(btnNoX, btnY, btnW, btnH, "NO (N)", enfocada("no"), pal.botonSecFondo, pal.botonSecBorde);
 
-      estado._btnSiSalir = { x: btnSiX, y: btnY, w: btnW, h: btnH };
-      estado._btnNoSalir = { x: btnNoX, y: btnY, w: btnW, h: btnH };
+      dibujarBoton(btnSiX, by, btnW, btnH, "SÍ (S)", enfocada("si"), "220, 80, 80", "255, 120, 120");
+      dibujarBoton(btnNoX, by, btnW, btnH, "NO (N)", enfocada("no"), pal.botonSecFondo, pal.botonSecBorde);
+      estado._btnSiSalir = { x: btnSiX, y: by, w: btnW, h: btnH };
+      estado._btnNoSalir = { x: btnNoX, y: by, w: btnW, h: btnH };
+      by += btnH + 20;
+
+      if (fullscreenSoportado && estaEnFullscreen()) {
+        const btnFullW = 340;
+        dibujarBoton(ANCHO / 2 - btnFullW / 2, by, btnFullW, btnH, "⛶  SALIR PANTALLA COMPLETA", enfocada("salir-fullscreen"), pal.botonSecFondo, pal.botonSecBorde);
+        estado._btnSalirFullscreen = { x: ANCHO / 2 - btnFullW / 2, y: by, w: btnFullW, h: btnH };
+      } else {
+        estado._btnSalirFullscreen = null;
+      }
 
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "13px monospace";
       ctx.textAlign = "center";
-      ctx.fillText("↑↓ / Tab para moverte · ENTER para elegir", ANCHO / 2, py + ph - 25);
+      ctx.fillText("↑↓ / Tab para moverte · ENTER para elegir", ANCHO / 2, py + ph - 15);
       ctx.textAlign = "start";
       ctx.textBaseline = "alphabetic";
-    }
-  }
-
-  // ---------- Botón ----------
-  function dibujarBoton(x, y, w, h, texto, foco, colorBase, colorBorde) {
-    const brillo = 0.7 + Math.sin(Date.now() / 250) * 0.3;
-    const fondo = foco
-      ? "rgba(" + colorBase + ", " + (0.55 + brillo * 0.3) + ")"
-      : "rgba(" + colorBase + ", 0.35)";
-    const borde = foco
-      ? "rgba(" + colorBorde + ", " + brillo + ")"
-      : "rgba(" + colorBorde + ", 0.6)";
-
-    ctx.fillStyle = fondo;
-    ctx.fillRect(x, y, w, h);
-    ctx.strokeStyle = borde;
-    ctx.lineWidth = foco ? 4 : 2;
-    ctx.strokeRect(x, y, w, h);
-
-    ctx.fillStyle = foco ? "#ffffff" : "rgba(230, 240, 250, 0.85)";
-    ctx.font = "bold " + (foco ? 24 : 22) + "px monospace";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(texto, x + w / 2, y + h / 2);
-
-    if (foco) {
-      const parpadeo = 0.5 + Math.sin(Date.now() / 180) * 0.5;
-      ctx.fillStyle = "rgba(255, 255, 100, " + parpadeo + ")";
-      ctx.font = "bold 22px monospace";
-      ctx.textAlign = "left";
-      ctx.fillText("▶", x - 26, y + h / 2);
-      ctx.textAlign = "center";
     }
   }
 
@@ -1770,6 +1854,7 @@
       crearDecoraciones();
       crearMurcielagos();
       contenedor.style.display = "flex";
+      actualizarBloqueoScroll();
       console.log("Saltado a P" + numero + " · tipo: " + estado.tipoPantalla + " · skin: " + skinActual());
     },
     tiposDisponibles() { return Object.keys(TIPOS_PANTALLA); },
@@ -1777,5 +1862,8 @@
       return CATALOGO_PANTALLAS.map((p, i) => ({ numero: i + 1, tipo: p.tipo, nombre: p.nombre }));
     },
     skinsDisponibles() { return Object.keys(PALETAS_SKIN); },
+    entrarFullscreen() { entrarPantallaCompleta(); },
+    salirFullscreen() { salirPantallaCompleta(); },
+    estaEnFullscreen,
   };
 })();
