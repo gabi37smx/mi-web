@@ -1,0 +1,83 @@
+/* ============================================================================
+   juego-escalada.css · Juego de plataformas del escalador
+   ============================================================================ */
+
+/* Contenedor principal (oculto por ahora, hasta la Fase 6) */
+.juego-escalada {
+  display: none;   /* Cambiar a "flex" en la Fase 6 */
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  background: var(--surface);
+  border: 2px solid var(--text);
+  box-shadow: 4px 4px 0 var(--text);
+  max-width: 640px;
+  margin: 2rem auto;
+}
+
+/* Canvas del juego */
+.juego-escalada__canvas {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  background: var(--bg);
+  border: 2px solid var(--text);
+  box-shadow: 2px 2px 0 var(--text);
+  image-rendering: pixelated;
+  touch-action: none;   /* evita scroll táctil dentro del canvas */
+}
+
+/* Info superior (altura, récord) */
+.juego-escalada__info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 600px;
+  font-family: var(--mono);
+  font-size: .85rem;
+  color: var(--muted);
+}
+
+.juego-escalada__info strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Botones de control (solo en móvil, de momento ocultos) */
+.juego-escalada__controles {
+  display: none;
+  gap: .5rem;
+  width: 100%;
+  max-width: 600px;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.juego-escalada__btn {
+  flex: 1;
+  padding: 1rem;
+  font-family: var(--display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 2px solid var(--text);
+  box-shadow: 2px 2px 0 var(--text);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.juego-escalada__btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--text);
+}
+
+/* En móvil, mostrar los botones de control */
+@media (max-width: 720px) {
+  .juego-escalada__controles {
+    display: flex;
+  }
+}
