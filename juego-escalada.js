@@ -1,12 +1,11 @@
 /* ============================================================================
-   juego-escalada.js · Juego de plataformas del escalador (Fase 3.4)
+   juego-escalada.js · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
-   · Conjuntos temáticos de fragmentos (5 grupos)
-   · Popup GRANDE al coger los 3 fragmentos (3s) + efecto visual del resultado
-   · Caída: quita 1 vida SOLO al tocar suelo, si la caída > 30 m
-   · Suelo sólido de lado a lado (sin precipicio lateral)
+   · Fase 3.4: cofres + esqueletos + cráneos + monedas + petróleo
+   · Fase 3.5.1: sistema de pantallas (estructura + transición preparada)
+   · Caída: quita 1 vida SOLO al tocar suelo, si la caída > 90 m
+   · Suelo sólido de lado a lado
    · Último corazón en rojo
-   · Decoraciones especiales: cofres, esqueletos, cráneos, monedas, petróleo
    ============================================================================ */
 
 (function juegoEscalada() {
@@ -41,6 +40,30 @@
 
   // Umbral de caída: si cae más de esto al tocar suelo, pierde vida
   const UMBRAL_CAIDA_PX = 1800; // 90 m
+
+  // ---------- Tipos de pantalla ----------
+  const TIPOS_PANTALLA = {
+    cueva:    { id: 1, nombre: "Cueva",      fondo: "#1a1410", techo: "#2e2620" },
+    grieta:   { id: 2, nombre: "Grieta",     fondo: "#2a1f18", techo: "#3a2e26" },
+    aire:     { id: 3, nombre: "Aire libre", fondo: "#87CEEB", techo: "#5a9ec9" },
+    infinito: { id: 4, nombre: "Infinito",   fondo: "#1a1410", techo: "#2e2620" },
+  };
+
+  // Secuencia de pantallas (las 5 primeras fijas, luego infinito)
+  const SECUENCIA_PANTALLAS = [
+    "cueva",    // Pantalla 1
+    "cueva",    // Pantalla 2
+    "grieta",   // Pantalla 3
+    "grieta",   // Pantalla 4
+    "aire",     // Pantalla 5
+  ];
+
+  function tipoDePantalla(numero) {
+    if (numero <= SECUENCIA_PANTALLAS.length) {
+      return SECUENCIA_PANTALLAS[numero - 1];
+    }
+    return "infinito";
+  }
 
   // ---------- Conjuntos temáticos ----------
   const CONJUNTOS = [
@@ -107,15 +130,18 @@
     fragmentosRecogidos: 0,
     fragmentosTotales: 0,
     pantalla: 1,
+    tipoPantalla: "cueva",
+    transicion: null,
     gameOver: false,
     bonusVidaDado: false,
   };
 
   // ---------- Plataformas ----------
   function crearPlataformas() {
+    estado.tipoPantalla = tipoDePantalla(estado.pantalla);
     const plats = [];
 
-    // Suelo sólido de lado a lado (el fondo de la cueva)
+    // Suelo sólido de lado a lado (el fondo de la pantalla)
     plats.push({ x: 0, y: SUELO_Y, ancho: ANCHO, alto: SUELO_ALTO, tipo: "suelo" });
 
     let y = -180;
@@ -229,9 +255,8 @@
       });
     }
 
-    // ▼ NUEVAS DECORACIONES ESPECIALES (Fase 3.4)
+    // ▼ DECORACIONES ESPECIALES (Fase 3.4)
 
-    // Cofres del tesoro enterrados (con oro asomando)
     for (let i = 0; i < 8; i++) {
       decor.push({
         tipo: "cofre",
@@ -244,7 +269,6 @@
       });
     }
 
-    // Esqueletos de dinosaurio (cráneo + costillas + fémur)
     for (let i = 0; i < 4; i++) {
       decor.push({
         tipo: "esqueleto",
@@ -255,7 +279,6 @@
       });
     }
 
-    // Cráneos sueltos
     for (let i = 0; i < 10; i++) {
       decor.push({
         tipo: "craneo",
@@ -265,7 +288,6 @@
       });
     }
 
-    // Monedas antiguas
     for (let i = 0; i < 14; i++) {
       decor.push({
         tipo: "moneda",
@@ -276,7 +298,6 @@
       });
     }
 
-    // Charcos de petróleo
     for (let i = 0; i < 6; i++) {
       decor.push({
         tipo: "petroleo",
@@ -286,7 +307,7 @@
         alto: 14 + Math.random() * 10,
       });
     }
-    // ▲ FIN NUEVAS DECORACIONES
+    // ▲ FIN DECORACIONES ESPECIALES
 
     estado.decoraciones = decor;
   }
@@ -392,7 +413,6 @@
       return;
     }
 
-    // Buscar la plataforma "presa" más cercana por encima del jugador
     let respawnPlat = null;
     let mejorDist = Infinity;
     for (const plat of estado.plataformas) {
@@ -419,6 +439,69 @@
     p.alturaMaximaVuelo = p.y;
   }
 
+  // ---------- Transición de pantalla ----------
+  function iniciarTransicion() {
+    estado.transicion = {
+      tiempo: 0,
+      duracion: 120,
+      tipo: estado.tipoPantalla,
+    };
+
+    estado.pantalla++;
+    estado.tipoPantalla = tipoDePantalla(estado.pantalla);
+
+    crearPlataformas();
+    crearDecoraciones();
+    crearMurcielagos();
+
+    const p = estado.personaje;
+    p.x = ANCHO / 2 - STEVE_ANCHO / 2;
+    p.y = Y_SUELO_JUGABLE;
+    p.velX = 0;
+    p.velY = 0;
+    p.alturaMaximaVuelo = p.y;
+    p.enSuelo = false;
+    p.saltando = false;
+    p.dobleSaltoDisponible = true;
+    p.saltoSuelto = true;
+
+    estado.camara.y = CAMARA_INICIAL;
+  }
+
+  function actualizarTransicion() {
+    if (!estado.transicion) return false;
+    estado.transicion.tiempo++;
+    if (estado.transicion.tiempo > estado.transicion.duracion) {
+      estado.transicion = null;
+      return false;
+    }
+    return true;
+  }
+
+  function dibujarTransicion() {
+    const tr = estado.transicion;
+    if (!tr) return;
+
+    const mitad = tr.duracion / 2;
+    let alpha;
+    if (tr.tiempo < mitad) {
+      alpha = tr.tiempo / mitad;
+    } else {
+      alpha = (tr.duracion - tr.tiempo) / mitad;
+    }
+
+    ctx.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
+    ctx.fillRect(0, 0, ANCHO, ALTO);
+
+    ctx.fillStyle = "rgba(255, 255, 255, " + alpha + ")";
+    ctx.font = "bold 36px monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("PANTALLA " + estado.pantalla, ANCHO / 2, ALTO / 2);
+    ctx.textAlign = "start";
+    ctx.textBaseline = "alphabetic";
+  }
+
   // ---------- Reiniciar partida ----------
   function reiniciarPartida() {
     estado.vidas = VIDAS_INICIALES;
@@ -428,6 +511,8 @@
     estado.camara.y = CAMARA_INICIAL;
     estado.camara.alturaMaxima = 0;
     estado.pantalla = 1;
+    estado.tipoPantalla = "cueva";
+    estado.transicion = null;
     estado.popups = [];
     estado.popupGrande = null;
 
@@ -445,6 +530,8 @@
     p.dañoTiempo = 0;
 
     crearPlataformas();
+    crearDecoraciones();
+    crearMurcielagos();
   }
 
   // ---------- Colisiones ----------
@@ -538,8 +625,6 @@
   function comprobarCaida() {
     const p = estado.personaje;
 
-    // Mientras está en el aire: solo guardamos el punto más alto
-    // cuando está subiendo o en el ápice (velY <= 0).
     if (!p.enSuelo) {
       if (p.velY <= 0 && p.y < p.alturaMaximaVuelo) {
         p.alturaMaximaVuelo = p.y;
@@ -547,7 +632,6 @@
       return;
     }
 
-    // Está en el suelo: calcular cuánto ha caído desde el punto más alto
     const caida = p.y - p.alturaMaximaVuelo;
 
     if (caida > UMBRAL_CAIDA_PX && estado.vidas > 0) {
@@ -560,7 +644,6 @@
       }
     }
 
-    // Resetear el punto más alto al tocar suelo
     p.alturaMaximaVuelo = p.y;
   }
 
@@ -568,6 +651,7 @@
   function actualizarFisica() {
     const p = estado.personaje;
     if (estado.gameOver) return;
+    if (actualizarTransicion()) return;
 
     if (p.dañoTiempo > 0) p.dañoTiempo--;
 
@@ -582,13 +666,13 @@
       p.saltando = true;
       p.saltoSuelto = false;
       p.dobleSaltoDisponible = true;
-      p.alturaMaximaVuelo = p.y;   // resetear al despegar
+      p.alturaMaximaVuelo = p.y;
     } else if (estado.teclas.salto && p.saltoSuelto && !p.enSuelo && p.dobleSaltoDisponible) {
       p.velY = Math.min(p.velY, 0) + IMPULSO_DOBLE;
       p.saltando = true;
       p.saltoSuelto = false;
       p.dobleSaltoDisponible = false;
-      p.alturaMaximaVuelo = p.y;   // resetear al doble saltar
+      p.alturaMaximaVuelo = p.y;
     }
 
     p.velY += GRAVEDAD;
@@ -632,7 +716,7 @@
     }
 
     // HUD
-    elAltura.textContent = altura;
+    elAltura.textContent = altura + " m · P" + estado.pantalla;
     elFrags.textContent = estado.fragmentosRecogidos + "/" + estado.fragmentosTotales;
     let corazones = "";
     for (let i = 0; i < estado.vidas; i++) {
@@ -897,9 +981,11 @@
     ctx.textBaseline = "alphabetic";
   }
 
-  // ---------- Fondo cueva ----------
+  // ---------- Fondo ----------
   function dibujarFondo() {
-    ctx.fillStyle = "#1a1410";
+    const tipo = TIPOS_PANTALLA[estado.tipoPantalla] || TIPOS_PANTALLA.cueva;
+
+    ctx.fillStyle = tipo.fondo;
     ctx.fillRect(0, 0, ANCHO, ALTO);
 
     const camY = estado.camara.y;
@@ -1173,6 +1259,7 @@
 
     dibujarPopups();
     dibujarPopupGrande();
+    dibujarTransicion();
 
     if (estado.gameOver) {
       ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
