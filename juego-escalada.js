@@ -1,13 +1,7 @@
 /* ============================================================================
    juego-escalada.js · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
-   · Fase 3.4 → 3.6: mecánicas + decoraciones + pantallas + menús
-   · Fase 4: paletas por skin
-   · Fase 5: fullscreen + móvil + responsive
-   · Fase 6: integrado en #juego
-   · Fase 7: traducción ES/VA/EN + créditos
-   · Fase 8.1: Valencia + Madrid + París
-   · Fase 8.1.1: botón ☰ MENÚ flotante (iOS-friendly) + monumentos rediseñados
+   · Fase 8.2: osos bípedos caminando por Madrid (5 osos, sin daño todavía)
    ============================================================================ */
 
 (function juegoEscalada() {
@@ -17,7 +11,7 @@
   window.__juegoEscaladaCargado = true;
 
   // ============================================================================
-  // i18n · Traducciones del juego (ES / VA / EN)
+  // i18n
   // ============================================================================
   const TRADUCCIONES = {
     es: {
@@ -52,7 +46,10 @@
       pantalla: "PANTALLA",
       pantalla_cueva: "Cueva", pantalla_grieta: "Grieta", pantalla_aire: "Aire libre", pantalla_infinito: "Infinito",
       pantalla_valencia: "Valencia", pantalla_madrid: "Madrid", pantalla_paris: "París",
-      pie: "Vía al Cielo · v:71.1 · por Gabriel Vidal Badia",
+      subtitulo_valencia: "Ciudad de las Artes y las Ciencias",
+      subtitulo_madrid: "Puerta de Alcalá · Cibeles · El Oso y el Madroño",
+      subtitulo_paris: "La Torre Eiffel al atardecer",
+      pie: "Vía al Cielo · v:71.6 · por Gabriel Vidal Badia",
     },
     val: {
       hud_altura: "Alçada", hud_fragmentos: "Fragments", hud_vidas: "Vides", hud_record: "Rècord", hud_m: "m", hud_p: "P",
@@ -86,7 +83,10 @@
       pantalla: "PANTALLA",
       pantalla_cueva: "Cova", pantalla_grieta: "Esquerda", pantalla_aire: "Aire lliure", pantalla_infinito: "Infinit",
       pantalla_valencia: "València", pantalla_madrid: "Madrid", pantalla_paris: "París",
-      pie: "Via al Cel · v:71.1 · per Gabriel Vidal Badia",
+      subtitulo_valencia: "Ciutat de les Arts i les Ciències",
+      subtitulo_madrid: "Puerta de Alcalá · Cibeles · L'Osset i el Madroño",
+      subtitulo_paris: "La Torre Eiffel a la posta de sol",
+      pie: "Via al Cel · v:71.6 · per Gabriel Vidal Badia",
     },
     en: {
       hud_altura: "Height", hud_fragmentos: "Fragments", hud_vidas: "Lives", hud_record: "Record", hud_m: "m", hud_p: "P",
@@ -120,7 +120,10 @@
       pantalla: "SCREEN",
       pantalla_cueva: "Cave", pantalla_grieta: "Crevice", pantalla_aire: "Open air", pantalla_infinito: "Infinite",
       pantalla_valencia: "Valencia", pantalla_madrid: "Madrid", pantalla_paris: "Paris",
-      pie: "Path to the Sky · v:71.1 · by Gabriel Vidal Badia",
+      subtitulo_valencia: "City of Arts and Sciences",
+      subtitulo_madrid: "Puerta de Alcalá · Cibeles · The Bear and the Strawberry Tree",
+      subtitulo_paris: "The Eiffel Tower at sunset",
+      pie: "Path to the Sky · v:71.6 · by Gabriel Vidal Badia",
     },
   };
 
@@ -171,6 +174,8 @@
   const DECO_RANGO_OBJETO = 4200;
   const DECO_RANGO_PEQUENO = 4000;
 
+  const BANNER_DURACION = 180;
+
   // ---------- Reduced motion ----------
   const mediaReduced = window.matchMedia
     ? window.matchMedia("(prefers-reduced-motion: reduce)")
@@ -180,12 +185,11 @@
     mediaReduced.addEventListener("change", (e) => { reducedMotion = e.matches; });
   }
 
-  // ---------- Detección de iOS ----------
-  // iPhone no soporta Fullscreen API. iPad sí. Detectamos iPhone/iPod específicamente.
+  // ---------- iOS ----------
   const esIPhone = /iPhone|iPod/.test(navigator.userAgent) ||
                    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1 && !/iPad/.test(navigator.userAgent));
 
-  // ---------- Fullscreen API ----------
+  // ---------- Fullscreen ----------
   const fullscreenSoportado = !!(
     !esIPhone && (
       document.fullscreenEnabled ||
@@ -194,17 +198,12 @@
       document.msFullscreenEnabled
     )
   );
-
   function estaEnFullscreen() {
-    return !!(document.fullscreenElement ||
-              document.webkitFullscreenElement ||
-              document.mozFullScreenElement ||
-              document.msFullscreenElement);
+    return !!(document.fullscreenElement || document.webkitFullscreenElement ||
+              document.mozFullScreenElement || document.msFullscreenElement);
   }
   function pedirFullscreen(el) {
-    if (el.requestFullscreen) {
-      return el.requestFullscreen({ navigationUI: "hide" }).catch(() => el.requestFullscreen());
-    }
+    if (el.requestFullscreen) return el.requestFullscreen({ navigationUI: "hide" }).catch(() => el.requestFullscreen());
     if (el.webkitRequestFullscreen) return Promise.resolve(el.webkitRequestFullscreen());
     if (el.mozRequestFullScreen) return Promise.resolve(el.mozRequestFullScreen());
     if (el.msRequestFullscreen) return Promise.resolve(el.msRequestFullscreen());
@@ -216,75 +215,45 @@
     if (fn) return fn.call(document);
     return Promise.reject(new Error("Exit fullscreen no soportado"));
   }
-
   function ajustarAlturaFullscreen() {
     if (!estaEnFullscreen()) {
       if (contenedor) contenedor.style.removeProperty("--altura-juego");
       return;
     }
-    let h;
-    if (window.visualViewport && window.visualViewport.height) {
-      h = Math.round(window.visualViewport.height);
-    } else {
-      h = Math.round(window.innerHeight);
-    }
+    let h = (window.visualViewport && window.visualViewport.height)
+      ? Math.round(window.visualViewport.height)
+      : Math.round(window.innerHeight);
     if (contenedor) contenedor.style.setProperty("--altura-juego", h + "px");
   }
 
+  // ---------- Carga de fondos ----------
+  const FONDOS = {
+    valencia: { img: null, cargada: false, ruta: "image/fondo-valencia.webp" },
+    madrid:   { img: null, cargada: false, ruta: "image/fondo-madrid.webp" },
+    paris:    { img: null, cargada: false, ruta: "image/fondo-paris.webp" },
+  };
+  function cargarFondos() {
+    Object.keys(FONDOS).forEach((k) => {
+      const f = FONDOS[k];
+      const img = new Image();
+      img.onload = () => { f.cargada = true; };
+      img.onerror = () => {
+        const alt = new Image();
+        alt.onload = () => { f.img = alt; f.cargada = true; };
+        alt.src = f.ruta.replace(".webp", ".svg");
+      };
+      img.src = f.ruta;
+      f.img = img;
+    });
+  }
+  cargarFondos();
+
   // ---------- Paletas por skin ----------
   const PALETAS_SKIN = {
-    topo: {
-      fondo: "#1a0e0a", fondo2: "#2a1a12",
-      suelo: "#5a3a2a", sueloLuz: "#8a5a40",
-      presa: "#6a4a3a", presaLuz: "#a07a60",
-      texto: "#f2ede3", textoSuave: "#d4c4b0",
-      acento: "#c94a2a", acentoSuave: "#e07050",
-      menuFondo: "rgba(20, 10, 8, 0.92)",
-      botonFondo: "201, 74, 42", botonBorde: "232, 120, 80",
-      botonSecFondo: "80, 50, 40", botonSecBorde: "140, 100, 80",
-      panelFondo: "rgba(30, 15, 10, 0.95)", panelBorde: "201, 74, 42",
-      transicionTexto: "#f2ede3", vinyeta: "rgba(0,0,0,0.5)",
-      bloques: false, lluviaMatrix: false,
-    },
-    omarchy: {
-      fondo: "#050a1a", fondo2: "#0a1430",
-      suelo: "#1a2540", sueloLuz: "#3a5a9a",
-      presa: "#2a3a5a", presaLuz: "#5a8ae0",
-      texto: "#e8f0ff", textoSuave: "#a0b8e0",
-      acento: "#3a8ae0", acentoSuave: "#60b0ff",
-      menuFondo: "rgba(5, 10, 30, 0.92)",
-      botonFondo: "58, 138, 224", botonBorde: "96, 176, 255",
-      botonSecFondo: "20, 40, 80", botonSecBorde: "80, 140, 220",
-      panelFondo: "rgba(10, 20, 50, 0.95)", panelBorde: "96, 176, 255",
-      transicionTexto: "#e8f0ff", vinyeta: "rgba(0,0,20,0.5)",
-      bloques: false, lluviaMatrix: false,
-    },
-    minecraft: {
-      fondo: "#0a2a30", fondo2: "#0e3a42",
-      suelo: "#2a6a70", sueloLuz: "#5aa0a8",
-      presa: "#3a8a90", presaLuz: "#7ac0c8",
-      texto: "#e0fff0", textoSuave: "#a0e0d0",
-      acento: "#2ad0a0", acentoSuave: "#60ffd0",
-      menuFondo: "rgba(6, 30, 34, 0.92)",
-      botonFondo: "42, 208, 160", botonBorde: "96, 255, 208",
-      botonSecFondo: "20, 60, 60", botonSecBorde: "60, 160, 150",
-      panelFondo: "rgba(10, 40, 44, 0.95)", panelBorde: "42, 208, 160",
-      transicionTexto: "#e0fff0", vinyeta: "rgba(0,0,0,0.55)",
-      bloques: true, lluviaMatrix: false,
-    },
-    matrix: {
-      fondo: "#000000", fondo2: "#001a00",
-      suelo: "#0a2a0a", sueloLuz: "#2aff2a",
-      presa: "#0d3a0d", presaLuz: "#40ff40",
-      texto: "#c8ffc8", textoSuave: "#80ff80",
-      acento: "#00ff41", acentoSuave: "#80ff80",
-      menuFondo: "rgba(0, 10, 0, 0.92)",
-      botonFondo: "0, 180, 60", botonBorde: "0, 255, 65",
-      botonSecFondo: "10, 40, 10", botonSecBorde: "0, 120, 40",
-      panelFondo: "rgba(0, 20, 0, 0.95)", panelBorde: "0, 255, 65",
-      transicionTexto: "#00ff41", vinyeta: "rgba(0,0,0,0.3)",
-      bloques: false, lluviaMatrix: true,
-    },
+    topo: { fondo: "#1a0e0a", fondo2: "#2a1a12", suelo: "#5a3a2a", sueloLuz: "#8a5a40", presa: "#6a4a3a", presaLuz: "#a07a60", texto: "#f2ede3", textoSuave: "#d4c4b0", acento: "#c94a2a", acentoSuave: "#e07050", menuFondo: "rgba(20, 10, 8, 0.92)", botonFondo: "201, 74, 42", botonBorde: "232, 120, 80", botonSecFondo: "80, 50, 40", botonSecBorde: "140, 100, 80", panelFondo: "rgba(30, 15, 10, 0.95)", panelBorde: "201, 74, 42", transicionTexto: "#f2ede3", vinyeta: "rgba(0,0,0,0.5)", bloques: false, lluviaMatrix: false },
+    omarchy: { fondo: "#050a1a", fondo2: "#0a1430", suelo: "#1a2540", sueloLuz: "#3a5a9a", presa: "#2a3a5a", presaLuz: "#5a8ae0", texto: "#e8f0ff", textoSuave: "#a0b8e0", acento: "#3a8ae0", acentoSuave: "#60b0ff", menuFondo: "rgba(5, 10, 30, 0.92)", botonFondo: "58, 138, 224", botonBorde: "96, 176, 255", botonSecFondo: "20, 40, 80", botonSecBorde: "80, 140, 220", panelFondo: "rgba(10, 20, 50, 0.95)", panelBorde: "96, 176, 255", transicionTexto: "#e8f0ff", vinyeta: "rgba(0,0,20,0.5)", bloques: false, lluviaMatrix: false },
+    minecraft: { fondo: "#0a2a30", fondo2: "#0e3a42", suelo: "#2a6a70", sueloLuz: "#5aa0a8", presa: "#3a8a90", presaLuz: "#7ac0c8", texto: "#e0fff0", textoSuave: "#a0e0d0", acento: "#2ad0a0", acentoSuave: "#60ffd0", menuFondo: "rgba(6, 30, 34, 0.92)", botonFondo: "42, 208, 160", botonBorde: "96, 255, 208", botonSecFondo: "20, 60, 60", botonSecBorde: "60, 160, 150", panelFondo: "rgba(10, 40, 44, 0.95)", panelBorde: "42, 208, 160", transicionTexto: "#e0fff0", vinyeta: "rgba(0,0,0,0.55)", bloques: true, lluviaMatrix: false },
+    matrix: { fondo: "#000000", fondo2: "#001a00", suelo: "#0a2a0a", sueloLuz: "#2aff2a", presa: "#0d3a0d", presaLuz: "#40ff40", texto: "#c8ffc8", textoSuave: "#80ff80", acento: "#00ff41", acentoSuave: "#80ff80", menuFondo: "rgba(0, 10, 0, 0.92)", botonFondo: "0, 180, 60", botonBorde: "0, 255, 65", botonSecFondo: "10, 40, 10", botonSecBorde: "0, 120, 40", panelFondo: "rgba(0, 20, 0, 0.95)", panelBorde: "0, 255, 65", transicionTexto: "#00ff41", vinyeta: "rgba(0,0,0,0.3)", bloques: false, lluviaMatrix: true },
   };
 
   function skinActual() {
@@ -329,16 +298,51 @@
     ctx.textBaseline = "alphabetic";
   }
 
-  // ---------- Tipos de pantalla ----------
+  // ============================================================================
+  // Tipos de pantalla
+  // ============================================================================
   const TIPOS_PANTALLA = {
     cueva: { id: 1, categoria: "cueva", fondo: "#1a1410", fondo2: "#2e2620", fondoAbajo: "#1a1410", suelo: "#4a3a30", sueloLuz: "#6a5545", presa: "#5a4a3e", presaLuz: "#8a7565", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true, degradado: false },
     grieta: { id: 2, categoria: "cueva", fondo: "#2a1f18", fondo2: "#3a2e26", fondoAbajo: "#2a1f18", suelo: "#5a4a3e", sueloLuz: "#8a7565", presa: "#6a5a4e", presaLuz: "#9a8575", decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"], murcielagos: 15, vinyetaFuerte: true, degradado: false },
     aire: { id: 3, categoria: "aire", fondo: "#87CEEB", fondo2: "#5a9ec9", fondoAbajo: "#a0d8ef", suelo: "#6a8a4a", sueloLuz: "#8aaa6a", presa: "#7a6a5a", presaLuz: "#aa9a8a", decoraciones: ["nube", "montana", "arbol", "pajaro", "aguila"], murcielagos: 0, vinyetaFuerte: false, degradado: false },
     infinito: { id: 4, categoria: "cueva", fondo: "#1a1410", fondo2: "#2e2620", fondoAbajo: "#1a1410", suelo: "#4a3a30", sueloLuz: "#6a5545", presa: "#5a4a3e", presaLuz: "#8a7565", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true, degradado: false },
 
-    valencia: { id: 10, categoria: "ciudad", fondo: "#87CEEB", fondo2: "#5fa8d8", fondoAbajo: "#f0c890", suelo: "#c9a875", sueloLuz: "#e8c898", presa: "#b08060", presaLuz: "#d0a080", decoraciones: ["falla-ninot", "falla-fallera", "miguelete", "nube-ciudad", "paloma-blanca", "confeti"], murcielagos: 0, vinyetaFuerte: false, degradado: true },
-    madrid: { id: 11, categoria: "ciudad", fondo: "#9ec5e8", fondo2: "#6a9bc5", fondoAbajo: "#d4c0a0", suelo: "#a08868", sueloLuz: "#c8b090", presa: "#907860", presaLuz: "#b0a080", decoraciones: ["puerta-alcala", "cibeles", "oso-madrono", "nube-ciudad", "paloma"], murcielagos: 0, vinyetaFuerte: false, degradado: true },
-    paris: { id: 12, categoria: "ciudad", fondo: "#b8c8d8", fondo2: "#8aa8c0", fondoAbajo: "#e8d0b0", suelo: "#8a7a6a", sueloLuz: "#a89888", presa: "#7a6a5a", presaLuz: "#9a8a7a", decoraciones: ["torre-eiffel", "nube-ciudad", "paloma-blanca"], murcielagos: 0, vinyetaFuerte: false, degradado: true },
+    valencia: {
+      id: 10, categoria: "ciudad",
+      fondo: "#5db8e0", fondo2: "#a8d8e8", fondoAbajo: "#f0e8d0",
+      suelo: "#c9a875", sueloLuz: "#e8c898",
+      presa: "#b08060", presaLuz: "#d0a080",
+      fondoImg: "valencia",
+      bandera: ["senyera"],
+      decoraciones: [],
+      animalVolador: "murcielago",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#c92a4a", bannerColorB: "#e8b84a", bannerEmoji: "🦇",
+    },
+    madrid: {
+      id: 11, categoria: "ciudad",
+      fondo: "#9ec5e8", fondo2: "#d0d8dc", fondoAbajo: "#e8d8b8",
+      suelo: "#a08868", sueloLuz: "#c8b090",
+      presa: "#907860", presaLuz: "#b0a080",
+      fondoImg: "madrid",
+      bandera: ["espana"],
+      decoraciones: [],
+      animalCaminante: "oso-bipedo",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#c60b1e", bannerColorB: "#ffc400", bannerEmoji: "🐻",
+    },
+    paris: {
+      id: 12, categoria: "ciudad",
+      fondo: "#6a7ac8", fondo2: "#d890b0", fondoAbajo: "#f0a870",
+      suelo: "#8a7a6a", sueloLuz: "#a89888",
+      presa: "#7a6a5a", presaLuz: "#9a8a7a",
+      fondoImg: "paris",
+      bandera: ["francia"],
+      decoraciones: [],
+      animalVolador: "gallo",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#0055a4", bannerColorB: "#ef4135", bannerEmoji: "🐓",
+    },
   };
 
   const CATALOGO_PANTALLAS = [
@@ -377,12 +381,10 @@
     personaje: {
       x: ANCHO / 2 - STEVE_ANCHO / 2, y: Y_SUELO_JUGABLE,
       ancho: STEVE_ANCHO, alto: STEVE_ALTO,
-      velX: 0, velY: 0,
-      enSuelo: false, saltando: false,
+      velX: 0, velY: 0, enSuelo: false, saltando: false,
       dobleSaltoDisponible: true, saltoSuelto: true,
       frame: "parado", mirandoDerecha: true,
-      ultimaPlataforma: null,
-      alturaMaximaVuelo: Y_SUELO_JUGABLE, dañoTiempo: 0,
+      ultimaPlataforma: null, alturaMaximaVuelo: Y_SUELO_JUGABLE, dañoTiempo: 0,
     },
     plataformas: [], decoraciones: [], murcielagos: [],
     fragmentos: [], popups: [], popupGrande: null, conjuntoActual: null,
@@ -392,9 +394,10 @@
     fragmentosRecogidos: 0, fragmentosTotales: 0,
     pantalla: 1, tipoPantalla: "cueva",
     transicion: null, gameOver: false, bonusVidaDado: false,
+    banner: null,
   };
 
-  // ---------- Opciones de menú ----------
+  // ---------- Menú ----------
   function opcionesMenuActual() {
     if (estado.modo === "menu") {
       const op = ["empezar", "instrucciones", "creditos"];
@@ -443,8 +446,6 @@
   }
   function enfocada(nombreOpcion) { return opcionActual() === nombreOpcion; }
 
-  // ---------- Actualizar clase "jugando" en el contenedor ----------
-  // Esto controla la visibilidad del botón ☰.
   function actualizarClaseJugando() {
     if (!contenedor) return;
     const visible = estado.modo === "jugando" || estado.modo === "confirmar-salida";
@@ -455,14 +456,10 @@
   // ---------- Fullscreen helpers ----------
   function entrarPantallaCompleta() {
     if (!fullscreenSoportado) return;
-    pedirFullscreen(contenedor)
-      .then(() => {
-        if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock("portrait").catch(() => {});
-        }
-        ajustarAlturaFullscreen();
-      })
-      .catch(() => {});
+    pedirFullscreen(contenedor).then(() => {
+      if (screen.orientation && screen.orientation.lock) screen.orientation.lock("portrait").catch(() => {});
+      ajustarAlturaFullscreen();
+    }).catch(() => {});
   }
   function salirPantallaCompleta() {
     if (!fullscreenSoportado) return Promise.resolve();
@@ -477,16 +474,12 @@
     if (estado.opcionActiva >= n) estado.opcionActiva = Math.max(0, n - 1);
   }
 
-  // ---------- Bloqueo de scroll ----------
+  // ---------- Bloqueo scroll ----------
   function actualizarBloqueoScroll() {
     const jugando = estado.modo === "jugando" || estado.modo === "confirmar-salida";
     const visible = contenedor && contenedor.style.display !== "none" && document.body.contains(contenedor);
-    if (jugando && visible) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
+    if (jugando && visible) document.body.style.overflow = "hidden";
+    else { document.body.style.overflow = ""; document.documentElement.style.overflow = ""; }
   }
   setInterval(() => {
     const jugando = estado.modo === "jugando" || estado.modo === "confirmar-salida";
@@ -497,9 +490,25 @@
     }
   }, 1000);
 
+  // ---------- Banner ----------
+  function mostrarBanner(tipoPantalla) {
+    const tipo = TIPOS_PANTALLA[tipoPantalla];
+    if (!tipo || !tipo.bannerEmoji) return;
+    estado.banner = {
+      tiempo: 0,
+      duracion: BANNER_DURACION,
+      nombre: tx("pantalla_" + tipoPantalla),
+      subtitulo: tx("subtitulo_" + tipoPantalla),
+      emoji: tipo.bannerEmoji,
+      colorA: tipo.bannerColorA,
+      colorB: tipo.bannerColorB,
+    };
+  }
+
   // ---------- Plataformas ----------
   function crearPlataformas() {
     estado.tipoPantalla = tipoDePantalla(estado.pantalla);
+    const tipo = TIPOS_PANTALLA[estado.tipoPantalla] || TIPOS_PANTALLA.cueva;
     const plats = [];
     plats.push({ x: 0, y: SUELO_Y, ancho: ANCHO, alto: SUELO_ALTO, tipo: "suelo" });
 
@@ -517,8 +526,17 @@
       if (xActual < ANCHO / 2) nuevoX = maxX - Math.random() * 100;
       else nuevoX = minX + Math.random() * 100;
       xActual = nuevoX;
-      plats.push({ x: nuevoX, y, ancho, alto, tipo: "presa", tieneFragmento: false });
+      plats.push({ x: nuevoX, y, ancho, alto, tipo: "presa", tieneFragmento: false, esBandera: false });
       y -= separacionY;
+    }
+
+    if (tipo.bandera) {
+      const candidatasBandera = plats.filter((p) => p.tipo === "presa");
+      const idx1 = Math.floor(Math.random() * candidatasBandera.length);
+      let idx2 = Math.floor(Math.random() * candidatasBandera.length);
+      while (idx2 === idx1 && candidatasBandera.length > 1) idx2 = Math.floor(Math.random() * candidatasBandera.length);
+      if (candidatasBandera[idx1]) candidatasBandera[idx1].esBandera = true;
+      if (candidatasBandera[idx2]) candidatasBandera[idx2].esBandera = true;
     }
 
     const candidatas = plats.filter((p) => p.tipo === "presa");
@@ -533,6 +551,7 @@
       candidatas[idx].fraseCodigo = estado.conjuntoActual.trozos[i];
       candidatas[idx].indiceTrozo = i;
     });
+
     estado.plataformas = plats;
     estado.fragmentos = [];
     candidatas.forEach((plat) => {
@@ -547,16 +566,18 @@
     estado.fragmentosTotales = estado.fragmentos.length;
     estado.fragmentosRecogidos = 0;
     estado.bonusVidaDado = false;
+
+    if (tipo.categoria === "ciudad") mostrarBanner(estado.tipoPantalla);
+    else estado.banner = null;
   }
 
   // ---------- Decoraciones ----------
   function crearDecoraciones() {
     const tipo = tipoActual();
-    const permitidas = tipo.decoraciones;
+    const permitidas = tipo.decoraciones || [];
     const decor = [];
     function permitido(t) { return permitidas.indexOf(t) !== -1; }
 
-    // --- Cueva / grieta / infinito ---
     if (permitido("estalactita")) {
       for (let i = 0; i < 55; i++) decor.push({ tipo: "estalactita", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, largo: 25 + Math.random() * 60, ancho: 10 + Math.random() * 14 });
     }
@@ -594,7 +615,6 @@
       for (let i = 0; i < 22; i++) decor.push({ tipo: "grieta-luz", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, largo: 40 + Math.random() * 80, ancho: 3 + Math.random() * 4 });
     }
 
-    // --- Aire libre ---
     if (permitido("nube")) {
       for (let i = 0; i < 28; i++) decor.push({ tipo: "nube", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, ancho: 60 + Math.random() * 80, alto: 20 + Math.random() * 20, vel: 0.2 + Math.random() * 0.4 });
     }
@@ -611,51 +631,30 @@
       for (let i = 0; i < 6; i++) decor.push({ tipo: "aguila", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, tam: 22 + Math.random() * 8, vel: 0.15 + Math.random() * 0.2, tiempo: Math.random() * 10 });
     }
 
-    // --- Ciudades · Nubes ---
-    if (permitido("nube-ciudad")) {
-      for (let i = 0; i < 18; i++) decor.push({ tipo: "nube-ciudad", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, ancho: 80 + Math.random() * 120, alto: 22 + Math.random() * 20, vel: 0.15 + Math.random() * 0.3 });
-    }
-
-    // --- Valencia ---
-    if (permitido("falla-ninot")) {
-      for (let i = 0; i < 5; i++) decor.push({ tipo: "falla-ninot", x: 60 + Math.random() * (ANCHO - 120), y: -300 - Math.random() * DECO_RANGO_OBJETO, tiempo: Math.random() * 6.28 });
-    }
-    if (permitido("falla-fallera")) {
-      for (let i = 0; i < 5; i++) decor.push({ tipo: "falla-fallera", x: 60 + Math.random() * (ANCHO - 120), y: -400 - Math.random() * DECO_RANGO_OBJETO, tiempo: Math.random() * 6.28 });
-    }
-    if (permitido("miguelete")) {
-      for (let i = 0; i < 4; i++) decor.push({ tipo: "miguelete", x: 80 + Math.random() * (ANCHO - 160), y: -500 - Math.random() * DECO_RANGO_PEQUENO });
-    }
-    if (permitido("confeti")) {
-      for (let i = 0; i < 25; i++) decor.push({ tipo: "confeti", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, tam: 3 + Math.random() * 4, vel: 0.5 + Math.random() * 1.5, color: Math.floor(Math.random() * 5), tiempo: Math.random() * 6.28 });
-    }
-
-    // --- Madrid ---
-    if (permitido("puerta-alcala")) {
-      for (let i = 0; i < 4; i++) decor.push({ tipo: "puerta-alcala", x: 80 + Math.random() * (ANCHO - 160), y: -400 - Math.random() * DECO_RANGO_PEQUENO });
-    }
-    if (permitido("cibeles")) {
-      for (let i = 0; i < 4; i++) decor.push({ tipo: "cibeles", x: 80 + Math.random() * (ANCHO - 160), y: -500 - Math.random() * DECO_RANGO_PEQUENO });
-    }
-    if (permitido("oso-madrono")) {
-      for (let i = 0; i < 6; i++) decor.push({ tipo: "oso-madrono", x: 60 + Math.random() * (ANCHO - 120), y: -350 - Math.random() * DECO_RANGO_OBJETO });
-    }
-
-    // --- París ---
-    if (permitido("torre-eiffel")) {
-      for (let i = 0; i < 4; i++) decor.push({ tipo: "torre-eiffel", x: 100 + Math.random() * (ANCHO - 200), y: -450 - Math.random() * DECO_RANGO_PEQUENO });
-    }
-
-    // --- Palomas ---
-    if (permitido("paloma") || permitido("paloma-blanca")) {
-      const cantidad = permitido("paloma-blanca") ? 14 : 12;
+    if (tipo.animalVolador === "murcielago" || tipo.animalVolador === "gallo") {
+      const cantidad = tipo.animalVolador === "murcielago" ? 14 : 10;
       for (let i = 0; i < cantidad; i++) {
         decor.push({
-          tipo: permitido("paloma-blanca") ? "paloma-blanca" : "paloma",
+          tipo: tipo.animalVolador,
           x: Math.random() * ANCHO,
           y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.3 + Math.random() * 0.5,
+          vel: 0.4 + Math.random() * 0.6,
           tiempo: Math.random() * 10,
+          mirandoDerecha: Math.random() > 0.5,
+        });
+      }
+    }
+
+    // 5 osos bípedos caminando por Madrid
+    if (tipo.animalCaminante === "oso-bipedo") {
+      for (let i = 0; i < 5; i++) {
+        decor.push({
+          tipo: "oso-bipedo",
+          x: 60 + Math.random() * (ANCHO - 120),
+          y: -Math.random() * DECO_RANGO - 100,
+          vel: 0.25 + Math.random() * 0.25,
+          tiempo: Math.random() * 10,
+          mirandoDerecha: Math.random() > 0.5,
         });
       }
     }
@@ -696,8 +695,8 @@
     </div>
     <canvas class="juego-escalada__canvas notranslate" translate="no" width="${ANCHO}" height="${ALTO}"></canvas>
     <div class="juego-escalada__controles notranslate" translate="no">
-      <button class="juego-escalada__btn" data-accion="izquierda" aria-label="Izquierda">←</button>
       <button class="juego-escalada__btn" data-accion="salto" aria-label="Saltar">↑</button>
+      <button class="juego-escalada__btn" data-accion="izquierda" aria-label="Izquierda">←</button>
       <button class="juego-escalada__btn" data-accion="derecha" aria-label="Derecha">→</button>
     </div>
     <div class="juego-escalada__footer notranslate" translate="no">
@@ -727,7 +726,6 @@
   btnSalirFullscreen.addEventListener("click", () => salirPantallaCompleta());
   btnMenuFlotante.addEventListener("click", () => pedirConfirmacionSalida());
 
-  // ---------- i18n en el DOM del juego ----------
   function aplicarIdiomaAlJuego() {
     contenedor.querySelectorAll("[data-i18n]").forEach((el) => {
       const clave = el.getAttribute("data-i18n");
@@ -741,28 +739,21 @@
   }
   aplicarIdiomaAlJuego();
 
-  // ---------- Observadores ----------
   const observerSkin = new MutationObserver(() => { aplicarColoresHUD(); });
   observerSkin.observe(document.documentElement, { attributes: true, attributeFilter: ["data-skin"] });
 
   document.addEventListener("portfolio:languagechange", () => { aplicarIdiomaAlJuego(); });
-  window.addEventListener("storage", (e) => {
-    if (e.key === "language") aplicarIdiomaAlJuego();
-  });
+  window.addEventListener("storage", (e) => { if (e.key === "language") aplicarIdiomaAlJuego(); });
 
-  // ---------- HUD colores ----------
   function aplicarColoresHUD() {
     const p = paletaActual();
     const info = contenedor.querySelector(".juego-escalada__info");
     if (info) info.style.color = p.textoSuave;
-    [elAltura, elFrags, elVidas, elRecord].forEach((el) => {
-      if (el) el.style.color = p.hudAcento;
-    });
+    [elAltura, elFrags, elVidas, elRecord].forEach((el) => { if (el) el.style.color = p.hudAcento; });
     if (elFooter) elFooter.style.color = p.textoSuave;
   }
   aplicarColoresHUD();
 
-  // ---------- Fullscreen listeners ----------
   ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((ev) => {
     document.addEventListener(ev, () => {
       ajustarFocoTrasFullscreen();
@@ -913,6 +904,7 @@
     p.alturaMaximaVuelo = Y_SUELO_JUGABLE;
     p.dañoTiempo = 0;
     estado.camara.y = CAMARA_INICIAL;
+    estado.banner = null;
     actualizarClaseJugando();
     actualizarBloqueoScroll();
   }
@@ -921,11 +913,8 @@
   function respawn() {
     const p = estado.personaje;
     if (estado.vidas <= 0) {
-      estado.gameOver = true;
-      estado.modo = "gameover";
-      estado.opcionActiva = 0;
-      actualizarClaseJugando();
-      actualizarBloqueoScroll();
+      estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0;
+      actualizarClaseJugando(); actualizarBloqueoScroll();
       return;
     }
     let respawnPlat = null;
@@ -994,7 +983,72 @@
     ctx.textBaseline = "alphabetic";
   }
 
-  // ---------- Iniciar / reiniciar ----------
+  // ---------- Banner ----------
+  function actualizarBanner() {
+    if (!estado.banner) return;
+    estado.banner.tiempo++;
+    if (estado.banner.tiempo > estado.banner.duracion) {
+      estado.banner = null;
+    }
+  }
+  function dibujarBanner() {
+    const b = estado.banner;
+    if (!b) return;
+    const t = b.tiempo;
+    const duracion = b.duracion;
+    let alpha = 1;
+    if (t < 20) alpha = t / 20;
+    if (t > duracion - 30) alpha = (duracion - t) / 30;
+    alpha = Math.max(0, Math.min(1, alpha));
+
+    const anchoBanner = 480;
+    const altoBanner = 130;
+    const x = (ANCHO - anchoBanner) / 2;
+    const y = 30;
+
+    ctx.fillStyle = "rgba(0, 0, 0, " + (alpha * 0.88) + ")";
+    ctx.fillRect(x, y, anchoBanner, altoBanner);
+
+    ctx.fillStyle = b.colorA;
+    ctx.globalAlpha = alpha;
+    ctx.fillRect(x, y, anchoBanner, 6);
+
+    ctx.fillStyle = b.colorB;
+    ctx.fillRect(x, y + altoBanner - 6, anchoBanner, 6);
+
+    ctx.strokeStyle = "rgba(255, 255, 255, " + (alpha * 0.45) + ")";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x + 1, y + 1, anchoBanner - 2, altoBanner - 2);
+
+    ctx.font = "bold 54px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#ffffff";
+    ctx.globalAlpha = alpha;
+    ctx.fillText(b.emoji, x + 65, y + altoBanner / 2);
+
+    ctx.font = "bold 38px monospace";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(b.nombre.toUpperCase(), x + 130, y + 50);
+
+    ctx.font = "14px monospace";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+    ctx.fillText(b.subtitulo, x + 130, y + 90);
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x + 130, y + 68);
+    ctx.lineTo(x + anchoBanner - 20, y + 68);
+    ctx.stroke();
+
+    ctx.globalAlpha = 1;
+    ctx.textAlign = "start";
+    ctx.textBaseline = "alphabetic";
+  }
+
+  // ---------- Iniciar ----------
   function iniciarPartidaDesdeMenu() {
     estado.modo = "jugando";
     estado.opcionActiva = 0;
@@ -1015,6 +1069,7 @@
     estado.transicion = null;
     estado.popups = [];
     estado.popupGrande = null;
+    estado.banner = null;
     const p = estado.personaje;
     p.x = ANCHO / 2 - STEVE_ANCHO / 2;
     p.y = Y_SUELO_JUGABLE;
@@ -1043,8 +1098,7 @@
       }
     }
     p.y += dy;
-    let aterrizo = false;
-    let plataformaTocada = null;
+    let aterrizo = false, plataformaTocada = null;
     for (const plat of estado.plataformas) {
       if (colisiona(p, plat)) {
         if (dy > 0) { p.y = plat.y - p.alto; aterrizo = true; plataformaTocada = plat; }
@@ -1093,11 +1147,8 @@
       estado.vidas--;
       p.dañoTiempo = 30;
       if (estado.vidas <= 0) {
-        estado.gameOver = true;
-        estado.modo = "gameover";
-        estado.opcionActiva = 0;
-        actualizarClaseJugando();
-        actualizarBloqueoScroll();
+        estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0;
+        actualizarClaseJugando(); actualizarBloqueoScroll();
         return;
       }
     }
@@ -1110,6 +1161,7 @@
     if (estado.modo !== "jugando") return;
     if (estado.gameOver) return;
     if (actualizarTransicion()) return;
+    actualizarBanner();
 
     if (p.dañoTiempo > 0) p.dañoTiempo--;
 
@@ -1189,8 +1241,7 @@
     const camiseta = daño > 0 && Math.floor(daño / 4) % 2 === 0 ? "#ff6666" : "#24A0A0";
     const pantalon = "#3A4A7A";
     const bota = "#3A2E1E";
-    const ojo = "#1a1a1a";
-    const cont = "#1a1a1a";
+    const ojo = "#1a1a1a", cont = "#1a1a1a";
     ctx.save();
     if (!mirando) { ctx.translate(x + 26, y); ctx.scale(-1, 1); x = 0; y = 0; }
     ctx.fillStyle = cont; ctx.fillRect(x - 1, y - 1, 28, 44);
@@ -1210,60 +1261,44 @@
     ctx.fillStyle = camiseta; ctx.fillRect(x + 5, y + 16, 16, 13);
     ctx.fillStyle = cont;
     if (frame === "parado") {
-      ctx.fillRect(x + 1, y + 17, 3, 11);
-      ctx.fillRect(x + 22, y + 17, 3, 11);
+      ctx.fillRect(x + 1, y + 17, 3, 11); ctx.fillRect(x + 22, y + 17, 3, 11);
       ctx.fillStyle = piel;
-      ctx.fillRect(x + 1, y + 17, 3, 9);
-      ctx.fillRect(x + 22, y + 17, 3, 9);
+      ctx.fillRect(x + 1, y + 17, 3, 9); ctx.fillRect(x + 22, y + 17, 3, 9);
     } else if (frame === "corriendo") {
-      ctx.fillRect(x + 1, y + 14, 3, 11);
-      ctx.fillRect(x + 22, y + 20, 3, 11);
+      ctx.fillRect(x + 1, y + 14, 3, 11); ctx.fillRect(x + 22, y + 20, 3, 11);
       ctx.fillStyle = piel;
-      ctx.fillRect(x + 1, y + 14, 3, 9);
-      ctx.fillRect(x + 22, y + 20, 3, 9);
+      ctx.fillRect(x + 1, y + 14, 3, 9); ctx.fillRect(x + 22, y + 20, 3, 9);
     } else {
-      ctx.fillRect(x - 1, y + 8, 3, 13);
-      ctx.fillRect(x + 24, y + 8, 3, 13);
+      ctx.fillRect(x - 1, y + 8, 3, 13); ctx.fillRect(x + 24, y + 8, 3, 13);
       ctx.fillStyle = piel;
-      ctx.fillRect(x - 1, y + 8, 3, 11);
-      ctx.fillRect(x + 24, y + 8, 3, 11);
+      ctx.fillRect(x - 1, y + 8, 3, 11); ctx.fillRect(x + 24, y + 8, 3, 11);
     }
     ctx.fillStyle = cont;
     if (frame === "parado") {
-      ctx.fillRect(x + 5, y + 30, 7, 11);
-      ctx.fillRect(x + 14, y + 30, 7, 11);
+      ctx.fillRect(x + 5, y + 30, 7, 11); ctx.fillRect(x + 14, y + 30, 7, 11);
       ctx.fillStyle = pantalon;
-      ctx.fillRect(x + 6, y + 30, 5, 9);
-      ctx.fillRect(x + 15, y + 30, 5, 9);
+      ctx.fillRect(x + 6, y + 30, 5, 9); ctx.fillRect(x + 15, y + 30, 5, 9);
       ctx.fillStyle = bota;
-      ctx.fillRect(x + 6, y + 39, 6, 2);
-      ctx.fillRect(x + 14, y + 39, 6, 2);
+      ctx.fillRect(x + 6, y + 39, 6, 2); ctx.fillRect(x + 14, y + 39, 6, 2);
     } else if (frame === "corriendo") {
-      ctx.fillRect(x + 4, y + 30, 7, 11);
-      ctx.fillRect(x + 15, y + 30, 7, 11);
+      ctx.fillRect(x + 4, y + 30, 7, 11); ctx.fillRect(x + 15, y + 30, 7, 11);
       ctx.fillStyle = pantalon;
-      ctx.fillRect(x + 5, y + 30, 5, 9);
-      ctx.fillRect(x + 16, y + 30, 5, 9);
+      ctx.fillRect(x + 5, y + 30, 5, 9); ctx.fillRect(x + 16, y + 30, 5, 9);
       ctx.fillStyle = bota;
-      ctx.fillRect(x + 4, y + 39, 6, 2);
-      ctx.fillRect(x + 16, y + 39, 6, 2);
+      ctx.fillRect(x + 4, y + 39, 6, 2); ctx.fillRect(x + 16, y + 39, 6, 2);
     } else {
-      ctx.fillRect(x + 6, y + 30, 6, 11);
-      ctx.fillRect(x + 14, y + 30, 6, 11);
+      ctx.fillRect(x + 6, y + 30, 6, 11); ctx.fillRect(x + 14, y + 30, 6, 11);
       ctx.fillStyle = pantalon;
-      ctx.fillRect(x + 7, y + 30, 4, 9);
-      ctx.fillRect(x + 15, y + 30, 4, 9);
+      ctx.fillRect(x + 7, y + 30, 4, 9); ctx.fillRect(x + 15, y + 30, 4, 9);
       ctx.fillStyle = bota;
-      ctx.fillRect(x + 7, y + 39, 5, 2);
-      ctx.fillRect(x + 15, y + 39, 5, 2);
+      ctx.fillRect(x + 7, y + 39, 5, 2); ctx.fillRect(x + 15, y + 39, 5, 2);
     }
     ctx.restore();
   }
 
-  // ---------- Murciélago ----------
+  // ---------- Murciélago (cueva) ----------
   function dibujarMurcielago(bat, x, y) {
-    const cuerpo = "#1a1a1a";
-    const ala = "#0a0a0a";
+    const cuerpo = "#1a1a1a", ala = "#0a0a0a";
     const brillo = bat.despierto;
     const aleteo = bat.despierto > 0.5 ? Math.sin(bat.tiempo * 4) * 1.5 : 0;
     ctx.fillStyle = ala;
@@ -1277,12 +1312,10 @@
       ? "rgba(255, " + (100 + Math.round(80 * brillo)) + ", 50, " + (0.3 + brillo * 0.7) + ")"
       : "#3a1a1a";
     ctx.fillStyle = ojoColor;
-    ctx.fillRect(x + 7, y + 9, 2, 2);
-    ctx.fillRect(x + 11, y + 9, 2, 2);
+    ctx.fillRect(x + 7, y + 9, 2, 2); ctx.fillRect(x + 11, y + 9, 2, 2);
     if (brillo > 0.5) {
       ctx.fillStyle = "rgba(255, 150, 50, " + ((brillo - 0.5) * 0.6) + ")";
-      ctx.fillRect(x + 6, y + 8, 4, 4);
-      ctx.fillRect(x + 10, y + 8, 4, 4);
+      ctx.fillRect(x + 6, y + 8, 4, 4); ctx.fillRect(x + 10, y + 8, 4, 4);
     }
     ctx.fillStyle = cuerpo;
     ctx.fillRect(x + 9, y + 18, 2, 3);
@@ -1296,9 +1329,7 @@
     const flote = Math.sin(frag.tiempo) * 3;
     const y = fy + flote;
     ctx.fillStyle = "rgba(120, 200, 255, " + (0.3 + Math.sin(frag.tiempo * 2) * 0.1) + ")";
-    ctx.beginPath();
-    ctx.arc(fx, y, 22, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(fx, y, 22, 0, Math.PI * 2); ctx.fill();
     const ancho = 16, alto = 16;
     ctx.fillStyle = "#1a1a1a";
     ctx.fillRect(fx - ancho / 2 - 1, y - alto / 2 - 1, ancho + 2, alto + 2);
@@ -1308,19 +1339,16 @@
     ctx.fillRect(fx - ancho / 2 + 1, y - alto / 2 + 1, ancho - 2, 2);
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 10px monospace";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText("</>", fx, y + 1);
-    ctx.textAlign = "start";
-    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
   }
 
   // ---------- Popups ----------
   function dibujarPopups() {
     for (let i = estado.popups.length - 1; i >= 0; i--) {
       const pop = estado.popups[i];
-      pop.tiempo++;
-      pop.y -= 0.4;
+      pop.tiempo++; pop.y -= 0.4;
       if (pop.tiempo > pop.duracion) { estado.popups.splice(i, 1); continue; }
       const restante = pop.duracion - pop.tiempo;
       let alpha = 1;
@@ -1336,11 +1364,9 @@
       ctx.strokeRect(px - 70, py - 14, 140, 28);
       ctx.fillStyle = pop.tipo === "vida" ? "rgba(102, 255, 102, " + alpha + ")" : "rgba(180, 220, 255, " + alpha + ")";
       ctx.font = "bold 13px monospace";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(pop.texto, px, py + 1);
-      ctx.textAlign = "start";
-      ctx.textBaseline = "alphabetic";
+      ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
   }
 
@@ -1350,14 +1376,12 @@
     const pal = paletaActual();
     pg.tiempo++;
     if (pg.tiempo > pg.duracion) { estado.popupGrande = null; return; }
-    const duracion = pg.duracion;
-    const t = pg.tiempo;
+    const duracion = pg.duracion, t = pg.tiempo;
     let alpha = 1;
     if (t < 20) alpha = t / 20;
     if (t > duracion - 30) alpha = (duracion - t) / 30;
     const anchoPanel = 520, altoPanel = 280;
-    const px = (ANCHO - anchoPanel) / 2;
-    const py = (ALTO - altoPanel) / 2;
+    const px = (ANCHO - anchoPanel) / 2, py = (ALTO - altoPanel) / 2;
     ctx.fillStyle = "rgba(0, 0, 0, " + (alpha * 0.9) + ")";
     ctx.fillRect(0, 0, ANCHO, ALTO);
     ctx.fillStyle = pal.panelFondo;
@@ -1370,8 +1394,7 @@
     ctx.fillStyle = pal.acento;
     ctx.globalAlpha = alpha;
     ctx.font = "bold 22px monospace";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText("¡FRAGMENTOS COMPLETOS!", ANCHO / 2, py + 40);
     ctx.fillStyle = pal.texto;
     ctx.font = "16px monospace";
@@ -1384,11 +1407,282 @@
     ctx.font = "bold 26px monospace";
     ctx.fillText(pg.conjunto.resultado, ANCHO / 2, py + altoPanel - 40);
     ctx.globalAlpha = 1;
-    ctx.textAlign = "start";
-    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
   }
 
-  // ---------- Fondo ----------
+  // ============================================================================
+  // Animales
+  // ============================================================================
+  function dibujarMurcielagoValencia(d, dy) {
+    d.x += (d.mirandoDerecha ? 1 : -1) * d.vel * 0.6;
+    if (d.x > ANCHO + 40) d.x = -40;
+    if (d.x < -40) d.x = ANCHO + 40;
+    d.tiempo += 0.3;
+    const aleteo = Math.sin(d.tiempo * 5) * 5;
+    const dir = d.mirandoDerecha ? 1 : -1;
+    ctx.fillStyle = "#0a0a0a";
+    ctx.beginPath();
+    ctx.moveTo(d.x - 4, dy - 2);
+    ctx.quadraticCurveTo(d.x - 18, dy - 6 + aleteo, d.x - 24, dy + 2 + aleteo);
+    ctx.lineTo(d.x - 20, dy + 6 + aleteo);
+    ctx.quadraticCurveTo(d.x - 14, dy + 4, d.x - 6, dy + 4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(d.x + 4, dy - 2);
+    ctx.quadraticCurveTo(d.x + 18, dy - 6 - aleteo, d.x + 24, dy + 2 - aleteo);
+    ctx.lineTo(d.x + 20, dy + 6 - aleteo);
+    ctx.quadraticCurveTo(d.x + 14, dy + 4, d.x + 6, dy + 4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#2a2a2a";
+    ctx.beginPath();
+    ctx.ellipse(d.x, dy, 7, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#1a1a1a";
+    ctx.beginPath();
+    ctx.moveTo(d.x - 3, dy - 4);
+    ctx.lineTo(d.x - 8, dy - 12);
+    ctx.lineTo(d.x - 1, dy - 5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(d.x + 3, dy - 4);
+    ctx.lineTo(d.x + 8, dy - 12);
+    ctx.lineTo(d.x + 1, dy - 5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#ff2020";
+    ctx.beginPath();
+    ctx.arc(d.x + dir * 2, dy - 2, 1.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function dibujarGalloParis(d, dy) {
+    d.x += (d.mirandoDerecha ? 1 : -1) * d.vel * 0.5;
+    if (d.x > ANCHO + 40) d.x = -40;
+    if (d.x < -40) d.x = ANCHO + 40;
+    d.tiempo += 0.2;
+    const dir = d.mirandoDerecha ? 1 : -1;
+    const aleteo = Math.sin(d.tiempo * 4) * 3;
+    ctx.fillStyle = "#0055a4";
+    ctx.beginPath();
+    ctx.moveTo(d.x - dir * 10, dy - 4);
+    ctx.quadraticCurveTo(d.x - dir * 28, dy - 18 + aleteo, d.x - dir * 16, dy + 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.moveTo(d.x - dir * 10, dy + 2);
+    ctx.quadraticCurveTo(d.x - dir * 26, dy + 2 - aleteo, d.x - dir * 16, dy + 10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#ef4135";
+    ctx.beginPath();
+    ctx.moveTo(d.x - dir * 10, dy + 6);
+    ctx.quadraticCurveTo(d.x - dir * 22, dy + 16 + aleteo, d.x - dir * 12, dy + 16);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#f8f8f8";
+    ctx.beginPath();
+    ctx.ellipse(d.x, dy + 4, 14, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#c8c8c8";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = "#f8f8f8";
+    ctx.beginPath();
+    ctx.arc(d.x + dir * 12, dy - 6, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#ef4135";
+    ctx.beginPath();
+    ctx.arc(d.x + dir * 8, dy - 14, 4, 0, Math.PI * 2);
+    ctx.arc(d.x + dir * 12, dy - 16, 5, 0, Math.PI * 2);
+    ctx.arc(d.x + dir * 16, dy - 14, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffc400";
+    ctx.beginPath();
+    ctx.moveTo(d.x + dir * 19, dy - 6);
+    ctx.lineTo(d.x + dir * 28, dy - 5);
+    ctx.lineTo(d.x + dir * 19, dy - 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#1a1a1a";
+    ctx.beginPath();
+    ctx.arc(d.x + dir * 14, dy - 7, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#ffc400";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(d.x - 4, dy + 12);
+    ctx.lineTo(d.x - 5, dy + 18);
+    ctx.moveTo(d.x + 4, dy + 12);
+    ctx.lineTo(d.x + 5, dy + 18);
+    ctx.stroke();
+  }
+
+  // ============================================================================
+  // OSO BÍPEDO (Madrid) · casi el doble de alto que Steve (~80 px)
+  // ============================================================================
+  function dibujarOsoBipedo(d, dy) {
+    d.x += (d.mirandoDerecha ? 1 : -1) * d.vel * 0.4;
+    if (d.x > ANCHO + 60) d.x = -60;
+    if (d.x < -60) d.x = ANCHO + 60;
+    d.tiempo += 0.12;
+
+    const dir = d.mirandoDerecha ? 1 : -1;
+    // Balanceo al caminar
+    const balanceo = Math.sin(d.tiempo * 3) * 3;
+    // Balanceo de brazos (opuesto)
+    const brazoIzqY = Math.sin(d.tiempo * 3) * 4;
+    const brazoDerY = -Math.sin(d.tiempo * 3) * 4;
+
+    // Base del oso: dy es el centro vertical. El oso mide ~80 px de alto.
+    // Lo dibujamos desde los pies hacia arriba.
+    const piesY = dy + 40;   // pies
+    const cabezaY = dy - 40; // parte superior de la cabeza
+
+    ctx.save();
+    ctx.translate(d.x, 0);
+    if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    // A partir de aquí, dibujamos mirando siempre a la derecha.
+    // El translate + scale hacen que se voltee.
+    const x = 0;
+    const y = dy;
+
+    // PATAS TRASERAS (dos columnas)
+    ctx.fillStyle = "#3a1e0a";
+    // Pata izquierda
+    ctx.fillRect(x - 14, y + 24 + balanceo * 0.3, 10, 16);
+    // Pata derecha
+    ctx.fillRect(x + 4, y + 24 - balanceo * 0.3, 10, 16);
+    // Zarpas
+    ctx.fillStyle = "#2a1408";
+    ctx.fillRect(x - 15, y + 38 + balanceo * 0.3, 12, 4);
+    ctx.fillRect(x + 3, y + 38 - balanceo * 0.3, 12, 4);
+
+    // CUERPO (ovalado grande)
+    ctx.fillStyle = "#4a2a1a";
+    ctx.beginPath();
+    ctx.ellipse(x, y + 4, 20, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Vientre más claro
+    ctx.fillStyle = "#6a4a3a";
+    ctx.beginPath();
+    ctx.ellipse(x, y + 8, 12, 14, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // BRAZOS LEVANTADOS (amenazantes, con garras)
+    ctx.fillStyle = "#4a2a1a";
+    // Brazo izquierdo (arriba)
+    ctx.beginPath();
+    ctx.ellipse(x - 20, y - 6 + brazoIzqY, 6, 12, 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    // Brazo derecho (arriba)
+    ctx.beginPath();
+    ctx.ellipse(x + 20, y - 6 + brazoDerY, 6, 12, -0.5, 0, Math.PI * 2);
+    ctx.fill();
+    // Garras
+    ctx.fillStyle = "#1a0a04";
+    // Garra izquierda (3 puntas)
+    ctx.beginPath();
+    ctx.moveTo(x - 24, y - 16 + brazoIzqY);
+    ctx.lineTo(x - 26, y - 22 + brazoIzqY);
+    ctx.lineTo(x - 22, y - 18 + brazoIzqY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x - 21, y - 17 + brazoIzqY);
+    ctx.lineTo(x - 22, y - 24 + brazoIzqY);
+    ctx.lineTo(x - 19, y - 18 + brazoIzqY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x - 18, y - 16 + brazoIzqY);
+    ctx.lineTo(x - 18, y - 22 + brazoIzqY);
+    ctx.lineTo(x - 16, y - 17 + brazoIzqY);
+    ctx.closePath();
+    ctx.fill();
+    // Garra derecha
+    ctx.beginPath();
+    ctx.moveTo(x + 24, y - 16 + brazoDerY);
+    ctx.lineTo(x + 26, y - 22 + brazoDerY);
+    ctx.lineTo(x + 22, y - 18 + brazoDerY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + 21, y - 17 + brazoDerY);
+    ctx.lineTo(x + 22, y - 24 + brazoDerY);
+    ctx.lineTo(x + 19, y - 18 + brazoDerY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + 18, y - 16 + brazoDerY);
+    ctx.lineTo(x + 18, y - 22 + brazoDerY);
+    ctx.lineTo(x + 16, y - 17 + brazoDerY);
+    ctx.closePath();
+    ctx.fill();
+
+    // CABEZA (grande)
+    ctx.fillStyle = "#4a2a1a";
+    ctx.beginPath();
+    ctx.arc(x + 2, y - 22, 13, 0, Math.PI * 2);
+    ctx.fill();
+    // Orejas redondas
+    ctx.beginPath();
+    ctx.arc(x - 8, y - 32, 5, 0, Math.PI * 2);
+    ctx.arc(x + 12, y - 32, 5, 0, Math.PI * 2);
+    ctx.fill();
+    // Interior orejas
+    ctx.fillStyle = "#2a1408";
+    ctx.beginPath();
+    ctx.arc(x - 8, y - 32, 2.5, 0, Math.PI * 2);
+    ctx.arc(x + 12, y - 32, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    // Hocico
+    ctx.fillStyle = "#6a4a3a";
+    ctx.beginPath();
+    ctx.ellipse(x + 8, y - 18, 6, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Nariz negra
+    ctx.fillStyle = "#1a1a1a";
+    ctx.beginPath();
+    ctx.arc(x + 12, y - 18, 2, 0, Math.PI * 2);
+    ctx.fill();
+    // Ojos pequeños y amenazantes
+    ctx.fillStyle = "#f0e8d8";
+    ctx.beginPath();
+    ctx.arc(x - 1, y - 24, 2.5, 0, Math.PI * 2);
+    ctx.arc(x + 7, y - 24, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    // Pupilas
+    ctx.fillStyle = "#1a1a1a";
+    ctx.beginPath();
+    ctx.arc(x - 0.5, y - 24, 1.3, 0, Math.PI * 2);
+    ctx.arc(x + 7.5, y - 24, 1.3, 0, Math.PI * 2);
+    ctx.fill();
+    // Ceño fruncido (líneas negras)
+    ctx.strokeStyle = "#1a1a1a";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x - 4, y - 27);
+    ctx.lineTo(x + 1, y - 26);
+    ctx.moveTo(x + 10, y - 27);
+    ctx.lineTo(x + 5, y - 26);
+    ctx.stroke();
+    // Boca
+    ctx.beginPath();
+    ctx.moveTo(x + 8, y - 15);
+    ctx.quadraticCurveTo(x + 5, y - 12, x + 2, y - 14);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  // ============================================================================
+  // Fondo
+  // ============================================================================
   function dibujarFondo() {
     const pal = paletaActual();
     const tipo = tipoActual();
@@ -1396,13 +1690,33 @@
     if (tipo.degradado) {
       const grad = ctx.createLinearGradient(0, 0, 0, ALTO);
       grad.addColorStop(0, tipo.fondo);
-      grad.addColorStop(0.65, tipo.fondo2);
+      grad.addColorStop(0.5, tipo.fondo2);
       grad.addColorStop(1, tipo.fondoAbajo || tipo.fondo2);
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, ANCHO, ALTO);
     } else {
       ctx.fillStyle = tipo.fondo;
       ctx.fillRect(0, 0, ANCHO, ALTO);
+    }
+
+    if (tipo.fondoImg && FONDOS[tipo.fondoImg] && FONDOS[tipo.fondoImg].cargada) {
+      const img = FONDOS[tipo.fondoImg].img;
+      const r = img.width / img.height;
+      let ancho = ANCHO;
+      let alto = ancho / r;
+      const altoMinimo = ALTO * 0.7;
+      if (alto < altoMinimo) { alto = altoMinimo; ancho = alto * r; }
+      const dx = (ANCHO - ancho) / 2;
+      const dy = 0;
+      try { ctx.drawImage(img, dx, dy, ancho, alto); } catch (e) {}
+      const huecoAlto = ALTO - alto;
+      if (huecoAlto > 0) {
+        const grad = ctx.createLinearGradient(0, alto, 0, ALTO);
+        grad.addColorStop(0, "rgba(0,0,0,0)");
+        grad.addColorStop(1, tipo.suelo + "");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, alto - 40, ANCHO, huecoAlto + 40);
+      }
     }
 
     if (pal.lluviaMatrix) dibujarMatrixLluvia();
@@ -1431,7 +1745,6 @@
       const dy = d.y - camY;
       if (dy + 300 < 0 || dy - 300 > ALTO) continue;
 
-      // --- Cueva ---
       if (d.tipo === "estalactita") {
         ctx.fillStyle = "rgba(0,0,0,0.55)";
         ctx.beginPath();
@@ -1462,17 +1775,9 @@
         ctx.beginPath();
         ctx.ellipse(d.x, dy, d.ancho / 2, d.alto / 2, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = "rgba(120, 200, 100, 0.25)";
-        ctx.beginPath();
-        ctx.ellipse(d.x, dy - 3, d.ancho / 3, d.alto / 4, 0, 0, Math.PI * 2);
-        ctx.fill();
       } else if (d.tipo === "roca") {
         ctx.fillStyle = "rgba(0,0,0,0.4)";
         ctx.fillRect(d.x, dy, d.ancho, d.alto);
-        ctx.fillStyle = pal.presaLuz;
-        ctx.globalAlpha = 0.25;
-        ctx.fillRect(d.x, dy, d.ancho, 3);
-        ctx.globalAlpha = 1;
       } else if (d.tipo === "gota") {
         ctx.fillStyle = "rgba(180, 220, 255, 0.5)";
         ctx.beginPath();
@@ -1483,25 +1788,10 @@
         ctx.fillRect(d.x, dy, d.ancho, d.alto);
         ctx.fillStyle = "#5a3a22";
         ctx.fillRect(d.x, dy, d.ancho, 3);
-        ctx.fillStyle = "#2a1a10";
-        ctx.fillRect(d.x, dy + d.alto - 4, d.ancho, 4);
-        ctx.fillStyle = "#4a2e1a";
-        if (d.abierto) {
-          ctx.fillRect(d.x - 2, dy - 10, d.ancho + 4, 6);
-          const brillo = 0.6 + Math.sin(Date.now() / 300 + d.tiempo) * 0.4;
-          ctx.fillStyle = "rgba(255, 215, 0, " + brillo + ")";
-          ctx.fillRect(d.x + 4, dy - 4, d.ancho - 8, 4);
-          ctx.fillStyle = "rgba(255, 240, 150, " + (brillo * 0.7) + ")";
-          ctx.fillRect(d.x + 8, dy - 8, d.ancho - 16, 3);
-        } else {
-          ctx.fillRect(d.x, dy - 6, d.ancho, 6);
-        }
         ctx.fillStyle = "#c9a227";
         ctx.fillRect(d.x + d.ancho / 2 - 3, dy + 8, 6, 6);
-        ctx.fillStyle = "#1a1008";
-        ctx.fillRect(d.x + d.ancho / 2 - 1, dy + 10, 2, 3);
       } else if (d.tipo === "esqueleto") {
-        const hueso = "#d8d0b8", huesoSombra = "#a89f88";
+        const hueso = "#d8d0b8";
         ctx.fillStyle = hueso;
         ctx.beginPath();
         ctx.ellipse(d.x + 12, dy + 12, 14, 10, 0, 0, Math.PI * 2);
@@ -1512,25 +1802,7 @@
         ctx.fill();
         ctx.fillStyle = hueso;
         ctx.fillRect(d.x + 2, dy + 18, 22, 4);
-        ctx.fillStyle = huesoSombra;
         for (let k = 0; k < 5; k++) ctx.fillRect(d.x + 30 + k * 12, dy + 14, 6, 6);
-        ctx.strokeStyle = hueso;
-        ctx.lineWidth = 3;
-        for (let k = 0; k < 4; k++) {
-          ctx.beginPath();
-          ctx.arc(d.x + 34 + k * 12, dy + 14, 8, Math.PI, 0);
-          ctx.stroke();
-        }
-        ctx.fillStyle = hueso;
-        ctx.save();
-        ctx.translate(d.x + d.ancho - 12, dy + 30);
-        ctx.rotate(-0.4);
-        ctx.fillRect(-3, -10, 6, 20);
-        ctx.beginPath();
-        ctx.arc(0, -10, 4, 0, Math.PI * 2);
-        ctx.arc(0, 10, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
       } else if (d.tipo === "craneo") {
         const t = d.tam;
         ctx.fillStyle = "#d8d0b8";
@@ -1542,10 +1814,6 @@
         ctx.arc(d.x - t * 0.35, dy - t * 0.1, t * 0.22, 0, Math.PI * 2);
         ctx.arc(d.x + t * 0.35, dy - t * 0.1, t * 0.22, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = "#c8c0a8";
-        ctx.fillRect(d.x - t * 0.5, dy + t * 0.5, t, t * 0.3);
-        ctx.fillStyle = "#2a2218";
-        for (let k = 0; k < 3; k++) ctx.fillRect(d.x - t * 0.4 + k * t * 0.3, dy + t * 0.5, 1.5, t * 0.3);
       } else if (d.tipo === "moneda") {
         const giro = Math.abs(Math.cos(Date.now() / 400 + d.tiempo));
         const anchoVisible = d.tam * giro;
@@ -1553,24 +1821,10 @@
         ctx.beginPath();
         ctx.ellipse(d.x, dy, anchoVisible, d.tam, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = "#f0d060";
-        ctx.beginPath();
-        ctx.ellipse(d.x, dy, anchoVisible * 0.6, d.tam * 0.6, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#8a6a10";
-        ctx.fillRect(d.x - anchoVisible * 0.3, dy - 1, anchoVisible * 0.6, 2);
       } else if (d.tipo === "petroleo") {
         ctx.fillStyle = "rgba(10, 8, 6, 0.85)";
         ctx.beginPath();
         ctx.ellipse(d.x, dy, d.ancho / 2, d.alto / 2, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "rgba(60, 120, 80, 0.25)";
-        ctx.beginPath();
-        ctx.ellipse(d.x - d.ancho * 0.15, dy - 2, d.ancho * 0.25, d.alto * 0.25, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "rgba(120, 60, 140, 0.2)";
-        ctx.beginPath();
-        ctx.ellipse(d.x + d.ancho * 0.2, dy + 2, d.ancho * 0.2, d.alto * 0.2, 0, 0, Math.PI * 2);
         ctx.fill();
       } else if (d.tipo === "cristal") {
         const brillo = 0.5 + Math.sin(Date.now() / 400 + d.tiempo) * 0.5;
@@ -1582,23 +1836,10 @@
         ctx.lineTo(d.x - d.tam * 0.6, dy);
         ctx.closePath();
         ctx.fill();
-        ctx.fillStyle = "rgba(255, 255, 255, " + (brillo * 0.6) + ")";
-        ctx.beginPath();
-        ctx.moveTo(d.x, dy - d.tam * 0.6);
-        ctx.lineTo(d.x + d.tam * 0.25, dy - d.tam * 0.1);
-        ctx.lineTo(d.x, dy + d.tam * 0.2);
-        ctx.closePath();
-        ctx.fill();
       } else if (d.tipo === "grieta-luz") {
         const pulso = 0.5 + Math.sin(Date.now() / 500 + d.x) * 0.5;
         ctx.fillStyle = "rgba(255, 230, 150, " + (0.2 + pulso * 0.3) + ")";
         ctx.fillRect(d.x, dy, d.ancho, d.largo);
-        ctx.fillStyle = "rgba(255, 250, 200, " + (0.4 + pulso * 0.4) + ")";
-        ctx.fillRect(d.x, dy, d.ancho, d.largo * 0.4);
-        ctx.fillStyle = "rgba(255, 255, 255, " + (0.6 + pulso * 0.4) + ")";
-        ctx.fillRect(d.x + 1, dy + d.largo * 0.1, 1, d.largo * 0.2);
-
-      // --- Aire libre ---
       } else if (d.tipo === "nube") {
         d.x += d.vel * 0.3;
         if (d.x > ANCHO + 100) d.x = -100;
@@ -1630,10 +1871,6 @@
         ctx.beginPath();
         ctx.arc(d.x, dy, d.alto * 0.35, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = "#3a8a3a";
-        ctx.beginPath();
-        ctx.arc(d.x - d.alto * 0.1, dy - d.alto * 0.1, d.alto * 0.25, 0, Math.PI * 2);
-        ctx.fill();
       } else if (d.tipo === "pajaro") {
         d.tiempo += 0.15;
         const aleteo = Math.sin(d.tiempo * 3) * 3;
@@ -1656,26 +1893,6 @@
         ctx.ellipse(d.x, dy + planeo, t * 0.4, t * 0.18, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.moveTo(d.x - t * 0.4, dy + planeo);
-        ctx.lineTo(d.x - t * 0.7, dy + planeo - t * 0.1);
-        ctx.lineTo(d.x - t * 0.7, dy + planeo + t * 0.1);
-        ctx.closePath();
-        ctx.fill();
-        ctx.fillStyle = "#e0d0a0";
-        ctx.beginPath();
-        ctx.arc(d.x + t * 0.4, dy + planeo, t * 0.15, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#d4a017";
-        ctx.beginPath();
-        ctx.moveTo(d.x + t * 0.55, dy + planeo);
-        ctx.lineTo(d.x + t * 0.72, dy + planeo + t * 0.03);
-        ctx.lineTo(d.x + t * 0.55, dy + planeo + t * 0.06);
-        ctx.closePath();
-        ctx.fill();
-        ctx.fillStyle = "#1a1a1a";
-        ctx.fillRect(d.x + t * 0.4, dy + planeo - t * 0.05, 1.5, 1.5);
-        ctx.fillStyle = "#2a1e12";
-        ctx.beginPath();
         ctx.moveTo(d.x - t * 0.05, dy + planeo - t * 0.05);
         ctx.lineTo(d.x - t * 0.9, dy + planeo - t * 0.25);
         ctx.lineTo(d.x - t * 0.5, dy + planeo + t * 0.05);
@@ -1688,529 +1905,12 @@
         ctx.closePath();
         ctx.fill();
 
-      // --- Ciudades ---
-      } else if (d.tipo === "nube-ciudad") {
-        d.x += d.vel * 0.25;
-        if (d.x > ANCHO + 150) d.x = -150;
-        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-        ctx.beginPath();
-        ctx.ellipse(d.x, dy, d.ancho / 2, d.alto / 2, 0, 0, Math.PI * 2);
-        ctx.ellipse(d.x + d.ancho * 0.22, dy - d.alto * 0.15, d.ancho * 0.32, d.alto * 0.4, 0, 0, Math.PI * 2);
-        ctx.ellipse(d.x - d.ancho * 0.22, dy - d.alto * 0.1, d.ancho * 0.28, d.alto * 0.35, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-      // --- VALENCIA · Falla grande y reconocible ---
-      } else if (d.tipo === "falla-ninot") {
-        const x = d.x, y0 = dy;
-        // Pedestal (base de la falla)
-        ctx.fillStyle = "#8a5a3a";
-        ctx.fillRect(x - 22, y0 + 46, 44, 8);
-        ctx.fillStyle = "#a87a4a";
-        ctx.fillRect(x - 18, y0 + 40, 36, 6);
-        // Cuerpo de la falla (figura central grande, colores vivos)
-        // Faldón rojo con vuelo
-        ctx.fillStyle = "#c92a4a";
-        ctx.beginPath();
-        ctx.moveTo(x - 18, y0 + 40);
-        ctx.lineTo(x + 18, y0 + 40);
-        ctx.lineTo(x + 12, y0 + 4);
-        ctx.lineTo(x - 12, y0 + 4);
-        ctx.closePath();
-        ctx.fill();
-        // Detalles dorados en el faldón
-        ctx.fillStyle = "#e8b84a";
-        ctx.fillRect(x - 14, y0 + 14, 28, 3);
-        ctx.fillRect(x - 12, y0 + 26, 24, 3);
-        // Flores en el faldón
-        ctx.fillStyle = "#f2c84a";
-        ctx.beginPath();
-        ctx.arc(x, y0 + 20, 2, 0, Math.PI * 2);
-        ctx.arc(x - 6, y0 + 32, 2, 0, Math.PI * 2);
-        ctx.arc(x + 6, y0 + 32, 2, 0, Math.PI * 2);
-        ctx.fill();
-        // Torso (blusa blanca con detalles)
-        ctx.fillStyle = "#f2ede3";
-        ctx.fillRect(x - 10, y0 - 12, 20, 18);
-        // Detalle rojo en el pecho
-        ctx.fillStyle = "#c92a4a";
-        ctx.fillRect(x - 8, y0 - 6, 16, 3);
-        // Cabeza
-        ctx.fillStyle = "#C9A27E";
-        ctx.beginPath();
-        ctx.arc(x, y0 - 22, 11, 0, Math.PI * 2);
-        ctx.fill();
-        // Pelo/moño grande
-        ctx.fillStyle = "#3a1a1a";
-        ctx.beginPath();
-        ctx.arc(x, y0 - 28, 10, Math.PI, 0);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x, y0 - 34, 6, 0, Math.PI * 2);
-        ctx.fill();
-        // Ojos
-        ctx.fillStyle = "#1a1a1a";
-        ctx.fillRect(x - 5, y0 - 24, 3, 3);
-        ctx.fillRect(x + 2, y0 - 24, 3, 3);
-        // Boca
-        ctx.fillRect(x - 2, y0 - 16, 4, 1);
-        // Brazos abiertos (acogiendo)
-        ctx.strokeStyle = "#C9A27E";
-        ctx.lineWidth = 4;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x - 10, y0 - 6);
-        ctx.lineTo(x - 22, y0 + 4);
-        ctx.lineTo(x - 22, y0 + 14);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x + 10, y0 - 6);
-        ctx.lineTo(x + 22, y0 + 4);
-        ctx.lineTo(x + 22, y0 + 14);
-        ctx.stroke();
-        ctx.lineCap = "butt";
-
-      } else if (d.tipo === "falla-fallera") {
-        const x = d.x, y0 = dy;
-        // Falda larga con vuelo (traje de fallera)
-        ctx.fillStyle = "#8a2a4a";
-        ctx.beginPath();
-        ctx.moveTo(x - 22, y0 + 48);
-        ctx.lineTo(x + 22, y0 + 48);
-        ctx.lineTo(x + 10, y0 + 4);
-        ctx.lineTo(x - 10, y0 + 4);
-        ctx.closePath();
-        ctx.fill();
-        // Detalles dorados
-        ctx.fillStyle = "#f2c84a";
-        ctx.fillRect(x - 18, y0 + 20, 36, 3);
-        ctx.fillRect(x - 20, y0 + 34, 40, 3);
-        // Flores en la falda
-        ctx.beginPath();
-        ctx.arc(x - 8, y0 + 28, 2, 0, Math.PI * 2);
-        ctx.arc(x + 8, y0 + 28, 2, 0, Math.PI * 2);
-        ctx.arc(x, y0 + 40, 2, 0, Math.PI * 2);
-        ctx.fill();
-        // Delantal blanco
-        ctx.fillStyle = "#f2ede3";
-        ctx.beginPath();
-        ctx.moveTo(x - 8, y0 + 4);
-        ctx.lineTo(x + 8, y0 + 4);
-        ctx.lineTo(x + 6, y0 + 28);
-        ctx.lineTo(x - 6, y0 + 28);
-        ctx.closePath();
-        ctx.fill();
-        // Torso (blusa blanca con manga corta)
-        ctx.fillStyle = "#f2ede3";
-        ctx.fillRect(x - 9, y0 - 10, 18, 16);
-        // Cabeza
-        ctx.fillStyle = "#C9A27E";
-        ctx.beginPath();
-        ctx.arc(x, y0 - 20, 9, 0, Math.PI * 2);
-        ctx.fill();
-        // Pelo recogido
-        ctx.fillStyle = "#2a1a0a";
-        ctx.beginPath();
-        ctx.arc(x, y0 - 24, 9, Math.PI, 0);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x + 8, y0 - 22, 4, 0, Math.PI * 2);
-        ctx.fill();
-        // Peineta dorada (arco visible)
-        ctx.strokeStyle = "#e8b84a";
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.arc(x, y0 - 28, 11, Math.PI + 0.2, -0.2);
-        ctx.stroke();
-        // Ojos
-        ctx.fillStyle = "#1a1a1a";
-        ctx.fillRect(x - 4, y0 - 22, 2, 2);
-        ctx.fillRect(x + 2, y0 - 22, 2, 2);
-        // Brazos
-        ctx.strokeStyle = "#C9A27E";
-        ctx.lineWidth = 3;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x - 9, y0 - 4);
-        ctx.lineTo(x - 16, y0 + 6);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x + 9, y0 - 4);
-        ctx.lineTo(x + 16, y0 + 6);
-        ctx.stroke();
-        ctx.lineCap = "butt";
-
-      } else if (d.tipo === "miguelete") {
-        // Miguelete: torre octogonal del campanario de Valencia
-        const x = d.x, y0 = dy;
-        const anchoTorre = 40;
-        const altoTorre = 120;
-        // Cuerpo de la torre (octogonal, aproximado como un trapecio)
-        ctx.fillStyle = "#d8c8a8";
-        ctx.beginPath();
-        ctx.moveTo(x - anchoTorre / 2, y0 + altoTorre);
-        ctx.lineTo(x - anchoTorre / 2 + 4, y0 + 14);
-        ctx.lineTo(x - anchoTorre / 2 + 8, y0);
-        ctx.lineTo(x + anchoTorre / 2 - 8, y0);
-        ctx.lineTo(x + anchoTorre / 2 - 4, y0 + 14);
-        ctx.lineTo(x + anchoTorre / 2, y0 + altoTorre);
-        ctx.closePath();
-        ctx.fill();
-        // Sombra lateral derecha para dar volumen
-        ctx.fillStyle = "rgba(0,0,0,0.18)";
-        ctx.beginPath();
-        ctx.moveTo(x + 6, y0 + 14);
-        ctx.lineTo(x + anchoTorre / 2 - 4, y0 + 14);
-        ctx.lineTo(x + anchoTorre / 2, y0 + altoTorre);
-        ctx.lineTo(x + 6, y0 + altoTorre);
-        ctx.closePath();
-        ctx.fill();
-        // Campanario: dos huecos grandes y claros
-        ctx.fillStyle = "#1a1a1a";
-        // Hueco 1
-        ctx.beginPath();
-        ctx.arc(x, y0 + 28, 7, 0, Math.PI * 2);
-        ctx.fill();
-        // Hueco 2
-        ctx.beginPath();
-        ctx.arc(x, y0 + 60, 7, 0, Math.PI * 2);
-        ctx.fill();
-        // Campanas visibles (amarillas)
-        ctx.fillStyle = "#e8b84a";
-        ctx.beginPath();
-        ctx.arc(x, y0 + 28, 3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x, y0 + 60, 3, 0, Math.PI * 2);
-        ctx.fill();
-        // Líneas horizontales decorativas
-        ctx.strokeStyle = "rgba(0,0,0,0.25)";
-        ctx.lineWidth = 1;
-        for (let k = 1; k < 7; k++) {
-          ctx.beginPath();
-          ctx.moveTo(x - anchoTorre / 2 + 4, y0 + 14 + k * 14);
-          ctx.lineTo(x + anchoTorre / 2 - 4, y0 + 14 + k * 14);
-          ctx.stroke();
-        }
-        // Tejado (triángulo claro)
-        ctx.fillStyle = "#8a5a3a";
-        ctx.beginPath();
-        ctx.moveTo(x - anchoTorre / 2 - 4, y0);
-        ctx.lineTo(x + anchoTorre / 2 + 4, y0);
-        ctx.lineTo(x, y0 - 14);
-        ctx.closePath();
-        ctx.fill();
-        // Cruz de hierro encima
-        ctx.strokeStyle = "#3a2a1a";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(x, y0 - 14);
-        ctx.lineTo(x, y0 - 24);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x - 4, y0 - 20);
-        ctx.lineTo(x + 4, y0 - 20);
-        ctx.stroke();
-
-      } else if (d.tipo === "confeti") {
-        d.y += d.vel;
-        if (d.y > ALTO + 20 + camY) {
-          d.y = -20 - Math.random() * 400 - camY;
-          d.x = Math.random() * ANCHO;
-        }
-        const coloresConfeti = ["#e84a4a", "#f2c84a", "#4aa8e8", "#6ac84a", "#c84ae8"];
-        ctx.fillStyle = coloresConfeti[d.color] || "#f2c84a";
-        ctx.save();
-        ctx.translate(d.x, dy);
-        ctx.rotate((Date.now() / 500 + d.tiempo) % (Math.PI * 2));
-        ctx.fillRect(-d.tam / 2, -d.tam / 4, d.tam, d.tam / 2);
-        ctx.restore();
-
-      // --- MADRID ---
-      } else if (d.tipo === "puerta-alcala") {
-        // Puerta de Alcalá: arco central grande + 2 arcos laterales + frontón
-        const x = d.x, y0 = dy;
-        const anchoP = 120;
-        const altoP = 100;
-        // Base
-        ctx.fillStyle = "#d8c8a8";
-        ctx.fillRect(x - anchoP / 2, y0 + altoP - 20, anchoP, 20);
-        // Cuerpo principal
-        ctx.fillStyle = "#e8d8b8";
-        ctx.fillRect(x - anchoP / 2 + 6, y0 + 12, anchoP - 12, altoP - 32);
-        // Arco central (grande)
-        ctx.fillStyle = "#4a4030";
-        ctx.beginPath();
-        ctx.moveTo(x - 18, y0 + altoP - 20);
-        ctx.lineTo(x - 18, y0 + 36);
-        ctx.arc(x, y0 + 36, 18, Math.PI, 0);
-        ctx.lineTo(x + 18, y0 + altoP - 20);
-        ctx.closePath();
-        ctx.fill();
-        // Arco izquierdo
-        ctx.beginPath();
-        ctx.moveTo(x - 46, y0 + altoP - 20);
-        ctx.lineTo(x - 46, y0 + 48);
-        ctx.arc(x - 40, y0 + 48, 6, Math.PI, 0);
-        ctx.lineTo(x - 34, y0 + altoP - 20);
-        ctx.closePath();
-        ctx.fill();
-        // Arco derecho
-        ctx.beginPath();
-        ctx.moveTo(x + 34, y0 + altoP - 20);
-        ctx.lineTo(x + 34, y0 + 48);
-        ctx.arc(x + 40, y0 + 48, 6, Math.PI, 0);
-        ctx.lineTo(x + 46, y0 + altoP - 20);
-        ctx.closePath();
-        ctx.fill();
-        // Cornisa superior
-        ctx.fillStyle = "#c8b890";
-        ctx.fillRect(x - anchoP / 2 - 6, y0 + 6, anchoP + 12, 8);
-        // Frontón triangular (parte superior)
-        ctx.fillStyle = "#e8d8b8";
-        ctx.beginPath();
-        ctx.moveTo(x - 30, y0 + 6);
-        ctx.lineTo(x + 30, y0 + 6);
-        ctx.lineTo(x, y0 - 12);
-        ctx.closePath();
-        ctx.fill();
-        // Detalles del frontón
-        ctx.strokeStyle = "rgba(0,0,0,0.25)";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x - 26, y0 + 4);
-        ctx.lineTo(x + 26, y0 + 4);
-        ctx.stroke();
-        // Columnas visibles en la fachada
-        ctx.fillStyle = "rgba(0,0,0,0.15)";
-        ctx.fillRect(x - anchoP / 2 + 14, y0 + 12, 3, altoP - 32);
-        ctx.fillRect(x + anchoP / 2 - 17, y0 + 12, 3, altoP - 32);
-
-      } else if (d.tipo === "cibeles") {
-        // Fuente de Cibeles: diosa sobre carro tirado por 2 leones
-        const x = d.x, y0 = dy;
-        // Base escalonada (3 niveles)
-        ctx.fillStyle = "#d8d0c0";
-        ctx.fillRect(x - 32, y0 + 26, 64, 8);
-        ctx.fillRect(x - 28, y0 + 18, 56, 8);
-        ctx.fillRect(x - 22, y0 + 10, 44, 8);
-        // Leones grandes (dos, muy visibles)
-        // León izquierdo
-        ctx.fillStyle = "#a87a4a";
-        ctx.beginPath();
-        ctx.ellipse(x - 14, y0 - 2, 10, 7, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x - 20, y0 - 6, 6, 0, Math.PI * 2);
-        ctx.fill();
-        // Melena del león izquierdo
-        ctx.fillStyle = "#8a5a2a";
-        ctx.beginPath();
-        ctx.arc(x - 20, y0 - 6, 7, Math.PI, 0);
-        ctx.fill();
-        // Ojo león izquierdo
-        ctx.fillStyle = "#1a1a1a";
-        ctx.fillRect(x - 22, y0 - 7, 1.5, 1.5);
-        // León derecho
-        ctx.fillStyle = "#a87a4a";
-        ctx.beginPath();
-        ctx.ellipse(x + 14, y0 - 2, 10, 7, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x + 20, y0 - 6, 6, 0, Math.PI * 2);
-        ctx.fill();
-        // Melena del león derecho
-        ctx.fillStyle = "#8a5a2a";
-        ctx.beginPath();
-        ctx.arc(x + 20, y0 - 6, 7, Math.PI, 0);
-        ctx.fill();
-        // Ojo león derecho
-        ctx.fillStyle = "#1a1a1a";
-        ctx.fillRect(x + 21, y0 - 7, 1.5, 1.5);
-        // Carro (encima de los leones)
-        ctx.fillStyle = "#b89860";
-        ctx.fillRect(x - 16, y0 - 14, 32, 10);
-        // Detalles del carro
-        ctx.fillStyle = "#8a6a3a";
-        ctx.fillRect(x - 16, y0 - 14, 32, 2);
-        // Diosa Cibeles (figura central)
-        ctx.fillStyle = "#f0e8d8";
-        // Cuerpo
-        ctx.fillRect(x - 5, y0 - 30, 10, 16);
-        // Cabeza
-        ctx.beginPath();
-        ctx.arc(x, y0 - 34, 5, 0, Math.PI * 2);
-        ctx.fill();
-        // Corona
-        ctx.fillStyle = "#e8b84a";
-        ctx.beginPath();
-        ctx.arc(x, y0 - 38, 3, 0, Math.PI * 2);
-        ctx.fill();
-        // Brazos
-        ctx.strokeStyle = "#f0e8d8";
-        ctx.lineWidth = 2.5;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x - 5, y0 - 24);
-        ctx.lineTo(x - 12, y0 - 20);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x + 5, y0 - 24);
-        ctx.lineTo(x + 12, y0 - 28);
-        ctx.stroke();
-        ctx.lineCap = "butt";
-
-      } else if (d.tipo === "oso-madrono") {
-        // Oso y Madroño: estatua de bronce
-        const x = d.x, y0 = dy;
-        // Pedestal de piedra
-        ctx.fillStyle = "#a89880";
-        ctx.fillRect(x - 14, y0 + 18, 28, 10);
-        ctx.fillStyle = "#c8b890";
-        ctx.fillRect(x - 12, y0 + 10, 24, 8);
-        // Árbol (madroño) grande
-        // Tronco
-        ctx.fillStyle = "#5a3a1a";
-        ctx.fillRect(x + 4, y0 - 8, 4, 20);
-        // Copa del árbol
-        ctx.fillStyle = "#2a6a2a";
-        ctx.beginPath();
-        ctx.arc(x + 6, y0 - 14, 12, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#3a8a3a";
-        ctx.beginPath();
-        ctx.arc(x + 4, y0 - 16, 8, 0, Math.PI * 2);
-        ctx.fill();
-        // Frutos rojos del madroño
-        ctx.fillStyle = "#c92a2a";
-        ctx.beginPath();
-        ctx.arc(x + 2, y0 - 14, 2, 0, Math.PI * 2);
-        ctx.arc(x + 10, y0 - 12, 2, 0, Math.PI * 2);
-        ctx.arc(x + 6, y0 - 18, 2, 0, Math.PI * 2);
-        ctx.fill();
-        // Oso de pie, apoyado en el árbol
-        ctx.fillStyle = "#3a1e0a";
-        // Cuerpo
-        ctx.beginPath();
-        ctx.ellipse(x - 6, y0 + 6, 8, 10, 0, 0, Math.PI * 2);
-        ctx.fill();
-        // Cabeza
-        ctx.beginPath();
-        ctx.arc(x - 6, y0 - 6, 6, 0, Math.PI * 2);
-        ctx.fill();
-        // Orejas
-        ctx.beginPath();
-        ctx.arc(x - 10, y0 - 10, 2, 0, Math.PI * 2);
-        ctx.arc(x - 2, y0 - 10, 2, 0, Math.PI * 2);
-        ctx.fill();
-        // Ojos
-        ctx.fillStyle = "#f0e8d8";
-        ctx.fillRect(x - 8, y0 - 7, 1.5, 1.5);
-        ctx.fillRect(x - 4, y0 - 7, 1.5, 1.5);
-        // Hocico
-        ctx.fillStyle = "#2a1a08";
-        ctx.beginPath();
-        ctx.arc(x - 6, y0 - 4, 1.5, 0, Math.PI * 2);
-        ctx.fill();
-        // Patas delanteras apoyadas en el árbol
-        ctx.fillStyle = "#3a1e0a";
-        ctx.fillRect(x - 1, y0 - 2, 4, 8);
-        ctx.fillRect(x - 1, y0 + 6, 4, 6);
-        // Patas traseras
-        ctx.fillRect(x - 12, y0 + 12, 4, 6);
-        ctx.fillRect(x - 7, y0 + 12, 4, 6);
-
-      // --- PARÍS · Torre Eiffel detallada ---
-      } else if (d.tipo === "torre-eiffel") {
-        const x = d.x, y0 = dy;
-        const altoTorre = 180;
-        const anchoBase = 70;
-        // Sombra bajo la torre
-        ctx.fillStyle = "rgba(0,0,0,0.15)";
-        ctx.beginPath();
-        ctx.ellipse(x, y0 + altoTorre + 4, anchoBase * 0.7, 5, 0, 0, Math.PI * 2);
-        ctx.fill();
-        // 4 patas (dos visibles desde el frente, dos ligeramente detrás)
-        // Patas traseras (más oscuras)
-        ctx.strokeStyle = "#3a2e22";
-        ctx.lineWidth = 5;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x - anchoBase / 2 + 8, y0 + altoTorre);
-        ctx.quadraticCurveTo(x - anchoBase / 4, y0 + altoTorre * 0.55, x - 2, y0 + 20);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x + anchoBase / 2 - 8, y0 + altoTorre);
-        ctx.quadraticCurveTo(x + anchoBase / 4, y0 + altoTorre * 0.55, x + 2, y0 + 20);
-        ctx.stroke();
-        // Patas delanteras (más claras)
-        ctx.strokeStyle = "#5a4a3a";
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.moveTo(x - anchoBase / 2, y0 + altoTorre);
-        ctx.quadraticCurveTo(x - anchoBase / 4, y0 + altoTorre * 0.5, x, y0 + 20);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x + anchoBase / 2, y0 + altoTorre);
-        ctx.quadraticCurveTo(x + anchoBase / 4, y0 + altoTorre * 0.5, x, y0 + 20);
-        ctx.stroke();
-        ctx.lineCap = "butt";
-        // Piso 1 (abajo, grande) - línea horizontal
-        ctx.fillStyle = "#5a4a3a";
-        ctx.fillRect(x - anchoBase * 0.35, y0 + altoTorre * 0.7, anchoBase * 0.7, 4);
-        // Detalles piso 1 (X decorativas)
-        ctx.strokeStyle = "#5a4a3a";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(x - anchoBase * 0.3, y0 + altoTorre * 0.7);
-        ctx.lineTo(x - anchoBase * 0.15, y0 + altoTorre * 0.5);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x + anchoBase * 0.3, y0 + altoTorre * 0.7);
-        ctx.lineTo(x + anchoBase * 0.15, y0 + altoTorre * 0.5);
-        ctx.stroke();
-        // Piso 2 (medio)
-        ctx.fillStyle = "#5a4a3a";
-        ctx.fillRect(x - anchoBase * 0.22, y0 + altoTorre * 0.48, anchoBase * 0.44, 3);
-        // Piso 3 (arriba)
-        ctx.fillRect(x - 10, y0 + 26, 20, 3);
-        // Antena
-        ctx.fillRect(x - 1, y0 - 12, 2, 40);
-        // Cruz superior
-        ctx.fillRect(x - 5, y0 - 6, 10, 2);
-        // Puntitos luminosos amarillos (parpadean)
-        const brillo = 0.5 + Math.sin(Date.now() / 500) * 0.5;
-        ctx.fillStyle = "rgba(255, 240, 130, " + (0.7 + brillo * 0.3) + ")";
-        ctx.beginPath();
-        ctx.arc(x, y0 + 40, 2.5, 0, Math.PI * 2);
-        ctx.arc(x, y0 + 70, 2.5, 0, Math.PI * 2);
-        ctx.arc(x, y0 + 100, 2.5, 0, Math.PI * 2);
-        ctx.arc(x, y0 + 130, 2.5, 0, Math.PI * 2);
-        ctx.fill();
-        // Halo de luz
-        ctx.fillStyle = "rgba(255, 240, 130, " + (brillo * 0.15) + ")";
-        ctx.beginPath();
-        ctx.arc(x, y0 + altoTorre / 2, anchoBase / 2 + 10, 0, Math.PI * 2);
-        ctx.fill();
-
-      // --- Animales ---
-      } else if (d.tipo === "paloma" || d.tipo === "paloma-blanca") {
-        d.x += d.vel * 0.4;
-        if (d.x > ANCHO + 40) d.x = -40;
-        d.tiempo += 0.2;
-        const aleteo = Math.sin(d.tiempo * 5) * 2;
-        const color = d.tipo === "paloma-blanca" ? "#f8f8f8" : "#888888";
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.ellipse(d.x, dy, 5, 3, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(d.x - 2, dy - aleteo, 5, 2, -0.3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(d.x + 4, dy - 1, 2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#e8a030";
-        ctx.fillRect(d.x + 6, dy - 1, 2, 1);
+      } else if (d.tipo === "murcielago") {
+        dibujarMurcielagoValencia(d, dy);
+      } else if (d.tipo === "gallo") {
+        dibujarGalloParis(d, dy);
+      } else if (d.tipo === "oso-bipedo") {
+        dibujarOsoBipedo(d, dy);
       }
     }
 
@@ -2224,46 +1924,60 @@
   }
 
   // ---------- Plataforma ----------
-  function dibujarPlataforma(plat, py, pal) {
+  function dibujarPlataforma(plat, py, pal, tipo) {
     if (plat.tipo === "suelo") {
-      if (pal.bloques) {
-        ctx.fillStyle = pal.suelo;
-        ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
-        ctx.fillStyle = pal.sueloLuz;
-        ctx.fillRect(plat.x, py, plat.ancho, 4);
-        ctx.fillStyle = "rgba(0,0,0,0.35)";
-        ctx.fillRect(plat.x, py + plat.alto - 4, plat.ancho, 4);
-        ctx.strokeStyle = "rgba(0,0,0,0.25)";
-        ctx.lineWidth = 1;
-        for (let bx = plat.x; bx < plat.x + plat.ancho; bx += 16) {
-          ctx.beginPath();
-          ctx.moveTo(bx, py);
-          ctx.lineTo(bx, py + plat.alto);
-          ctx.stroke();
-        }
-      } else {
-        ctx.fillStyle = pal.suelo;
-        ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
-        ctx.fillStyle = pal.sueloLuz;
-        ctx.fillRect(plat.x, py, plat.ancho, 4);
-      }
+      ctx.fillStyle = pal.suelo;
+      ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
+      ctx.fillStyle = pal.sueloLuz;
+      ctx.fillRect(plat.x, py, plat.ancho, 4);
     } else {
-      if (pal.bloques) {
+      if (plat.esBandera && tipo && tipo.bandera) {
+        const tipoBandera = tipo.bandera[0];
+        if (tipoBandera === "senyera") {
+          const h = plat.alto / 9;
+          const coloresSen = ["#d32f2f", "#ffd700", "#d32f2f", "#ffd700", "#d32f2f", "#ffd700", "#d32f2f", "#ffd700", "#d32f2f"];
+          for (let i = 0; i < 9; i++) {
+            ctx.fillStyle = coloresSen[i];
+            ctx.fillRect(plat.x, py + i * h, plat.ancho, h);
+          }
+          ctx.fillStyle = "#1a3a8a";
+          ctx.fillRect(plat.x, py, plat.ancho * 0.15, plat.alto);
+          ctx.strokeStyle = "#ffd700";
+          ctx.lineWidth = 2;
+          const lx = plat.x + plat.ancho * 0.075;
+          const ly = py + plat.alto * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(lx - 2, ly - 5);
+          ctx.lineTo(lx - 2, ly + 5);
+          ctx.lineTo(lx + 3, ly + 5);
+          ctx.stroke();
+        } else if (tipoBandera === "espana") {
+          const h = plat.alto / 4;
+          ctx.fillStyle = "#c60b1e";
+          ctx.fillRect(plat.x, py, plat.ancho, h);
+          ctx.fillStyle = "#ffc400";
+          ctx.fillRect(plat.x, py + h, plat.ancho, h * 2);
+          ctx.fillStyle = "#c60b1e";
+          ctx.fillRect(plat.x, py + h * 3, plat.ancho, h);
+        } else if (tipoBandera === "francia") {
+          const w = plat.ancho / 3;
+          ctx.fillStyle = "#0055a4";
+          ctx.fillRect(plat.x, py, w, plat.alto);
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(plat.x + w, py, w, plat.alto);
+          ctx.fillStyle = "#ef4135";
+          ctx.fillRect(plat.x + w * 2, py, w, plat.alto);
+        }
+        ctx.strokeStyle = "#1a1a1a";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(plat.x + 1, py + 1, plat.ancho - 2, plat.alto - 2);
+      } else if (pal.bloques) {
         ctx.fillStyle = pal.presa;
         ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
         ctx.fillStyle = pal.presaLuz;
         ctx.fillRect(plat.x, py, plat.ancho, 3);
         ctx.fillStyle = "rgba(0,0,0,0.35)";
         ctx.fillRect(plat.x, py + plat.alto - 3, plat.ancho, 3);
-        ctx.strokeStyle = "rgba(0,0,0,0.5)";
-        ctx.lineWidth = 1;
-        ctx.strokeRect(plat.x + 0.5, py + 0.5, plat.ancho - 1, plat.alto - 1);
-        for (let bx = plat.x + 16; bx < plat.x + plat.ancho; bx += 16) {
-          ctx.beginPath();
-          ctx.moveTo(bx, py);
-          ctx.lineTo(bx, py + plat.alto);
-          ctx.stroke();
-        }
       } else {
         const radio = 10;
         ctx.fillStyle = pal.presa;
@@ -2287,12 +2001,8 @@
   // ---------- Botón ----------
   function dibujarBoton(x, y, w, h, texto, foco, colorBase, colorBorde) {
     const brillo = 0.7 + Math.sin(Date.now() / 250) * 0.3;
-    const fondo = foco
-      ? "rgba(" + colorBase + ", " + (0.55 + brillo * 0.3) + ")"
-      : "rgba(" + colorBase + ", 0.35)";
-    const borde = foco
-      ? "rgba(" + colorBorde + ", " + brillo + ")"
-      : "rgba(" + colorBorde + ", 0.6)";
+    const fondo = foco ? "rgba(" + colorBase + ", " + (0.55 + brillo * 0.3) + ")" : "rgba(" + colorBase + ", 0.35)";
+    const borde = foco ? "rgba(" + colorBorde + ", " + brillo + ")" : "rgba(" + colorBorde + ", 0.6)";
     ctx.fillStyle = fondo;
     ctx.fillRect(x, y, w, h);
     ctx.strokeStyle = borde;
@@ -2316,6 +2026,7 @@
   // ---------- Render ----------
   function render() {
     const pal = paletaActual();
+    const tipo = tipoActual();
     dibujarFondo();
 
     const p = estado.personaje;
@@ -2333,23 +2044,14 @@
       if (py + plat.alto < 0 || py > ALTO) continue;
       ctx.fillStyle = "rgba(0,0,0,0.5)";
       ctx.fillRect(plat.x + 4, py + 4, plat.ancho, plat.alto);
-      dibujarPlataforma(plat, py, pal);
-      if (plat.tipo === "presa") {
-        if ((plat.x + plat.y) % 3 === 0) {
-          ctx.fillStyle = "rgba(70, 100, 60, 0.5)";
-          ctx.fillRect(plat.x + 4, py + plat.alto - 4, plat.ancho - 8, 4);
-        }
-        if (plat === siguientePresa) {
-          const brillo = 0.6 + Math.sin(Date.now() / 200) * 0.4;
-          ctx.strokeStyle = pal.acentoSuave;
-          ctx.globalAlpha = brillo;
-          ctx.lineWidth = 4;
-          ctx.strokeRect(plat.x - 3, py - 3, plat.ancho + 6, plat.alto + 6);
-          ctx.globalAlpha = brillo * 0.4;
-          ctx.lineWidth = 8;
-          ctx.strokeRect(plat.x - 6, py - 6, plat.ancho + 12, plat.alto + 12);
-          ctx.globalAlpha = 1;
-        }
+      dibujarPlataforma(plat, py, pal, tipo);
+      if (plat.tipo === "presa" && plat === siguientePresa) {
+        const brillo = 0.6 + Math.sin(Date.now() / 200) * 0.4;
+        ctx.strokeStyle = pal.acentoSuave;
+        ctx.globalAlpha = brillo;
+        ctx.lineWidth = 4;
+        ctx.strokeRect(plat.x - 3, py - 3, plat.ancho + 6, plat.alto + 6);
+        ctx.globalAlpha = 1;
       }
     }
 
@@ -2380,15 +2082,14 @@
     dibujarPopups();
     dibujarPopupGrande();
     dibujarTransicion();
+    dibujarBanner();
 
-    // Menú
     if (estado.modo === "menu") {
       ctx.fillStyle = pal.menuFondo;
       ctx.fillRect(0, 0, ANCHO, ALTO);
       ctx.fillStyle = pal.texto;
       ctx.font = "bold 56px monospace";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(tx("menu_titulo"), ANCHO / 2, ALTO / 2 - 200);
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "18px monospace";
@@ -2415,7 +2116,6 @@
       if (fullscreenSoportado && !estaEnFullscreen()) {
         dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_fullscreen"), enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
-        by += btnH + sep;
       } else {
         estado._btnPantallaCompleta = null;
       }
@@ -2423,19 +2123,16 @@
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "13px monospace";
       ctx.textAlign = "center";
-      ctx.fillText(tx("menu_ayuda"), ANCHO / 2, by + 10);
-      ctx.textAlign = "start";
-      ctx.textBaseline = "alphabetic";
+      ctx.fillText(tx("menu_ayuda"), ANCHO / 2, ALTO / 2 + 260);
+      ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
-    // Instrucciones
     if (estado.modo === "instrucciones") {
       ctx.fillStyle = pal.menuFondo;
       ctx.fillRect(0, 0, ANCHO, ALTO);
       ctx.fillStyle = pal.texto;
       ctx.font = "bold 36px monospace";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(tx("inst_titulo"), ANCHO / 2, 60);
       ctx.font = "16px monospace";
       ctx.textAlign = "left";
@@ -2451,18 +2148,15 @@
       ctx.font = "14px monospace";
       ctx.textAlign = "center";
       ctx.fillText(tx("inst_volver"), ANCHO / 2, ALTO - 40);
-      ctx.textAlign = "start";
-      ctx.textBaseline = "alphabetic";
+      ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
-    // Créditos
     if (estado.modo === "creditos") {
       ctx.fillStyle = pal.menuFondo;
       ctx.fillRect(0, 0, ANCHO, ALTO);
       ctx.fillStyle = pal.acento;
       ctx.font = "bold 40px monospace";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(tx("cred_titulo"), ANCHO / 2, 100);
       const px = ANCHO / 2 - 240, py = 160, pw = 480, ph = 420;
       ctx.fillStyle = pal.panelFondo;
@@ -2497,23 +2191,20 @@
       ctx.fillText(tx("cred_gracias"), ANCHO / 2, py + 300);
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "13px monospace";
-      ctx.fillText(tx("cred_version") + ": v:71.1", ANCHO / 2, py + 340);
+      ctx.fillText(tx("cred_version") + ": v:71.6", ANCHO / 2, py + 340);
       ctx.fillText("© 2026", ANCHO / 2, py + 365);
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "14px monospace";
       ctx.fillText(tx("cred_volver"), ANCHO / 2, ALTO - 40);
-      ctx.textAlign = "start";
-      ctx.textBaseline = "alphabetic";
+      ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
-    // Game Over
     if (estado.modo === "gameover") {
       ctx.fillStyle = pal.menuFondo;
       ctx.fillRect(0, 0, ANCHO, ALTO);
       ctx.fillStyle = pal.acento;
       ctx.font = "bold 52px monospace";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(tx("go_titulo"), ANCHO / 2, 160);
       const px = ANCHO / 2 - 200, py = 230, pw = 400, ph = 220;
       ctx.fillStyle = pal.panelFondo;
@@ -2549,11 +2240,9 @@
       } else {
         estado._btnPantallaCompleta = null;
       }
-      ctx.textAlign = "start";
-      ctx.textBaseline = "alphabetic";
+      ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
-    // Confirmar salida
     if (estado.modo === "confirmar-salida") {
       ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
       ctx.fillRect(0, 0, ANCHO, ALTO);
@@ -2565,8 +2254,7 @@
       ctx.strokeRect(px, py, pw, ph);
       ctx.fillStyle = pal.acento;
       ctx.font = "bold 24px monospace";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(tx("salir_titulo"), ANCHO / 2, py + 45);
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "15px monospace";
@@ -2592,8 +2280,7 @@
       ctx.font = "13px monospace";
       ctx.textAlign = "center";
       ctx.fillText(tx("salir_ayuda"), ANCHO / 2, py + ph - 15);
-      ctx.textAlign = "start";
-      ctx.textBaseline = "alphabetic";
+      ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
   }
 
@@ -2634,6 +2321,7 @@
       estado.popups = [];
       estado.popupGrande = null;
       estado.transicion = null;
+      estado.banner = null;
       const p = estado.personaje;
       p.x = ANCHO / 2 - STEVE_ANCHO / 2;
       p.y = Y_SUELO_JUGABLE;
