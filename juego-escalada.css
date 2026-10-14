@@ -1,10 +1,7 @@
 /* ============================================================================
    juego-escalada.css · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
-   · Fase 5: responsive móvil + pantalla completa + reduced-motion
-   · Fix fullscreen iOS + Android
-   · Fase 7: pie del HUD con créditos
-   · Fase 8.1.1: botón ☰ MENÚ flotante + fix iOS
+   · Fase 8.1.2: botones táctiles reordenados (↑ ← →)
    ============================================================================ */
 
 /* Contenedor principal */
@@ -99,7 +96,7 @@
   letter-spacing: .02em;
 }
 
-/* Botones de control (móvil) */
+/* Botones de control (móvil) · orden ↑ ← → */
 .juego-escalada__controles {
   display: none;
   gap: .5rem;
@@ -129,11 +126,7 @@
   box-shadow: 0 0 0 var(--text);
 }
 
-/* ============================================================================
-   BOTONES FLOTANTES · Salir fullscreen (✕) y Abrir menú (☰)
-   ============================================================================ */
-
-/* ✕ Salir de pantalla completa: solo visible si estamos en fullscreen */
+/* Botones flotantes */
 .juego-escalada__salir-fullscreen {
   display: none;
   position: absolute;
@@ -168,8 +161,6 @@
   justify-content: center;
 }
 
-/* ☰ Abrir menú de pausa: visible SOLO cuando estamos jugando o confirmando salida.
-   Funciona en todos los navegadores, incluido iPhone. */
 .juego-escalada__menu-flotante {
   display: none;
   position: absolute;
@@ -198,17 +189,13 @@
   box-shadow: 0 0 0 var(--text);
 }
 
-/* El botón se muestra solo cuando el contenedor tiene la clase activa */
 .juego-escalada.jugando .juego-escalada__menu-flotante {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ============================================================================
-   FULLSCREEN · Compactar HUD, controles y ocultar pie de créditos
-   ============================================================================ */
-
+/* Fullscreen: compactar HUD y controles */
 .juego-escalada:fullscreen .juego-escalada__info,
 .juego-escalada:-webkit-full-screen .juego-escalada__info {
   padding: 0 .25rem;
@@ -254,10 +241,7 @@
   display: none;
 }
 
-/* ============================================================================
-   RESPONSIVE · MÓVIL Y TABLET
-   ============================================================================ */
-
+/* Responsive */
 @media (max-width: 720px) {
   .juego-escalada {
     padding: .75rem .5rem;
@@ -295,10 +279,6 @@
     width: auto;
   }
 }
-
-/* ============================================================================
-   ACCESIBILIDAD · Reduced motion
-   ============================================================================ */
 
 @media (prefers-reduced-motion: reduce) {
   .juego-escalada,
