@@ -1,7 +1,13 @@
 /* ============================================================================
    juego-escalada.js · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
-   · Fase 8.2: osos bípedos caminando por Madrid (5 osos, sin daño todavía)
+   · Fase 8.3.2: barra de vida, daño por toque, sin regeneración
+   · Fix: murciélagos visibles (contorno dorado), colisiones correctas,
+          update de animales en física, voladores no atraviesan plataformas
+   · P5: 22 águilas rápidas con rebote ida/vuelta
+   · P6 (Valencia): 16 murciélagos volando libres
+   · Madrid: 8 osos con anti-atasco
+   · París: 14 gallos volando libres
    ============================================================================ */
 
 (function juegoEscalada() {
@@ -15,7 +21,7 @@
   // ============================================================================
   const TRADUCCIONES = {
     es: {
-      hud_altura: "Altura", hud_fragmentos: "Fragmentos", hud_vidas: "Vidas", hud_record: "Récord", hud_m: "m", hud_p: "P",
+      hud_altura: "Altura", hud_fragmentos: "Fragmentos", hud_vida: "Vida", hud_record: "Récord", hud_m: "m", hud_p: "P",
       menu_titulo: "VÍA AL CIELO", menu_subtitulo: "Un juego de escalada vertical", menu_record: "Récord",
       menu_empezar: "▶  EMPEZAR", menu_instrucciones: "?  CÓMO JUGAR", menu_creditos: "★  CRÉDITOS",
       menu_fullscreen: "⛶  PANTALLA COMPLETA", menu_ayuda: "↑↓ / Tab para moverte · ENTER para elegir",
@@ -27,8 +33,11 @@
         "FULLSCREEN: F o botón ⛶ en el menú", "",
         "OBJETIVO:", "· Sube lo más alto posible",
         "· Coge los 3 fragmentos de código de cada pantalla",
-        "· Si coges los 3, ganas 1 vida (máx. 5)", "",
-        "VIDAS:", "· Empiezas con 3 vidas", "· Caída > 90 m → pierdes 1 vida", "· 0 vidas → Game Over", "",
+        "· Si coges los 3, recuperas vida", "",
+        "VIDA:", "· Empiezas con 100% de vida",
+        "· Los animales te quitan vida al tocarte",
+        "· Caída > 90 m → pierdes 30% de vida",
+        "· La vida NO se regenera sola", "",
         "PANTALLAS:", "· Cada 220 m cambias de pantalla", "· Viajas por el mundo entero",
       ],
       inst_volver: "Pulsa ENTER o ESC para volver",
@@ -49,10 +58,10 @@
       subtitulo_valencia: "Ciudad de las Artes y las Ciencias",
       subtitulo_madrid: "Puerta de Alcalá · Cibeles · El Oso y el Madroño",
       subtitulo_paris: "La Torre Eiffel al atardecer",
-      pie: "Vía al Cielo · v:71.6 · por Gabriel Vidal Badia",
+      pie: "Vía al Cielo · v:72.0 · por Gabriel Vidal Badia",
     },
     val: {
-      hud_altura: "Alçada", hud_fragmentos: "Fragments", hud_vidas: "Vides", hud_record: "Rècord", hud_m: "m", hud_p: "P",
+      hud_altura: "Alçada", hud_fragmentos: "Fragments", hud_vida: "Vida", hud_record: "Rècord", hud_m: "m", hud_p: "P",
       menu_titulo: "VIA AL CEL", menu_subtitulo: "Un joc d'escalada vertical", menu_record: "Rècord",
       menu_empezar: "▶  COMENÇAR", menu_instrucciones: "?  COM JUGAR", menu_creditos: "★  CRÈDITS",
       menu_fullscreen: "⛶  PANTALLA COMPLETA", menu_ayuda: "↑↓ / Tab per moure't · ENTER per triar",
@@ -64,8 +73,11 @@
         "FULLSCREEN: F o botó ⛶ al menú", "",
         "OBJECTIU:", "· Puja el més alt possible",
         "· Agafa els 3 fragments de codi de cada pantalla",
-        "· Si n'agafes els 3, guanyes 1 vida (màx. 5)", "",
-        "VIDES:", "· Comences amb 3 vides", "· Caiguda > 90 m → perds 1 vida", "· 0 vides → Game Over", "",
+        "· Si n'agafes els 3, recuperes vida", "",
+        "VIDA:", "· Comences amb 100% de vida",
+        "· Els animals et lleven vida al tocar-te",
+        "· Caiguda > 90 m → perds 30% de vida",
+        "· La vida NO es regenera sola", "",
         "PANTALLES:", "· Cada 220 m canvies de pantalla", "· Viatges pel món sencer",
       ],
       inst_volver: "Prem ENTER o ESC per a tornar",
@@ -86,10 +98,10 @@
       subtitulo_valencia: "Ciutat de les Arts i les Ciències",
       subtitulo_madrid: "Puerta de Alcalá · Cibeles · L'Osset i el Madroño",
       subtitulo_paris: "La Torre Eiffel a la posta de sol",
-      pie: "Via al Cel · v:71.6 · per Gabriel Vidal Badia",
+      pie: "Via al Cel · v:72.0 · per Gabriel Vidal Badia",
     },
     en: {
-      hud_altura: "Height", hud_fragmentos: "Fragments", hud_vidas: "Lives", hud_record: "Record", hud_m: "m", hud_p: "P",
+      hud_altura: "Height", hud_fragmentos: "Fragments", hud_vida: "Health", hud_record: "Record", hud_m: "m", hud_p: "P",
       menu_titulo: "PATH TO THE SKY", menu_subtitulo: "A vertical climbing game", menu_record: "Record",
       menu_empezar: "▶  START", menu_instrucciones: "?  HOW TO PLAY", menu_creditos: "★  CREDITS",
       menu_fullscreen: "⛶  FULLSCREEN", menu_ayuda: "↑↓ / Tab to move · ENTER to choose",
@@ -101,8 +113,11 @@
         "FULLSCREEN: F or the ⛶ button in the menu", "",
         "GOAL:", "· Climb as high as you can",
         "· Collect the 3 code fragments on each screen",
-        "· If you get all 3, you earn 1 life (max. 5)", "",
-        "LIVES:", "· You start with 3 lives", "· Fall > 90 m → lose 1 life", "· 0 lives → Game Over", "",
+        "· If you get all 3, you recover health", "",
+        "HEALTH:", "· You start with 100% health",
+        "· Animals damage you when they touch you",
+        "· Fall > 90 m → lose 30% health",
+        "· Health does NOT regenerate on its own", "",
         "SCREENS:", "· Every 220 m you change screen", "· You travel the world",
       ],
       inst_volver: "Press ENTER or ESC to go back",
@@ -123,7 +138,7 @@
       subtitulo_valencia: "City of Arts and Sciences",
       subtitulo_madrid: "Puerta de Alcalá · Cibeles · The Bear and the Strawberry Tree",
       subtitulo_paris: "The Eiffel Tower at sunset",
-      pie: "Path to the Sky · v:71.6 · by Gabriel Vidal Badia",
+      pie: "Path to the Sky · v:72.0 · by Gabriel Vidal Badia",
     },
   };
 
@@ -163,8 +178,8 @@
   const Y_SUELO_JUGABLE = SUELO_Y - STEVE_ALTO;
   const CAMARA_INICIAL = -ALTO + SUELO_ALTO;
 
-  const VIDAS_INICIALES = 3;
-  const VIDAS_MAX = 5;
+  const VIDA_INICIAL = 100;
+  const VIDA_MAX = 100;
   const FRAGMENTOS_POR_PANTALLA = 3;
 
   const UMBRAL_CAIDA_PX = 1800;
@@ -175,6 +190,17 @@
   const DECO_RANGO_PEQUENO = 4000;
 
   const BANNER_DURACION = 180;
+
+  // Daños por toque (en %)
+  const DAÑO_PAJARO = 10;
+  const DAÑO_AGUILA = 15;
+  const DAÑO_OSO = 20;
+  const DAÑO_MURCIELAGO = 10;
+  const DAÑO_GALLO = 10;
+  const DAÑO_CAIDA = 30;
+
+  // Tiempo de invulnerabilidad en frames (1.5s a 60fps = 90)
+  const INVULNERABILIDAD_FRAMES = 90;
 
   // ---------- Reduced motion ----------
   const mediaReduced = window.matchMedia
@@ -302,10 +328,10 @@
   // Tipos de pantalla
   // ============================================================================
   const TIPOS_PANTALLA = {
-    cueva: { id: 1, categoria: "cueva", fondo: "#1a1410", fondo2: "#2e2620", fondoAbajo: "#1a1410", suelo: "#4a3a30", sueloLuz: "#6a5545", presa: "#5a4a3e", presaLuz: "#8a7565", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true, degradado: false },
-    grieta: { id: 2, categoria: "cueva", fondo: "#2a1f18", fondo2: "#3a2e26", fondoAbajo: "#2a1f18", suelo: "#5a4a3e", sueloLuz: "#8a7565", presa: "#6a5a4e", presaLuz: "#9a8575", decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"], murcielagos: 15, vinyetaFuerte: true, degradado: false },
+    cueva: { id: 1, categoria: "cueva", fondo: "#1a1410", fondo2: "#2e2620", fondoAbajo: "#1a1410", suelo: "#4a3a30", sueloLuz: "#6a5545", presa: "#5a4a3e", presaLuz: "#8a7565", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true, degradado: false, murcielagosVoladores: true },
+    grieta: { id: 2, categoria: "cueva", fondo: "#2a1f18", fondo2: "#3a2e26", fondoAbajo: "#2a1f18", suelo: "#5a4a3e", sueloLuz: "#8a7565", presa: "#6a5a4e", presaLuz: "#9a8575", decoraciones: ["estalactita", "musgo", "roca", "gota", "cristal", "grieta-luz", "craneo"], murcielagos: 15, vinyetaFuerte: true, degradado: false, murcielagosVoladores: true },
     aire: { id: 3, categoria: "aire", fondo: "#87CEEB", fondo2: "#5a9ec9", fondoAbajo: "#a0d8ef", suelo: "#6a8a4a", sueloLuz: "#8aaa6a", presa: "#7a6a5a", presaLuz: "#aa9a8a", decoraciones: ["nube", "montana", "arbol", "pajaro", "aguila"], murcielagos: 0, vinyetaFuerte: false, degradado: false },
-    infinito: { id: 4, categoria: "cueva", fondo: "#1a1410", fondo2: "#2e2620", fondoAbajo: "#1a1410", suelo: "#4a3a30", sueloLuz: "#6a5545", presa: "#5a4a3e", presaLuz: "#8a7565", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true, degradado: false },
+    infinito: { id: 4, categoria: "cueva", fondo: "#1a1410", fondo2: "#2e2620", fondoAbajo: "#1a1410", suelo: "#4a3a30", sueloLuz: "#6a5545", presa: "#5a4a3e", presaLuz: "#8a7565", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true, degradado: false, murcielagosVoladores: true },
 
     valencia: {
       id: 10, categoria: "ciudad",
@@ -385,12 +411,13 @@
       dobleSaltoDisponible: true, saltoSuelto: true,
       frame: "parado", mirandoDerecha: true,
       ultimaPlataforma: null, alturaMaximaVuelo: Y_SUELO_JUGABLE, dañoTiempo: 0,
+      vida: VIDA_INICIAL,
+      invulnerable: 0,
     },
     plataformas: [], decoraciones: [], murcielagos: [],
     fragmentos: [], popups: [], popupGrande: null, conjuntoActual: null,
     teclas: { izquierda: false, derecha: false, salto: false },
     camara: { y: CAMARA_INICIAL, alturaMaxima: 0, record: 0 },
-    vidas: VIDAS_INICIALES,
     fragmentosRecogidos: 0, fragmentosTotales: 0,
     pantalla: 1, tipoPantalla: "cueva",
     transicion: null, gameOver: false, bonusVidaDado: false,
@@ -628,33 +655,44 @@
       for (let i = 0; i < 24; i++) decor.push({ tipo: "pajaro", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, tiempo: Math.random() * 10 });
     }
     if (permitido("aguila")) {
-      for (let i = 0; i < 6; i++) decor.push({ tipo: "aguila", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, tam: 22 + Math.random() * 8, vel: 0.15 + Math.random() * 0.2, tiempo: Math.random() * 10 });
+      // 22 águilas rápidas con rebote ida/vuelta
+      for (let i = 0; i < 22; i++) decor.push({
+        tipo: "aguila",
+        x: Math.random() * ANCHO,
+        y: -Math.random() * DECO_RANGO - 100,
+        tam: 22 + Math.random() * 8,
+        vel: 0.5 + Math.random() * 0.5,
+        tiempo: Math.random() * 10,
+        mirandoDerecha: Math.random() > 0.5,
+      });
     }
 
     if (tipo.animalVolador === "murcielago" || tipo.animalVolador === "gallo") {
-      const cantidad = tipo.animalVolador === "murcielago" ? 14 : 10;
+      const cantidad = tipo.animalVolador === "murcielago" ? 16 : 14;
       for (let i = 0; i < cantidad; i++) {
         decor.push({
           tipo: tipo.animalVolador,
           x: Math.random() * ANCHO,
           y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.4 + Math.random() * 0.6,
+          vel: 0.6 + Math.random() * 0.7,
           tiempo: Math.random() * 10,
           mirandoDerecha: Math.random() > 0.5,
         });
       }
     }
 
-    // 5 osos bípedos caminando por Madrid
+    // 8 osos bípedos caminando por Madrid
     if (tipo.animalCaminante === "oso-bipedo") {
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 8; i++) {
         decor.push({
           tipo: "oso-bipedo",
-          x: 60 + Math.random() * (ANCHO - 120),
+          x: 40 + Math.random() * (ANCHO - 80),
           y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.25 + Math.random() * 0.25,
+          vel: 0.35,
           tiempo: Math.random() * 10,
           mirandoDerecha: Math.random() > 0.5,
+          ancho: 44, alto: 80,
+          _atascado: 0,
         });
       }
     }
@@ -667,7 +705,14 @@
     const cantidad = tipo.murcielagos || 0;
     const bats = [];
     for (let i = 0; i < cantidad; i++) {
-      bats.push({ x: 40 + Math.random() * (ANCHO - 80), y: -200 - i * 90 - Math.random() * 60, despierto: 0, mirandoDerecha: Math.random() > 0.5, tiempo: Math.random() * 10 });
+      bats.push({
+        x: 40 + Math.random() * (ANCHO - 80),
+        y: -200 - i * 90 - Math.random() * 60,
+        despierto: 0,
+        mirandoDerecha: Math.random() > 0.5,
+        tiempo: Math.random() * 10,
+        vel: 0.3 + Math.random() * 0.4,
+      });
     }
     estado.murcielagos = bats;
   }
@@ -690,8 +735,14 @@
     <div class="juego-escalada__info notranslate" translate="no">
       <span><span data-i18n="hud_altura">Altura</span>: <strong id="je-altura">0</strong> <span data-i18n="hud_m">m</span></span>
       <span><span data-i18n="hud_fragmentos">Fragmentos</span>: <strong id="je-frags">0/0</strong></span>
-      <span><span data-i18n="hud_vidas">Vidas</span>: <strong id="je-vidas">♥♥♥</strong></span>
+      <span><span data-i18n="hud_vida">Vida</span>: <strong id="je-vida">100</strong>%</span>
       <span><span data-i18n="hud_record">Récord</span>: <strong id="je-record">0</strong> <span data-i18n="hud_m">m</span></span>
+    </div>
+    <div class="juego-escalada__barra notranslate" translate="no">
+      <div class="juego-escalada__barra-fondo">
+        <div class="juego-escalada__barra-relleno" id="je-barra-vida"></div>
+      </div>
+      <span class="juego-escalada__barra-pct" id="je-barra-pct">100%</span>
     </div>
     <canvas class="juego-escalada__canvas notranslate" translate="no" width="${ANCHO}" height="${ALTO}"></canvas>
     <div class="juego-escalada__controles notranslate" translate="no">
@@ -717,8 +768,10 @@
   const ctx = canvas.getContext("2d");
   const elAltura = contenedor.querySelector("#je-altura");
   const elFrags = contenedor.querySelector("#je-frags");
-  const elVidas = contenedor.querySelector("#je-vidas");
+  const elVida = contenedor.querySelector("#je-vida");
   const elRecord = contenedor.querySelector("#je-record");
+  const elBarraVida = contenedor.querySelector("#je-barra-vida");
+  const elBarraPct = contenedor.querySelector("#je-barra-pct");
   const elFooter = contenedor.querySelector("#je-footer");
   const btnSalirFullscreen = contenedor.querySelector(".juego-escalada__salir-fullscreen");
   const btnMenuFlotante = contenedor.querySelector(".juego-escalada__menu-flotante");
@@ -749,7 +802,7 @@
     const p = paletaActual();
     const info = contenedor.querySelector(".juego-escalada__info");
     if (info) info.style.color = p.textoSuave;
-    [elAltura, elFrags, elVidas, elRecord].forEach((el) => { if (el) el.style.color = p.hudAcento; });
+    [elAltura, elFrags, elVida, elRecord].forEach((el) => { if (el) el.style.color = p.hudAcento; });
     if (elFooter) elFooter.style.color = p.textoSuave;
   }
   aplicarColoresHUD();
@@ -903,16 +956,162 @@
     p.frame = "parado";
     p.alturaMaximaVuelo = Y_SUELO_JUGABLE;
     p.dañoTiempo = 0;
+    p.vida = VIDA_INICIAL;
+    p.invulnerable = 0;
     estado.camara.y = CAMARA_INICIAL;
     estado.banner = null;
     actualizarClaseJugando();
     actualizarBloqueoScroll();
   }
 
+  // ---------- Daño ----------
+  function aplicarDaño(cantidad) {
+    const p = estado.personaje;
+    if (p.invulnerable > 0) return;
+    if (estado.modo !== "jugando") return;
+    p.vida -= cantidad;
+    if (p.vida < 0) p.vida = 0;
+    p.dañoTiempo = 30;
+    p.invulnerable = INVULNERABILIDAD_FRAMES;
+    if (p.vida <= 0) {
+      estado.gameOver = true;
+      estado.modo = "gameover";
+      estado.opcionActiva = 0;
+      actualizarClaseJugando();
+      actualizarBloqueoScroll();
+    }
+  }
+
+  // ---------- Colisiones con animales (por toque) ----------
+  function comprobarColisionesAnimales() {
+    const p = estado.personaje;
+    const pcx = p.x + p.ancho / 2;
+    const pcy = p.y + p.alto / 2;
+
+    // Murciélagos de cueva (coordenadas de mundo)
+    for (const bat of estado.murcielagos) {
+      const bx = bat.x + 13;
+      const by = bat.y + 12;
+      const d = Math.hypot(bx - pcx, by - pcy);
+      if (d < 22) { aplicarDaño(DAÑO_MURCIELAGO); return; }
+    }
+
+    // Animales decorativos (coordenadas de mundo)
+    for (const d of estado.decoraciones) {
+      const dx = d.x;
+      const dy = d.y + 12;
+      let radio = 0;
+      let daño = 0;
+      if (d.tipo === "murcielago") { radio = 20; daño = DAÑO_MURCIELAGO; }
+      else if (d.tipo === "gallo") { radio = 22; daño = DAÑO_GALLO; }
+      else if (d.tipo === "pajaro") { radio = 12; daño = DAÑO_PAJARO; }
+      else if (d.tipo === "aguila") { radio = 24; daño = DAÑO_AGUILA; }
+      else if (d.tipo === "oso-bipedo") { radio = 32; daño = DAÑO_OSO; }
+      if (radio === 0) continue;
+      const dist = Math.hypot(dx - pcx, dy - pcy);
+      if (dist < radio) { aplicarDaño(daño); return; }
+    }
+  }
+
+  // ---------- AABB animal vs plataformas ----------
+  function colisionaEntidadConPlataformas(cx, cy, radio) {
+    const ax = cx - radio, ay = cy - radio;
+    const aw = radio * 2, ah = radio * 2;
+    for (const plat of estado.plataformas) {
+      if (ax + aw > plat.x && ax < plat.x + plat.ancho &&
+          ay + ah > plat.y && ay < plat.y + plat.alto) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // ---------- Update de animales (en física) ----------
+  function actualizarAnimales() {
+    const p = estado.personaje;
+
+    // Murciélagos de cueva (vuelan libres, sin colisión con plataformas)
+    for (const bat of estado.murcielagos) {
+      const dist = Math.abs(bat.y - p.y) + Math.abs(bat.x - p.x) * 0.5;
+      if (dist < 120) bat.despierto = Math.min(1, bat.despierto + 0.15);
+      else bat.despierto = Math.max(0, bat.despierto - 0.05);
+      bat.tiempo += 0.1;
+
+      const vel = (bat.vel || 0.4) * 0.6;
+      let nx = bat.x + (bat.mirandoDerecha ? 1 : -1) * vel;
+      let ny = bat.y + Math.sin(bat.tiempo * 1.7) * 1.2;
+
+      // Rebote en bordes
+      if (nx > ANCHO - 26) { nx = ANCHO - 26; bat.mirandoDerecha = false; }
+      if (nx < 0) { nx = 0; bat.mirandoDerecha = true; }
+
+      bat.x = nx;
+      bat.y = ny;
+    }
+
+    // Animales decorativos
+    for (const d of estado.decoraciones) {
+      if (d.tipo === "murcielago") {
+        // Vuelan libres: sin colisión con plataformas
+        d.tiempo += 0.3;
+        const vel = d.vel * 0.9;
+        d.x += (d.mirandoDerecha ? 1 : -1) * vel;
+        if (d.x > ANCHO + 30) { d.x = ANCHO + 30; d.mirandoDerecha = false; }
+        if (d.x < -30) { d.x = -30; d.mirandoDerecha = true; }
+      } else if (d.tipo === "gallo") {
+        // Vuelan libres: sin colisión con plataformas
+        d.tiempo += 0.3;
+        const vel = d.vel * 0.8;
+        d.x += (d.mirandoDerecha ? 1 : -1) * vel;
+        if (d.x > ANCHO + 40) { d.x = ANCHO + 40; d.mirandoDerecha = false; }
+        if (d.x < -40) { d.x = -40; d.mirandoDerecha = true; }
+      } else if (d.tipo === "oso-bipedo") {
+        // Caminan: SÍ colisionan con plataformas, radio pequeño + anti-atasco
+        d.tiempo += 0.12;
+        const vel = d.vel * 0.7;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+
+        // Rebote en bordes de pantalla
+        if (nx > ANCHO - 20) { nx = ANCHO - 20; d.mirandoDerecha = false; }
+        if (nx < 20) { nx = 20; d.mirandoDerecha = true; }
+
+        // Comprobación con radio pequeño
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 35, 17);
+        if (!choca) {
+          d.x = nx;
+          d._atascado = 0;
+        } else {
+          d._atascado = (d._atascado || 0) + 1;
+          d.mirandoDerecha = !d.mirandoDerecha;
+          if (d._atascado > 5) {
+            d.y -= 60;
+            d._atascado = 0;
+          }
+        }
+      } else if (d.tipo === "aguila") {
+        // Vuelan libres: rebote ida/vuelta
+        d.tiempo += 0.04;
+        const vel = d.vel * 1.6;
+        d.x += (d.mirandoDerecha ? 1 : -1) * vel;
+
+        if (d.x > ANCHO + 60) { d.x = ANCHO + 60; d.mirandoDerecha = false; }
+        if (d.x < -60) { d.x = -60; d.mirandoDerecha = true; }
+
+        // Ligera oscilación vertical
+        d.y += Math.sin(d.tiempo * 2) * 0.3;
+      } else if (d.tipo === "nube") {
+        d.x += d.vel * 0.3;
+        if (d.x > ANCHO + 100) d.x = -100;
+      } else if (d.tipo === "pajaro") {
+        // Decoración pura, sin movimiento
+      }
+    }
+  }
+
   // ---------- Respawn ----------
   function respawn() {
     const p = estado.personaje;
-    if (estado.vidas <= 0) {
+    if (p.vida <= 0) {
       estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0;
       actualizarClaseJugando(); actualizarBloqueoScroll();
       return;
@@ -1058,7 +1257,6 @@
   }
   function reiniciarPartida() {
     estado.modo = "jugando";
-    estado.vidas = VIDAS_INICIALES;
     estado.fragmentosRecogidos = 0;
     estado.gameOver = false;
     estado.bonusVidaDado = false;
@@ -1079,6 +1277,8 @@
     p.frame = "parado";
     p.alturaMaximaVuelo = Y_SUELO_JUGABLE;
     p.dañoTiempo = 0;
+    p.vida = VIDA_INICIAL;
+    p.invulnerable = 0;
     crearPlataformas();
     crearDecoraciones();
     crearMurcielagos();
@@ -1128,10 +1328,8 @@
     }
     if (estado.fragmentosRecogidos >= estado.fragmentosTotales && !estado.bonusVidaDado) {
       estado.bonusVidaDado = true;
-      if (estado.vidas < VIDAS_MAX) {
-        estado.vidas++;
-        estado.popups.push({ x: p.x + p.ancho / 2, y: p.y, texto: "+1 VIDA", tiempo: 0, duracion: 220, tipo: "vida" });
-      }
+      estado.personaje.vida = Math.min(VIDA_MAX, estado.personaje.vida + 25);
+      estado.popups.push({ x: p.x + p.ancho / 2, y: p.y, texto: "+25% VIDA", tiempo: 0, duracion: 220, tipo: "vida" });
     }
   }
 
@@ -1143,14 +1341,8 @@
       return;
     }
     const caida = p.y - p.alturaMaximaVuelo;
-    if (caida > UMBRAL_CAIDA_PX && estado.vidas > 0) {
-      estado.vidas--;
-      p.dañoTiempo = 30;
-      if (estado.vidas <= 0) {
-        estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0;
-        actualizarClaseJugando(); actualizarBloqueoScroll();
-        return;
-      }
+    if (caida > UMBRAL_CAIDA_PX) {
+      aplicarDaño(DAÑO_CAIDA);
     }
     p.alturaMaximaVuelo = p.y;
   }
@@ -1164,6 +1356,9 @@
     actualizarBanner();
 
     if (p.dañoTiempo > 0) p.dañoTiempo--;
+    if (p.invulnerable > 0) p.invulnerable--;
+
+    // NOTA: sin regeneración de vida
 
     if (estado.teclas.izquierda) { p.velX -= ACELERACION; p.mirandoDerecha = false; }
     if (estado.teclas.derecha)   { p.velX += ACELERACION; p.mirandoDerecha = true; }
@@ -1203,6 +1398,10 @@
     comprobarFragmentos();
     comprobarCaida();
 
+    // Actualizar animales ANTES de comprobar colisiones
+    actualizarAnimales();
+    comprobarColisionesAnimales();
+
     const objetivo = p.y - ALTO * 0.4;
     estado.camara.y += (objetivo - estado.camara.y) * 0.15;
     if (estado.camara.y > CAMARA_INICIAL) estado.camara.y = CAMARA_INICIAL;
@@ -1214,28 +1413,32 @@
     if (altura > estado.camara.alturaMaxima) estado.camara.alturaMaxima = altura;
     if (altura > estado.camara.record) { estado.camara.record = altura; guardarRecord(); }
 
-    for (const bat of estado.murcielagos) {
-      const dist = Math.abs(bat.y - p.y) + Math.abs(bat.x - p.x) * 0.5;
-      if (dist < 120) bat.despierto = Math.min(1, bat.despierto + 0.15);
-      else bat.despierto = Math.max(0, bat.despierto - 0.05);
-      bat.tiempo += 0.1;
-    }
-
+    // HUD
     elAltura.textContent = altura + " " + tx("hud_m") + " · " + tx("hud_p") + estado.pantalla;
     elFrags.textContent = estado.fragmentosRecogidos + "/" + estado.fragmentosTotales;
-    let corazones = "";
-    for (let i = 0; i < estado.vidas; i++) {
-      if (estado.vidas === 1) corazones += "❤";
-      else corazones += "♥";
+    elVida.textContent = Math.round(p.vida);
+
+    // Barra
+    const porcentaje = Math.max(0, Math.min(100, p.vida));
+    elBarraVida.style.width = porcentaje + "%";
+    let color = "#4caf50";
+    if (porcentaje < 30) color = "#f44336";
+    else if (porcentaje < 60) color = "#ff9800";
+    else if (porcentaje < 80) color = "#ffc107";
+    elBarraVida.style.background = color;
+    if (elBarraPct) {
+      elBarraPct.textContent = Math.round(porcentaje) + "%";
+      elBarraPct.style.color = color;
     }
-    elVidas.innerHTML = estado.vidas === 1
-      ? '<span style="color:#ff4444">' + corazones + '</span>'
-      : corazones;
     elRecord.textContent = estado.camara.record;
   }
 
   // ---------- Steve ----------
   function dibujarSteve(x, y, frame, mirando, daño) {
+    const p = estado.personaje;
+    if (p.invulnerable > 0 && Math.floor(p.invulnerable / 6) % 2 === 0) {
+      return;
+    }
     const piel = daño > 0 && Math.floor(daño / 4) % 2 === 0 ? "#ff8888" : "#C9A27E";
     const pelo = "#5A3A1E";
     const camiseta = daño > 0 && Math.floor(daño / 4) % 2 === 0 ? "#ff6666" : "#24A0A0";
@@ -1296,11 +1499,24 @@
     ctx.restore();
   }
 
-  // ---------- Murciélago (cueva) ----------
+  // ---------- Murciélago (cueva) con contorno dorado ----------
   function dibujarMurcielago(bat, x, y) {
     const cuerpo = "#1a1a1a", ala = "#0a0a0a";
     const brillo = bat.despierto;
     const aleteo = bat.despierto > 0.5 ? Math.sin(bat.tiempo * 4) * 1.5 : 0;
+
+    const pulso = 0.5 + Math.sin(bat.tiempo * 2.5) * 0.5;
+    ctx.strokeStyle = "rgba(201, 162, 39, " + (0.55 + pulso * 0.45) + ")";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(x + 10, y + 12, 14 + aleteo * 0.2, 11, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(201, 162, 39, " + (0.08 + pulso * 0.10) + ")";
+    ctx.beginPath();
+    ctx.ellipse(x + 10, y + 12, 18 + aleteo * 0.3, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.fillStyle = ala;
     ctx.fillRect(x - 3, y + 8 + aleteo, 8, 10);
     ctx.fillRect(x + 15, y + 8 - aleteo, 8, 10);
@@ -1308,9 +1524,10 @@
     ctx.fillRect(x + 5, y + 6, 10, 12);
     ctx.fillRect(x + 3, y + 3, 4, 5);
     ctx.fillRect(x + 13, y + 3, 4, 5);
+
     const ojoColor = bat.despierto > 0.1
       ? "rgba(255, " + (100 + Math.round(80 * brillo)) + ", 50, " + (0.3 + brillo * 0.7) + ")"
-      : "#3a1a1a";
+      : "#ff3a3a";
     ctx.fillStyle = ojoColor;
     ctx.fillRect(x + 7, y + 9, 2, 2); ctx.fillRect(x + 11, y + 9, 2, 2);
     if (brillo > 0.5) {
@@ -1411,13 +1628,9 @@
   }
 
   // ============================================================================
-  // Animales
+  // Animales (solo dibujo — el movimiento está en actualizarAnimales)
   // ============================================================================
   function dibujarMurcielagoValencia(d, dy) {
-    d.x += (d.mirandoDerecha ? 1 : -1) * d.vel * 0.6;
-    if (d.x > ANCHO + 40) d.x = -40;
-    if (d.x < -40) d.x = ANCHO + 40;
-    d.tiempo += 0.3;
     const aleteo = Math.sin(d.tiempo * 5) * 5;
     const dir = d.mirandoDerecha ? 1 : -1;
     ctx.fillStyle = "#0a0a0a";
@@ -1459,10 +1672,6 @@
   }
 
   function dibujarGalloParis(d, dy) {
-    d.x += (d.mirandoDerecha ? 1 : -1) * d.vel * 0.5;
-    if (d.x > ANCHO + 40) d.x = -40;
-    if (d.x < -40) d.x = ANCHO + 40;
-    d.tiempo += 0.2;
     const dir = d.mirandoDerecha ? 1 : -1;
     const aleteo = Math.sin(d.tiempo * 4) * 3;
     ctx.fillStyle = "#0055a4";
@@ -1523,69 +1732,43 @@
   }
 
   // ============================================================================
-  // OSO BÍPEDO (Madrid) · casi el doble de alto que Steve (~80 px)
+  // OSO BÍPEDO (Madrid) · sin updates de posición aquí
   // ============================================================================
   function dibujarOsoBipedo(d, dy) {
-    d.x += (d.mirandoDerecha ? 1 : -1) * d.vel * 0.4;
-    if (d.x > ANCHO + 60) d.x = -60;
-    if (d.x < -60) d.x = ANCHO + 60;
-    d.tiempo += 0.12;
-
-    const dir = d.mirandoDerecha ? 1 : -1;
-    // Balanceo al caminar
     const balanceo = Math.sin(d.tiempo * 3) * 3;
-    // Balanceo de brazos (opuesto)
     const brazoIzqY = Math.sin(d.tiempo * 3) * 4;
     const brazoDerY = -Math.sin(d.tiempo * 3) * 4;
-
-    // Base del oso: dy es el centro vertical. El oso mide ~80 px de alto.
-    // Lo dibujamos desde los pies hacia arriba.
-    const piesY = dy + 40;   // pies
-    const cabezaY = dy - 40; // parte superior de la cabeza
 
     ctx.save();
     ctx.translate(d.x, 0);
     if (!d.mirandoDerecha) ctx.scale(-1, 1);
-    // A partir de aquí, dibujamos mirando siempre a la derecha.
-    // El translate + scale hacen que se voltee.
     const x = 0;
     const y = dy;
 
-    // PATAS TRASERAS (dos columnas)
     ctx.fillStyle = "#3a1e0a";
-    // Pata izquierda
     ctx.fillRect(x - 14, y + 24 + balanceo * 0.3, 10, 16);
-    // Pata derecha
     ctx.fillRect(x + 4, y + 24 - balanceo * 0.3, 10, 16);
-    // Zarpas
     ctx.fillStyle = "#2a1408";
     ctx.fillRect(x - 15, y + 38 + balanceo * 0.3, 12, 4);
     ctx.fillRect(x + 3, y + 38 - balanceo * 0.3, 12, 4);
 
-    // CUERPO (ovalado grande)
     ctx.fillStyle = "#4a2a1a";
     ctx.beginPath();
     ctx.ellipse(x, y + 4, 20, 22, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Vientre más claro
     ctx.fillStyle = "#6a4a3a";
     ctx.beginPath();
     ctx.ellipse(x, y + 8, 12, 14, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // BRAZOS LEVANTADOS (amenazantes, con garras)
     ctx.fillStyle = "#4a2a1a";
-    // Brazo izquierdo (arriba)
     ctx.beginPath();
     ctx.ellipse(x - 20, y - 6 + brazoIzqY, 6, 12, 0.5, 0, Math.PI * 2);
     ctx.fill();
-    // Brazo derecho (arriba)
     ctx.beginPath();
     ctx.ellipse(x + 20, y - 6 + brazoDerY, 6, 12, -0.5, 0, Math.PI * 2);
     ctx.fill();
-    // Garras
     ctx.fillStyle = "#1a0a04";
-    // Garra izquierda (3 puntas)
     ctx.beginPath();
     ctx.moveTo(x - 24, y - 16 + brazoIzqY);
     ctx.lineTo(x - 26, y - 22 + brazoIzqY);
@@ -1604,7 +1787,6 @@
     ctx.lineTo(x - 16, y - 17 + brazoIzqY);
     ctx.closePath();
     ctx.fill();
-    // Garra derecha
     ctx.beginPath();
     ctx.moveTo(x + 24, y - 16 + brazoDerY);
     ctx.lineTo(x + 26, y - 22 + brazoDerY);
@@ -1624,45 +1806,37 @@
     ctx.closePath();
     ctx.fill();
 
-    // CABEZA (grande)
     ctx.fillStyle = "#4a2a1a";
     ctx.beginPath();
     ctx.arc(x + 2, y - 22, 13, 0, Math.PI * 2);
     ctx.fill();
-    // Orejas redondas
     ctx.beginPath();
     ctx.arc(x - 8, y - 32, 5, 0, Math.PI * 2);
     ctx.arc(x + 12, y - 32, 5, 0, Math.PI * 2);
     ctx.fill();
-    // Interior orejas
     ctx.fillStyle = "#2a1408";
     ctx.beginPath();
     ctx.arc(x - 8, y - 32, 2.5, 0, Math.PI * 2);
     ctx.arc(x + 12, y - 32, 2.5, 0, Math.PI * 2);
     ctx.fill();
-    // Hocico
     ctx.fillStyle = "#6a4a3a";
     ctx.beginPath();
     ctx.ellipse(x + 8, y - 18, 6, 5, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Nariz negra
     ctx.fillStyle = "#1a1a1a";
     ctx.beginPath();
     ctx.arc(x + 12, y - 18, 2, 0, Math.PI * 2);
     ctx.fill();
-    // Ojos pequeños y amenazantes
     ctx.fillStyle = "#f0e8d8";
     ctx.beginPath();
     ctx.arc(x - 1, y - 24, 2.5, 0, Math.PI * 2);
     ctx.arc(x + 7, y - 24, 2.5, 0, Math.PI * 2);
     ctx.fill();
-    // Pupilas
     ctx.fillStyle = "#1a1a1a";
     ctx.beginPath();
     ctx.arc(x - 0.5, y - 24, 1.3, 0, Math.PI * 2);
     ctx.arc(x + 7.5, y - 24, 1.3, 0, Math.PI * 2);
     ctx.fill();
-    // Ceño fruncido (líneas negras)
     ctx.strokeStyle = "#1a1a1a";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -1671,7 +1845,6 @@
     ctx.moveTo(x + 10, y - 27);
     ctx.lineTo(x + 5, y - 26);
     ctx.stroke();
-    // Boca
     ctx.beginPath();
     ctx.moveTo(x + 8, y - 15);
     ctx.quadraticCurveTo(x + 5, y - 12, x + 2, y - 14);
@@ -1841,8 +2014,6 @@
         ctx.fillStyle = "rgba(255, 230, 150, " + (0.2 + pulso * 0.3) + ")";
         ctx.fillRect(d.x, dy, d.ancho, d.largo);
       } else if (d.tipo === "nube") {
-        d.x += d.vel * 0.3;
-        if (d.x > ANCHO + 100) d.x = -100;
         ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
         ctx.beginPath();
         ctx.ellipse(d.x, dy, d.ancho / 2, d.alto / 2, 0, 0, Math.PI * 2);
@@ -1883,28 +2054,25 @@
         ctx.arc(d.x + 6, dy - aleteo, 6, Math.PI, 0);
         ctx.stroke();
       } else if (d.tipo === "aguila") {
-        d.x += d.vel * 0.4;
-        if (d.x > ANCHO + 80) d.x = -80;
-        d.tiempo += 0.04;
         const planeo = Math.sin(d.tiempo) * 2;
         const t = d.tam;
+        const dir = d.mirandoDerecha ? 1 : -1;
         ctx.fillStyle = "#3a2a1a";
         ctx.beginPath();
         ctx.ellipse(d.x, dy + planeo, t * 0.4, t * 0.18, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
         ctx.moveTo(d.x - t * 0.05, dy + planeo - t * 0.05);
-        ctx.lineTo(d.x - t * 0.9, dy + planeo - t * 0.25);
-        ctx.lineTo(d.x - t * 0.5, dy + planeo + t * 0.05);
+        ctx.lineTo(d.x - dir * t * 0.9, dy + planeo - t * 0.25);
+        ctx.lineTo(d.x - dir * t * 0.5, dy + planeo + t * 0.05);
         ctx.closePath();
         ctx.fill();
         ctx.beginPath();
         ctx.moveTo(d.x - t * 0.05, dy + planeo - t * 0.05);
-        ctx.lineTo(d.x + t * 0.7, dy + planeo - t * 0.25);
-        ctx.lineTo(d.x + t * 0.4, dy + planeo + t * 0.05);
+        ctx.lineTo(d.x + dir * t * 0.7, dy + planeo - t * 0.25);
+        ctx.lineTo(d.x + dir * t * 0.4, dy + planeo + t * 0.05);
         ctx.closePath();
         ctx.fill();
-
       } else if (d.tipo === "murcielago") {
         dibujarMurcielagoValencia(d, dy);
       } else if (d.tipo === "gallo") {
@@ -2191,7 +2359,7 @@
       ctx.fillText(tx("cred_gracias"), ANCHO / 2, py + 300);
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "13px monospace";
-      ctx.fillText(tx("cred_version") + ": v:71.6", ANCHO / 2, py + 340);
+      ctx.fillText(tx("cred_version") + ": v:72.0", ANCHO / 2, py + 340);
       ctx.fillText("© 2026", ANCHO / 2, py + 365);
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "14px monospace";
@@ -2314,7 +2482,6 @@
       estado.tipoPantalla = tipoForzado || tipoDePantalla(numero);
       estado.modo = "jugando";
       estado.gameOver = false;
-      estado.vidas = VIDAS_INICIALES;
       estado.fragmentosRecogidos = 0;
       estado.camara.y = CAMARA_INICIAL;
       estado.camara.alturaMaxima = (numero - 1) * METROS_FIN_PANTALLA;
@@ -2331,6 +2498,8 @@
       p.frame = "parado";
       p.alturaMaximaVuelo = Y_SUELO_JUGABLE;
       p.dañoTiempo = 0;
+      p.vida = VIDA_INICIAL;
+      p.invulnerable = 0;
       crearPlataformas();
       crearDecoraciones();
       crearMurcielagos();

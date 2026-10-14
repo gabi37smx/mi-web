@@ -2,6 +2,7 @@
    juego-escalada.css · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
    · Fase 8.1.2: botones táctiles reordenados (↑ ← →)
+   · Fase 8.3.1: barra de vida más corta + % visible a la derecha
    ============================================================================ */
 
 /* Contenedor principal */
@@ -291,4 +292,54 @@
   .juego-escalada__menu-flotante:active {
     transform: none;
   }
+}
+
+/* ============================================================================
+   Barra de vida
+   ============================================================================ */
+.juego-escalada__barra {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  width: 100%;
+  max-width: 600px;
+  margin-top: -0.5rem;
+}
+
+.juego-escalada__barra-fondo {
+  flex: 0 0 85%;              /* la barra ocupa 85%, deja hueco al % */
+  height: 14px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--text);
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 2px 2px 0 var(--text);
+  box-sizing: border-box;
+}
+
+.juego-escalada__barra-relleno {
+  height: 100%;
+  width: 100%;
+  background: #4caf50;
+  transition: width 0.2s ease, background 0.3s ease;
+}
+
+.juego-escalada__barra-pct {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 3.2rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.juego-escalada:fullscreen .juego-escalada__barra {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 420px) {
+  .juego-escalada__barra-fondo { flex-basis: 78%; }
+  .juego-escalada__barra-pct { font-size: .75rem; min-width: 2.8rem; }
 }
