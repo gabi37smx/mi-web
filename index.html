@@ -96,8 +96,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
-  <link rel="preload" href="fonts/Monocraft.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="preload" href="fonts/Monocraft-Bold.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="juego-escalada.css">
 </head>
@@ -140,7 +138,7 @@
       </a>
 
       <nav class="main-nav" aria-label="Navegación principal">
-        <ul class="nav-list">
+        <ul class="nav-list" id="nav-list">
           <li><a href="#sobre-mi" class="nav-link">Sobre mí</a></li>
           <li><a href="#hecho" class="nav-link">Experiencia</a></li>
           <li><a href="proyectos.html" class="nav-link">Proyectos</a></li>
@@ -241,7 +239,7 @@
 
         <div class="about-layout">
           <figure class="about-photo reveal">
-          <img src="image/gabriel.webp" alt="Gabriel Vidal Badia sonriendo, con americana azul y camisa blanca, sobre fondo gris claro" width="800" height="993" loading="lazy" />  
+          <img src="image/gabriel.webp" alt="Gabriel Vidal Badia sonriendo, con americana azul y camisa blanca, sobre fondo gris claro" width="800" height="993" loading="lazy" />
           </figure>
 
           <div class="about-text reveal">
@@ -728,7 +726,7 @@
         <div class="container footer-bottom">
       <div class="footer-bottom__left">
         <p><small>© <span id="year"></span> Gabriel Vidal Badia · Web personal con HTML, CSS y JS puros.</small></p>
-        <p class="footer-juego"><small>Juego "Vía al Cielo" creado por Gabriel Vidal Badia · v:70.0</small></p>
+        <p class="footer-juego"><small>Juego "Vía al Cielo" creado por Gabriel Vidal Badia · v:73.0</small></p>
         <p class="footer-secreto" title="Los clásicos nunca mueren">
           <span class="footer-secreto__icono" aria-hidden="true">⛏</span>
           <span class="footer-secreto__texto">Pista:</span>
@@ -737,7 +735,6 @@
       </div>
       <button id="toTop" class="to-top" aria-label="Volver arriba">↑</button>
     </div>
-  </footer>
   </footer>
 
   <script src="language.js" defer></script>
@@ -749,5 +746,25 @@
   <script src="escalador.js" defer></script>
   <script src="chatbot.js" defer></script>
   <script src="juego-escalada.js" defer></script>
+
+  <!-- Parche temporal: arregla el input del chat generado por chatbot.js
+       (id/name) para silenciar el warning de Chrome sobre form fields -->
+  <script>
+    (function () {
+      function arreglarInputChat() {
+        var input = document.querySelector(".cordada-campo");
+        if (!input) return false;
+        if (!input.id) input.id = "cordadaCampo";
+        if (!input.name) input.name = "pregunta";
+        return true;
+      }
+      if (!arreglarInputChat()) {
+        var obs = new MutationObserver(function () {
+          if (arreglarInputChat()) obs.disconnect();
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
+      }
+    })();
+  </script>
 </body>
 </html>
