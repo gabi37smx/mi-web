@@ -1,7 +1,8 @@
 /* ============================================================================
    juego-escalada.js · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
-   · Fase 8.7: El Cairo, Tokio y Río
+   · v73.0 — Fase 8.8 completada: Sídney, Marrakech y Machu Picchu
+   · 17 pantallas: 2 cueva + 2 grieta + 1 aire + 12 ciudades
    ============================================================================ */
 
 (function juegoEscalada() {
@@ -51,6 +52,7 @@
       pantalla_valencia: "Valencia", pantalla_madrid: "Madrid", pantalla_paris: "París",
       pantalla_londres: "Londres", pantalla_nuevayork: "Nueva York", pantalla_roma: "Roma",
       pantalla_elcairo: "El Cairo", pantalla_tokio: "Tokio", pantalla_rio: "Río",
+      pantalla_sidney: "Sídney", pantalla_marrakech: "Marrakech", pantalla_machupicchu: "Machu Picchu",
       subtitulo_valencia: "Ciudad de las Artes y las Ciencias",
       subtitulo_madrid: "Puerta de Alcalá · Cibeles · El Oso y el Madroño",
       subtitulo_paris: "La Torre Eiffel al atardecer",
@@ -60,7 +62,10 @@
       subtitulo_elcairo: "Las Pirámides de Giza y el Nilo",
       subtitulo_tokio: "El Monte Fuji y los cerezos en flor",
       subtitulo_rio: "El Cristo Redentor y el Pan de Azúcar",
-      pie: "Vía al Cielo · v:72.0 · por Gabriel Vidal Badia",
+      subtitulo_sidney: "La Ópera de Sídney y el Harbour Bridge",
+      subtitulo_marrakech: "La Koutoubia y la plaza Jemaa el-Fnaa",
+      subtitulo_machupicchu: "La ciudadela inca en los Andes",
+      pie: "Vía al Cielo · v:73.0 · por Gabriel Vidal Badia",
     },
     val: {
       hud_altura: "Alçada", hud_fragmentos: "Fragments", hud_vida: "Vida", hud_record: "Rècord", hud_m: "m", hud_p: "P",
@@ -99,6 +104,7 @@
       pantalla_valencia: "València", pantalla_madrid: "Madrid", pantalla_paris: "París",
       pantalla_londres: "Londres", pantalla_nuevayork: "Nova York", pantalla_roma: "Roma",
       pantalla_elcairo: "El Caire", pantalla_tokio: "Tòquio", pantalla_rio: "Rio",
+      pantalla_sidney: "Sydney", pantalla_marrakech: "Marrakech", pantalla_machupicchu: "Machu Picchu",
       subtitulo_valencia: "Ciutat de les Arts i les Ciències",
       subtitulo_madrid: "Puerta de Alcalá · Cibeles · L'Osset i el Madroño",
       subtitulo_paris: "La Torre Eiffel a la posta de sol",
@@ -108,7 +114,10 @@
       subtitulo_elcairo: "Les Piràmides de Giza i el Nil",
       subtitulo_tokio: "El Mont Fuji i els cirerers en flor",
       subtitulo_rio: "El Crist Redemptor i el Pa de Sucre",
-      pie: "Via al Cel · v:72.0 · per Gabriel Vidal Badia",
+      subtitulo_sidney: "L'Òpera de Sydney i el Harbour Bridge",
+      subtitulo_marrakech: "La Koutoubia i la plaça Jemaa el-Fnaa",
+      subtitulo_machupicchu: "La ciutadella inca als Andes",
+      pie: "Via al Cel · v:73.0 · per Gabriel Vidal Badia",
     },
     en: {
       hud_altura: "Height", hud_fragmentos: "Fragments", hud_vida: "Health", hud_record: "Record", hud_m: "m", hud_p: "P",
@@ -147,6 +156,7 @@
       pantalla_valencia: "Valencia", pantalla_madrid: "Madrid", pantalla_paris: "Paris",
       pantalla_londres: "London", pantalla_nuevayork: "New York", pantalla_roma: "Rome",
       pantalla_elcairo: "Cairo", pantalla_tokio: "Tokyo", pantalla_rio: "Rio",
+      pantalla_sidney: "Sydney", pantalla_marrakech: "Marrakech", pantalla_machupicchu: "Machu Picchu",
       subtitulo_valencia: "City of Arts and Sciences",
       subtitulo_madrid: "Puerta de Alcalá · Cibeles · The Bear and the Strawberry Tree",
       subtitulo_paris: "The Eiffel Tower at sunset",
@@ -156,7 +166,10 @@
       subtitulo_elcairo: "The Pyramids of Giza and the Nile",
       subtitulo_tokio: "Mount Fuji and the cherry blossoms",
       subtitulo_rio: "Christ the Redeemer and Sugarloaf Mountain",
-      pie: "Path to the Sky · v:72.0 · by Gabriel Vidal Badia",
+      subtitulo_sidney: "The Sydney Opera House and the Harbour Bridge",
+      subtitulo_marrakech: "The Koutoubia and Jemaa el-Fnaa square",
+      subtitulo_machupicchu: "The Inca citadel in the Andes",
+      pie: "Path to the Sky · v:73.0 · by Gabriel Vidal Badia",
     },
   };
 
@@ -194,7 +207,7 @@
   const SUELO_Y = -40;
   const SUELO_ALTO = 0;
   const Y_SUELO_JUGABLE = SUELO_Y - STEVE_ALTO;
-  const CAMARA_INICIAL = -ALTO + SUELO_ALTO;             // ahora -780 en vez de -760
+  const CAMARA_INICIAL = -ALTO + SUELO_ALTO;
 
   const VIDA_INICIAL = 100;
   const VIDA_MAX = 100;
@@ -220,10 +233,12 @@
   const DAÑO_CAMELLO = 20;
   const DAÑO_GRULLA = 15;
   const DAÑO_TUCAN = 10;
+  const DAÑO_CANGURO = 20;
+  const DAÑO_MONO = 15;
+  const DAÑO_LLAMA = 20;
 
   const INVULNERABILIDAD_FRAMES = 90;
 
-  // Rangos de crossfade y fade a cielo (sistema de doble imagen)
   const CROSSFADE_INICIO_M = 60;
   const CROSSFADE_FIN_M = 140;
   const FADEOUT_INICIO_M = 180;
@@ -232,16 +247,11 @@
   const PARALLAX_AIREA = 0.15;
   const PARALLAX_CALLE = 0.30;
 
-  // Sistema de imagen única recorrida
   const FADEOUT_UNICO_INICIO_M = 155;
   const FADEOUT_UNICO_FIN_M = 200;
-  // La imagen llega al tope al 80% del recorrido (los últimos 20% son cielo)
   const LIMITE_PROGRESO_IMAGEN = 0.80;
-
-  // Ampliación de la imagen (para simular cercanía a la base)
   const ESCALA_IMAGEN_UNICA = 1.40;
 
-  // ---------- Reduced motion ----------
   const mediaReduced = window.matchMedia
     ? window.matchMedia("(prefers-reduced-motion: reduce)")
     : { matches: false };
@@ -250,11 +260,9 @@
     mediaReduced.addEventListener("change", (e) => { reducedMotion = e.matches; });
   }
 
-  // ---------- iOS ----------
   const esIPhone = /iPhone|iPod/.test(navigator.userAgent) ||
                    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1 && !/iPad/.test(navigator.userAgent));
 
-  // ---------- Fullscreen ----------
   const fullscreenSoportado = !!(
     !esIPhone && (
       document.fullscreenEnabled ||
@@ -302,6 +310,9 @@
     elcairo:    { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-elcairo.webp",    ruta2: "image/fondo-elcairo2.webp" },
     tokio:      { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-tokio.webp",      ruta2: "image/fondo-tokio2.webp" },
     rio:        { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-rio.webp",        ruta2: "image/fondo-rio2.webp" },
+    sidney:     { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-australia.webp",  ruta2: "image/fondo-australia2.webp" },
+    marrakech:  { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-marruecos.webp",  ruta2: "image/fondo-marruecos2.webp" },
+    machupicchu:{ img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-peru.webp",       ruta2: "image/fondo-peru2.webp" },
   };
   function cargarFondos() {
     Object.keys(FONDOS).forEach((k) => {
@@ -344,7 +355,6 @@
   function paletaActual() {
     return PALETAS_SKIN[skinActual()];
   }
-  // Convierte "#rrggbb" + alpha a "rgba(r, g, b, alpha)"
   function colorConAlpha(hex, alpha) {
     if (!hex) return "rgba(0, 0, 0, " + alpha + ")";
     if (hex.indexOf("rgba") === 0 || hex.indexOf("rgb") === 0) return hex;
@@ -409,13 +419,8 @@
       fondo: "#5db8e0", fondo2: "#a8d8e8", fondoAbajo: "#f0e8d0",
       suelo: "#ff8c00", sueloLuz: "#ffb347",
       presa: "#ff8c00", presaLuz: "#ffb347",
-      coloresPropios: true,
-      fondoImg: "valencia",
-      fondoUnico: true,
-      esCiudad: true,
-      bandera: ["senyera"],
-      decoraciones: [],
-      animalVolador: "murcielago",
+      coloresPropios: true, fondoImg: "valencia", fondoUnico: true, esCiudad: true,
+      bandera: ["senyera"], decoraciones: [], animalVolador: "murcielago",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#c92a4a", bannerColorB: "#e8b84a", bannerEmoji: "🦇",
     },
@@ -424,13 +429,8 @@
       fondo: "#9ec5e8", fondo2: "#d0d8dc", fondoAbajo: "#e8d8b8",
       suelo: "#473e3f", sueloLuz: "#473e3f",
       presa: "#473e3f", presaLuz: "#473e3f",
-      coloresPropios: true,
-      fondoImg: "madrid",
-      fondoUnico: true,
-      esCiudad: true,
-      bandera: ["espana"],
-      decoraciones: [],
-      animalCaminante: "oso-bipedo",
+      coloresPropios: true, fondoImg: "madrid", fondoUnico: true, esCiudad: true,
+      bandera: ["espana"], decoraciones: [], animalCaminante: "oso-bipedo",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#c60b1e", bannerColorB: "#ffc400", bannerEmoji: "🐻",
     },
@@ -439,13 +439,8 @@
       fondo: "#0a0a2a", fondo2: "#1a2a5a", fondoAbajo: "#4a3a5a",
       suelo: "#796f6f1d", sueloLuz: "#796f6f1d",
       presa: "#d4a84a", presaLuz: "#f0c870",
-      coloresPropios: true,
-      fondoImg: "paris",
-      fondoUnico: true,
-      esCiudad: true,
-      bandera: ["francia"],
-      decoraciones: [],
-      animalVolador: "gallo",
+      coloresPropios: true, fondoImg: "paris", fondoUnico: true, esCiudad: true,
+      bandera: ["francia"], decoraciones: [], animalVolador: "gallo",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#0055a4", bannerColorB: "#ef4135", bannerEmoji: "🐓",
     },
@@ -454,13 +449,8 @@
       fondo: "#5a6070", fondo2: "#8890a0", fondoAbajo: "#c8ccd4",
       suelo: "#c41e3a", sueloLuz: "#e04a5a",
       presa: "#c41e3a", presaLuz: "#e04a5a",
-      coloresPropios: true,
-      fondoImg: "londres",
-      fondoUnico: true,
-      esCiudad: true,
-      bandera: ["reino-unido"],
-      decoraciones: [],
-      animalVolador: "cuervo",
+      coloresPropios: true, fondoImg: "londres", fondoUnico: true, esCiudad: true,
+      bandera: ["reino-unido"], decoraciones: [], animalVolador: "cuervo",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#012169", bannerColorB: "#C8102E", bannerEmoji: "🐦‍⬛",
     },
@@ -469,13 +459,8 @@
       fondo: "#4a5a78", fondo2: "#8a7a8a", fondoAbajo: "#e8b880",
       suelo: "#f4c430", sueloLuz: "#f7d76a",
       presa: "#f4c430", presaLuz: "#f7d76a",
-      coloresPropios: true,
-      fondoImg: "nuevayork",
-      fondoUnico: true,
-      esCiudad: true,
-      bandera: ["eeuu"],
-      decoraciones: [],
-      animalCaminante: "rata",
+      coloresPropios: true, fondoImg: "nuevayork", fondoUnico: true, esCiudad: true,
+      bandera: ["eeuu"], decoraciones: [], animalCaminante: "rata",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#3C3B6E", bannerColorB: "#B22234", bannerEmoji: "🗽",
     },
@@ -484,13 +469,8 @@
       fondo: "#4a7a3a", fondo2: "#6a9a4a", fondoAbajo: "#a8c878",
       suelo: "#3a5a28", sueloLuz: "#5a7a40",
       presa: "#2a5a1a", presaLuz: "#4a8a2a",
-      coloresPropios: true,
-      fondoImg: "roma",
-      fondoUnico: true,
-      esCiudad: true,
-      bandera: ["italia"],
-      decoraciones: [],
-      animalCaminante: "gato-romano",
+      coloresPropios: true, fondoImg: "roma", fondoUnico: true, esCiudad: true,
+      bandera: ["italia"], decoraciones: [], animalCaminante: "gato-romano",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#009246", bannerColorB: "#CE2B37", bannerEmoji: "🏛",
     },
@@ -499,13 +479,8 @@
       fondo: "#e8a850", fondo2: "#f0c878", fondoAbajo: "#f8e0a8",
       suelo: "#c89040", sueloLuz: "#e8b060",
       presa: "#c89040", presaLuz: "#e8b060",
-      coloresPropios: true,
-      fondoImg: "elcairo",
-      fondoUnico: true,
-      esCiudad: true,
-      bandera: ["egipto"],
-      decoraciones: [],
-      animalCaminante: "camello",
+      coloresPropios: true, fondoImg: "elcairo", fondoUnico: true, esCiudad: true,
+      bandera: ["egipto"], decoraciones: [], animalCaminante: "camello",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#C8102E", bannerColorB: "#000000", bannerEmoji: "🐪",
     },
@@ -514,13 +489,8 @@
       fondo: "#f0b8c8", fondo2: "#d8a8c8", fondoAbajo: "#a888c8",
       suelo: "#6a4a7a", sueloLuz: "#8a6a9a",
       presa: "#d04868", presaLuz: "#f06888",
-      coloresPropios: true,
-      fondoImg: "tokio",
-      fondoUnico: true,
-      esCiudad: true,
-      bandera: ["japon"],
-      decoraciones: [],
-      animalVolador: "grulla",
+      coloresPropios: true, fondoImg: "tokio", fondoUnico: true, esCiudad: true,
+      bandera: ["japon"], decoraciones: [], animalVolador: "grulla",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#BC002D", bannerColorB: "#FFFFFF", bannerEmoji: "🗾",
     },
@@ -529,15 +499,40 @@
       fondo: "#4aa8d8", fondo2: "#7ac8e8", fondoAbajo: "#f0d8a8",
       suelo: "#2a5a2a", sueloLuz: "#4a8a4a",
       presa: "#2a8a4a", presaLuz: "#50c070",
-      coloresPropios: true,
-      fondoImg: "rio",
-      fondoUnico: true,
-      esCiudad: true,
-      bandera: ["brasil"],
-      decoraciones: [],
-      animalVolador: "tucan",
+      coloresPropios: true, fondoImg: "rio", fondoUnico: true, esCiudad: true,
+      bandera: ["brasil"], decoraciones: [], animalVolador: "tucan",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#009C3B", bannerColorB: "#FFDF00", bannerEmoji: "🏖",
+    },
+    sidney: {
+      id: 19, categoria: "ciudad",
+      fondo: "#f0b878", fondo2: "#e89898", fondoAbajo: "#8888c8",
+      suelo: "#f0c840", sueloLuz: "#f7e070",
+      presa: "#f0c840", presaLuz: "#f7e070",
+      coloresPropios: true, fondoImg: "sidney", fondoUnico: true, esCiudad: true,
+      bandera: ["australia"], decoraciones: [], animalCaminante: "canguro",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#00008B", bannerColorB: "#FFD700", bannerEmoji: "🦘",
+    },
+    marrakech: {
+      id: 20, categoria: "ciudad",
+      fondo: "#e8a858", fondo2: "#d88858", fondoAbajo: "#a84838",
+      suelo: "#c84838", sueloLuz: "#e87058",
+      presa: "#c84838", presaLuz: "#e87058",
+      coloresPropios: true, fondoImg: "marrakech", fondoUnico: true, esCiudad: true,
+      bandera: ["marruecos"], decoraciones: [], animalCaminante: "mono",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#C1272D", bannerColorB: "#006233", bannerEmoji: "🐒",
+    },
+    machupicchu: {
+      id: 21, categoria: "ciudad",
+      fondo: "#88b8d8", fondo2: "#c8d8b8", fondoAbajo: "#7a9a58",
+      suelo: "#6a8a48", sueloLuz: "#8aaa68",
+      presa: "#8a6a3a", presaLuz: "#a88a5a",
+      coloresPropios: true, fondoImg: "machupicchu", fondoUnico: true, esCiudad: true,
+      bandera: ["peru"], decoraciones: [], animalCaminante: "llama",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#D91023", bannerColorB: "#FFFFFF", bannerEmoji: "🦙",
     },
   };
 
@@ -546,6 +541,7 @@
     { tipo: "valencia" }, { tipo: "madrid" }, { tipo: "paris" },
     { tipo: "londres" }, { tipo: "nuevayork" }, { tipo: "roma" },
     { tipo: "elcairo" }, { tipo: "tokio" }, { tipo: "rio" },
+    { tipo: "sidney" }, { tipo: "marrakech" }, { tipo: "machupicchu" },
   ];
 
   function tipoDePantalla(numero) {
@@ -553,7 +549,7 @@
       const tipo = CATALOGO_PANTALLAS[numero - 1].tipo;
       return TIPOS_PANTALLA[tipo] ? tipo : "cueva";
     }
-    const tipos = ["cueva", "grieta", "aire", "infinito", "valencia", "madrid", "paris", "londres", "nuevayork", "roma", "elcairo", "tokio", "rio"];
+    const tipos = ["cueva", "grieta", "aire", "infinito", "valencia", "madrid", "paris", "londres", "nuevayork", "roma", "elcairo", "tokio", "rio", "sidney", "marrakech", "machupicchu"];
     return tipos[Math.floor(Math.random() * tipos.length)];
   }
   function nombreDePantalla(numero) {
@@ -595,26 +591,38 @@
     { cuerpo: "#3a3a44", ala: "#2a2a34", pico: "#4a4a54", ojo: "#ffffff" },
     { cuerpo: "#0a1a2a", ala: "#000a12", pico: "#2a3a4a", ojo: "#a0e0ff" },
   ];
-  // Camello (El Cairo) — 3 variantes
   const PALETAS_CAMELLO = [
-    { cuerpo: "#c8a878", cuerpo2: "#a88858", joroba: "#d8b888", pelo: "#8a6a3a", casco: "#5a4a2a", nariz: "#3a2a1a" }, // beige dorado
-    { cuerpo: "#a88858", cuerpo2: "#8a6848", joroba: "#b8a878", pelo: "#6a4a2a", casco: "#3a2a1a", nariz: "#2a1a0a" }, // marrón claro
-    { cuerpo: "#d8b888", cuerpo2: "#b89868", joroba: "#e8c898", pelo: "#a88858", casco: "#6a5a3a", nariz: "#4a3a2a" }, // crema
+    { cuerpo: "#c8a878", cuerpo2: "#a88858", joroba: "#d8b888", pelo: "#8a6a3a", casco: "#5a4a2a", nariz: "#3a2a1a" },
+    { cuerpo: "#a88858", cuerpo2: "#8a6848", joroba: "#b8a878", pelo: "#6a4a2a", casco: "#3a2a1a", nariz: "#2a1a0a" },
+    { cuerpo: "#d8b888", cuerpo2: "#b89868", joroba: "#e8c898", pelo: "#a88858", casco: "#6a5a3a", nariz: "#4a3a2a" },
   ];
-  // Grulla (Tokio) — 3 variantes
   const PALETAS_GRULLA = [
-    { cuerpo: "#f8f4ec", cuerpo2: "#e0d8c8", cabeza: "#1a1a1a", pico: "#e0a050", patas: "#c84868", ojo: "#f0f0f0" }, // grulla japonesa (blanca y negra, cresta roja)
-    { cuerpo: "#e8e0d0", cuerpo2: "#c8c0b0", cabeza: "#2a2a2a", pico: "#c89040", patas: "#a83858", ojo: "#e0e0e0" }, // grulla más apagada
-    { cuerpo: "#f8f0e0", cuerpo2: "#d8d0c0", cabeza: "#0a0a0a", pico: "#e8b060", patas: "#d85878", ojo: "#ffffff" }, // grulla clara
+    { cuerpo: "#f8f4ec", cuerpo2: "#e0d8c8", cabeza: "#1a1a1a", pico: "#e0a050", patas: "#c84868", ojo: "#f0f0f0" },
+    { cuerpo: "#e8e0d0", cuerpo2: "#c8c0b0", cabeza: "#2a2a2a", pico: "#c89040", patas: "#a83858", ojo: "#e0e0e0" },
+    { cuerpo: "#f8f0e0", cuerpo2: "#d8d0c0", cabeza: "#0a0a0a", pico: "#e8b060", patas: "#d85878", ojo: "#ffffff" },
   ];
-  // Tucán (Río) — 3 variantes de colores vivos
   const PALETAS_TUCAN = [
-    { cuerpo: "#1a1a1a", pecho: "#ffcc00", pico1: "#ff8800", pico2: "#ffcc00", picoTip: "#1a1a1a", ojo: "#88ddff", anillo: "#66ccff" }, // toco (pico naranja)
-    { cuerpo: "#1a1a2a", pecho: "#ffffff", pico1: "#66cc33", pico2: "#ffcc00", picoTip: "#1a1a1a", ojo: "#ffddaa", anillo: "#ff6600" }, // tucán verde (pico verde/amarillo)
-    { cuerpo: "#0a0a1a", pecho: "#ff4466", pico1: "#8844cc", pico2: "#ffcc00", picoTip: "#1a1a1a", ojo: "#ffddaa", anillo: "#66dd88" }, // tucán violeta
+    { cuerpo: "#1a1a1a", pecho: "#ffcc00", pico1: "#ff8800", pico2: "#ffcc00", picoTip: "#1a1a1a", ojo: "#88ddff", anillo: "#66ccff" },
+    { cuerpo: "#1a1a2a", pecho: "#ffffff", pico1: "#66cc33", pico2: "#ffcc00", picoTip: "#1a1a1a", ojo: "#ffddaa", anillo: "#ff6600" },
+    { cuerpo: "#0a0a1a", pecho: "#ff4466", pico1: "#8844cc", pico2: "#ffcc00", picoTip: "#1a1a1a", ojo: "#ffddaa", anillo: "#66dd88" },
+  ];
+  const PALETAS_CANGURO = [
+    { cuerpo: "#a87858", cuerpo2: "#c89878", vientre: "#e0c8a8", patas: "#8a5838", orejas: "#d8b090", nariz: "#2a1a10", ojos: "#1a1a1a" },
+    { cuerpo: "#8a5a3a", cuerpo2: "#a87858", vientre: "#d8b898", patas: "#6a3a1a", orejas: "#c89878", nariz: "#2a1a10", ojos: "#1a1a1a" },
+    { cuerpo: "#c89878", cuerpo2: "#e0b898", vientre: "#f0d8b8", patas: "#a87858", orejas: "#e8c8a8", nariz: "#3a2a1a", ojos: "#1a1a1a" },
+  ];
+  const PALETAS_MONO = [
+    { cuerpo: "#6a4a2a", cuerpo2: "#8a6a48", cara: "#d8b090", hocico: "#f0d8b8", ojos: "#3a2a1a", nariz: "#2a1a10" },
+    { cuerpo: "#4a3a2a", cuerpo2: "#6a5a48", cara: "#c8a880", hocico: "#e8c8a8", ojos: "#3a2a1a", nariz: "#2a1a10" },
+    { cuerpo: "#8a6a48", cuerpo2: "#a88858", cara: "#e0c0a0", hocico: "#f0d8c0", ojos: "#3a2a1a", nariz: "#3a2a1a" },
+  ];
+  const PALETAS_LLAMA = [
+    { cuerpo: "#e0c8a8", cuerpo2: "#c8a878", panza: "#f0e0c8", patas: "#a88858", orejas: "#d8b898", nariz: "#3a2a1a", ojos: "#1a1a1a" },
+    { cuerpo: "#a87858", cuerpo2: "#8a5a3a", panza: "#c89878", patas: "#6a4a2a", orejas: "#a87858", nariz: "#2a1a10", ojos: "#1a1a1a" },
+    { cuerpo: "#f0d8b8", cuerpo2: "#d8b898", panza: "#fff0d8", patas: "#c89878", orejas: "#e0c8a8", nariz: "#3a2a1a", ojos: "#1a1a1a" },
   ];
 
-  // ---------- Estrellas y luna ----------
+  // ---------- Estrellas y nubes ----------
   const estrellas = [];
   function initEstrellas() {
     if (estrellas.length > 0) return;
@@ -627,8 +635,6 @@
       });
     }
   }
-
-  // Nubes del cielo nocturno
   const nubes = [];
   function initNubes() {
     if (nubes.length > 0) return;
@@ -667,7 +673,6 @@
     banner: null,
   };
 
-  // ---------- Menú ----------
   function opcionesMenuActual() {
     if (estado.modo === "menu") {
       const op = ["empezar", "instrucciones", "creditos"];
@@ -723,7 +728,6 @@
     else contenedor.classList.remove("jugando");
   }
 
-  // ---------- Fullscreen helpers ----------
   function entrarPantallaCompleta() {
     if (!fullscreenSoportado) return;
     pedirFullscreen(contenedor).then(() => {
@@ -744,7 +748,6 @@
     if (estado.opcionActiva >= n) estado.opcionActiva = Math.max(0, n - 1);
   }
 
-  // ---------- Bloqueo scroll ----------
   function actualizarBloqueoScroll() {
     const jugando = estado.modo === "jugando" || estado.modo === "confirmar-salida";
     const visible = contenedor && contenedor.style.display !== "none" && document.body.contains(contenedor);
@@ -760,22 +763,18 @@
     }
   }, 1000);
 
-  // ---------- Banner ----------
   function mostrarBanner(tipoPantalla) {
     const tipo = TIPOS_PANTALLA[tipoPantalla];
     if (!tipo || !tipo.bannerEmoji) return;
     estado.banner = {
-      tiempo: 0,
-      duracion: BANNER_DURACION,
+      tiempo: 0, duracion: BANNER_DURACION,
       nombre: tx("pantalla_" + tipoPantalla),
       subtitulo: tx("subtitulo_" + tipoPantalla),
       emoji: tipo.bannerEmoji,
-      colorA: tipo.bannerColorA,
-      colorB: tipo.bannerColorB,
+      colorA: tipo.bannerColorA, colorB: tipo.bannerColorB,
     };
   }
 
-  // ---------- Plataformas ----------
   function crearPlataformas() {
     estado.tipoPantalla = tipoDePantalla(estado.pantalla);
     const tipo = TIPOS_PANTALLA[estado.tipoPantalla] || TIPOS_PANTALLA.cueva;
@@ -849,7 +848,6 @@
     else estado.banner = null;
   }
 
-  // ---------- Decoraciones ----------
   function crearDecoraciones() {
     const tipo = tipoActual();
     const permitidas = tipo.decoraciones || [];
@@ -892,7 +890,6 @@
     if (permitido("grieta-luz")) {
       for (let i = 0; i < 22; i++) decor.push({ tipo: "grieta-luz", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, largo: 40 + Math.random() * 80, ancho: 3 + Math.random() * 4 });
     }
-
     if (permitido("montana")) {
       for (let i = 0; i < 16; i++) decor.push({ tipo: "montana", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, ancho: 120 + Math.random() * 100, alto: 80 + Math.random() * 60 });
     }
@@ -903,159 +900,89 @@
       for (let i = 0; i < 24; i++) decor.push({ tipo: "pajaro", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, tiempo: Math.random() * 10 });
     }
     if (permitido("aguila")) {
-      for (let i = 0; i < 22; i++) decor.push({
-        tipo: "aguila",
-        x: Math.random() * ANCHO,
-        y: -Math.random() * DECO_RANGO - 100,
-        tam: 22 + Math.random() * 8,
-        vel: 0.5 + Math.random() * 0.5,
-        tiempo: Math.random() * 10,
-        mirandoDerecha: Math.random() > 0.5,
-      });
+      for (let i = 0; i < 22; i++) decor.push({ tipo: "aguila", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, tam: 22 + Math.random() * 8, vel: 0.5 + Math.random() * 0.5, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5 });
     }
 
     if (tipo.animalVolador === "murcielago" || tipo.animalVolador === "gallo") {
       const cantidad = tipo.animalVolador === "murcielago" ? 16 : 14;
       for (let i = 0; i < cantidad; i++) {
-        decor.push({
-          tipo: tipo.animalVolador,
-          x: Math.random() * ANCHO,
-          y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.6 + Math.random() * 0.7,
-          tiempo: Math.random() * 10,
-          mirandoDerecha: Math.random() > 0.5,
-        });
+        decor.push({ tipo: tipo.animalVolador, x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.6 + Math.random() * 0.7, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5 });
       }
     }
 
     if (tipo.animalCaminante === "oso-bipedo") {
       for (let i = 0; i < 8; i++) {
-        decor.push({
-          tipo: "oso-bipedo",
-          x: 40 + Math.random() * (ANCHO - 80),
-          y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.35,
-          tiempo: Math.random() * 10,
-          mirandoDerecha: Math.random() > 0.5,
-          ancho: 44, alto: 80,
-          _atascado: 0,
-          paleta: PALETAS_OSO[Math.floor(Math.random() * PALETAS_OSO.length)],
-        });
+        decor.push({ tipo: "oso-bipedo", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.35, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 44, alto: 80, _atascado: 0, paleta: PALETAS_OSO[Math.floor(Math.random() * PALETAS_OSO.length)] });
       }
     }
 
     if (tipo.animalVolador === "cuervo") {
       for (let i = 0; i < 12; i++) {
-        decor.push({
-          tipo: "cuervo",
-          x: Math.random() * ANCHO,
-          y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.7 + Math.random() * 0.7,
-          tiempo: Math.random() * 10,
-          mirandoDerecha: Math.random() > 0.5,
-          paleta: PALETAS_CUERVO[Math.floor(Math.random() * PALETAS_CUERVO.length)],
-        });
+        decor.push({ tipo: "cuervo", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.7 + Math.random() * 0.7, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, paleta: PALETAS_CUERVO[Math.floor(Math.random() * PALETAS_CUERVO.length)] });
       }
     }
 
     if (tipo.animalCaminante === "rata") {
       for (let i = 0; i < 10; i++) {
-        decor.push({
-          tipo: "rata",
-          x: 40 + Math.random() * (ANCHO - 80),
-          y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.5 + Math.random() * 0.3,
-          tiempo: Math.random() * 10,
-          mirandoDerecha: Math.random() > 0.5,
-          _atascado: 0,
-          paleta: PALETAS_RATA[Math.floor(Math.random() * PALETAS_RATA.length)],
-        });
+        decor.push({ tipo: "rata", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.5 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_RATA[Math.floor(Math.random() * PALETAS_RATA.length)] });
       }
     }
 
     if (tipo.animalCaminante === "gato-romano") {
       for (let i = 0; i < 10; i++) {
-        decor.push({
-          tipo: "gato-romano",
-          x: 40 + Math.random() * (ANCHO - 80),
-          y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.4 + Math.random() * 0.3,
-          tiempo: Math.random() * 10,
-          mirandoDerecha: Math.random() > 0.5,
-          _atascado: 0,
-          paleta: PALETAS_GATO[Math.floor(Math.random() * PALETAS_GATO.length)],
-        });
+        decor.push({ tipo: "gato-romano", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.4 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_GATO[Math.floor(Math.random() * PALETAS_GATO.length)] });
       }
     }
 
-    // Camello (El Cairo) — camina, tamaño como el oso
     if (tipo.animalCaminante === "camello") {
       for (let i = 0; i < 6; i++) {
-        decor.push({
-          tipo: "camello",
-          x: 40 + Math.random() * (ANCHO - 80),
-          y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.3,
-          tiempo: Math.random() * 10,
-          mirandoDerecha: Math.random() > 0.5,
-          ancho: 56, alto: 90,
-          _atascado: 0,
-          paleta: PALETAS_CAMELLO[Math.floor(Math.random() * PALETAS_CAMELLO.length)],
-        });
+        decor.push({ tipo: "camello", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 56, alto: 90, _atascado: 0, paleta: PALETAS_CAMELLO[Math.floor(Math.random() * PALETAS_CAMELLO.length)] });
       }
     }
 
-    // Grulla (Tokio) — vuela libre, más grande que el águila
     if (tipo.animalVolador === "grulla") {
       for (let i = 0; i < 10; i++) {
-        decor.push({
-          tipo: "grulla",
-          x: Math.random() * ANCHO,
-          y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.7 + Math.random() * 0.6,
-          tiempo: Math.random() * 10,
-          mirandoDerecha: Math.random() > 0.5,
-          tam: 32 + Math.random() * 8,
-          paleta: PALETAS_GRULLA[Math.floor(Math.random() * PALETAS_GRULLA.length)],
-        });
+        decor.push({ tipo: "grulla", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.7 + Math.random() * 0.6, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, tam: 32 + Math.random() * 8, paleta: PALETAS_GRULLA[Math.floor(Math.random() * PALETAS_GRULLA.length)] });
       }
     }
 
-    // Tucán (Río) — vuela libre, colores vivos
     if (tipo.animalVolador === "tucan") {
       for (let i = 0; i < 12; i++) {
-        decor.push({
-          tipo: "tucan",
-          x: Math.random() * ANCHO,
-          y: -Math.random() * DECO_RANGO - 100,
-          vel: 0.6 + Math.random() * 0.7,
-          tiempo: Math.random() * 10,
-          mirandoDerecha: Math.random() > 0.5,
-          paleta: PALETAS_TUCAN[Math.floor(Math.random() * PALETAS_TUCAN.length)],
-        });
+        decor.push({ tipo: "tucan", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.6 + Math.random() * 0.7, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, paleta: PALETAS_TUCAN[Math.floor(Math.random() * PALETAS_TUCAN.length)] });
+      }
+    }
+
+    if (tipo.animalCaminante === "canguro") {
+      for (let i = 0; i < 6; i++) {
+        decor.push({ tipo: "canguro", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.5 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 44, alto: 78, _atascado: 0, paleta: PALETAS_CANGURO[Math.floor(Math.random() * PALETAS_CANGURO.length)] });
+      }
+    }
+
+    if (tipo.animalCaminante === "mono") {
+      for (let i = 0; i < 8; i++) {
+        decor.push({ tipo: "mono", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.5 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 30, alto: 44, _atascado: 0, paleta: PALETAS_MONO[Math.floor(Math.random() * PALETAS_MONO.length)] });
+      }
+    }
+
+    if (tipo.animalCaminante === "llama") {
+      for (let i = 0; i < 6; i++) {
+        decor.push({ tipo: "llama", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.4 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 40, alto: 82, _atascado: 0, paleta: PALETAS_LLAMA[Math.floor(Math.random() * PALETAS_LLAMA.length)] });
       }
     }
 
     estado.decoraciones = decor;
   }
-    function crearMurcielagos() {
+
+  function crearMurcielagos() {
     const tipo = tipoActual();
     const cantidad = tipo.murcielagos || 0;
     const bats = [];
     for (let i = 0; i < cantidad; i++) {
-      bats.push({
-        x: 40 + Math.random() * (ANCHO - 80),
-        y: -200 - i * 90 - Math.random() * 60,
-        despierto: 0,
-        mirandoDerecha: Math.random() > 0.5,
-        tiempo: Math.random() * 10,
-        vel: 0.3 + Math.random() * 0.4,
-      });
+      bats.push({ x: 40 + Math.random() * (ANCHO - 80), y: -200 - i * 90 - Math.random() * 60, despierto: 0, mirandoDerecha: Math.random() > 0.5, tiempo: Math.random() * 10, vel: 0.3 + Math.random() * 0.4 });
     }
     estado.murcielagos = bats;
   }
 
-  // ---------- Récord ----------
   function cargarRecord() {
     try { const g = localStorage.getItem("je-record"); if (g) estado.camara.record = parseInt(g, 10) || 0; } catch (e) {}
   }
@@ -1063,7 +990,6 @@
     try { localStorage.setItem("je-record", estado.camara.record); } catch (e) {}
   }
 
-  // ---------- DOM ----------
   const contenedor = document.createElement("div");
   contenedor.className = "juego-escalada notranslate";
   contenedor.setAttribute("translate", "no");
@@ -1132,7 +1058,6 @@
 
   const observerSkin = new MutationObserver(() => { aplicarColoresHUD(); });
   observerSkin.observe(document.documentElement, { attributes: true, attributeFilter: ["data-skin"] });
-
   document.addEventListener("portfolio:languagechange", () => { aplicarIdiomaAlJuego(); });
   window.addEventListener("storage", (e) => { if (e.key === "language") aplicarIdiomaAlJuego(); });
 
@@ -1140,16 +1065,13 @@
     const p = paletaActual();
     const info = contenedor.querySelector(".juego-escalada__info");
     if (info) info.style.color = p.textoSuave;
-    [elAltura, elFrags, elVida, elRecord].forEach((el) => { if (el) el.style.color = p.hudAcento; });
+    [elAltura, elFrags, elVida, elRecord].forEach((el) => { if (el) el.style.color = p.acento; });
     if (elFooter) elFooter.style.color = p.textoSuave;
   }
   aplicarColoresHUD();
 
   ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((ev) => {
-    document.addEventListener(ev, () => {
-      ajustarFocoTrasFullscreen();
-      ajustarAlturaFullscreen();
-    });
+    document.addEventListener(ev, () => { ajustarFocoTrasFullscreen(); ajustarAlturaFullscreen(); });
   });
   if (window.visualViewport) {
     window.visualViewport.addEventListener("resize", ajustarAlturaFullscreen);
@@ -1158,7 +1080,6 @@
   window.addEventListener("resize", ajustarAlturaFullscreen);
   window.addEventListener("orientationchange", () => { setTimeout(ajustarAlturaFullscreen, 150); });
 
-  // ---------- Teclado ----------
   document.addEventListener("keydown", (e) => {
     const enMenu = estado.modo === "menu" || estado.modo === "gameover" || estado.modo === "confirmar-salida";
     if (enMenu) {
@@ -1196,9 +1117,7 @@
           document.documentElement.style.overflow = "";
           actualizarBloqueoScroll();
         });
-      } else {
-        pedirConfirmacionSalida();
-      }
+      } else { pedirConfirmacionSalida(); }
       return;
     }
     if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") { estado.teclas.izquierda = true; e.preventDefault(); }
@@ -1214,7 +1133,6 @@
     }
   });
 
-  // ---------- Botones táctiles ----------
   contenedor.querySelectorAll(".juego-escalada__btn").forEach((btn) => {
     const accion = btn.dataset.accion;
     const activar = (e) => {
@@ -1235,7 +1153,6 @@
     btn.addEventListener("pointercancel", desactivar);
   });
 
-  // ---------- Clicks en canvas ----------
   canvas.addEventListener("click", (e) => {
     const rect = canvas.getBoundingClientRect();
     const escalaX = ANCHO / rect.width;
@@ -1262,7 +1179,6 @@
     }
   });
 
-  // ---------- Confirmar salida ----------
   function pedirConfirmacionSalida() {
     if (estado.modo !== "jugando") return;
     estado.modoAnterior = estado.modo;
@@ -1302,7 +1218,6 @@
     actualizarBloqueoScroll();
   }
 
-  // ---------- Daño ----------
   function aplicarDaño(cantidad) {
     const p = estado.personaje;
     if (p.invulnerable > 0) return;
@@ -1320,7 +1235,6 @@
     }
   }
 
-  // ---------- Colisiones con animales ----------
   function comprobarColisionesAnimales() {
     const p = estado.personaje;
     const pcx = p.x + p.ancho / 2;
@@ -1349,13 +1263,15 @@
       else if (d.tipo === "camello") { radio = 36; daño = DAÑO_CAMELLO; }
       else if (d.tipo === "grulla") { radio = 32; daño = DAÑO_GRULLA; }
       else if (d.tipo === "tucan") { radio = 20; daño = DAÑO_TUCAN; }
+      else if (d.tipo === "canguro") { radio = 30; daño = DAÑO_CANGURO; }
+      else if (d.tipo === "mono") { radio = 22; daño = DAÑO_MONO; }
+      else if (d.tipo === "llama") { radio = 32; daño = DAÑO_LLAMA; }
       if (radio === 0) continue;
       const dist = Math.hypot(dx - pcx, dy - pcy);
       if (dist < radio) { aplicarDaño(daño); return; }
     }
   }
 
-  // ---------- AABB animal vs plataformas ----------
   function colisionaEntidadConPlataformas(cx, cy, radio) {
     const ax = cx - radio, ay = cy - radio;
     const aw = radio * 2, ah = radio * 2;
@@ -1368,7 +1284,6 @@
     return false;
   }
 
-  // ---------- Update de animales ----------
   function actualizarAnimales() {
     const p = estado.personaje;
 
@@ -1377,14 +1292,11 @@
       if (dist < 120) bat.despierto = Math.min(1, bat.despierto + 0.15);
       else bat.despierto = Math.max(0, bat.despierto - 0.05);
       bat.tiempo += 0.1;
-
       const vel = (bat.vel || 0.4) * 0.6;
       let nx = bat.x + (bat.mirandoDerecha ? 1 : -1) * vel;
       let ny = bat.y + Math.sin(bat.tiempo * 1.7) * 1.2;
-
       if (nx > ANCHO - 26) { nx = ANCHO - 26; bat.mirandoDerecha = false; }
       if (nx < 0) { nx = 0; bat.mirandoDerecha = true; }
-
       bat.x = nx;
       bat.y = ny;
     }
@@ -1398,7 +1310,6 @@
         if (d.x > ANCHO + 40) { d.x = ANCHO + 40; d.mirandoDerecha = false; }
         if (d.x < -40) { d.x = -40; d.mirandoDerecha = true; }
       } else if (d.tipo === "grulla") {
-        // Vuela libre, rebota en los bordes
         d.tiempo += 0.06;
         const vel = d.vel * 1.2;
         d.x += (d.mirandoDerecha ? 1 : -1) * vel;
@@ -1412,30 +1323,44 @@
         if (nx > ANCHO - 20) { nx = ANCHO - 20; d.mirandoDerecha = false; }
         if (nx < 20) { nx = 20; d.mirandoDerecha = true; }
         const choca = colisionaEntidadConPlataformas(nx, d.y + 35, 17);
-        if (!choca) {
-          d.x = nx;
-          d._atascado = 0;
-        } else {
-          d._atascado = (d._atascado || 0) + 1;
-          d.mirandoDerecha = !d.mirandoDerecha;
-          if (d._atascado > 5) { d.y -= 60; d._atascado = 0; }
-        }
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 60; d._atascado = 0; } }
       } else if (d.tipo === "camello") {
-        // Camina, radio grande (como el oso pero un poco más)
         d.tiempo += 0.10;
         const vel = d.vel * 0.6;
         let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
         if (nx > ANCHO - 30) { nx = ANCHO - 30; d.mirandoDerecha = false; }
         if (nx < 30) { nx = 30; d.mirandoDerecha = true; }
         const choca = colisionaEntidadConPlataformas(nx, d.y + 42, 20);
-        if (!choca) {
-          d.x = nx;
-          d._atascado = 0;
-        } else {
-          d._atascado = (d._atascado || 0) + 1;
-          d.mirandoDerecha = !d.mirandoDerecha;
-          if (d._atascado > 5) { d.y -= 70; d._atascado = 0; }
-        }
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 70; d._atascado = 0; } }
+      } else if (d.tipo === "canguro") {
+        d.tiempo += 0.15;
+        const vel = d.vel * 1.1;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+        if (nx > ANCHO - 25) { nx = ANCHO - 25; d.mirandoDerecha = false; }
+        if (nx < 25) { nx = 25; d.mirandoDerecha = true; }
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 34, 18);
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 60; d._atascado = 0; } }
+      } else if (d.tipo === "mono") {
+        d.tiempo += 0.18;
+        const vel = d.vel * 1.0;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+        if (nx > ANCHO - 18) { nx = ANCHO - 18; d.mirandoDerecha = false; }
+        if (nx < 18) { nx = 18; d.mirandoDerecha = true; }
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 20, 14);
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 40; d._atascado = 0; } }
+      } else if (d.tipo === "llama") {
+        d.tiempo += 0.10;
+        const vel = d.vel * 0.6;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+        if (nx > ANCHO - 25) { nx = ANCHO - 25; d.mirandoDerecha = false; }
+        if (nx < 25) { nx = 25; d.mirandoDerecha = true; }
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 40, 18);
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 60; d._atascado = 0; } }
       } else if (d.tipo === "rata") {
         d.tiempo += 0.15;
         const vel = d.vel * 0.9;
@@ -1443,14 +1368,8 @@
         if (nx > ANCHO - 10) { nx = ANCHO - 10; d.mirandoDerecha = false; }
         if (nx < 10) { nx = 10; d.mirandoDerecha = true; }
         const choca = colisionaEntidadConPlataformas(nx, d.y + 8, 12);
-        if (!choca) {
-          d.x = nx;
-          d._atascado = 0;
-        } else {
-          d._atascado = (d._atascado || 0) + 1;
-          d.mirandoDerecha = !d.mirandoDerecha;
-          if (d._atascado > 5) { d.y -= 40; d._atascado = 0; }
-        }
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 40; d._atascado = 0; } }
       } else if (d.tipo === "gato-romano") {
         d.tiempo += 0.12;
         const vel = d.vel * 0.8;
@@ -1458,14 +1377,8 @@
         if (nx > ANCHO - 15) { nx = ANCHO - 15; d.mirandoDerecha = false; }
         if (nx < 15) { nx = 15; d.mirandoDerecha = true; }
         const choca = colisionaEntidadConPlataformas(nx, d.y + 18, 16);
-        if (!choca) {
-          d.x = nx;
-          d._atascado = 0;
-        } else {
-          d._atascado = (d._atascado || 0) + 1;
-          d.mirandoDerecha = !d.mirandoDerecha;
-          if (d._atascado > 5) { d.y -= 50; d._atascado = 0; }
-        }
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 50; d._atascado = 0; } }
       } else if (d.tipo === "aguila") {
         d.tiempo += 0.04;
         const vel = d.vel * 1.6;
@@ -1482,14 +1395,9 @@
     }
   }
 
-  // ---------- Respawn ----------
   function respawn() {
     const p = estado.personaje;
-    if (p.vida <= 0) {
-      estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0;
-      actualizarClaseJugando(); actualizarBloqueoScroll();
-      return;
-    }
+    if (p.vida <= 0) { estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0; actualizarClaseJugando(); actualizarBloqueoScroll(); return; }
     let respawnPlat = null;
     let mejorDist = Infinity;
     for (const plat of estado.plataformas) {
@@ -1498,20 +1406,14 @@
       const dist = p.y - plat.y;
       if (dist < mejorDist) { mejorDist = dist; respawnPlat = plat; }
     }
-    if (respawnPlat) {
-      p.x = respawnPlat.x + respawnPlat.ancho / 2 - p.ancho / 2;
-      p.y = respawnPlat.y - p.alto - 2;
-    } else {
-      p.x = ANCHO / 2 - p.ancho / 2;
-      p.y = Y_SUELO_JUGABLE;
-    }
+    if (respawnPlat) { p.x = respawnPlat.x + respawnPlat.ancho / 2 - p.ancho / 2; p.y = respawnPlat.y - p.alto - 2; }
+    else { p.x = ANCHO / 2 - p.ancho / 2; p.y = Y_SUELO_JUGABLE; }
     p.velX = 0; p.velY = 0;
     p.saltando = false; p.dobleSaltoDisponible = true; p.saltoSuelto = true;
     p.frame = "parado";
     p.alturaMaximaVuelo = p.y;
   }
 
-  // ---------- Transición ----------
   function iniciarTransicion() {
     estado.transicion = { tiempo: 0, duracion: 120, tipo: estado.tipoPantalla };
     estado.pantalla++;
@@ -1556,13 +1458,10 @@
     ctx.textBaseline = "alphabetic";
   }
 
-  // ---------- Banner ----------
   function actualizarBanner() {
     if (!estado.banner) return;
     estado.banner.tiempo++;
-    if (estado.banner.tiempo > estado.banner.duracion) {
-      estado.banner = null;
-    }
+    if (estado.banner.tiempo > estado.banner.duracion) { estado.banner = null; }
   }
   function dibujarBanner() {
     const b = estado.banner;
@@ -1573,55 +1472,44 @@
     if (t < 20) alpha = t / 20;
     if (t > duracion - 30) alpha = (duracion - t) / 30;
     alpha = Math.max(0, Math.min(1, alpha));
-
     const anchoBanner = 480;
     const altoBanner = 130;
     const x = (ANCHO - anchoBanner) / 2;
     const y = 30;
-
     ctx.fillStyle = "rgba(0, 0, 0, " + (alpha * 0.88) + ")";
     ctx.fillRect(x, y, anchoBanner, altoBanner);
-
     ctx.fillStyle = b.colorA;
     ctx.globalAlpha = alpha;
     ctx.fillRect(x, y, anchoBanner, 6);
-
     ctx.fillStyle = b.colorB;
     ctx.fillRect(x, y + altoBanner - 6, anchoBanner, 6);
-
     ctx.strokeStyle = "rgba(255, 255, 255, " + (alpha * 0.45) + ")";
     ctx.lineWidth = 2;
     ctx.strokeRect(x + 1, y + 1, anchoBanner - 2, altoBanner - 2);
-
     ctx.font = "bold 54px sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#ffffff";
     ctx.globalAlpha = alpha;
     ctx.fillText(b.emoji, x + 65, y + altoBanner / 2);
-
     ctx.font = "bold 38px monospace";
     ctx.textAlign = "left";
     ctx.fillStyle = "#ffffff";
     ctx.fillText(b.nombre.toUpperCase(), x + 130, y + 50);
-
     ctx.font = "14px monospace";
     ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
     ctx.fillText(b.subtitulo, x + 130, y + 90);
-
     ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(x + 130, y + 68);
     ctx.lineTo(x + anchoBanner - 20, y + 68);
     ctx.stroke();
-
     ctx.globalAlpha = 1;
     ctx.textAlign = "start";
     ctx.textBaseline = "alphabetic";
   }
 
-  // ---------- Iniciar ----------
   function iniciarPartidaDesdeMenu() {
     estado.modo = "jugando";
     estado.opcionActiva = 0;
@@ -1658,7 +1546,6 @@
     crearMurcielagos();
   }
 
-  // ---------- Colisiones ----------
   function colisiona(a, b) {
     return a.x + a.ancho > b.x && a.x < b.x + b.ancho && a.y + a.alto > b.y && a.y < b.y + b.alto;
   }
@@ -1684,7 +1571,6 @@
     return aterrizo;
   }
 
-  // ---------- Fragmentos ----------
   function comprobarFragmentos() {
     const p = estado.personaje;
     for (const frag of estado.fragmentos) {
@@ -1707,7 +1593,6 @@
     }
   }
 
-  // ---------- Caída ----------
   function comprobarCaida() {
     const p = estado.personaje;
     if (!p.enSuelo) {
@@ -1715,13 +1600,10 @@
       return;
     }
     const caida = p.y - p.alturaMaximaVuelo;
-    if (caida > UMBRAL_CAIDA_PX) {
-      aplicarDaño(DAÑO_CAIDA);
-    }
+    if (caida > UMBRAL_CAIDA_PX) { aplicarDaño(DAÑO_CAIDA); }
     p.alturaMaximaVuelo = p.y;
   }
 
-  // ---------- Física ----------
   function actualizarFisica() {
     const p = estado.personaje;
     if (estado.modo !== "jugando") return;
@@ -1769,7 +1651,6 @@
 
     comprobarFragmentos();
     comprobarCaida();
-
     actualizarAnimales();
     comprobarColisionesAnimales();
 
@@ -1787,7 +1668,6 @@
     elAltura.textContent = altura + " " + tx("hud_m") + " · " + tx("hud_p") + estado.pantalla;
     elFrags.textContent = estado.fragmentosRecogidos + "/" + estado.fragmentosTotales;
     elVida.textContent = Math.round(p.vida);
-
     const porcentaje = Math.max(0, Math.min(100, p.vida));
     elBarraVida.style.width = porcentaje + "%";
     let color = "#4caf50";
@@ -1795,54 +1675,37 @@
     else if (porcentaje < 60) color = "#ff9800";
     else if (porcentaje < 80) color = "#ffc107";
     elBarraVida.style.background = color;
-    if (elBarraPct) {
-      elBarraPct.textContent = Math.round(porcentaje) + "%";
-      elBarraPct.style.color = color;
-    }
+    if (elBarraPct) { elBarraPct.textContent = Math.round(porcentaje) + "%"; elBarraPct.style.color = color; }
     elRecord.textContent = estado.camara.record;
   }
 
-  // ---------- Steve ----------
-    function dibujarSteve(x, y, frame, mirando, daño) {
+  function dibujarSteve(x, y, frame, mirando, daño) {
     const p = estado.personaje;
-    if (p.invulnerable > 0 && Math.floor(p.invulnerable / 6) % 2 === 0) {
-      return;
-    }
+    if (p.invulnerable > 0 && Math.floor(p.invulnerable / 6) % 2 === 0) return;
     const piel = daño > 0 && Math.floor(daño / 4) % 2 === 0 ? "#ff8888" : "#C9A27E";
     const pelo = "#5A3A1E";
     const camiseta = daño > 0 && Math.floor(daño / 4) % 2 === 0 ? "#ff6666" : "#24A0A0";
     const pantalon = "#3A4A7A";
     const bota = "#3A2E1E";
     const ojo = "#1a1a1a";
-
     ctx.save();
     if (!mirando) { ctx.translate(x + 26, y); ctx.scale(-1, 1); x = 0; y = 0; }
-
-    // --- CABEZA (22px de alto) ---
     ctx.fillStyle = piel; ctx.fillRect(x, y, 26, 22);
-    // Pelo
     ctx.fillStyle = pelo;
     ctx.fillRect(x, y, 26, 7);
     ctx.fillRect(x, y + 7, 3, 5);
     ctx.fillRect(x + 23, y + 7, 3, 5);
-    // Ojos
     ctx.fillStyle = ojo;
     ctx.fillRect(x + 6, y + 11, 3, 3);
     ctx.fillRect(x + 17, y + 11, 3, 3);
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(x + 7, y + 12, 1, 1);
     ctx.fillRect(x + 18, y + 12, 1, 1);
-    // Boca
     ctx.fillStyle = ojo; ctx.fillRect(x + 10, y + 17, 6, 1);
-
-    // --- CAMISETA (20px de alto) ---
     ctx.fillStyle = camiseta;
     ctx.fillRect(x + 3, y + 22, 20, 20);
-    // Cuello de la camiseta
     ctx.fillStyle = "#1a6a6a";
     ctx.fillRect(x + 9, y + 22, 8, 3);
-
-    // --- BRAZOS (más largos) ---
     if (frame === "parado") {
       ctx.fillStyle = piel;
       ctx.fillRect(x + 1, y + 24, 3, 16);
@@ -1856,8 +1719,6 @@
       ctx.fillRect(x - 1, y + 11, 3, 18);
       ctx.fillRect(x + 24, y + 11, 3, 18);
     }
-
-    // --- PANTALÓN (18px de alto) ---
     ctx.fillStyle = pantalon;
     if (frame === "parado") {
       ctx.fillRect(x + 4, y + 42, 8, 18);
@@ -1869,8 +1730,6 @@
       ctx.fillRect(x + 5, y + 42, 7, 18);
       ctx.fillRect(x + 14, y + 42, 7, 18);
     }
-
-    // --- BOTAS (3px) ---
     ctx.fillStyle = bota;
     if (frame === "parado") {
       ctx.fillRect(x + 4, y + 58, 8, 3);
@@ -1882,28 +1741,23 @@
       ctx.fillRect(x + 5, y + 58, 7, 3);
       ctx.fillRect(x + 14, y + 58, 7, 3);
     }
-
     ctx.restore();
   }
 
-  // ---------- Murciélago de cueva ----------
   function dibujarMurcielago(bat, x, y) {
     const cuerpo = "#1a1a1a", ala = "#0a0a0a";
     const brillo = bat.despierto;
     const aleteo = bat.despierto > 0.5 ? Math.sin(bat.tiempo * 4) * 1.5 : 0;
-
     const pulso = 0.5 + Math.sin(bat.tiempo * 2.5) * 0.5;
     ctx.strokeStyle = "rgba(201, 162, 39, " + (0.55 + pulso * 0.45) + ")";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.ellipse(x + 10, y + 12, 14 + aleteo * 0.2, 11, 0, 0, Math.PI * 2);
     ctx.stroke();
-
     ctx.fillStyle = "rgba(201, 162, 39, " + (0.08 + pulso * 0.10) + ")";
     ctx.beginPath();
     ctx.ellipse(x + 10, y + 12, 18 + aleteo * 0.3, 15, 0, 0, Math.PI * 2);
     ctx.fill();
-
     ctx.fillStyle = ala;
     ctx.fillRect(x - 3, y + 8 + aleteo, 8, 10);
     ctx.fillRect(x + 15, y + 8 - aleteo, 8, 10);
@@ -1911,7 +1765,6 @@
     ctx.fillRect(x + 5, y + 6, 10, 12);
     ctx.fillRect(x + 3, y + 3, 4, 5);
     ctx.fillRect(x + 13, y + 3, 4, 5);
-
     const ojoColor = bat.despierto > 0.1
       ? "rgba(255, " + (100 + Math.round(80 * brillo)) + ", 50, " + (0.3 + brillo * 0.7) + ")"
       : "#ff3a3a";
@@ -1925,7 +1778,6 @@
     ctx.fillRect(x + 9, y + 18, 2, 3);
   }
 
-  // ---------- Fragmento ----------
   function dibujarFragmento(frag) {
     if (frag.recogido) return;
     const fx = frag.x;
@@ -1948,7 +1800,6 @@
     ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
   }
 
-  // ---------- Popups ----------
   function dibujarPopups() {
     for (let i = estado.popups.length - 1; i >= 0; i--) {
       const pop = estado.popups[i];
@@ -1985,48 +1836,37 @@
     if (t < 10) alpha = t / 10;
     if (t > duracion - 20) alpha = (duracion - t) / 20;
     alpha = Math.max(0, Math.min(1, alpha));
-
     const anchoPanel = 460, altoPanel = 150;
     const px = (ANCHO - anchoPanel) / 2;
     const py = 20;
-
     ctx.fillStyle = "rgba(0, 0, 0, " + (alpha * 0.55) + ")";
     ctx.fillRect(px - 8, py - 8, anchoPanel + 16, altoPanel + 16);
-
     ctx.fillStyle = pal.panelFondo;
     ctx.globalAlpha = alpha;
     ctx.fillRect(px, py, anchoPanel, altoPanel);
     ctx.globalAlpha = 1;
-
     ctx.strokeStyle = "rgba(" + pal.panelBorde + ", " + alpha + ")";
     ctx.lineWidth = 3;
     ctx.strokeRect(px, py, anchoPanel, altoPanel);
-
     ctx.fillStyle = pal.acento;
     ctx.globalAlpha = alpha;
     ctx.font = "bold 18px monospace";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText("¡FRAGMENTOS COMPLETOS!", ANCHO / 2, py + 26);
-
     ctx.fillStyle = pal.texto;
     ctx.font = "13px monospace";
     for (let i = 0; i < pg.conjunto.trozos.length; i++) {
       ctx.fillText(pg.conjunto.trozos[i], ANCHO / 2, py + 58 + i * 18);
     }
-
     const parpadeo = Math.sin(t * 0.4) * 0.5 + 0.5;
     ctx.fillStyle = pal.acentoSuave;
     ctx.globalAlpha = alpha * (0.6 + parpadeo * 0.4);
     ctx.font = "bold 18px monospace";
     ctx.fillText(pg.conjunto.resultado, ANCHO / 2, py + altoPanel - 22);
-
     ctx.globalAlpha = 1;
     ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
   }
 
-  // ============================================================================
-  // Animales
-  // ============================================================================
   function dibujarMurcielagoValencia(d, dy) {
     const aleteo = Math.sin(d.tiempo * 5) * 5;
     const dir = d.mirandoDerecha ? 1 : -1;
@@ -2315,20 +2155,17 @@
     const brazoIzqY = Math.sin(d.tiempo * 3) * 4;
     const brazoDerY = -Math.sin(d.tiempo * 3) * 4;
     const p = d.paleta || PALETAS_OSO[0];
-
     ctx.save();
     ctx.translate(d.x, 0);
     if (!d.mirandoDerecha) ctx.scale(-1, 1);
     const x = 0;
     const y = dy;
-
     ctx.fillStyle = p.pelo;
     ctx.fillRect(x - 14, y + 24 + balanceo * 0.3, 10, 16);
     ctx.fillRect(x + 4, y + 24 - balanceo * 0.3, 10, 16);
     ctx.fillStyle = p.garra;
     ctx.fillRect(x - 15, y + 38 + balanceo * 0.3, 12, 4);
     ctx.fillRect(x + 3, y + 38 - balanceo * 0.3, 12, 4);
-
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.ellipse(x, y + 4, 20, 22, 0, 0, Math.PI * 2);
@@ -2337,7 +2174,6 @@
     ctx.beginPath();
     ctx.ellipse(x, y + 8, 12, 14, 0, 0, Math.PI * 2);
     ctx.fill();
-
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.ellipse(x - 20, y - 6 + brazoIzqY, 6, 12, 0.5, 0, Math.PI * 2);
@@ -2382,7 +2218,6 @@
     ctx.lineTo(x + 16, y - 17 + brazoDerY);
     ctx.closePath();
     ctx.fill();
-
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.arc(x + 2, y - 22, 13, 0, Math.PI * 2);
@@ -2426,46 +2261,35 @@
     ctx.moveTo(x + 8, y - 15);
     ctx.quadraticCurveTo(x + 5, y - 12, x + 2, y - 14);
     ctx.stroke();
-
     ctx.restore();
   }
 
-  // ---------- Camello (El Cairo) ----------
   function dibujarCamello(d, dy) {
     const balanceo = Math.sin(d.tiempo * 2.5) * 4;
     const p = d.paleta || PALETAS_CAMELLO[0];
-
     ctx.save();
     ctx.translate(d.x, 0);
     if (!d.mirandoDerecha) ctx.scale(-1, 1);
     const x = 0;
     const y = dy;
-
-    // Patas traseras
     ctx.fillStyle = p.cuerpo2;
     ctx.fillRect(x - 16, y + 34 + balanceo * 0.4, 6, 30);
     ctx.fillRect(x - 8, y + 34 - balanceo * 0.3, 6, 30);
-    // Patas delanteras
     ctx.fillRect(x + 4, y + 34 - balanceo * 0.4, 6, 30);
     ctx.fillRect(x + 12, y + 34 + balanceo * 0.3, 6, 30);
-    // Cascos
     ctx.fillStyle = p.casco;
     ctx.fillRect(x - 17, y + 62 + balanceo * 0.4, 8, 4);
     ctx.fillRect(x - 9, y + 62 - balanceo * 0.3, 8, 4);
     ctx.fillRect(x + 3, y + 62 - balanceo * 0.4, 8, 4);
     ctx.fillRect(x + 11, y + 62 + balanceo * 0.3, 8, 4);
-
-    // Cuerpo (con joroba)
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.ellipse(x, y + 24, 22, 14, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Joroba
     ctx.fillStyle = p.joroba;
     ctx.beginPath();
     ctx.ellipse(x + 2, y + 10, 14, 12, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Cuello (curvado hacia arriba)
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.moveTo(x + 16, y + 20);
@@ -2474,57 +2298,46 @@
     ctx.quadraticCurveTo(x + 34, y + 4, x + 24, y + 26);
     ctx.closePath();
     ctx.fill();
-    // Cabeza
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.ellipse(x + 30, y - 22, 10, 7, -0.2, 0, Math.PI * 2);
     ctx.fill();
-    // Orejas
     ctx.fillStyle = p.cuerpo2;
     ctx.beginPath();
     ctx.arc(x + 26, y - 28, 3, 0, Math.PI * 2);
     ctx.arc(x + 32, y - 28, 3, 0, Math.PI * 2);
     ctx.fill();
-    // Hocico
     ctx.fillStyle = p.cuerpo2;
     ctx.beginPath();
     ctx.ellipse(x + 38, y - 22, 4, 3, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Ojo
     ctx.fillStyle = "#1a1a1a";
     ctx.beginPath();
     ctx.arc(x + 30, y - 24, 1.5, 0, Math.PI * 2);
     ctx.fill();
-    // Nariz
     ctx.fillStyle = p.nariz;
     ctx.beginPath();
     ctx.arc(x + 41, y - 22, 1.2, 0, Math.PI * 2);
     ctx.fill();
-    // Cola
     ctx.strokeStyle = p.pelo;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(x - 20, y + 22);
     ctx.lineTo(x - 24, y + 30 + balanceo * 0.3);
     ctx.stroke();
-
     ctx.restore();
   }
 
-  // ---------- Grulla (Tokio) ----------
   function dibujarGrulla(d, dy) {
     const dir = d.mirandoDerecha ? 1 : -1;
     const aleteo = Math.sin(d.tiempo * 3) * 6;
     const p = d.paleta || PALETAS_GRULLA[0];
     const t = d.tam || 34;
     const escala = t / 34;
-
     ctx.save();
     ctx.translate(d.x, dy);
     if (!d.mirandoDerecha) ctx.scale(-1, 1);
     ctx.scale(escala, escala);
-
-    // Alas
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.moveTo(-4, -2);
@@ -2538,8 +2351,6 @@
     ctx.quadraticCurveTo(14, 2, 4, 2);
     ctx.closePath();
     ctx.fill();
-
-    // Plumas negras en las alas (detalle grulla)
     ctx.fillStyle = p.cabeza;
     ctx.beginPath();
     ctx.moveTo(-22, -6);
@@ -2553,19 +2364,14 @@
     ctx.lineTo(24, 6);
     ctx.closePath();
     ctx.fill();
-
-    // Cuerpo
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.ellipse(0, 4, 12, 8, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Sombra ligera del cuerpo
     ctx.fillStyle = p.cuerpo2;
     ctx.beginPath();
     ctx.ellipse(0, 6, 8, 4, 0, 0, Math.PI * 2);
     ctx.fill();
-
-    // Cuello largo y curvado
     ctx.strokeStyle = p.cuerpo;
     ctx.lineWidth = 3.5;
     ctx.lineCap = "round";
@@ -2573,19 +2379,14 @@
     ctx.moveTo(6, 2);
     ctx.quadraticCurveTo(18, -6, 16, -18);
     ctx.stroke();
-
-    // Cabeza
     ctx.fillStyle = p.cabeza;
     ctx.beginPath();
     ctx.arc(16, -20, 4, 0, Math.PI * 2);
     ctx.fill();
-    // Cresta roja (detalle grulla japonesa)
     ctx.fillStyle = "#c83030";
     ctx.beginPath();
     ctx.arc(18, -23, 1.8, 0, Math.PI * 2);
     ctx.fill();
-
-    // Ojo
     ctx.fillStyle = p.ojo;
     ctx.beginPath();
     ctx.arc(17, -20, 0.9, 0, Math.PI * 2);
@@ -2594,8 +2395,6 @@
     ctx.beginPath();
     ctx.arc(17.3, -20, 0.5, 0, Math.PI * 2);
     ctx.fill();
-
-    // Pico largo naranja
     ctx.fillStyle = p.pico;
     ctx.beginPath();
     ctx.moveTo(20, -20);
@@ -2603,8 +2402,6 @@
     ctx.lineTo(20, -17);
     ctx.closePath();
     ctx.fill();
-
-    // Patas largas colgando
     ctx.strokeStyle = p.patas;
     ctx.lineWidth = 1.8;
     ctx.beginPath();
@@ -2613,21 +2410,16 @@
     ctx.moveTo(4, 10);
     ctx.lineTo(6, 22);
     ctx.stroke();
-
     ctx.restore();
   }
 
-  // ---------- Tucán (Río) ----------
   function dibujarTucan(d, dy) {
     const dir = d.mirandoDerecha ? 1 : -1;
     const aleteo = Math.sin(d.tiempo * 5) * 4;
     const p = d.paleta || PALETAS_TUCAN[0];
-
     ctx.save();
     ctx.translate(d.x, dy);
     if (!d.mirandoDerecha) ctx.scale(-1, 1);
-
-    // Alas
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.moveTo(-3, -1);
@@ -2639,26 +2431,18 @@
     ctx.quadraticCurveTo(16, -12 - aleteo, 12, 3);
     ctx.closePath();
     ctx.fill();
-
-    // Cuerpo
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.ellipse(0, 3, 8, 6, 0, 0, Math.PI * 2);
     ctx.fill();
-
-    // Pecho de color vivo
     ctx.fillStyle = p.pecho;
     ctx.beginPath();
     ctx.ellipse(-1, 5, 5, 3.5, 0, 0, Math.PI * 2);
     ctx.fill();
-
-    // Cabeza
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.arc(6, -2, 4.5, 0, Math.PI * 2);
     ctx.fill();
-
-    // Pico grande de tucán (muy característico)
     ctx.fillStyle = p.pico1;
     ctx.beginPath();
     ctx.moveTo(9, -4);
@@ -2666,7 +2450,6 @@
     ctx.quadraticCurveTo(20, -1, 9, -1);
     ctx.closePath();
     ctx.fill();
-    // Parte inferior del pico
     ctx.fillStyle = p.pico2;
     ctx.beginPath();
     ctx.moveTo(9, -1);
@@ -2674,18 +2457,14 @@
     ctx.quadraticCurveTo(19, 0.5, 9, 0.5);
     ctx.closePath();
     ctx.fill();
-    // Punta negra del pico
     ctx.fillStyle = p.picoTip;
     ctx.beginPath();
     ctx.arc(22, -3, 1.2, 0, Math.PI * 2);
     ctx.fill();
-
-    // Anillo del ojo (azul vivo en tucanes)
     ctx.fillStyle = p.anillo;
     ctx.beginPath();
     ctx.arc(7, -3, 1.6, 0, Math.PI * 2);
     ctx.fill();
-    // Ojo
     ctx.fillStyle = p.ojo;
     ctx.beginPath();
     ctx.arc(7, -3, 1, 0, Math.PI * 2);
@@ -2694,8 +2473,6 @@
     ctx.beginPath();
     ctx.arc(7.2, -3, 0.5, 0, Math.PI * 2);
     ctx.fill();
-
-    // Cola negra
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.moveTo(-7, 2);
@@ -2703,18 +2480,265 @@
     ctx.lineTo(-9, 1);
     ctx.closePath();
     ctx.fill();
-
-    // Patas pequeñas
     ctx.fillStyle = "#4a3a2a";
     ctx.fillRect(-2, 8, 1.5, 3);
     ctx.fillRect(2, 8, 1.5, 3);
-
     ctx.restore();
   }
 
-  // ============================================================================
-  // Fondo
-  // ============================================================================
+  function dibujarCanguro(d, dy) {
+    const balanceo = Math.sin(d.tiempo * 4) * 4;
+    const p = d.paleta || PALETAS_CANGURO[0];
+    ctx.save();
+    ctx.translate(d.x, 0);
+    if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    const x = 0;
+    const y = dy;
+    ctx.fillStyle = p.patas;
+    ctx.beginPath();
+    ctx.ellipse(x - 8, y + 42, 10, 20, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x + 6, y + 42, 10, 20, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.ellipse(x - 12, y + 60, 14, 6, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x + 10, y + 60, 14, 6, -0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath();
+    ctx.moveTo(x - 14, y + 30);
+    ctx.quadraticCurveTo(x - 34, y + 40 + balanceo, x - 40, y + 60 + balanceo);
+    ctx.lineTo(x - 30, y + 62 + balanceo);
+    ctx.quadraticCurveTo(x - 22, y + 42, x - 12, y + 36);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 20, 16, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.vientre;
+    ctx.beginPath();
+    ctx.ellipse(x + 2, y + 26, 10, 14, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath();
+    ctx.ellipse(x + 10, y + 14, 5, 9, -0.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x + 4, y + 22, 4, 7, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.ellipse(x + 6, y - 2, 7, 10, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath();
+    ctx.ellipse(x + 8, y - 14, 10, 8, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.ellipse(x + 15, y - 12, 6, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.nariz;
+    ctx.beginPath();
+    ctx.arc(x + 19, y - 12, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath();
+    ctx.ellipse(x + 4, y - 22, 3.5, 8, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x + 12, y - 22, 3.5, 8, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.orejas;
+    ctx.beginPath();
+    ctx.ellipse(x + 4, y - 22, 2, 6, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x + 12, y - 22, 2, 6, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.ojos;
+    ctx.beginPath();
+    ctx.arc(x + 12, y - 15, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(x + 12.5, y - 15.5, 0.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function dibujarMono(d, dy) {
+    const balanceo = Math.sin(d.tiempo * 5) * 2;
+    const p = d.paleta || PALETAS_MONO[0];
+    ctx.save();
+    ctx.translate(d.x, 0);
+    if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    const x = 0;
+    const y = dy;
+    ctx.strokeStyle = p.cuerpo;
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x - 10, y + 12);
+    ctx.quadraticCurveTo(x - 20, y + 10, x - 18, y - 2);
+    ctx.quadraticCurveTo(x - 14, y - 8, x - 8, y - 4);
+    ctx.stroke();
+    ctx.fillStyle = p.cuerpo2;
+    ctx.fillRect(x - 8, y + 26, 6, 14);
+    ctx.fillRect(x + 4, y + 26, 6, 14);
+    ctx.fillStyle = p.cuerpo;
+    ctx.fillRect(x - 9, y + 38, 8, 3);
+    ctx.fillRect(x + 3, y + 38, 8, 3);
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 14, 12, 16, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 18, 7, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo;
+    ctx.fillRect(x - 12, y + 8 + balanceo, 4, 14);
+    ctx.fillRect(x + 8, y + 8 - balanceo, 4, 14);
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.arc(x + 2, y - 4, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cara;
+    ctx.beginPath();
+    ctx.ellipse(x + 2, y - 2, 6, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.hocico;
+    ctx.beginPath();
+    ctx.ellipse(x + 2, y + 2, 4, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.arc(x - 8, y - 6, 5, 0, Math.PI * 2);
+    ctx.arc(x + 12, y - 6, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cara;
+    ctx.beginPath();
+    ctx.arc(x - 8, y - 6, 3, 0, Math.PI * 2);
+    ctx.arc(x + 12, y - 6, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.ojos;
+    ctx.beginPath();
+    ctx.arc(x - 1, y - 4, 1.5, 0, Math.PI * 2);
+    ctx.arc(x + 6, y - 4, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(x - 0.5, y - 4.5, 0.5, 0, Math.PI * 2);
+    ctx.arc(x + 6.5, y - 4.5, 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.nariz;
+    ctx.beginPath();
+    ctx.arc(x + 2, y + 0.5, 0.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = p.ojos;
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(x - 1, y + 3);
+    ctx.quadraticCurveTo(x + 2, y + 5, x + 5, y + 3);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function dibujarLlama(d, dy) {
+    const balanceo = Math.sin(d.tiempo * 2.5) * 3;
+    const p = d.paleta || PALETAS_LLAMA[0];
+    ctx.save();
+    ctx.translate(d.x, 0);
+    if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    const x = 0;
+    const y = dy;
+    ctx.fillStyle = p.patas;
+    ctx.fillRect(x - 12, y + 38 + balanceo * 0.4, 5, 30);
+    ctx.fillRect(x - 4, y + 38 - balanceo * 0.3, 5, 30);
+    ctx.fillRect(x + 6, y + 38 - balanceo * 0.4, 5, 30);
+    ctx.fillRect(x + 14, y + 38 + balanceo * 0.3, 5, 30);
+    ctx.fillStyle = p.nariz;
+    ctx.fillRect(x - 13, y + 66 + balanceo * 0.4, 7, 3);
+    ctx.fillRect(x - 5, y + 66 - balanceo * 0.3, 7, 3);
+    ctx.fillRect(x + 5, y + 66 - balanceo * 0.4, 7, 3);
+    ctx.fillRect(x + 13, y + 66 + balanceo * 0.3, 7, 3);
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 28, 20, 14, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.panza;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 32, 12, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.moveTo(x + 12, y + 22);
+    ctx.quadraticCurveTo(x + 22, y + 8, x + 20, y - 14);
+    ctx.lineTo(x + 27, y - 14);
+    ctx.quadraticCurveTo(x + 30, y + 8, x + 20, y + 28);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.ellipse(x + 24, y - 16, 9, 7, -0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath();
+    ctx.moveTo(x + 18, y - 22);
+    ctx.lineTo(x + 16, y - 34);
+    ctx.lineTo(x + 22, y - 24);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + 26, y - 23);
+    ctx.lineTo(x + 28, y - 35);
+    ctx.lineTo(x + 31, y - 22);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = p.orejas;
+    ctx.beginPath();
+    ctx.moveTo(x + 19, y - 23);
+    ctx.lineTo(x + 18, y - 31);
+    ctx.lineTo(x + 21, y - 24);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + 27, y - 24);
+    ctx.lineTo(x + 28, y - 32);
+    ctx.lineTo(x + 30, y - 23);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath();
+    ctx.ellipse(x + 31, y - 15, 4, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.nariz;
+    ctx.beginPath();
+    ctx.arc(x + 33, y - 15, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = p.ojos;
+    ctx.beginPath();
+    ctx.arc(x + 24, y - 17, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(x + 24.5, y - 17.5, 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = p.ojos;
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(x + 31, y - 13);
+    ctx.lineTo(x + 33, y - 13);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   function dibujarCieloDeFondo(tipo) {
     const grad = ctx.createLinearGradient(0, 0, 0, ALTO);
     grad.addColorStop(0, tipo.fondo);
@@ -2724,7 +2748,6 @@
     ctx.fillRect(0, 0, ANCHO, ALTO);
   }
 
-  // Cielo nocturno con estrellas, luna y nubes
   function dibujarCieloNocturno() {
     const grad = ctx.createLinearGradient(0, 0, 0, ALTO);
     grad.addColorStop(0, "#0a0a2a");
@@ -2733,7 +2756,6 @@
     grad.addColorStop(1, "#6a4a5a");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, ANCHO, ALTO);
-
     initEstrellas();
     const t = Date.now() / 1000;
     for (const est of estrellas) {
@@ -2750,7 +2772,6 @@
         ctx.fill();
       }
     }
-
     const lunaX = ANCHO * 0.82;
     const lunaY = ALTO * 0.12;
     const lunaR = 38;
@@ -2776,7 +2797,6 @@
     ctx.beginPath();
     ctx.arc(lunaX - 4, lunaY + 14, 2.5, 0, Math.PI * 2);
     ctx.fill();
-
     initNubes();
     for (const nu of nubes) {
       nu.x += nu.vel;
@@ -2790,14 +2810,11 @@
     }
   }
 
-  // Dibuja la imagen estirada a 140% y la recorre de abajo a arriba según progreso
   function dibujarImagenRecorrida(img, progreso) {
     if (!img) return;
     const rImg = img.width / img.height;
-
     const imgW = ANCHO * ESCALA_IMAGEN_UNICA;
     let imgH = imgW / rImg;
-
     if (imgH < ALTO) {
       imgH = ALTO;
       const w = imgH * rImg;
@@ -2805,11 +2822,9 @@
       try { ctx.drawImage(img, dx, 0, w, imgH); } catch (e) {}
       return;
     }
-
     const rango = imgH - ALTO;
     const prog = Math.min(1, progreso / LIMITE_PROGRESO_IMAGEN);
     const offsetY = -(1 - prog) * rango;
-
     const dx = (ANCHO - imgW) / 2;
     try { ctx.drawImage(img, dx, offsetY, imgW, imgH); } catch (e) {}
   }
@@ -2819,17 +2834,8 @@
     const rImg = img.width / img.height;
     const rCanvas = ANCHO / ALTO;
     let w, h, dx, dy;
-    if (rImg > rCanvas) {
-      h = ALTO;
-      w = ALTO * rImg;
-      dx = (ANCHO - w) / 2;
-      dy = 0;
-    } else {
-      w = ANCHO;
-      h = ANCHO / rImg;
-      dx = 0;
-      dy = (ALTO - h) / 2;
-    }
+    if (rImg > rCanvas) { h = ALTO; w = ALTO * rImg; dx = (ANCHO - w) / 2; dy = 0; }
+    else { w = ANCHO; h = ANCHO / rImg; dx = 0; dy = (ALTO - h) / 2; }
     dy += desplazamientoY;
     try { ctx.drawImage(img, dx, dy, w, h); } catch (e) {}
   }
@@ -2837,29 +2843,21 @@
   function dibujarFondo() {
     const pal = paletaActual();
     const tipo = tipoActual();
-
-    // Capa 0: cielo
     if (tipo.fondoUnico && tipo.fondoImg === "paris") {
       dibujarCieloNocturno();
     } else {
       dibujarCieloDeFondo(tipo);
     }
 
-    // Capas de imagen
     if (tipo.fondoImg && FONDOS[tipo.fondoImg]) {
       const fondo = FONDOS[tipo.fondoImg];
-
       const alturaJugadorPx = Math.max(0, Y_SUELO_JUGABLE - estado.personaje.y);
       const alturaJugadorM = alturaJugadorPx / PX_POR_METRO;
-
       if (tipo.fondoUnico) {
         const progreso = Math.min(1, alturaJugadorM / METROS_FIN_PANTALLA);
-
         let fadeOut = (alturaJugadorM - FADEOUT_UNICO_INICIO_M) / (FADEOUT_UNICO_FIN_M - FADEOUT_UNICO_INICIO_M);
         fadeOut = Math.max(0, Math.min(1, fadeOut));
-
         const alphaImg = 1 - fadeOut;
-
         if (fondo.cargada && alphaImg > 0.01) {
           ctx.globalAlpha = alphaImg;
           dibujarImagenRecorrida(fondo.img, progreso);
@@ -2868,17 +2866,13 @@
       } else {
         let mix = (alturaJugadorM - CROSSFADE_INICIO_M) / (CROSSFADE_FIN_M - CROSSFADE_INICIO_M);
         mix = Math.max(0, Math.min(1, mix));
-
         let fadeOut = (alturaJugadorM - FADEOUT_INICIO_M) / (FADEOUT_FIN_M - FADEOUT_INICIO_M);
         fadeOut = Math.max(0, Math.min(1, fadeOut));
-
         const desplazamiento = (estado.camara.y - CAMARA_INICIAL);
         const offsetAerea = desplazamiento * PARALLAX_AIREA;
         const offsetCalle = desplazamiento * PARALLAX_CALLE;
-
         const alphaCalle = (1 - mix) * (1 - fadeOut);
         const alphaAerea = mix * (1 - fadeOut);
-
         if (fondo.cargada2 && alphaAerea > 0.01) {
           ctx.globalAlpha = alphaAerea;
           dibujarImagenCover(fondo.img2, offsetAerea);
@@ -2893,7 +2887,6 @@
     }
 
     if (pal.lluviaMatrix) dibujarMatrixLluvia();
-
     const camY = estado.camara.y;
 
     if (tipo.categoria === "cueva") {
@@ -2917,7 +2910,6 @@
     for (const d of estado.decoraciones) {
       const dy = d.y - camY;
       if (dy + 300 < 0 || dy - 300 > ALTO) continue;
-
       if (d.tipo === "estalactita") {
         ctx.fillStyle = "rgba(0,0,0,0.55)";
         ctx.beginPath();
@@ -3091,6 +3083,12 @@
         dibujarGrulla(d, dy);
       } else if (d.tipo === "tucan") {
         dibujarTucan(d, dy);
+      } else if (d.tipo === "canguro") {
+        dibujarCanguro(d, dy);
+      } else if (d.tipo === "mono") {
+        dibujarMono(d, dy);
+      } else if (d.tipo === "llama") {
+        dibujarLlama(d, dy);
       }
     }
 
@@ -3103,7 +3101,6 @@
     }
   }
 
-  // ---------- Plataforma ----------
   function dibujarPlataforma(plat, py, pal, tipo) {
     const usarColorTipo = tipo.categoria === "ciudad" || tipo.categoria === "aire";
     const colorPresa = usarColorTipo ? tipo.presa : pal.presa;
@@ -3112,65 +3109,34 @@
     const colorSueloLuz = usarColorTipo ? tipo.sueloLuz : pal.sueloLuz;
 
     if (plat.tipo === "suelo") {
-      // El suelo ya no se dibuja: es invisible en todas las pantallas.
-      // El jugador apoya directamente sobre el borde inferior del canvas.
-      // (No hace falta dibujar nada.)
+      // Suelo invisible
     } else {
       if (plat.esBandera && tipo && tipo.bandera) {
         const tipoBandera = tipo.bandera[0];
         if (tipoBandera === "senyera") {
           const h = plat.alto / 9;
           const coloresSen = ["#d32f2f", "#ffd700", "#d32f2f", "#ffd700", "#d32f2f", "#ffd700", "#d32f2f", "#ffd700", "#d32f2f"];
-          for (let i = 0; i < 9; i++) {
-            ctx.fillStyle = coloresSen[i];
-            ctx.fillRect(plat.x, py + i * h, plat.ancho, h);
-          }
+          for (let i = 0; i < 9; i++) { ctx.fillStyle = coloresSen[i]; ctx.fillRect(plat.x, py + i * h, plat.ancho, h); }
           ctx.fillStyle = "#1a3a8a";
           ctx.fillRect(plat.x, py, plat.ancho * 0.15, plat.alto);
-          ctx.strokeStyle = "#ffd700";
-          ctx.lineWidth = 2;
-          const lx = plat.x + plat.ancho * 0.075;
-          const ly = py + plat.alto * 0.5;
-          ctx.beginPath();
-          ctx.moveTo(lx - 2, ly - 5);
-          ctx.lineTo(lx - 2, ly + 5);
-          ctx.lineTo(lx + 3, ly + 5);
-          ctx.stroke();
         } else if (tipoBandera === "espana") {
           const h = plat.alto / 4;
-          ctx.fillStyle = "#c60b1e";
-          ctx.fillRect(plat.x, py, plat.ancho, h);
-          ctx.fillStyle = "#ffc400";
-          ctx.fillRect(plat.x, py + h, plat.ancho, h * 2);
-          ctx.fillStyle = "#c60b1e";
-          ctx.fillRect(plat.x, py + h * 3, plat.ancho, h);
+          ctx.fillStyle = "#c60b1e"; ctx.fillRect(plat.x, py, plat.ancho, h);
+          ctx.fillStyle = "#ffc400"; ctx.fillRect(plat.x, py + h, plat.ancho, h * 2);
+          ctx.fillStyle = "#c60b1e"; ctx.fillRect(plat.x, py + h * 3, plat.ancho, h);
         } else if (tipoBandera === "francia") {
           const w = plat.ancho / 3;
-          ctx.fillStyle = "#0055a4";
-          ctx.fillRect(plat.x, py, w, plat.alto);
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(plat.x + w, py, w, plat.alto);
-          ctx.fillStyle = "#ef4135";
-          ctx.fillRect(plat.x + w * 2, py, w, plat.alto);
+          ctx.fillStyle = "#0055a4"; ctx.fillRect(plat.x, py, w, plat.alto);
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x + w, py, w, plat.alto);
+          ctx.fillStyle = "#ef4135"; ctx.fillRect(plat.x + w * 2, py, w, plat.alto);
         } else if (tipoBandera === "reino-unido") {
-          ctx.fillStyle = "#012169";
-          ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
-          ctx.strokeStyle = "#ffffff";
-          ctx.lineWidth = 4;
-          ctx.beginPath();
-          ctx.moveTo(plat.x, py);
-          ctx.lineTo(plat.x + plat.ancho, py + plat.alto);
-          ctx.moveTo(plat.x + plat.ancho, py);
-          ctx.lineTo(plat.x, py + plat.alto);
-          ctx.stroke();
-          ctx.strokeStyle = "#C8102E";
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(plat.x, py);
-          ctx.lineTo(plat.x + plat.ancho, py + plat.alto);
-          ctx.moveTo(plat.x + plat.ancho, py);
-          ctx.lineTo(plat.x, py + plat.alto);
-          ctx.stroke();
+          ctx.fillStyle = "#012169"; ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
+          ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 4;
+          ctx.beginPath(); ctx.moveTo(plat.x, py); ctx.lineTo(plat.x + plat.ancho, py + plat.alto);
+          ctx.moveTo(plat.x + plat.ancho, py); ctx.lineTo(plat.x, py + plat.alto); ctx.stroke();
+          ctx.strokeStyle = "#C8102E"; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(plat.x, py); ctx.lineTo(plat.x + plat.ancho, py + plat.alto);
+          ctx.moveTo(plat.x + plat.ancho, py); ctx.lineTo(plat.x, py + plat.alto); ctx.stroke();
           ctx.fillStyle = "#ffffff";
           ctx.fillRect(plat.x + plat.ancho / 2 - 5, py, 10, plat.alto);
           ctx.fillRect(plat.x, py + plat.alto / 2 - 4, plat.ancho, 8);
@@ -3180,53 +3146,29 @@
         } else if (tipoBandera === "eeuu") {
           const franjas = 13;
           const h = plat.alto / franjas;
-          for (let i = 0; i < franjas; i++) {
-            ctx.fillStyle = i % 2 === 0 ? "#B22234" : "#ffffff";
-            ctx.fillRect(plat.x, py + i * h, plat.ancho, h);
-          }
+          for (let i = 0; i < franjas; i++) { ctx.fillStyle = i % 2 === 0 ? "#B22234" : "#ffffff"; ctx.fillRect(plat.x, py + i * h, plat.ancho, h); }
           ctx.fillStyle = "#3C3B6E";
           ctx.fillRect(plat.x, py, plat.ancho * 0.4, h * 7);
           ctx.fillStyle = "#ffffff";
-          for (let r = 0; r < 4; r++) {
-            for (let c = 0; c < 4; c++) {
-              ctx.fillRect(plat.x + 4 + c * 8, py + 3 + r * 6, 2, 2);
-            }
-          }
+          for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) ctx.fillRect(plat.x + 4 + c * 8, py + 3 + r * 6, 2, 2);
         } else if (tipoBandera === "italia") {
           const w = plat.ancho / 3;
-          ctx.fillStyle = "#009246";
-          ctx.fillRect(plat.x, py, w, plat.alto);
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(plat.x + w, py, w, plat.alto);
-          ctx.fillStyle = "#CE2B37";
-          ctx.fillRect(plat.x + w * 2, py, w, plat.alto);
+          ctx.fillStyle = "#009246"; ctx.fillRect(plat.x, py, w, plat.alto);
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x + w, py, w, plat.alto);
+          ctx.fillStyle = "#CE2B37"; ctx.fillRect(plat.x + w * 2, py, w, plat.alto);
         } else if (tipoBandera === "egipto") {
           const h = plat.alto / 3;
-          ctx.fillStyle = "#C8102E";
-          ctx.fillRect(plat.x, py, plat.ancho, h);
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(plat.x, py + h, plat.ancho, h);
-          ctx.fillStyle = "#000000";
-          ctx.fillRect(plat.x, py + h * 2, plat.ancho, h);
-          // Águila dorada (simplificada)
-          ctx.fillStyle = "#C09300";
-          ctx.beginPath();
-          ctx.moveTo(plat.x + plat.ancho / 2, py + h + 3);
-          ctx.lineTo(plat.x + plat.ancho / 2 + 4, py + h + 8);
-          ctx.lineTo(plat.x + plat.ancho / 2, py + h + 13);
-          ctx.lineTo(plat.x + plat.ancho / 2 - 4, py + h + 8);
-          ctx.closePath();
-          ctx.fill();
+          ctx.fillStyle = "#C8102E"; ctx.fillRect(plat.x, py, plat.ancho, h);
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x, py + h, plat.ancho, h);
+          ctx.fillStyle = "#000000"; ctx.fillRect(plat.x, py + h * 2, plat.ancho, h);
         } else if (tipoBandera === "japon") {
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
           ctx.fillStyle = "#BC002D";
           ctx.beginPath();
           ctx.arc(plat.x + plat.ancho / 2, py + plat.alto / 2, plat.alto * 0.35, 0, Math.PI * 2);
           ctx.fill();
         } else if (tipoBandera === "brasil") {
-          ctx.fillStyle = "#009C3B";
-          ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
+          ctx.fillStyle = "#009C3B"; ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
           ctx.fillStyle = "#FFDF00";
           ctx.beginPath();
           ctx.moveTo(plat.x + plat.ancho / 2, py + 2);
@@ -3239,6 +3181,44 @@
           ctx.beginPath();
           ctx.arc(plat.x + plat.ancho / 2, py + plat.alto / 2, plat.alto * 0.28, 0, Math.PI * 2);
           ctx.fill();
+        } else if (tipoBandera === "australia") {
+          ctx.fillStyle = "#00008B"; ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
+          ctx.fillStyle = "#ffffff";
+          const jw = plat.ancho * 0.4;
+          const jh = plat.alto * 0.5;
+          ctx.fillRect(plat.x + jw / 2 - 1, py, 2, jh);
+          ctx.fillRect(plat.x, py + jh / 2 - 1, jw, 2);
+          ctx.strokeStyle = "#C8102E";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(plat.x, py); ctx.lineTo(plat.x + jw, py + jh);
+          ctx.moveTo(plat.x + jw, py); ctx.lineTo(plat.x, py + jh);
+          ctx.stroke();
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath(); ctx.arc(plat.x + plat.ancho * 0.7, py + plat.alto * 0.3, plat.alto * 0.08, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(plat.x + plat.ancho * 0.8, py + plat.alto * 0.5, plat.alto * 0.06, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(plat.x + plat.ancho * 0.65, py + plat.alto * 0.65, plat.alto * 0.06, 0, Math.PI * 2); ctx.fill();
+        } else if (tipoBandera === "marruecos") {
+          ctx.fillStyle = "#C1272D"; ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
+          ctx.fillStyle = "#006233";
+          const cx = plat.x + plat.ancho / 2;
+          const cy = py + plat.alto / 2;
+          const r = plat.alto * 0.35;
+          ctx.beginPath();
+          for (let i = 0; i < 5; i++) {
+            const ang = -Math.PI / 2 + (i * 4 * Math.PI) / 5;
+            const x1 = cx + Math.cos(ang) * r;
+            const y1 = cy + Math.sin(ang) * r;
+            if (i === 0) ctx.moveTo(x1, y1);
+            else ctx.lineTo(x1, y1);
+          }
+          ctx.closePath();
+          ctx.fill();
+        } else if (tipoBandera === "peru") {
+          const w = plat.ancho / 3;
+          ctx.fillStyle = "#D91023"; ctx.fillRect(plat.x, py, w, plat.alto);
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x + w, py, w, plat.alto);
+          ctx.fillStyle = "#D91023"; ctx.fillRect(plat.x + w * 2, py, w, plat.alto);
         }
         ctx.strokeStyle = "#1a1a1a";
         ctx.lineWidth = 2;
@@ -3290,7 +3270,6 @@
     }
   }
 
-  // ---------- Botón ----------
   function dibujarBoton(x, y, w, h, texto, foco, colorBase, colorBorde) {
     const brillo = 0.7 + Math.sin(Date.now() / 250) * 0.3;
     const fondo = foco ? "rgba(" + colorBase + ", " + (0.55 + brillo * 0.3) + ")" : "rgba(" + colorBase + ", 0.35)";
@@ -3315,7 +3294,6 @@
     }
   }
 
-  // ---------- Render ----------
   function render() {
     const pal = paletaActual();
     const tipo = tipoActual();
@@ -3334,8 +3312,10 @@
     for (const plat of estado.plataformas) {
       const py = plat.y - estado.camara.y;
       if (py + plat.alto < 0 || py > ALTO) continue;
-      ctx.fillStyle = "rgba(0,0,0,0.5)";
-      ctx.fillRect(plat.x + 4, py + 4, plat.ancho, plat.alto);
+      if (plat.tipo !== "suelo") {
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fillRect(plat.x + 4, py + 4, plat.ancho, plat.alto);
+      }
       dibujarPlataforma(plat, py, pal, tipo);
       if (plat.tipo === "presa" && plat === siguientePresa) {
         const brillo = 0.6 + Math.sin(Date.now() / 200) * 0.4;
@@ -3389,29 +3369,21 @@
       ctx.fillStyle = pal.acento;
       ctx.font = "16px monospace";
       ctx.fillText(tx("menu_record") + ": " + estado.camara.record + " " + tx("hud_m"), ANCHO / 2, ALTO / 2 - 110);
-
       const btnW = 280, btnH = 50, sep = 12;
       let by = ALTO / 2 - 50;
-
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_empezar"), enfocada("empezar"), pal.botonFondo, pal.botonBorde);
       estado._btnEmpezar = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
-
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_instrucciones"), enfocada("instrucciones"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnInstrucciones = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
-
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_creditos"), enfocada("creditos"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnCreditos = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
-
       if (fullscreenSoportado && !estaEnFullscreen()) {
         dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_fullscreen"), enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
-      } else {
-        estado._btnPantallaCompleta = null;
-      }
-
+      } else { estado._btnPantallaCompleta = null; }
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "13px monospace";
       ctx.textAlign = "center";
@@ -3420,14 +3392,12 @@
     }
 
     if (estado.modo === "instrucciones") {
-      ctx.fillStyle = pal.menuFondo;
-      ctx.fillRect(0, 0, ANCHO, ALTO);
+      ctx.fillStyle = pal.menuFondo; ctx.fillRect(0, 0, ANCHO, ALTO);
       ctx.fillStyle = pal.texto;
       ctx.font = "bold 36px monospace";
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(tx("inst_titulo"), ANCHO / 2, 60);
-      ctx.font = "16px monospace";
-      ctx.textAlign = "left";
+      ctx.font = "16px monospace"; ctx.textAlign = "left";
       const lineas = tx("inst_lineas");
       let yTexto = 120;
       for (const linea of lineas) {
@@ -3437,87 +3407,64 @@
         yTexto += 24;
       }
       ctx.fillStyle = pal.textoSuave;
-      ctx.font = "14px monospace";
-      ctx.textAlign = "center";
+      ctx.font = "14px monospace"; ctx.textAlign = "center";
       ctx.fillText(tx("inst_volver"), ANCHO / 2, ALTO - 40);
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
     if (estado.modo === "creditos") {
-      ctx.fillStyle = pal.menuFondo;
-      ctx.fillRect(0, 0, ANCHO, ALTO);
+      ctx.fillStyle = pal.menuFondo; ctx.fillRect(0, 0, ANCHO, ALTO);
       ctx.fillStyle = pal.acento;
       ctx.font = "bold 40px monospace";
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(tx("cred_titulo"), ANCHO / 2, 100);
       const px = ANCHO / 2 - 240, py = 160, pw = 480, ph = 420;
-      ctx.fillStyle = pal.panelFondo;
-      ctx.fillRect(px, py, pw, ph);
-      ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.8)";
-      ctx.lineWidth = 3;
+      ctx.fillStyle = pal.panelFondo; ctx.fillRect(px, py, pw, ph);
+      ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.8)"; ctx.lineWidth = 3;
       ctx.strokeRect(px, py, pw, ph);
-      ctx.fillStyle = pal.texto;
-      ctx.font = "bold 28px monospace";
+      ctx.fillStyle = pal.texto; ctx.font = "bold 28px monospace";
       ctx.fillText(tx("cred_juego"), ANCHO / 2, py + 50);
-      ctx.fillStyle = pal.textoSuave;
-      ctx.font = "15px monospace";
+      ctx.fillStyle = pal.textoSuave; ctx.font = "15px monospace";
       ctx.fillText(tx("cred_subtitulo"), ANCHO / 2, py + 80);
-      ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.4)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(px + 40, py + 100);
-      ctx.lineTo(px + pw - 40, py + 100);
-      ctx.stroke();
-      ctx.fillStyle = pal.textoSuave;
-      ctx.font = "16px monospace";
+      ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.4)"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(px + 40, py + 100); ctx.lineTo(px + pw - 40, py + 100); ctx.stroke();
+      ctx.fillStyle = pal.textoSuave; ctx.font = "16px monospace";
       ctx.fillText(tx("cred_creado"), ANCHO / 2, py + 140);
-      ctx.fillStyle = pal.acento;
-      ctx.font = "bold 24px monospace";
+      ctx.fillStyle = pal.acento; ctx.font = "bold 24px monospace";
       ctx.fillText(tx("cred_autor"), ANCHO / 2, py + 175);
-      ctx.fillStyle = pal.textoSuave;
-      ctx.font = "15px monospace";
+      ctx.fillStyle = pal.textoSuave; ctx.font = "15px monospace";
       ctx.fillText(tx("cred_hecho"), ANCHO / 2, py + 220);
       ctx.fillText(tx("cred_inspirado"), ANCHO / 2, py + 245);
-      ctx.fillStyle = pal.acento;
-      ctx.font = "bold 20px monospace";
+      ctx.fillStyle = pal.acento; ctx.font = "bold 20px monospace";
       ctx.fillText(tx("cred_gracias"), ANCHO / 2, py + 300);
-      ctx.fillStyle = pal.textoSuave;
-      ctx.font = "13px monospace";
-      ctx.fillText(tx("cred_version") + ": v:72.0", ANCHO / 2, py + 340);
+      ctx.fillStyle = pal.textoSuave; ctx.font = "13px monospace";
+      ctx.fillText(tx("cred_version") + ": v:73.0", ANCHO / 2, py + 340);
       ctx.fillText("© 2026", ANCHO / 2, py + 365);
-      ctx.fillStyle = pal.textoSuave;
-      ctx.font = "14px monospace";
+      ctx.fillStyle = pal.textoSuave; ctx.font = "14px monospace";
       ctx.fillText(tx("cred_volver"), ANCHO / 2, ALTO - 40);
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
     if (estado.modo === "gameover") {
-      ctx.fillStyle = pal.menuFondo;
-      ctx.fillRect(0, 0, ANCHO, ALTO);
+      ctx.fillStyle = pal.menuFondo; ctx.fillRect(0, 0, ANCHO, ALTO);
       ctx.fillStyle = pal.acento;
       ctx.font = "bold 52px monospace";
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(tx("go_titulo"), ANCHO / 2, 160);
       const px = ANCHO / 2 - 200, py = 230, pw = 400, ph = 220;
-      ctx.fillStyle = pal.panelFondo;
-      ctx.fillRect(px, py, pw, ph);
-      ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.8)";
-      ctx.lineWidth = 3;
+      ctx.fillStyle = pal.panelFondo; ctx.fillRect(px, py, pw, ph);
+      ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.8)"; ctx.lineWidth = 3;
       ctx.strokeRect(px, py, pw, ph);
-      ctx.fillStyle = pal.texto;
-      ctx.font = "bold 22px monospace";
+      ctx.fillStyle = pal.texto; ctx.font = "bold 22px monospace";
       ctx.fillText(tx("go_resumen"), ANCHO / 2, py + 30);
-      ctx.font = "18px monospace";
-      ctx.fillStyle = pal.textoSuave;
+      ctx.font = "18px monospace"; ctx.fillStyle = pal.textoSuave;
       ctx.fillText(tx("go_altura_max") + ":  " + estado.camara.alturaMaxima + " " + tx("hud_m"), ANCHO / 2, py + 80);
       ctx.fillText(tx("go_fragmentos") + ":  " + estado.fragmentosRecogidos + "/" + estado.fragmentosTotales, ANCHO / 2, py + 115);
       ctx.fillText(tx("go_pantalla") + ":  " + tx("hud_p") + estado.pantalla, ANCHO / 2, py + 150);
-      ctx.fillStyle = pal.acento;
-      ctx.font = "bold 18px monospace";
+      ctx.fillStyle = pal.acento; ctx.font = "bold 18px monospace";
       const nuevoRecord = estado.camara.alturaMaxima >= estado.camara.record && estado.camara.alturaMaxima > 0;
       if (nuevoRecord) ctx.fillText(tx("go_nuevo_record"), ANCHO / 2, py + 185);
       else ctx.fillText(tx("go_record") + ":  " + estado.camara.record + " " + tx("hud_m"), ANCHO / 2, py + 185);
-
       const btnW = 280, btnH = 50, sep = 12;
       let by = py + ph + 30;
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_reintentar"), enfocada("reintentar"), pal.botonFondo, pal.botonBorde);
@@ -3529,27 +3476,20 @@
       if (fullscreenSoportado && !estaEnFullscreen()) {
         dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_fullscreen"), enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
-      } else {
-        estado._btnPantallaCompleta = null;
-      }
+      } else { estado._btnPantallaCompleta = null; }
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
     if (estado.modo === "confirmar-salida") {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
-      ctx.fillRect(0, 0, ANCHO, ALTO);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.75)"; ctx.fillRect(0, 0, ANCHO, ALTO);
       const px = ANCHO / 2 - 220, py = ALTO / 2 - 160, pw = 440, ph = 320;
-      ctx.fillStyle = pal.panelFondo;
-      ctx.fillRect(px, py, pw, ph);
-      ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.9)";
-      ctx.lineWidth = 3;
+      ctx.fillStyle = pal.panelFondo; ctx.fillRect(px, py, pw, ph);
+      ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.9)"; ctx.lineWidth = 3;
       ctx.strokeRect(px, py, pw, ph);
-      ctx.fillStyle = pal.acento;
-      ctx.font = "bold 24px monospace";
+      ctx.fillStyle = pal.acento; ctx.font = "bold 24px monospace";
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(tx("salir_titulo"), ANCHO / 2, py + 45);
-      ctx.fillStyle = pal.textoSuave;
-      ctx.font = "15px monospace";
+      ctx.fillStyle = pal.textoSuave; ctx.font = "15px monospace";
       ctx.fillText(tx("salir_msg1"), ANCHO / 2, py + 80);
       ctx.fillText(tx("salir_msg2"), ANCHO / 2, py + 105);
       const btnW = 160, btnH = 50, sep = 20;
@@ -3565,18 +3505,14 @@
         const btnFullW = 340;
         dibujarBoton(ANCHO / 2 - btnFullW / 2, by, btnFullW, btnH, tx("salir_fullscreen"), enfocada("salir-fullscreen"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnSalirFullscreen = { x: ANCHO / 2 - btnFullW / 2, y: by, w: btnFullW, h: btnH };
-      } else {
-        estado._btnSalirFullscreen = null;
-      }
-      ctx.fillStyle = pal.textoSuave;
-      ctx.font = "13px monospace";
+      } else { estado._btnSalirFullscreen = null; }
+      ctx.fillStyle = pal.textoSuave; ctx.font = "13px monospace";
       ctx.textAlign = "center";
       ctx.fillText(tx("salir_ayuda"), ANCHO / 2, py + ph - 15);
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
   }
 
-  // ---------- Loop ----------
   let ultimoTiempo = 0;
   function loop(tiempo) {
     if (tiempo - ultimoTiempo < 16) { requestAnimationFrame(loop); return; }
@@ -3586,7 +3522,6 @@
     requestAnimationFrame(loop);
   }
 
-  // ---------- Inicializar ----------
   cargarRecord();
   crearPlataformas();
   crearDecoraciones();
@@ -3598,7 +3533,6 @@
   actualizarClaseJugando();
   requestAnimationFrame(loop);
 
-  // ---------- API pública ----------
   window.__juegoEscalada = {
     estado, contenedor,
     saltarA(numero, tipoForzado) {
@@ -3647,4 +3581,3 @@
     },
   };
 })();
-  
