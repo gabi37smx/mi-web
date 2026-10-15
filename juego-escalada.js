@@ -3,6 +3,8 @@
    ----------------------------------------------------------------------------
    · v73.0 — Fase 8.8 completada: Sídney, Marrakech y Machu Picchu
    · 17 pantallas: 2 cueva + 2 grieta + 1 aire + 12 ciudades
+   · Fondos: una sola imagen vertical por ciudad (fondo-{ciudad}.webp)
+   · Fix: no interceptar teclas cuando el foco está en un input
    ============================================================================ */
 
 (function juegoEscalada() {
@@ -239,14 +241,6 @@
 
   const INVULNERABILIDAD_FRAMES = 90;
 
-  const CROSSFADE_INICIO_M = 60;
-  const CROSSFADE_FIN_M = 140;
-  const FADEOUT_INICIO_M = 180;
-  const FADEOUT_FIN_M = 220;
-
-  const PARALLAX_AIREA = 0.15;
-  const PARALLAX_CALLE = 0.30;
-
   const FADEOUT_UNICO_INICIO_M = 155;
   const FADEOUT_UNICO_FIN_M = 200;
   const LIMITE_PROGRESO_IMAGEN = 0.80;
@@ -300,42 +294,34 @@
   }
 
   // ---------- Carga de fondos ----------
+  // Cada ciudad usa UNA sola imagen vertical (1080x1920) recorrida de
+  // abajo a arriba. No hay versión "aérea" (2.webp).
+  // Nombres reales en /image:
+  //   · fondo-australia.webp  → Sídney
+  //   · fondo-marruecos.webp  → Marrakech
+  //   · fondo-peru.webp       → Machu Picchu
   const FONDOS = {
-    valencia:   { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-valencia.webp",   ruta2: "image/fondo-valencia2.webp" },
-    madrid:     { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-madrid.webp",     ruta2: "image/fondo-madrid2.webp" },
-    paris:      { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-paris.webp",      ruta2: "image/fondo-paris2.webp" },
-    londres:    { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-londres.webp",    ruta2: "image/fondo-londres2.webp" },
-    nuevayork:  { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-nuevayork.webp",  ruta2: "image/fondo-nuevayork2.webp" },
-    roma:       { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-roma.webp",       ruta2: "image/fondo-roma2.webp" },
-    elcairo:    { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-elcairo.webp",    ruta2: "image/fondo-elcairo2.webp" },
-    tokio:      { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-tokio.webp",      ruta2: "image/fondo-tokio2.webp" },
-    rio:        { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-rio.webp",        ruta2: "image/fondo-rio2.webp" },
-    sidney:     { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-australia.webp",  ruta2: "image/fondo-australia2.webp" },
-    marrakech:  { img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-marruecos.webp",  ruta2: "image/fondo-marruecos2.webp" },
-    machupicchu:{ img: null, img2: null, cargada: false, cargada2: false, ruta: "image/fondo-peru.webp",       ruta2: "image/fondo-peru2.webp" },
+    valencia:    { img: null, cargada: false, ruta: "image/fondo-valencia.webp" },
+    madrid:      { img: null, cargada: false, ruta: "image/fondo-madrid.webp" },
+    paris:       { img: null, cargada: false, ruta: "image/fondo-paris.webp" },
+    londres:     { img: null, cargada: false, ruta: "image/fondo-londres.webp" },
+    nuevayork:   { img: null, cargada: false, ruta: "image/fondo-nuevayork.webp" },
+    roma:        { img: null, cargada: false, ruta: "image/fondo-roma.webp" },
+    elcairo:     { img: null, cargada: false, ruta: "image/fondo-elcairo.webp" },
+    tokio:       { img: null, cargada: false, ruta: "image/fondo-tokio.webp" },
+    rio:         { img: null, cargada: false, ruta: "image/fondo-rio.webp" },
+    sidney:      { img: null, cargada: false, ruta: "image/fondo-australia.webp" },
+    marrakech:   { img: null, cargada: false, ruta: "image/fondo-marruecos.webp" },
+    machupicchu: { img: null, cargada: false, ruta: "image/fondo-peru.webp" },
   };
   function cargarFondos() {
     Object.keys(FONDOS).forEach((k) => {
       const f = FONDOS[k];
       const img = new Image();
-      img.onload = () => { f.cargada = true; };
-      img.onerror = () => {
-        const alt = new Image();
-        alt.onload = () => { f.img = alt; f.cargada = true; };
-        alt.src = f.ruta.replace(".webp", ".svg");
-      };
+      img.onload  = () => { f.cargada = true; };
+      img.onerror = () => { f.cargada = false; };
       img.src = f.ruta;
       f.img = img;
-
-      const img2 = new Image();
-      img2.onload = () => { f.cargada2 = true; };
-      img2.onerror = () => {
-        const alt2 = new Image();
-        alt2.onload = () => { f.img2 = alt2; f.cargada2 = true; };
-        alt2.src = f.ruta2.replace(".webp", ".svg");
-      };
-      img2.src = f.ruta2;
-      f.img2 = img2;
     });
   }
   cargarFondos();
@@ -419,7 +405,7 @@
       fondo: "#5db8e0", fondo2: "#a8d8e8", fondoAbajo: "#f0e8d0",
       suelo: "#ff8c00", sueloLuz: "#ffb347",
       presa: "#ff8c00", presaLuz: "#ffb347",
-      coloresPropios: true, fondoImg: "valencia", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "valencia", esCiudad: true,
       bandera: ["senyera"], decoraciones: [], animalVolador: "murcielago",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#c92a4a", bannerColorB: "#e8b84a", bannerEmoji: "🦇",
@@ -429,7 +415,7 @@
       fondo: "#9ec5e8", fondo2: "#d0d8dc", fondoAbajo: "#e8d8b8",
       suelo: "#473e3f", sueloLuz: "#473e3f",
       presa: "#473e3f", presaLuz: "#473e3f",
-      coloresPropios: true, fondoImg: "madrid", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "madrid", esCiudad: true,
       bandera: ["espana"], decoraciones: [], animalCaminante: "oso-bipedo",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#c60b1e", bannerColorB: "#ffc400", bannerEmoji: "🐻",
@@ -439,7 +425,7 @@
       fondo: "#0a0a2a", fondo2: "#1a2a5a", fondoAbajo: "#4a3a5a",
       suelo: "#796f6f1d", sueloLuz: "#796f6f1d",
       presa: "#d4a84a", presaLuz: "#f0c870",
-      coloresPropios: true, fondoImg: "paris", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "paris", esCiudad: true,
       bandera: ["francia"], decoraciones: [], animalVolador: "gallo",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#0055a4", bannerColorB: "#ef4135", bannerEmoji: "🐓",
@@ -449,7 +435,7 @@
       fondo: "#5a6070", fondo2: "#8890a0", fondoAbajo: "#c8ccd4",
       suelo: "#c41e3a", sueloLuz: "#e04a5a",
       presa: "#c41e3a", presaLuz: "#e04a5a",
-      coloresPropios: true, fondoImg: "londres", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "londres", esCiudad: true,
       bandera: ["reino-unido"], decoraciones: [], animalVolador: "cuervo",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#012169", bannerColorB: "#C8102E", bannerEmoji: "🐦‍⬛",
@@ -459,7 +445,7 @@
       fondo: "#4a5a78", fondo2: "#8a7a8a", fondoAbajo: "#e8b880",
       suelo: "#f4c430", sueloLuz: "#f7d76a",
       presa: "#f4c430", presaLuz: "#f7d76a",
-      coloresPropios: true, fondoImg: "nuevayork", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "nuevayork", esCiudad: true,
       bandera: ["eeuu"], decoraciones: [], animalCaminante: "rata",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#3C3B6E", bannerColorB: "#B22234", bannerEmoji: "🗽",
@@ -469,7 +455,7 @@
       fondo: "#4a7a3a", fondo2: "#6a9a4a", fondoAbajo: "#a8c878",
       suelo: "#3a5a28", sueloLuz: "#5a7a40",
       presa: "#2a5a1a", presaLuz: "#4a8a2a",
-      coloresPropios: true, fondoImg: "roma", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "roma", esCiudad: true,
       bandera: ["italia"], decoraciones: [], animalCaminante: "gato-romano",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#009246", bannerColorB: "#CE2B37", bannerEmoji: "🏛",
@@ -479,7 +465,7 @@
       fondo: "#e8a850", fondo2: "#f0c878", fondoAbajo: "#f8e0a8",
       suelo: "#c89040", sueloLuz: "#e8b060",
       presa: "#c89040", presaLuz: "#e8b060",
-      coloresPropios: true, fondoImg: "elcairo", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "elcairo", esCiudad: true,
       bandera: ["egipto"], decoraciones: [], animalCaminante: "camello",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#C8102E", bannerColorB: "#000000", bannerEmoji: "🐪",
@@ -489,7 +475,7 @@
       fondo: "#f0b8c8", fondo2: "#d8a8c8", fondoAbajo: "#a888c8",
       suelo: "#6a4a7a", sueloLuz: "#8a6a9a",
       presa: "#d04868", presaLuz: "#f06888",
-      coloresPropios: true, fondoImg: "tokio", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "tokio", esCiudad: true,
       bandera: ["japon"], decoraciones: [], animalVolador: "grulla",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#BC002D", bannerColorB: "#FFFFFF", bannerEmoji: "🗾",
@@ -499,7 +485,7 @@
       fondo: "#4aa8d8", fondo2: "#7ac8e8", fondoAbajo: "#f0d8a8",
       suelo: "#2a5a2a", sueloLuz: "#4a8a4a",
       presa: "#2a8a4a", presaLuz: "#50c070",
-      coloresPropios: true, fondoImg: "rio", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "rio", esCiudad: true,
       bandera: ["brasil"], decoraciones: [], animalVolador: "tucan",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#009C3B", bannerColorB: "#FFDF00", bannerEmoji: "🏖",
@@ -509,7 +495,7 @@
       fondo: "#f0b878", fondo2: "#e89898", fondoAbajo: "#8888c8",
       suelo: "#f0c840", sueloLuz: "#f7e070",
       presa: "#f0c840", presaLuz: "#f7e070",
-      coloresPropios: true, fondoImg: "sidney", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "sidney", esCiudad: true,
       bandera: ["australia"], decoraciones: [], animalCaminante: "canguro",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#00008B", bannerColorB: "#FFD700", bannerEmoji: "🦘",
@@ -519,7 +505,7 @@
       fondo: "#e8a858", fondo2: "#d88858", fondoAbajo: "#a84838",
       suelo: "#c84838", sueloLuz: "#e87058",
       presa: "#c84838", presaLuz: "#e87058",
-      coloresPropios: true, fondoImg: "marrakech", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "marrakech", esCiudad: true,
       bandera: ["marruecos"], decoraciones: [], animalCaminante: "mono",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#C1272D", bannerColorB: "#006233", bannerEmoji: "🐒",
@@ -529,7 +515,7 @@
       fondo: "#88b8d8", fondo2: "#c8d8b8", fondoAbajo: "#7a9a58",
       suelo: "#6a8a48", sueloLuz: "#8aaa68",
       presa: "#8a6a3a", presaLuz: "#a88a5a",
-      coloresPropios: true, fondoImg: "machupicchu", fondoUnico: true, esCiudad: true,
+      coloresPropios: true, fondoImg: "machupicchu", esCiudad: true,
       bandera: ["peru"], decoraciones: [], animalCaminante: "llama",
       murcielagos: 0, vinyetaFuerte: false, degradado: true,
       bannerColorA: "#D91023", bannerColorB: "#FFFFFF", bannerEmoji: "🦙",
@@ -1080,7 +1066,24 @@
   window.addEventListener("resize", ajustarAlturaFullscreen);
   window.addEventListener("orientationchange", () => { setTimeout(ajustarAlturaFullscreen, 150); });
 
+  // ---------------------------------------------------------------------------
+  // Detección de foco en campo de texto
+  // Si el usuario está escribiendo en un <input>, <textarea>, <select> o
+  // cualquier elemento contenteditable, NO interceptamos teclas. Así el
+  // buscador del widget del tiempo y el input del chatbot funcionan bien.
+  // ---------------------------------------------------------------------------
+  function focoEnCampoDeTexto() {
+    const el = document.activeElement;
+    if (!el) return false;
+    const tag = el.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+    if (el.isContentEditable) return true;
+    return false;
+  }
+
   document.addEventListener("keydown", (e) => {
+    if (focoEnCampoDeTexto()) return;
+
     const enMenu = estado.modo === "menu" || estado.modo === "gameover" || estado.modo === "confirmar-salida";
     if (enMenu) {
       if (e.key === "ArrowDown" || e.key === "Tab") { e.preventDefault(); moverFoco(e.shiftKey ? -1 : 1); return; }
@@ -1125,6 +1128,7 @@
     if (e.key === " " || e.key === "ArrowUp" || e.key === "w" || e.key === "W") { estado.teclas.salto = true; e.preventDefault(); }
   });
   document.addEventListener("keyup", (e) => {
+    if (focoEnCampoDeTexto()) return;
     if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") estado.teclas.izquierda = false;
     if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") estado.teclas.derecha = false;
     if (e.key === " " || e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
@@ -2829,21 +2833,10 @@
     try { ctx.drawImage(img, dx, offsetY, imgW, imgH); } catch (e) {}
   }
 
-  function dibujarImagenCover(img, desplazamientoY) {
-    if (!img) return;
-    const rImg = img.width / img.height;
-    const rCanvas = ANCHO / ALTO;
-    let w, h, dx, dy;
-    if (rImg > rCanvas) { h = ALTO; w = ALTO * rImg; dx = (ANCHO - w) / 2; dy = 0; }
-    else { w = ANCHO; h = ANCHO / rImg; dx = 0; dy = (ALTO - h) / 2; }
-    dy += desplazamientoY;
-    try { ctx.drawImage(img, dx, dy, w, h); } catch (e) {}
-  }
-
   function dibujarFondo() {
     const pal = paletaActual();
     const tipo = tipoActual();
-    if (tipo.fondoUnico && tipo.fondoImg === "paris") {
+    if (tipo.fondoImg === "paris") {
       dibujarCieloNocturno();
     } else {
       dibujarCieloDeFondo(tipo);
@@ -2853,36 +2846,14 @@
       const fondo = FONDOS[tipo.fondoImg];
       const alturaJugadorPx = Math.max(0, Y_SUELO_JUGABLE - estado.personaje.y);
       const alturaJugadorM = alturaJugadorPx / PX_POR_METRO;
-      if (tipo.fondoUnico) {
-        const progreso = Math.min(1, alturaJugadorM / METROS_FIN_PANTALLA);
-        let fadeOut = (alturaJugadorM - FADEOUT_UNICO_INICIO_M) / (FADEOUT_UNICO_FIN_M - FADEOUT_UNICO_INICIO_M);
-        fadeOut = Math.max(0, Math.min(1, fadeOut));
-        const alphaImg = 1 - fadeOut;
-        if (fondo.cargada && alphaImg > 0.01) {
-          ctx.globalAlpha = alphaImg;
-          dibujarImagenRecorrida(fondo.img, progreso);
-          ctx.globalAlpha = 1;
-        }
-      } else {
-        let mix = (alturaJugadorM - CROSSFADE_INICIO_M) / (CROSSFADE_FIN_M - CROSSFADE_INICIO_M);
-        mix = Math.max(0, Math.min(1, mix));
-        let fadeOut = (alturaJugadorM - FADEOUT_INICIO_M) / (FADEOUT_FIN_M - FADEOUT_INICIO_M);
-        fadeOut = Math.max(0, Math.min(1, fadeOut));
-        const desplazamiento = (estado.camara.y - CAMARA_INICIAL);
-        const offsetAerea = desplazamiento * PARALLAX_AIREA;
-        const offsetCalle = desplazamiento * PARALLAX_CALLE;
-        const alphaCalle = (1 - mix) * (1 - fadeOut);
-        const alphaAerea = mix * (1 - fadeOut);
-        if (fondo.cargada2 && alphaAerea > 0.01) {
-          ctx.globalAlpha = alphaAerea;
-          dibujarImagenCover(fondo.img2, offsetAerea);
-          ctx.globalAlpha = 1;
-        }
-        if (fondo.cargada && alphaCalle > 0.01) {
-          ctx.globalAlpha = alphaCalle;
-          dibujarImagenCover(fondo.img, offsetCalle);
-          ctx.globalAlpha = 1;
-        }
+      const progreso = Math.min(1, alturaJugadorM / METROS_FIN_PANTALLA);
+      let fadeOut = (alturaJugadorM - FADEOUT_UNICO_INICIO_M) / (FADEOUT_UNICO_FIN_M - FADEOUT_UNICO_INICIO_M);
+      fadeOut = Math.max(0, Math.min(1, fadeOut));
+      const alphaImg = 1 - fadeOut;
+      if (fondo.cargada && alphaImg > 0.01) {
+        ctx.globalAlpha = alphaImg;
+        dibujarImagenRecorrida(fondo.img, progreso);
+        ctx.globalAlpha = 1;
       }
     }
 
@@ -3105,8 +3076,6 @@
     const usarColorTipo = tipo.categoria === "ciudad" || tipo.categoria === "aire";
     const colorPresa = usarColorTipo ? tipo.presa : pal.presa;
     const colorPresaLuz = usarColorTipo ? tipo.presaLuz : pal.presaLuz;
-    const colorSuelo = usarColorTipo ? tipo.suelo : pal.suelo;
-    const colorSueloLuz = usarColorTipo ? tipo.sueloLuz : pal.sueloLuz;
 
     if (plat.tipo === "suelo") {
       // Suelo invisible
