@@ -21,7 +21,7 @@ Este repositorio contiene mi portfolio personal, construido desde cero como proy
 - **Chatbot propio ("Cordada")** que responde por mí y tiene un plan B si la IA falla.
 - **Página de noticias IA** que se actualiza a diario con titulares reales.
 - **Juego "Vía al Cielo"**: plataformas con 17 pantallas (cuevas, grietas y 12 ciudades del mundo).
-- **Vídeo demo** de 30 segundos con subtítulos.
+- **Vídeo demo** de 35 segundos con subtítulos.
 - **4 skins visuales conmutables** (topo, omarchy, minecraft, matrix) y 3 idiomas (ES/VA/EN).
 
 Todo el proceso está versionado con Git a lo largo de **más de 120 commits**, con mensajes honestos que cuentan las decisiones tomadas.
@@ -63,14 +63,12 @@ Todo el sistema visual está hecho a mano, sin librerías externas:
 
 ## 🎥 Vídeo demo · Así trabajo
 
-En la sección "Sobre mí" hay un **vídeo de 30 segundos** donde le pido una mejora a la IA, la integro en mi web y compruebo el resultado en el navegador.
+En la sección "Sobre mí" hay un **vídeo de 35 segundos** (sin sonido) que recorre el portfolio: el asistente Cordada respondiendo, las noticias de IA, los proyectos, la experiencia y el juego "Vía al Cielo". Cierra con mi forma de trabajar: pedir, integrar, probar e iterar.
 
-- **Peso final**: comprimido con HandBrake (H.264, CRF 28, Optimize for Web).
+- **Formato**: 1920×1080, H.264, aprox. 1 MB (comprimido con HandBrake, CRF 28, Optimize for Web).
 - **Póster**: `media/poster.webp`.
 - **Atributos del `<video>`**: `controls`, `preload="none"`, `poster`, `playsinline`, `width`, `height`.
-- **Accesibilidad**: incluye pista de subtítulos en español (`<track kind="captions" src="media/demo.vtt" srclang="es" label="Español" default>`).
-
-Lo que enseña el vídeo: Le pido a la IA un mini-juego con requisitos concretos, me devuelve el código, lo integro, pruebo las mecánicas en el navegador y compruebo que funciona.
+- **Accesibilidad**: como no tiene audio, lleva una pista de subtítulos descriptivos en español (`media/demo.vtt`, `<track kind="captions" srclang="es" default>`) y un `aria-label` y un pie de vídeo traducidos a ES/VA/EN.
 
 ---
 
@@ -84,8 +82,11 @@ Un juego de plataformas vertical con temática de escalada que vive en la secci�
 - Recoge los 3 fragmentos de código para recuperar vida.
 - Animales propios de cada zona (murciélagos, osos, gallos, canguros, llamas...) que te quitan vida si te tocan.
 - **Récord persistente** en `localStorage`.
-- **Controles**: Teclado (flechas, A/D, W/Espacio para doble salto) y móvil (joystick táctil + botón de salto).
-- **Rendimiento**: el motor del juego solo se ejecuta cuando la sección entra en pantalla (IntersectionObserver), ahorrando CPU.
+- **Controles**: teclado (flechas, A/D, W/Espacio para doble salto) y móvil (joystick táctil + botón de salto).
+- **Joystick táctil** (móvil): mantienes el dedo y deslizas a izquierda o derecha sin levantarlo. Usa Pointer Events con `setPointerCapture`, así que funciona igual en Android e iOS, y permite mover y saltar a la vez (multitáctil).
+- **Pantalla completa también en iPhone**: Safari de iPhone no admite la Fullscreen API en elementos, así que se simula con `position: fixed` (clase `pseudo-fs`). En Android y escritorio se usa la pantalla completa real.
+- **Botones ☰ (menú) y ✕ (salir)** anclados a las esquinas del canvas con `ResizeObserver`, para que no tapen el marcador ni la barra de vida.
+- **Rendimiento**: el bucle del juego solo corre cuando la sección entra en pantalla (`IntersectionObserver`) y los 12 fondos (~3 MB) no se piden al cargar la página, sino cuando el juego está a 600 px de verse o al primer toque.
 
 **Fichero único**: `juego-escalada.js`. Sin librerías, sin red, todo dentro.
 
@@ -153,25 +154,79 @@ Un ADR (Architecture Decision Record) es un documento breve que explica por qué
 **ADR 6 · Una sola imagen vertical por ciudad en el juego.**
 - *Situación.* El motor del juego necesitaba fondos de ciudad que se recorrieran al subir.
 - *Decisión.* Usar una única imagen vertical (1080x1920) recorrida de abajo a arriba, en lugar de dos imágenes con crossfade.
-- *Consecuencia.* Menos peso (la mitad de peticiones por ciudad), menos código y menos fallos visuales. El navegador solo descarga la imagen cuando el jugador entra en esa pantalla.
+- *Consecuencia.* Menos peso (la mitad de peticiones por ciudad), menos código y menos fallos visuales. Las 12 imágenes se piden en diferido: no al cargar la página, sino cuando el juego está a 600 px de entrar en pantalla (o al primer toque). Así no compiten con el CSS ni las fuentes en la carga inicial. Coste: si el visitante llega muy rápido al juego, los fondos pueden tardar un instante en aparecer (mientras tanto el juego usa solo el color de fondo).
 
 **ADR 7 · El bucle del juego solo corre cuando es visible.**
 - *Situación.* El `requestAnimationFrame` del juego consumía CPU incluso cuando el usuario estaba leyendo otras secciones.
 - *Decisión.* Usar `IntersectionObserver` para arrancar el bucle solo cuando la sección `#juego` entra en el viewport, y pausarlo al salir.
 - *Consecuencia.* Se elimina el bloqueo del hilo principal. En Lighthouse, el TBT bajó de 4830 ms a ~150 ms.
 
+**ADR 8 ·Componentes JS reutilizables.**
+Situación. El código JS estaba disperso y era difícil de mantener.
+Decisión. Se extrajeron tres módulos independientes: language.js (traducción i18n), skin-picker.js (gestión de skins visuales) y chatbot.js (asistente flotante). Todos usan el patrón IIFE (función autoejecutable) para no contaminar el scope global.
+Consecuencia. El código es modular, cada componente se puede cargar en cualquier página de forma independiente y es fácil de mantener.
+
 ---
 
-## 📊 Lighthouse final
+## 📊 Lighthouse
 
-Estado del portfolio en producción (gabi37smx.github.io/mi-web/):
+Medido sobre producción (gabi37smx.github.io/mi-web/, 17 oct 2026):
 
-| Categoría | Nota |
-| --- | --- |
+| Perfil de medida | Rendimiento | Accesibilidad | Prácticas recomendadas | SEO |
+| --- | --- | --- | --- | --- |
+| Móvil (Moto G Power emulado, 4G lenta) | 90 | 97 | 100 | 100 |
+| Surface Pro 10 emulado | **98** | 97 | 100 | 100 |
+
+El perfil móvil es el más exigente (CPU ×4 más lenta y red 4G lenta), por eso es el que se toma como referencia para el criterio "Lighthouse ≥90".
+
+Mejoras aplicadas a partir del informe:
+- Bucle del juego solo cuando es visible (TBT de 4830 ms a ~150 ms).
+- Póster del vídeo y QR en WebP (517 KB a 35 KB).
+- Fuentes de Google sin bloquear el primer pintado (`preload` + `onload`).
+- Fondos del juego en diferido (~3 MB menos en la carga inicial).
+- Valores de color literales donde Lighthouse no resuelve variables CSS (contraste).
+
+--- | --- |
 | Rendimiento | **98** |
 | Accesibilidad | **97** |
 | Prácticas recomendadas | **100** |
 | SEO | **100** |
+
+---
+
+## 📁 Estructura de ficheros
+
+```text
+mi-web/
+├── index.html · proyectos.html · contacto.html · presentacion.html · noticias.html
+├── style.css               ← Estilos (variables, temas claro/oscuro, 4 skins)
+├── script.js               ← Interacciones generales (tema, cursor, formulario, proyectos)
+├── language.js             ← Sistema de traducción ES/VA/EN
+├── skin-picker.js          ← Selector de skins (topo, omarchy, minecraft, matrix)
+├── matrix-effects.js · omarchy-effects.js · easter-eggs.js   ← Efectos de cada skin
+├── escalador.js            ← Escalador de la barra lateral
+├── chatbot.js              ← Chatbot Cordada (burbuja, panel, árbol de decisión)
+├── noticias.js             ← Widget de noticias IA
+├── juego-escalada.js / .css ← Juego "Vía al Cielo"
+├── favicon.svg
+├── notas.txt               ← Instrucciones del bot, recorrido del dato y 10 pruebas trampa
+├── prompts/                ← Órdenes clave a la IA, con resultado y commit
+├── media/                  ← Vídeo demo, póster y subtítulos
+├── image/                  ← Fotos (WebP), QR y fondos del juego
+├── fonts/                  ← Tipografías de la skin Minecraft
+├── .nojekyll · .gitignore
+└── README.md
+```
+
+---
+
+## 🧭 Proceso de trabajo
+
+- **Commits**: más de 120, con versión y decisión en el mensaje (`v:36.15 arreglo botones salir y pantalla completa dentro del juego...`).
+- **Ramas**: trabajo grande en rama (`feature/skins-infraestructura`) fusionada en `main`.
+- **Issues**: 7 issues planificados y cerrados (formulario con backend, selector de idiomas, QR, widget del tiempo, terminal, casos de proyecto, rendimiento).
+- **Releases**: `v1 · Web publicada en Pages`.
+- **Prompts archivados**: carpeta `prompts/` y `notas.txt` (instrucciones del bot y pruebas del chatbot).
 
 ---
 
@@ -203,8 +258,12 @@ Estado del portfolio en producción (gabi37smx.github.io/mi-web/):
 | v25 | Chatbot "Cordada" con backend propio y árbol de decisión |
 | v26 | Página de noticias IA con proxy a GNews |
 | v31 | Mini-juego "Vía de bloques" (Tetris) |
-| v36 | Pulido de Lighthouse, README técnico, 4 skins completos |
-| v73 | Juego "Vía al Cielo" con 17 pantallas (ciudades del mundo) |
+| v34 | 4 skins conmutables (topo, omarchy, minecraft, matrix) con selector, easter eggs y sonidos |
+| v35-v36.12 | Juego "Vía al Cielo": pantallas, enemigos, ciudades, traducción ES/VA/EN y 17 pantallas |
+| v36.13 | Joystick táctil en móvil (sustituye a los botones ← →) |
+| v36.14 | Pantalla completa simulada en iPhone |
+| v36.15 | Botones ☰ y ✕ dentro del canvas, sin tapar el marcador |
+| v36.16 | Lighthouse: fondos del juego en diferido y fuentes sin bloquear |
 
 ---
 
@@ -217,16 +276,3 @@ Estado del portfolio en producción (gabi37smx.github.io/mi-web/):
 - 📫 Contacto: gabvidbad@alu.edu.gva.es
 - 🐙 GitHub: @gabi37smx
 - 💼 LinkedIn: gabriel-vidal-badia
-
-## 📊 Lighthouse final
-
-Estado del portfolio en producción (gabi37smx.github.io/mi-web/):
-
-![Lighthouse final: 95 / 97 / 100 / 100](image/Rendimiento.webp)
-
-| Categoría | Nota |
-| --- | --- |
-| Rendimiento | **95** |
-| Accesibilidad | **97** |
-| Prácticas recomendadas | **100** |
-| SEO | **100** |
