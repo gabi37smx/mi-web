@@ -266,8 +266,13 @@
       document.msFullscreenEnabled
     )
   );
+  // Pantalla completa "simulada" (iPhone y navegadores sin Fullscreen API):
+  // el contenedor pasa a position:fixed cubriendo toda la ventana visible.
+  let pseudoFS = false;
+  const bloquearGestosFS = (e) => { if (e.cancelable) e.preventDefault(); };
+
   function estaEnFullscreen() {
-    return !!(document.fullscreenElement || document.webkitFullscreenElement ||
+    return pseudoFS || !!(document.fullscreenElement || document.webkitFullscreenElement ||
               document.mozFullScreenElement || document.msFullscreenElement);
   }
   function pedirFullscreen(el) {
@@ -663,17 +668,17 @@
   function opcionesMenuActual() {
     if (estado.modo === "menu") {
       const op = ["empezar", "instrucciones", "creditos"];
-      if (fullscreenSoportado && !estaEnFullscreen()) op.push("pantalla-completa");
+      if (!estaEnFullscreen()) op.push("pantalla-completa");
       return op;
     }
     if (estado.modo === "gameover") {
       const op = ["reintentar", "menu"];
-      if (fullscreenSoportado && !estaEnFullscreen()) op.push("pantalla-completa");
+      if (!estaEnFullscreen()) op.push("pantalla-completa");
       return op;
     }
     if (estado.modo === "confirmar-salida") {
       const op = ["si", "no"];
-      if (fullscreenSoportado && estaEnFullscreen()) op.push("salir-fullscreen");
+      if (estaEnFullscreen()) op.push("salir-fullscreen");
       return op;
     }
     return [];
@@ -715,14 +720,38 @@
     else contenedor.classList.remove("jugando");
   }
 
+  function entrarPseudoFullscreen() {
+    if (pseudoFS || !contenedor) return;
+    pseudoFS = true;
+    contenedor.classList.add("pseudo-fs");
+    document.documentElement.classList.add("juego-pseudo-fs");
+    contenedor.addEventListener("touchmove", bloquearGestosFS, { passive: false });
+    ajustarAlturaFullscreen();
+    ajustarFocoTrasFullscreen();
+    // Safari reajusta la barra de direcciones un instante después
+    setTimeout(ajustarAlturaFullscreen, 150);
+    setTimeout(ajustarAlturaFullscreen, 400);
+  }
+  function salirPseudoFullscreen() {
+    if (!pseudoFS) return;
+    pseudoFS = false;
+    contenedor.removeEventListener("touchmove", bloquearGestosFS);
+    contenedor.classList.remove("pseudo-fs");
+    document.documentElement.classList.remove("juego-pseudo-fs");
+    contenedor.style.removeProperty("--altura-juego");
+    ajustarFocoTrasFullscreen();
+  }
+
   function entrarPantallaCompleta() {
-    if (!fullscreenSoportado) return;
+    if (estaEnFullscreen()) return;
+    if (!fullscreenSoportado) { entrarPseudoFullscreen(); return; }
     pedirFullscreen(contenedor).then(() => {
       if (screen.orientation && screen.orientation.lock) screen.orientation.lock("portrait").catch(() => {});
       ajustarAlturaFullscreen();
-    }).catch(() => {});
+    }).catch(() => { entrarPseudoFullscreen(); });
   }
   function salirPantallaCompleta() {
+    if (pseudoFS) { salirPseudoFullscreen(); return Promise.resolve(); }
     if (!fullscreenSoportado) return Promise.resolve();
     return salirFullscreen().finally(() => {
       contenedor.style.removeProperty("--altura-juego");
@@ -3398,7 +3427,7 @@
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_creditos"), enfocada("creditos"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnCreditos = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
-      if (fullscreenSoportado && !estaEnFullscreen()) {
+      if (!estaEnFullscreen()) {
         dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_fullscreen"), enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       } else { estado._btnPantallaCompleta = null; }
@@ -3491,7 +3520,7 @@
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_menu"), enfocada("menu"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnMenu = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
-      if (fullscreenSoportado && !estaEnFullscreen()) {
+      if (!estaEnFullscreen()) {
         dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_fullscreen"), enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       } else { estado._btnPantallaCompleta = null; }
@@ -3519,7 +3548,7 @@
       estado._btnSiSalir = { x: btnSiX, y: by, w: btnW, h: btnH };
       estado._btnNoSalir = { x: btnNoX, y: by, w: btnW, h: btnH };
       by += btnH + 20;
-      if (fullscreenSoportado && estaEnFullscreen()) {
+      if (estaEnFullscreen()) {
         const btnFullW = 340;
         dibujarBoton(ANCHO / 2 - btnFullW / 2, by, btnFullW, btnH, tx("salir_fullscreen"), enfocada("salir-fullscreen"), pal.botonSecFondo, pal.botonSecBorde);
         estado._btnSalirFullscreen = { x: ANCHO / 2 - btnFullW / 2, y: by, w: btnFullW, h: btnH };
