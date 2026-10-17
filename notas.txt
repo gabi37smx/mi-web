@@ -1,6 +1,6 @@
 ============================================================
    NOTAS DEL PROYECTO · Portfolio Gabriel Vidal Badia
-   Última actualización: 4 de octubre de 2026
+   Última actualización: 17 de octubre de 2026
 ============================================================
 
 ## Sobre mí (borrador inicial, se conserva)
@@ -43,6 +43,7 @@ campo concreto del objeto → elemento del DOM que lo pinta.
 | Zonas de escalada  | https://portfolio-backend-m07q.onrender.com/api/climbing/zones?q=X  | data.results[].name    | #climbingLinksList  |
 | GitHub             | https://portfolio-backend-m07q.onrender.com/api/github/activity     | data.repos[].name      | #githubActivityGrid |
 | Chatbot Cordada    | https://portfolio-backend-m07q.onrender.com/api/chat                | data.respuesta         | #cordada-lista      |
+| Noticias IA        | https://portfolio-backend-m07q.onrender.com/api/news/ai             | data.events[].title    | #news-widget        |
 
 
 ============================================================
@@ -273,6 +274,46 @@ Estado de la IA externa durante el desarrollo:
   legacy cerró con error 500 (ENOSPC: no space left on device).
 - Se intentó migrar a KeylessAI (keylessai.thryx.workers.dev). El dominio
   dejó de existir (DNS_PROBE_FINISHED_NXDOMAIN).
+- Se pasó a Gemini (API gratuita, con modelos de reserva) en la semana del
+  5 al 11 de octubre (commits v:13 a v:13.2). El 12 de octubre se probó el
+  endpoint oficial (v:13.3) y se revirtió.
 - Conclusión: el chatbot no depende de ninguna IA externa para funcionar.
-  El árbol de decisión es la base sólida; la IA queda como extra para cuando
-  haya un servicio fiable disponible.
+  El árbol de decisión es la base sólida y la IA (hoy Gemini, vía el
+  backend) es la capa opcional que lo mejora.
+
+Estado actual (17 de octubre de 2026):
+- Cordada responde con Gemini a través de /api/chat. Si la IA falla (timeout,
+  error 502), el frontend cae al árbol de decisión.
+- Las 10 pruebas trampa de arriba se hicieron con el árbol (4 de octubre).
+
+
+============================================================
+## Medios: antes y después
+============================================================
+
+Datos tomados del historial de versiones del README (v27 a v30) y del estado
+actual en producción.
+
+| Medio                | Antes                              | Ahora                                                        |
+|----------------------|------------------------------------|--------------------------------------------------------------|
+| Póster del vídeo     | PNG de 517 KB                      | WebP de 35 KB (Squoosh)                                      |
+| QR del footer        | PNG                                | WebP                                                         |
+| Vídeo demo           | 80 MB en bruto (30 s)              | 35 s, 1920x1080, H.264, aprox. 1 MB, sin audio, con subtítulos (media/demo.vtt) |
+| Logo                 | texto                              | SVG inline propio con currentColor y hover (reduced-motion)  |
+| Favicon              | por defecto                        | favicon.svg propio                                           |
+| Iconos               | ninguno                            | 4 SVG de la misma familia de trazo                           |
+| Imágenes             | sin optimizar                      | 3 fotos propias en WebP con alt, width, height y lazy        |
+| Animaciones          | hover de botones de serie          | aparición al scroll, hover de botones, contador y logo; todas respetan prefers-reduced-motion |
+| Lighthouse (móvil, Moto G Power, 4G lenta, 17 oct, antes de diferir fondos del juego y fuentes) | - | 90 / 97 / 100 / 100 |
+
+
+============================================================
+## Registro de prompts
+============================================================
+
+Las órdenes clave a la IA se archivan en la carpeta prompts/ del repositorio,
+con la orden, la decisión de la IA y el commit donde quedó:
+
+- prompts/2026-10-17-juego-movil.md → joystick táctil, pantalla completa en
+  iPhone, botones dentro del canvas y mejora de Lighthouse (commits
+  v:36.13 a v:36.16).
