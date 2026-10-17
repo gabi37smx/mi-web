@@ -330,7 +330,10 @@
       f.img = img;
     });
   }
-  cargarFondos();
+  // Los 12 fondos (1080x1920) pesan ~3 MB: NO se piden al cargar la página,
+  // solo cuando el juego está cerca de verse (o al primer toque sobre él).
+  let fondosPedidos = false;
+  function pedirFondos() { if (fondosPedidos) return; fondosPedidos = true; cargarFondos(); }
 
   // ---------- Paletas por skin ----------
   const PALETAS_SKIN = {
@@ -1046,6 +1049,17 @@
     document.body.appendChild(contenedor);
     contenedor.style.display = "flex";
   }
+
+  // Disparador de la carga diferida de fondos (600 px antes de que el juego entre en pantalla)
+  if ("IntersectionObserver" in window) {
+    const ioFondos = new IntersectionObserver((entradas) => {
+      if (entradas.some((e) => e.isIntersecting)) { pedirFondos(); ioFondos.disconnect(); }
+    }, { rootMargin: "600px 0px" });
+    ioFondos.observe(contenedor);
+  } else {
+    pedirFondos();
+  }
+  contenedor.addEventListener("pointerdown", pedirFondos, { once: true, passive: true });
 
   const canvas = contenedor.querySelector(".juego-escalada__canvas");
   const ctx = canvas.getContext("2d");
