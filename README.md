@@ -217,3 +217,16 @@ Estado del portfolio en producción (gabi37smx.github.io/mi-web/):
 - 📫 Contacto: gabvidbad@alu.edu.gva.es
 - 🐙 GitHub: @gabi37smx
 - 💼 LinkedIn: gabriel-vidal-badia
+
+## 📊 Lighthouse final
+
+Estado del portfolio en producción (gabi37smx.github.io/mi-web/):
+
+![Lighthouse final: 95 / 97 / 100 / 100](image/Rendimiento.webp)
+
+| Categoría | Nota |
+| --- | --- |
+| Rendimiento | **95** |
+| Accesibilidad | **97** |
+| Prácticas recomendadas | **100** |
+| SEO | **100** |
