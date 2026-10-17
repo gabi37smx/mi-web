@@ -4,7 +4,8 @@
    · v73.0 — Fase 8.8 completada: Sídney, Marrakech y Machu Picchu
    · 17 pantallas: 2 cueva + 2 grieta + 1 aire + 12 ciudades
    · Fondos: una sola imagen vertical por ciudad (fondo-{ciudad}.webp)
-   · Fix: no interceptar teclas cuando el foco está en un input
+   · Teclas: no se interceptan si el foco está en un input/textarea/select
+   · Rendimiento: el bucle solo corre cuando #juego está en viewport
    ============================================================================ */
 
 (function juegoEscalada() {
@@ -996,9 +997,12 @@
     </div>
     <canvas class="juego-escalada__canvas notranslate" translate="no" width="${ANCHO}" height="${ALTO}"></canvas>
     <div class="juego-escalada__controles notranslate" translate="no">
+      <div class="juego-escalada__joystick" role="group" aria-label="Joystick: desliza a izquierda o derecha">
+        <span class="juego-escalada__joystick-flecha juego-escalada__joystick-flecha--izq" aria-hidden="true">◀</span>
+        <span class="juego-escalada__joystick-flecha juego-escalada__joystick-flecha--der" aria-hidden="true">▶</span>
+        <div class="juego-escalada__joystick-knob" aria-hidden="true"></div>
+      </div>
       <button class="juego-escalada__btn" data-accion="salto" aria-label="Saltar">↑</button>
-      <button class="juego-escalada__btn" data-accion="izquierda" aria-label="Izquierda">←</button>
-      <button class="juego-escalada__btn" data-accion="derecha" aria-label="Derecha">→</button>
     </div>
     <div class="juego-escalada__footer notranslate" translate="no">
       <span id="je-footer"></span>
@@ -1068,9 +1072,6 @@
 
   // ---------------------------------------------------------------------------
   // Detección de foco en campo de texto
-  // Si el usuario está escribiendo en un <input>, <textarea>, <select> o
-  // cualquier elemento contenteditable, NO interceptamos teclas. Así el
-  // buscador del widget del tiempo y el input del chatbot funcionan bien.
   // ---------------------------------------------------------------------------
   function focoEnCampoDeTexto() {
     const el = document.activeElement;
@@ -1137,18 +1138,15 @@
     }
   });
 
+  // Botón de salto (táctil)
   contenedor.querySelectorAll(".juego-escalada__btn").forEach((btn) => {
     const accion = btn.dataset.accion;
     const activar = (e) => {
       e.preventDefault();
-      if (accion === "izquierda") estado.teclas.izquierda = true;
-      if (accion === "derecha") estado.teclas.derecha = true;
       if (accion === "salto") estado.teclas.salto = true;
     };
     const desactivar = (e) => {
       e.preventDefault();
-      if (accion === "izquierda") estado.teclas.izquierda = false;
-      if (accion === "derecha") estado.teclas.derecha = false;
       if (accion === "salto") { estado.teclas.salto = false; estado.personaje.saltoSuelto = true; }
     };
     btn.addEventListener("pointerdown", activar);
@@ -1156,6 +1154,57 @@
     btn.addEventListener("pointerleave", desactivar);
     btn.addEventListener("pointercancel", desactivar);
   });
+
+  // Joystick (táctil): mantén el dedo y desliza a izquierda/derecha sin levantarlo.
+  // Usa Pointer Events + setPointerCapture, así sigue al dedo aunque se salga del pad,
+  // y funciona a la vez que el botón de salto (multitáctil) en Android e iOS.
+  (function iniciarJoystick() {
+    const pad = contenedor.querySelector(".juego-escalada__joystick");
+    const knob = pad && pad.querySelector(".juego-escalada__joystick-knob");
+    if (!pad || !knob) return;
+
+    const ZONA_MUERTA = 0.2;   // 20% central = quieto
+    let punteroId = null;
+
+    function mover(clientX, clientY) {
+      const r = pad.getBoundingClientRect();
+      const radio = Math.max(1, (r.width - knob.offsetWidth) / 2);
+      const dx = clientX - (r.left + r.width / 2);
+      const dy = Math.max(-10, Math.min(10, (clientY - (r.top + r.height / 2)) * 0.3));
+      const valor = Math.max(-1, Math.min(1, dx / radio));
+      knob.style.transform = "translate(calc(-50% + " + (valor * radio) + "px), calc(-50% + " + dy + "px))";
+      estado.teclas.izquierda = valor < -ZONA_MUERTA;
+      estado.teclas.derecha = valor > ZONA_MUERTA;
+    }
+
+    function soltar() {
+      punteroId = null;
+      estado.teclas.izquierda = false;
+      estado.teclas.derecha = false;
+      knob.style.transform = "";
+      pad.classList.remove("activo");
+    }
+
+    pad.addEventListener("pointerdown", (e) => {
+      if (punteroId !== null) return;
+      e.preventDefault();
+      punteroId = e.pointerId;
+      try { pad.setPointerCapture(e.pointerId); } catch (err) { /* sin captura: sigue funcionando dentro del pad */ }
+      pad.classList.add("activo");
+      mover(e.clientX, e.clientY);
+    });
+    pad.addEventListener("pointermove", (e) => {
+      if (e.pointerId !== punteroId) return;
+      e.preventDefault();
+      mover(e.clientX, e.clientY);
+    });
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach((ev) => {
+      pad.addEventListener(ev, (e) => { if (e.pointerId === punteroId) soltar(); });
+    });
+    pad.addEventListener("contextmenu", (e) => e.preventDefault());
+    window.addEventListener("blur", soltar);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) soltar(); });
+  })();
 
   canvas.addEventListener("click", (e) => {
     const rect = canvas.getBoundingClientRect();
@@ -3482,15 +3531,40 @@
     }
   }
 
+  // ============================================================================
+  // Bucle principal + IntersectionObserver
+  // El juego solo consume CPU cuando la sección #juego está en viewport.
+  // ============================================================================
   let ultimoTiempo = 0;
+  let rafId = null;           // id del requestAnimationFrame en curso
+  let juegoVisible = false;   // ¿está la sección #juego en pantalla?
+
   function loop(tiempo) {
-    if (tiempo - ultimoTiempo < 16) { requestAnimationFrame(loop); return; }
+    if (!juegoVisible) { rafId = null; return; }
+    if (tiempo - ultimoTiempo < 16) {
+      rafId = requestAnimationFrame(loop);
+      return;
+    }
     ultimoTiempo = tiempo;
     actualizarFisica();
     render();
-    requestAnimationFrame(loop);
+    rafId = requestAnimationFrame(loop);
   }
 
+  function arrancarLoop() {
+    if (rafId !== null) return;
+    if (!juegoVisible) return;
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function pararLoop() {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  }
+
+  // Preparar estado inicial (esto NO arranca el bucle)
   cargarRecord();
   crearPlataformas();
   crearDecoraciones();
@@ -3500,7 +3574,41 @@
   estado.modo = "menu";
   estado.opcionActiva = 0;
   actualizarClaseJugando();
-  requestAnimationFrame(loop);
+
+  // Primer frame estático para que el canvas no esté en blanco cuando
+  // el usuario llegue a la sección. Esto NO es el bucle.
+  try { render(); } catch (e) {}
+
+  function conectarVisibilidadJuego() {
+    const seccion = document.getElementById("juego") || contenedor;
+
+    if (typeof IntersectionObserver === "undefined") {
+      juegoVisible = true;
+      arrancarLoop();
+      return;
+    }
+
+    const obs = new IntersectionObserver((entradas) => {
+      for (const e of entradas) {
+        juegoVisible = e.isIntersecting;
+        if (juegoVisible) arrancarLoop();
+        else pararLoop();
+      }
+    }, {
+      root: null,
+      rootMargin: "200px 0px",
+      threshold: 0.01,
+    });
+
+    obs.observe(seccion);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) pararLoop();
+    else if (juegoVisible) arrancarLoop();
+  });
+
+  conectarVisibilidadJuego();
 
   window.__juegoEscalada = {
     estado, contenedor,
@@ -3548,5 +3656,9 @@
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     },
+    // Rendimiento
+    arrancarLoop,
+    pararLoop,
+    estaArrancado() { return rafId !== null; },
   };
 })();

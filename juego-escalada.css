@@ -1,7 +1,7 @@
 /* ============================================================================
    juego-escalada.css · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
-   · Fase 8.1.2: botones táctiles reordenados (↑ ← →)
+   · Fase 8.1.2: joystick táctil + botón de salto
    · Fase 8.3.1: barra de vida más corta + % visible a la derecha
    ============================================================================ */
 
@@ -97,7 +97,7 @@
   letter-spacing: .02em;
 }
 
-/* Botones de control (móvil) · orden ↑ ← → */
+/* Botones de control (móvil) · joystick a la izquierda + salto a la derecha */
 .juego-escalada__controles {
   display: none;
   gap: .5rem;
@@ -342,4 +342,75 @@
 @media (max-width: 420px) {
   .juego-escalada__barra-fondo { flex-basis: 78%; }
   .juego-escalada__barra-pct { font-size: .75rem; min-width: 2.8rem; }
+}
+
+/* ============================================================================
+   Joystick táctil (móvil): sustituye a los botones ← →
+   ============================================================================ */
+.juego-escalada__controles { align-items: stretch; }
+
+.juego-escalada__joystick {
+  position: relative;
+  flex: 2 1 0;
+  min-height: 84px;
+  background: var(--surface);
+  border: 2px solid var(--text);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--text);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.juego-escalada__joystick-flecha {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  color: var(--muted);
+  opacity: .6;
+  pointer-events: none;
+}
+.juego-escalada__joystick-flecha--izq { left: 1rem; }
+.juego-escalada__joystick-flecha--der { right: 1rem; }
+
+.juego-escalada__joystick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--text);
+  box-shadow: 2px 2px 0 var(--text);
+  transform: translate(-50%, -50%);
+  transition: transform .12s ease-out;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.juego-escalada__joystick.activo .juego-escalada__joystick-knob {
+  transition: none;
+}
+
+/* El botón de salto ocupa el tercio derecho */
+.juego-escalada__controles .juego-escalada__btn { flex: 1 1 0; }
+
+.juego-escalada:fullscreen .juego-escalada__joystick,
+.juego-escalada:-webkit-full-screen .juego-escalada__joystick {
+  min-height: 64px;
+}
+.juego-escalada:fullscreen .juego-escalada__joystick-knob,
+.juego-escalada:-webkit-full-screen .juego-escalada__joystick-knob {
+  width: 46px;
+  height: 46px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .juego-escalada__joystick-knob { transition: none !important; }
 }
