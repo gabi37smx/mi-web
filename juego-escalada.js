@@ -1062,6 +1062,43 @@
   btnSalirFullscreen.addEventListener("click", () => salirPantallaCompleta());
   btnMenuFlotante.addEventListener("click", () => pedirConfirmacionSalida());
 
+  // Los botones flotantes (☰ y ✕) se anclan a las esquinas del CANVAS, no del
+  // contenedor: así quedan dentro de la pantalla del juego y no tapan el HUD.
+  function posicionarBotonesFlotantes() {
+    if (!contenedor || !canvas) return;
+    const c = canvas.getBoundingClientRect();
+    const p = contenedor.getBoundingClientRect();
+    if (!c.width || !p.width) return;
+    const MARGEN = 6;  // separación respecto al borde del canvas
+    const bordeCanvas = canvas.clientLeft || 2;
+    const izqPadre = p.left + contenedor.clientLeft;
+    const arrPadre = p.top + contenedor.clientTop;
+    const derPadre = izqPadre + contenedor.clientWidth;
+    contenedor.style.setProperty("--fl-top", Math.round(c.top - arrPadre + bordeCanvas + MARGEN) + "px");
+    contenedor.style.setProperty("--fl-left", Math.round(c.left - izqPadre + bordeCanvas + MARGEN) + "px");
+    contenedor.style.setProperty("--fl-right", Math.round(derPadre - c.right + bordeCanvas + MARGEN) + "px");
+  }
+  let rafFlotantes = 0;
+  function programarBotonesFlotantes() {
+    if (rafFlotantes) return;
+    rafFlotantes = requestAnimationFrame(() => { rafFlotantes = 0; posicionarBotonesFlotantes(); });
+  }
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(programarBotonesFlotantes);
+    ro.observe(canvas);
+    ro.observe(contenedor);
+    const infoHUD = contenedor.querySelector(".juego-escalada__info");
+    if (infoHUD) ro.observe(infoHUD);
+  }
+  new MutationObserver(programarBotonesFlotantes).observe(contenedor, { attributes: true, attributeFilter: ["class"] });
+  window.addEventListener("resize", programarBotonesFlotantes);
+  window.addEventListener("orientationchange", () => { setTimeout(programarBotonesFlotantes, 200); });
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", programarBotonesFlotantes);
+  ["fullscreenchange", "webkitfullscreenchange"].forEach((ev) => document.addEventListener(ev, () => { setTimeout(programarBotonesFlotantes, 50); }));
+  window.addEventListener("load", programarBotonesFlotantes);
+  document.addEventListener("portfolio:languagechange", () => { setTimeout(programarBotonesFlotantes, 50); });
+  programarBotonesFlotantes();
+
   function aplicarIdiomaAlJuego() {
     contenedor.querySelectorAll("[data-i18n]").forEach((el) => {
       const clave = el.getAttribute("data-i18n");

@@ -453,3 +453,18 @@ html.juego-pseudo-fs .cordada-burbuja,
 html.juego-pseudo-fs .cordada-panel {
   display: none !important;
 }
+
+/* ============================================================================
+   Botones flotantes (☰ menú · ✕ salir pantalla completa) DENTRO del canvas
+   Las variables --fl-* las calcula juego-escalada.js a partir del canvas.
+   ============================================================================ */
+.juego-escalada__menu-flotante,
+.juego-escalada__salir-fullscreen {
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+  opacity: .85;
+  top: var(--fl-top, .75rem);
+}
+.juego-escalada__menu-flotante { left: var(--fl-left, .75rem); }
+.juego-escalada__salir-fullscreen { right: var(--fl-right, .75rem); }
