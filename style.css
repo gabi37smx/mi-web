@@ -2004,15 +2004,20 @@ a.news-source:hover { color: var(--accent); }
 }
 
 /* Foto propia de escalada en "Me gusta" */
-.climb-photo { margin: 2.5rem auto; max-width: 340px; }
+.climb-photo {
+  margin: 2.5rem auto; 
+  max-width: 340px;
+}
+
 .climb-photo img {
-  display: block; width: 100%; height: auto;
-  border: 2px solid var(--text); box-shadow: 4px 4px 0 var(--text);
+  display: block; 
+  width: 100%; 
+  height: auto;
+  aspect-ratio: 700 / 1051; /* Mantiene el hueco reservado */
+  border: 2px solid var(--text); 
+  box-shadow: 4px 4px 0 var(--text);
 }
-.climb-photo figcaption {
-  margin-top: .9rem; font-family: var(--mono); font-size: .85rem;
-  color: var(--muted); text-align: center;
-}
+
 /* ============================================================
    Vídeo demo "Así trabajo" (Tutorial 4 · Paso 5)
    ============================================================ */
