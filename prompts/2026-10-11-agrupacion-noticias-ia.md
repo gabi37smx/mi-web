@@ -1,0 +1,2 @@
+ahora me gustaria que me agruparas las noticias de IA por temas generales y asi el usuario escoge el tema que le guste y dentro ya seleciona la noticia que quiera leer, porque asi salen las noticias todas juntas y tiene que leer todos los enuciados, puedes hacer? Pero se aplica a todos los los skins , y otra cosa he encontrado dos bugs texto que no se traduce: zonas de escalada, mi actividad en github.
+soluciona esto tambien para los tres idiomas claro.
