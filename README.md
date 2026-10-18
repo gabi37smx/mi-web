@@ -168,6 +168,16 @@ Un ADR (Architecture Decision Record) es un documento breve que explica por qué
 
 ---
 
+ADR 9 (opcional; va justo antes de "📊 Lighthouse"):
+
+ADR 9 · Reforzar la seguridad del panel de administración del backend.
+
+Situación. Durante una revisión de código asistida por IA se vio que el registro de passkeys no exigía sesión, que el login devolvía la contraseña del admin y que los límites de uso contaban por una IP interna del proxy de Render.
+Decisión. Sesión con token firmado (8 h), registro de passkeys protegido, bloqueo de IP tras 8 intentos fallidos y una utilidad (utils/clientIp.js) que lee la IP real del visitante.
+Consecuencia. La contraseña ya no viaja por la URL y los límites de uso se aplican por visitante. Quedan limitaciones documentadas (tokens sin revocación y contadores en memoria) en el informe del backend.
+
+---
+
 ## 📊 Lighthouse
 
 Medido sobre producción (gabi37smx.github.io/mi-web/, 18 oct 2026). Capturas en la carpeta [`docs/`](docs/).
@@ -179,6 +189,8 @@ Medido sobre producción (gabi37smx.github.io/mi-web/, 18 oct 2026). Capturas en
 | Escritorio (Surface Pro 10 emulado) | 97 | 97 | 100 | 100 |
 
 *Nota: Lighthouse es una herramienta de simulación y sus resultados pueden variar ligeramente entre ejecuciones (se han registrado picos del 78 al 98 en escritorio por micro-pausas del sistema). El CLS (cambios de diseño) real es de 0.001, lo que garantiza una experiencia visual perfecta sin saltos.*
+
+En cada informe, el último bloque indica con qué dispositivo se midió (por ejemplo "Moto G Power emulado"). Elegir "iPhone SE" o "Samsung" en la barra de dispositivos de Chrome cambia el tamaño de la ventana, pero Lighthouse mide con su propio perfil. Escribe en la tabla lo que ponga el pie y deja el 78 solo si lo capturaste de verdad (con su fecha).
 
 **Mejoras aplicadas:**
 - Bucle del juego solo cuando es visible (`IntersectionObserver`).
@@ -212,15 +224,14 @@ mi-web/
 
 ---
 
-## 🧭 Proceso de trabajo
-
-- **Commits**: más de 120, con versión y decisión en el mensaje (`v:36.15 arreglo botones salir y pantalla completa dentro del juego...`).
-- **Ramas**: trabajo grande en rama (`feature/skins-infraestructura`) fusionada en `main`.
-- **Issues**: 8 issues planificados y cerrados (formulario con backend, selector de idiomas, QR, widget del tiempo, terminal, casos de proyecto, rendimiento y capturas/ADR).
-- **Pull requests**: PR fusionada desde `fix/mejoras-finales` que cierra el issue #10 (documentación, subtítulos, capturas y registro de prompts).
-- **Releases**: `v1 · Web publicada en Pages` y `v2.0 · Juego "Vía al Cielo" y skins`.
-- **Prompts archivados**: carpeta `prompts/` y `notas.txt` (instrucciones del bot y pruebas del chatbot).
-
+🧭 Proceso de trabajo
+Commits: más de 120, con versión y decisión en el mensaje (v:36.15 arreglo botones salir y pantalla completa dentro del juego...).
+Ramas: trabajo grande en rama (feature/skins-infraestructura, fix/mejoras-finales).
+Issues: 8 issues planificados y cerrados (formulario, idiomas, QR, tiempo, terminal, casos, rendimiento y documentación final).
+Pull requests: PR fusionada desde fix/mejoras-finales que cierra el issue #10 (documentación, subtítulos, capturas y registro de prompts).
+Releases: v1 · Web publicada en Pages y v2.0 · Juego "Vía al Cielo" y skins.
+Prompts archivados: carpeta prompts/ (muestra de 6 hitos) y notas.txt (instrucciones y pruebas del chatbot).
+Seguridad: el backend tiene un informe propio en su repositorio (docs/auditoria-seguridad.md).
 ---
 
 ## 🚀 Cómo se publica

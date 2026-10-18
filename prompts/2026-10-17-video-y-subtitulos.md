@@ -1,11 +1,18 @@
-# Prompt: Actualización del vídeo y subtítulos (17 oct 2026)
+Prompt: vídeo demo y subtítulos (17-18 oct 2026)
 
-**Orden a la IA:**
-"El vídeo ha cambiado a 35 segundos y el anterior tenía fallos en los tiempos del `.vtt`. Reescribe el archivo `demo.vtt` ajustando los tiempos exactos para un vídeo de 35s (Noticias IA sobre el seg 13, Experiencia sobre el 18.5). Corrige también las tildes en `language.js` y dime qué líneas exactas del `index.html` debo cambiar para que el `aria-label` y el pie del vídeo digan '35 segundos' en vez de '30'."
+Mis órdenes a la IA (mensajes reales):
 
-**Resultado obtenido:**
-- Se ajustaron los tiempos del `.vtt`.
-- Se corrigieron textos en ES/VA/EN.
-- Se cambiaron las líneas 277 y 281 del `index.html`.
+"Ahí está el video y los subtítulos; si no te gustan, me los preparas mejor escritos y sin faltas y más profesionales. Actualízame las notas txt si hace falta y me dices qué nos falta para el 100% y vamos resolviendo."
 
-**Commit asociado:** `v:36.16 arreglo lighthouse` o el que corresponda a la PR de documentación.
+"te paso el index que tengo y así tú lo dejas niquelado"
+
+Qué hizo la IA:
+
+Analizó el vídeo (35 s, sin sonido, 1920x1080, aprox. 1 MB) y comparó fotogramas con los tiempos del demo.vtt: Noticias IA empieza hacia el segundo 13 y Experiencia hacia el 18,5.
+Reescribió demo.vtt con esos tiempos, con "Cordada" y "Gemini" bien escritos y sin faltas.
+Detectó que el pie y el aria-label del vídeo seguían diciendo "30 segundos" y que ya no describían el vídeo (ahora es un recorrido por la web); actualizó los textos en ES/VA/EN (language.js) y en index.html.
+Al revisar mi index.html encontró que el alt de mi foto principal se había quedado en "..." y que faltaba loading="lazy" en una imagen.
+
+Qué hice yo: grabé y comprimí el vídeo, revisé los subtítulos, sustituí los ficheros y comprobé en la web publicada que ponía "35 segundos".
+
+Commit asociado: a6ac66a docs: actualiza subtítulos, READMEs, notas y añade registro de prompts (PR fusionada desde fix/mejoras-finales).

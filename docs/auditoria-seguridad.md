@@ -1,48 +1,64 @@
-# 🛡️ Auditoría de Seguridad y Corrección de Vulnerabilidades
+# 🛡️ Informe de seguridad del backend (v14)
 
-Este documento registra la auditoría de seguridad realizada sobre el backend del portfolio (v14) y las medidas de mitigación implementadas. Se detectó y solucionó un fallo crítico de escalada de privilegios, además de varias fugas de información y debilidades en el control de acceso.
-
----
-
-## 🚨 1. El fallo crítico: Registro de Passkeys sin autenticación
-**Vulnerabilidad:** Elevación de privilegios (CWE-287).
-**Situación:** El endpoint `POST /api/passkey/register/options` (el que genera las opciones para crear una nueva passkey) no exigía ningún tipo de sesión o token. La página `/admin` es pública.
-**Impacto:** Cualquier visitante podía abrir la página de login, inyectar código en la consola o usar herramientas como Postman para pedir las opciones de registro, registrar su propia huella/Face ID y obtener acceso total al panel de administración. Esto anulaba por completo la seguridad del login híbrido.
-**Solución:** Se añadió el middleware `adminAuth` a los endpoints `register/options` y `register/verify`. Ahora, para registrar una nueva passkey, el usuario **debe estar previamente autenticado** con contraseña o con otra passkey.
-
-## 🚨 2. El fallo grave: Contraseña expuesta en el tráfico y en la URL
-**Vulnerabilidad:** Exposición de información sensible (CWE-598).
-**Situación:** Tras validar una passkey con éxito, el servidor devolvía la contraseña del administrador en texto plano al navegador. El panel web la guardaba y la enviaba en cada petición posterior a través de la URL (`?password=...`) o en una cabecera simple.
-**Impacto:** La contraseña viajaba por la red en cada petición, quedaba registrada en los logs de Render y en el historial del navegador. Si alguien interceptaba una sola petición (o miraba los logs), obtenía la contraseña maestra.
-**Solución:** Se eliminó el envío de la contraseña. Ahora, tanto el login por contraseña (`POST /api/session`) como el login por passkey devuelven un **token de sesión firmado (HMAC)** que caduca a las 8 horas. El panel guarda este token en `sessionStorage` y lo envía en la cabecera `Authorization: Bearer <token>`. La contraseña solo viaja una vez, en el cuerpo de la petición de login (nunca por la URL).
-
-## 🚨 3. El fallo de fuerza bruta: Falta de bloqueo de intentos
-**Vulnerabilidad:** Protección insuficiente contra ataques de fuerza bruta (CWE-307).
-**Situación:** El endpoint de login (`/api/session`) permitía intentos ilimitados de contraseña.
-**Impacto:** Un atacante podía automatizar peticiones y probar miles de contraseñas por segundo hasta dar con la correcta.
-**Solución:** Se implementó un sistema de bloqueo temporal en `middleware/auth.js`. Si una misma IP acumula **8 intentos fallidos en 15 minutos**, se le bloquea el acceso devolviendo un `429 Too Many Requests` y se registra un aviso en los logs (`warn: IP bloqueada por demasiados intentos`). El bloqueo se limpia automáticamente al caducar la ventana de 15 minutos.
-
-## 🚨 4. El fallo de red: IP falsa detrás del proxy de Render
-**Vulnerabilidad:** Bypass de Rate Limiting (CWE-770).
-**Situación:** En el entorno de producción de Render, `req.ip` devolvía la IP interna del proxy de la plataforma (algo como `10.195.x.x`), no la IP del visitante. Los límites del chatbot (6 preguntas por minuto y 40 al día) y del formulario (5 envíos cada 15 min) usaban esta IP para contar.
-**Impacto:** Todos los visitantes de la web compartían el mismo contador global. Si un usuario agotaba el límite del chat (por ejemplo, haciendo pruebas), el resto de visitantes (y el propio administrador) quedaban bloqueados al instante. Además, el bloqueo por fuerza bruta era inútil porque todos compartían la misma IP.
-**Solución:** Se creó el archivo `utils/clientIp.js`. Este módulo inspecciona las cabeceras del proxy (`cf-connecting-ip`, `true-client-ip`, `x-forwarded-for`) para buscar la IP pública real. Si no las encuentra, hace un fallback a `req.ip`. Se ha validado en producción que, desde un móvil con datos, el endpoint `/api/chat/health` devuelve la IP pública real del visitante y detecta correctamente la fuente (`cf-connecting-ip`).
+Este documento registra los fallos de seguridad encontrados en el backend del portfolio y las medidas aplicadas. Se detectaron durante una **revisión de código asistida por IA**; las pruebas, el despliegue y la verificación en producción los hice yo.
 
 ---
 
-## ✅ Validaciones realizadas tras el parche
+## 🚨 1. Registro de passkeys sin autenticación (crítico)
+**Debilidad:** acceso sin autenticación a una función crítica (CWE-306 / CWE-287).
 
-1. **Login con contraseña:** Funciona, emite un token de 8h y no expone la contraseña en la URL.
-2. **Login con passkey (iPhone y Samsung):** Face ID / Huella validan correctamente y emiten el token sin revelar la contraseña.
-3. **Bloqueo por intentos (Local y Producción):** Se comprobó que 8 intentos fallidos bloquean la IP y muestran el mensaje "Demasiados intentos". La terminal de Render registró los avisos de `warn` correctamente.
-4. **Registro de passkey protegido:** Se comprobó que sin token de sesión, el servidor rechaza la petición de registro (cerrando la brecha de escalada de privilegios).
-5. **IP Real (Producción):** Probado desde un iPhone con datos móviles (5G). El endpoint `/api/chat/health` devolvió `{"detectada":"31.4.137.122","fuente":"cf-connecting-ip"}`, demostrando que el rate limit ahora es individual y no global.
+- **Situación.** `POST /api/passkey/register/options` y `/register/verify` no exigían sesión, y la página `/admin` es pública.
+- **Impacto.** Cualquier visitante podía registrar su propia passkey desde la página del panel y después entrar con ella, con acceso total.
+- **Solución.** Se añadió el middleware `adminAuth` a los dos endpoints de registro: ahora solo se puede registrar una passkey nueva con una sesión de admin ya iniciada.
+
+## 🚨 2. Contraseña devuelta al navegador y enviada por la URL (grave)
+**Debilidad:** exposición de información sensible (CWE-598).
+
+- **Situación.** Tras validar una passkey, el servidor devolvía la contraseña del admin al navegador, y el panel la enviaba en cada petición como `?password=...`.
+- **Impacto.** La contraseña quedaba en los logs de Render y en el historial del navegador.
+- **Solución.** El login con contraseña (`POST /api/session`) y el login con passkey devuelven un **token de sesión firmado con HMAC-SHA256** que caduca a las 8 horas. El panel lo guarda en `sessionStorage` y lo envía en `Authorization: Bearer`. La contraseña solo viaja una vez, en el cuerpo del login, y ya no se acepta por la URL. La comparación de contraseñas es en tiempo constante.
+
+## 🚨 3. Sin límite de intentos de contraseña
+**Debilidad:** protección insuficiente contra fuerza bruta (CWE-307).
+
+- **Situación.** Se podían probar contraseñas sin límite.
+- **Solución.** Si una IP acumula **8 intentos fallidos en 15 minutos**, se bloquea (`429`) y se registra un aviso en los logs.
+
+## 🚨 4. IP interna del proxy de Render en los límites de uso
+**Debilidad:** se usaba como identificador una IP que no era la del visitante (CWE-348).
+
+- **Situación.** `req.ip` devolvía una IP interna del proxy (10.x). Los límites del chat (6 preguntas por minuto y 40 al día) y del formulario (5 envíos cada 15 minutos) contaban por esa IP.
+- **Impacto.** Todos los visitantes compartían el mismo contador.
+- **Solución.** `utils/clientIp.js` busca la IP real en `cf-connecting-ip`, `true-client-ip` y `x-forwarded-for` (saltando IPs privadas) y usa `req.ip` solo como último recurso.
+
+## ➕ 5. Botón "Cerrar sesión" y caducidad automática en el panel
+- El panel tiene un botón **Cerrar sesión** que borra el token, vacía los datos de la pantalla y vuelve al login.
+- La sesión se cierra sola cuando caduca el token, o si el servidor responde `401`.
+- Se corrigió un fallo de orden al recargar el panel con la sesión abierta (se intentaban cargar datos antes de definir las variables).
 
 ---
 
-## 🏗️ Actualización de ADRs (Decisiones de Arquitectura)
+## ✅ Validaciones
 
-Para reflejar este trabajo de seguridad, se han añadido/actualizado las siguientes decisiones en el README del backend:
+**Pruebas automáticas (en local, 14 comprobaciones):** la contraseña por URL ya no sirve; la contraseña por cabecera y por `POST /api/session` funcionan; un token manipulado, con la firma alterada o caducado se rechaza; 8 fallos bloquean la IP y otra IP no se ve afectada; `ipCliente` prioriza Cloudflare y `x-forwarded-for` y salta IPs privadas. El botón de cerrar sesión se probó con 9 comprobaciones sobre el HTML del panel.
 
-- **ADR 7 · Sesión con token firmado en lugar de reenviar la contraseña.**
-  La contraseña ya no sale del servidor ni viaja por la URL. Se genera un token sin estado (stateless) firmado con HMAC SHA-256 usando `crypto` nativo de Node.js, evitando dependencias externas como JWT. El token caduca solo a las 8 horas y se invalida si se cambia la contraseña o el secreto.
+**Pruebas manuales en producción:**
+1. Login con contraseña: emite token y no expone la contraseña en la URL.
+2. Login con passkey (iPhone y Samsung): Face ID y huella validan y emiten el token.
+3. Bloqueo tras 8 intentos fallidos: aparece "Demasiados intentos" y queda aviso `warn` en los logs de Render.
+4. Registro de passkey sin sesión: debe devolver `401`. Comprobación: `Invoke-WebRequest -Method POST https://portfolio-backend-m07q.onrender.com/api/passkey/register/options` (en PowerShell, el error `401` es el resultado esperado).
+5. IP real: desde el móvil con datos, `/api/chat/health` devuelve la IP pública y `"fuente":"cf-connecting-ip"`.
+
+---
+
+## ⚠️ Limitaciones conocidas
+- Los tokens son **sin estado**: "Cerrar sesión" los descarta en el navegador, pero no se pueden revocar en el servidor antes de caducar. Cambiar `ADMIN_PASSWORD` o `SESSION_SECRET` invalida todos.
+- El bloqueo de intentos y los límites del chat están **en memoria**: se reinician cuando Render reinicia el servicio.
+- Si no existen las cabeceras `cf-connecting-ip` ni `true-client-ip`, se usa `x-forwarded-for`, que un cliente podría falsear; por eso hay además un tope global diario en el chat.
+- La contraseña vive en variables de entorno de Render, no en el repositorio.
+
+---
+
+## 🏗️ Decisión de arquitectura relacionada
+
+**ADR 7 · Sesión con token firmado en lugar de reenviar la contraseña.** Token sin estado firmado con HMAC-SHA256 usando `crypto` de Node.js (sin dependencias nuevas), con caducidad de 8 horas. Detalle en el README del backend.
