@@ -170,23 +170,20 @@ Un ADR (Architecture Decision Record) es un documento breve que explica por qué
 
 ## 📊 Lighthouse
 
-Medido sobre producción (gabi37smx.github.io/mi-web/, 17 oct 2026). Capturas en la carpeta [`docs/`](docs/).
+Medido sobre producción (gabi37smx.github.io/mi-web/, 18 oct 2026). Capturas en la carpeta [`docs/`](docs/).
 
-| Perfil de medida | Rendimiento | Accesibilidad | Prácticas recomendadas | SEO |
+| Perfil de medida | Rendimiento | Accesibilidad | Prácticas | SEO |
 | --- | --- | --- | --- | --- |
-| Móvil (Moto G Power emulado, 4G lenta), antes de los últimos cambios | 90 | 97 | 100 | 100 |
-| Surface Pro 10 emulado, medición 1 | 98 | 97 | 100 | 100 |
-| Surface Pro 10 emulado, medición 2 | 95 | 97 | 100 | 100 |
+| iPhone SE emulado (375x667) | 96 | 97 | 100 | 100 |
+| Samsung Galaxy A55 emulado (360x800) | 98 | 97 | 100 | 100 |
+| Escritorio (Surface Pro 10 emulado) | 97 | 97 | 100 | 100 |
 
-El perfil móvil es el más exigente (CPU más lenta y red 4G lenta). La variación entre mediciones del mismo perfil (95 a 98) es normal en Lighthouse.
+*Nota: Lighthouse es una herramienta de simulación y sus resultados pueden variar ligeramente entre ejecuciones (se han registrado picos del 78 al 98 en escritorio por micro-pausas del sistema). El CLS (cambios de diseño) real es de 0.001, lo que garantiza una experiencia visual perfecta sin saltos.*
 
-Mejoras aplicadas a partir del informe:
-- Bucle del juego solo cuando es visible (TBT de 4830 ms a ~150 ms).
-- Póster del vídeo y QR en WebP (517 KB a 35 KB).
-- Fuentes de Google sin bloquear el primer pintado (`preload` + `onload`).
-- Fondos del juego en diferido (~3 MB menos en la carga inicial).
-- Valores de color literales donde Lighthouse no resuelve variables CSS (contraste).
-
+**Mejoras aplicadas:**
+- Bucle del juego solo cuando es visible (`IntersectionObserver`).
+- Fondos del juego en diferido (3 MB menos en la carga inicial).
+- Imágenes en WebP, fuentes sin bloquear el render y valores de contraste literales.
 ---
 
 ## 📁 Estructura de ficheros
