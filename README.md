@@ -161,23 +161,24 @@ Un ADR (Architecture Decision Record) es un documento breve que explica por qué
 - *Decisión.* Usar `IntersectionObserver` para arrancar el bucle solo cuando la sección `#juego` entra en el viewport, y pausarlo al salir.
 - *Consecuencia.* Se elimina el bloqueo del hilo principal. En Lighthouse, el TBT bajó de 4830 ms a ~150 ms.
 
-**ADR 8 ·Componentes JS reutilizables.**
-Situación. El código JS estaba disperso y era difícil de mantener.
-Decisión. Se extrajeron tres módulos independientes: language.js (traducción i18n), skin-picker.js (gestión de skins visuales) y chatbot.js (asistente flotante). Todos usan el patrón IIFE (función autoejecutable) para no contaminar el scope global.
-Consecuencia. El código es modular, cada componente se puede cargar en cualquier página de forma independiente y es fácil de mantener.
+**ADR 8 · Scripts independientes y autocontenidos (IIFE).**
+- *Situación.* La traducción ES/VA/EN, el cambio de skins y el chatbot se usan en varias páginas.
+- *Decisión.* Cada uno vive en su propio fichero (`language.js`, `skin-picker.js`, `chatbot.js`) envuelto en una IIFE para no contaminar el ámbito global; `chatbot.js` y `skin-picker.js` inyectan su propia interfaz y estilos.
+- *Consecuencia.* Se añaden a una página con una sola etiqueta `<script>` y no interfieren entre sí. Coste: la cabecera y el pie se repiten en cada HTML, porque es una web estática sin plantillas.
 
 ---
 
 ## 📊 Lighthouse
 
-Medido sobre producción (gabi37smx.github.io/mi-web/, 17 oct 2026):
+Medido sobre producción (gabi37smx.github.io/mi-web/, 17 oct 2026). Capturas en la carpeta [`docs/`](docs/).
 
 | Perfil de medida | Rendimiento | Accesibilidad | Prácticas recomendadas | SEO |
 | --- | --- | --- | --- | --- |
-| Móvil (Moto G Power emulado, 4G lenta) | 90 | 97 | 100 | 100 |
-| Surface Pro 10 emulado | **98** | 97 | 100 | 100 |
+| Móvil (Moto G Power emulado, 4G lenta), antes de los últimos cambios | 90 | 97 | 100 | 100 |
+| Surface Pro 10 emulado, medición 1 | 98 | 97 | 100 | 100 |
+| Surface Pro 10 emulado, medición 2 | 95 | 97 | 100 | 100 |
 
-El perfil móvil es el más exigente (CPU ×4 más lenta y red 4G lenta), por eso es el que se toma como referencia para el criterio "Lighthouse ≥90".
+El perfil móvil es el más exigente (CPU más lenta y red 4G lenta). La variación entre mediciones del mismo perfil (95 a 98) es normal en Lighthouse.
 
 Mejoras aplicadas a partir del informe:
 - Bucle del juego solo cuando es visible (TBT de 4830 ms a ~150 ms).
@@ -185,12 +186,6 @@ Mejoras aplicadas a partir del informe:
 - Fuentes de Google sin bloquear el primer pintado (`preload` + `onload`).
 - Fondos del juego en diferido (~3 MB menos en la carga inicial).
 - Valores de color literales donde Lighthouse no resuelve variables CSS (contraste).
-
---- | --- |
-| Rendimiento | **98** |
-| Accesibilidad | **97** |
-| Prácticas recomendadas | **100** |
-| SEO | **100** |
 
 ---
 
@@ -224,8 +219,9 @@ mi-web/
 
 - **Commits**: más de 120, con versión y decisión en el mensaje (`v:36.15 arreglo botones salir y pantalla completa dentro del juego...`).
 - **Ramas**: trabajo grande en rama (`feature/skins-infraestructura`) fusionada en `main`.
-- **Issues**: 7 issues planificados y cerrados (formulario con backend, selector de idiomas, QR, widget del tiempo, terminal, casos de proyecto, rendimiento).
-- **Releases**: `v1 · Web publicada en Pages`.
+- **Issues**: 8 issues planificados y cerrados (formulario con backend, selector de idiomas, QR, widget del tiempo, terminal, casos de proyecto, rendimiento y capturas/ADR).
+- **Pull requests**: PR fusionada desde `fix/mejoras-finales` que cierra el issue #10 (documentación, subtítulos, capturas y registro de prompts).
+- **Releases**: `v1 · Web publicada en Pages` y `v2.0 · Juego "Vía al Cielo" y skins`.
 - **Prompts archivados**: carpeta `prompts/` y `notas.txt` (instrucciones del bot y pruebas del chatbot).
 
 ---
