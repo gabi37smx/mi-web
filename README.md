@@ -182,20 +182,19 @@ Consecuencia. La contraseña ya no viaja por la URL y los límites de uso se apl
 
 Medido sobre producción (gabi37smx.github.io/mi-web/, 18 oct 2026). Capturas en la carpeta [`docs/`](docs/).
 
-| Perfil de medida | Rendimiento | Accesibilidad | Prácticas | SEO |
+| Dispositivo simulado en el informe | Rendimiento | Accesibilidad | Prácticas | SEO |
 | --- | --- | --- | --- | --- |
-| iPhone SE emulado (375x667) | 96 | 97 | 100 | 100 |
-| Samsung Galaxy A55 emulado (360x800) | 98 | 97 | 100 | 100 |
+| Móvil (Moto G Power emulado, 4G lenta) | 96 | 97 | 100 | 100 |
+| Móvil (Samsung Galaxy A55 emulado) | 98 | 97 | 100 | 100 |
 | Escritorio (Surface Pro 10 emulado) | 97 | 97 | 100 | 100 |
 
-*Nota: Lighthouse es una herramienta de simulación y sus resultados pueden variar ligeramente entre ejecuciones (se han registrado picos del 78 al 98 en escritorio por micro-pausas del sistema). El CLS (cambios de diseño) real es de 0.001, lo que garantiza una experiencia visual perfecta sin saltos.*
-
-En cada informe, el último bloque indica con qué dispositivo se midió (por ejemplo "Moto G Power emulado"). Elegir "iPhone SE" o "Samsung" en la barra de dispositivos de Chrome cambia el tamaño de la ventana, pero Lighthouse mide con su propio perfil. Escribe en la tabla lo que ponga el pie y deja el 78 solo si lo capturaste de verdad (con su fecha).
+*Nota: Lighthouse es una herramienta de simulación y sus resultados pueden variar ligeramente entre ejecuciones (se han registrado picos del 78 al 98 por micro-pausas del sistema). El CLS real es de 0.001, garantizando una experiencia visual perfecta sin saltos.*
 
 **Mejoras aplicadas:**
 - Bucle del juego solo cuando es visible (`IntersectionObserver`).
 - Fondos del juego en diferido (3 MB menos en la carga inicial).
 - Imágenes en WebP, fuentes sin bloquear el render y valores de contraste literales.
+
 ---
 
 ## 📁 Estructura de ficheros
