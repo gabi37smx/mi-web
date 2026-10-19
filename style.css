@@ -5009,3 +5009,32 @@ a.news-source:hover { color: var(--accent); }
 @media (min-width: 721px) and (max-width: 1399px) {
   :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .main-nav { left: auto; width: min(340px, calc(100% - 2rem)); }
 }
+/* ============================================================================
+   Pulido móvil (≤720 px)
+   · La barra de escalada (fija a la izquierda) ya no pisa el texto: el contenido
+     se desplaza a la derecha en las páginas que la llevan.
+   · Las 3 tarjetas del hero pasan a una fila compacta (antes ocupaban 3 filas).
+   ============================================================================ */
+@media (max-width: 720px) {
+  body:has(.climb-rail) main .container,
+  body:has(.climb-rail) .site-footer .container {
+    width: auto;
+    margin-left: 2.25rem;
+    margin-right: 1rem;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .5rem;
+    max-width: none;
+    margin-top: 2rem;
+  }
+  .hero-stats .stat { padding: .7rem .5rem; min-width: 0; }
+  .hero-stats .stat strong { font-size: clamp(.85rem, 4.1vw, 1.05rem); line-height: 1.1; overflow-wrap: normal; }
+  .hero-stats .stat span { font-size: .6rem; line-height: 1.25; letter-spacing: 0; }
+}
+
+/* En pantallas muy estrechas, la tercera tarjeta ocupa toda la fila para que no se parta la palabra */
+@media (max-width: 400px) {
+  .hero-stats .stat:last-child { grid-column: 1 / -1; }
+}
