@@ -99,7 +99,6 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" /></noscript>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="juego-escalada.css">
 </head>
 <body>
 
@@ -125,7 +124,7 @@
       <li><a href="proyectos.html" class="climb-hold" data-section="proyectos" aria-label="Ir a Proyectos"><span class="climb-hold__label">Proyectos</span></a></li>
       <li><a href="#certs"    class="climb-hold" data-section="certs"    aria-label="Ir a Certificaciones"><span class="climb-hold__label">Certificaciones</span></a></li>
       <li><a href="#gusta"    class="climb-hold" data-section="gusta"    aria-label="Ir a Me gusta"><span class="climb-hold__label">Me gusta</span></a></li>
-      <li><a href="#juego"    class="climb-hold" data-section="juego"    aria-label="Ir a Juego"><span class="climb-hold__label">Juego</span></a></li>
+      <li><a href="juego.html"    class="climb-hold" data-section="juego"    aria-label="Ir a Juego"><span class="climb-hold__label">Juego</span></a></li>
       <li><a href="contacto.html" class="climb-hold" data-section="contacto" aria-label="Ir a Contacto"><span class="climb-hold__label">Contacto</span></a></li>
     </ul>
   </aside>
@@ -146,7 +145,7 @@
           <li><a href="proyectos.html" class="nav-link">Proyectos</a></li>
           <li><a href="#certs" class="nav-link">Certificaciones</a></li>
           <li><a href="#gusta" class="nav-link">Me gusta</a></li>
-          <li><a href="#juego" class="nav-link">Juego</a></li>
+          <li><a href="juego.html" class="nav-link">Juego</a></li>
           <li><a href="presentacion.html" class="nav-link">Presentación</a></li>
           <li><a href="noticias.html" class="nav-link">Noticias IA</a></li>
           <li><a href="contacto.html" class="nav-link nav-cta">Contacto</a></li>
@@ -202,7 +201,10 @@
     <section class="hero" aria-label="Presentación">
       <div class="hero-bg" aria-hidden="true"></div>
       <div class="container hero-inner">
-        <p class="hero-eyebrow"><span class="dot"></span> Disponible para oportunidades</p>
+        <div class="hero-id">
+          <img class="hero-photo" src="image/gabriel.webp" alt="Retrato de Gabriel Vidal Badia" width="84" height="84" decoding="async" />
+          <p class="hero-eyebrow"><span class="dot"></span> Disponible para oportunidades</p>
+        </div>
         <h1 class="hero-title">
           Hola, soy <span class="accent-text">Gabriel Vidal Badia</span>
         </h1>
@@ -216,7 +218,7 @@
         </p>
         <div class="hero-actions">
           <a href="contacto.html" class="btn btn-primary btn-swap">
-            <span class="btn-swap__a">Móntame una vía</span>
+            <span class="btn-swap__a">Contactar</span>
             <span class="btn-swap__b">Hablemos</span>
           </a>
           <a href="#hecho" class="btn btn-ghost">Ver experiencia</a>
@@ -241,7 +243,7 @@
 
         <div class="about-layout">
           <figure class="about-photo reveal">
-          <img src="image/gabriel.webp" srcset="image/gabriel-400.webp 400w, image/gabriel.webp 800w" sizes="280px" alt="Gabriel Vidal Badia sonriendo, con americana azul y camisa blanca, sobre fondo gris claro" width="800" height="993" loading="lazy" />
+          <img src="image/gabriel.webp" srcset="image/gabriel.webp 400w, image/gabriel.webp 800w" sizes="280px" alt="Gabriel Vidal Badia sonriendo, con americana azul y camisa blanca, sobre fondo gris claro" width="800" height="993" loading="lazy" />
           </figure>
 
           <div class="about-text reveal">
@@ -507,6 +509,7 @@
             <span class="certs-group__icon" aria-hidden="true">🌐</span>
             Cisco Networking Academy
           </h3>
+          <p class="certs-swipe-hint" aria-hidden="true">Desliza para ver más →</p>
           <div class="certs-grid certs-grid--cisco">
             <article class="cert-card cert-card--cisco cert-card--star">
               <div class="cert-card__icon" aria-hidden="true">🏆</div>
@@ -658,11 +661,23 @@
       <section id="juego" class="section" role="region" aria-labelledby="juego-title">
         <div class="container">
           <div class="section-head reveal">
-            <span class="section-tag">06 · Juego</span>
-            <h2 id="juego-title">Vía al <span class="accent-text">Cielo</span></h2>
-            <p class="certs-counter">Sube lo más alto posible, coge los 3 fragmentos de código y llega a la cima. Funciona con teclado y con táctil.</p>
+            <span class="section-tag">06 · Laboratorio</span>
+            <h2 id="juego-title">Laboratorio de <span class="accent-text">pruebas</span></h2>
+            <p class="certs-counter">Un experimento técnico aparte del portfolio, por si tienes curiosidad.</p>
           </div>
-          <div id="juego-root"></div>
+
+          <div class="projects-preview-grid projects-preview-grid--single">
+            <a href="juego.html" class="project-preview">
+              <div class="project-preview__icon">🧪</div>
+              <h3>Vía al Cielo</h3>
+              <p>Juego de plataformas de escalada vertical: 17 pantallas, Canvas 2D, joystick táctil y sin librerías.</p>
+              <span class="project-preview__tag">Laboratorio · Canvas 2D</span>
+            </a>
+          </div>
+
+          <p class="projects-preview-cta">
+            <a href="juego.html" class="btn btn-primary btn-lg">Entrar al laboratorio →</a>
+          </p>
         </div>
       </section>
     <!-- ▲ FIN SECCIÓN JUEGO -->
@@ -704,7 +719,7 @@
           <li><a href="#hecho">Lo que he hecho</a></li>
           <li><a href="#certs">Certificaciones</a></li>
           <li><a href="#gusta">Me gusta</a></li>
-          <li><a href="#juego">Juego</a></li>
+          <li><a href="juego.html">Juego</a></li>
           <li><a href="presentacion.html">Presentación</a></li>
           <li><a href="#inicio">Volver arriba</a></li>
         </ul>
@@ -729,7 +744,6 @@
         <div class="container footer-bottom">
       <div class="footer-bottom__left">
         <p><small>© <span id="year"></span> Gabriel Vidal Badia · Web personal con HTML, CSS y JS puros.</small></p>
-        <p class="footer-juego"><small>Juego "Vía al Cielo" creado por Gabriel Vidal Badia · v:73.0</small></p>
         <p class="footer-secreto" title="Los clásicos nunca mueren">
           <span class="footer-secreto__icono" aria-hidden="true">⛏</span>
           <span class="footer-secreto__texto">Pista:</span>
@@ -748,8 +762,7 @@
   <script src="easter-eggs.js" defer></script>
   <script src="escalador.js" defer></script>
   <script src="chatbot.js" defer></script>
-  <script src="juego-escalada.js" defer></script>
-
+  
   <!-- Parche temporal: arregla el input del chat generado por chatbot.js
        (id/name) para silenciar el warning de Chrome sobre form fields -->
   <script>
