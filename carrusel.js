@@ -22,14 +22,12 @@
     let indice = 0;
     let inicioX = 0;
     let arrastrando = false;
-    let umbralArrastre = 50; // Píxeles que hay que mover para cambiar de tarjeta
+    let umbralArrastre = 50; 
 
     function renderizar() {
       tarjetas.forEach((tarjeta, i) => {
-        // Distancia de esta tarjeta al centro (0 es el centro)
         let offset = i - indice;
         
-        // Si está muy lejos, la ocultamos
         if (Math.abs(offset) > 2) {
           tarjeta.style.opacity = 0;
           tarjeta.style.pointerEvents = "none";
@@ -37,20 +35,18 @@
           return;
         }
 
-        // Cálculos del efecto 3D
         const esCentro = offset === 0;
-        const translateX = offset * 55; // Separación horizontal (ajustado para que no se apelotonen)
-        const translateZ = esCentro ? 0 : -150; // Las de atrás se van al fondo
-        const rotateY = offset * -35; // Giramos las tarjetas de atrás
-        const scale = esCentro ? 1 : 0.8; // Hacemos más pequeñas las de atrás
+        const translateX = offset * 55; 
+        const translateZ = esCentro ? 0 : -150; 
+        const rotateY = offset * -35; 
+        const scale = esCentro ? 1 : 0.8; 
 
         tarjeta.style.opacity = esCentro ? 1 : 0.6;
         tarjeta.style.pointerEvents = "auto";
         
-        // Aplicamos la transformación
         tarjeta.style.transform = `translateX(${translateX}%) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
         
-        // z-index: La tarjeta central debe estar siempre arriba
+        // La tarjeta central tiene el z-index más alto para que no la tapen
         tarjeta.style.zIndex = total - Math.abs(offset);
         tarjeta.style.boxShadow = esCentro ? "0 10px 30px rgba(0,0,0,0.4)" : "0 4px 10px rgba(0,0,0,0.2)";
       });
@@ -61,11 +57,10 @@
       renderizar();
     }
 
-    // --- LÓGICA DE ARRASTRE (TÁCTIL Y RATÓN) ---
     function alEmpezar(e) {
       arrastrando = true;
       inicioX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
-      pista.style.transition = "none"; // Quitamos transición mientras arrastramos
+      pista.style.transition = "none";
     }
 
     function alMover(e) {
@@ -73,12 +68,10 @@
       const xActual = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
       const desplazamiento = inicioX - xActual;
 
-      // Si arrastra a la izquierda
       if (desplazamiento > umbralArrastre) {
         irA(indice + 1);
         arrastrando = false; 
       } 
-      // Si arrastra a la derecha
       else if (desplazamiento < -umbralArrastre) {
         irA(indice - 1);
         arrastrando = false;
@@ -87,21 +80,18 @@
 
     function alTerminar() {
       arrastrando = false;
-      pista.style.transition = ""; // Devolvemos la transición CSS
+      pista.style.transition = "";
     }
 
-    // Eventos de ratón (para probar en F12)
     pista.addEventListener("mousedown", alEmpezar);
     pista.addEventListener("mousemove", alMover);
     pista.addEventListener("mouseup", alTerminar);
     pista.addEventListener("mouseleave", alTerminar);
 
-    // Eventos táctiles (para móvil real)
     pista.addEventListener("touchstart", alEmpezar, { passive: true });
     pista.addEventListener("touchmove", alMover, { passive: true });
     pista.addEventListener("touchend", alTerminar);
 
-    // Iniciar render
     renderizar();
   }
 })();
