@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light" data-skin="topo">
+<html lang="es" translate="no" data-theme="light" data-skin="topo">
 <head>
   <meta charset="UTF-8" />
+  <meta name="google" content="notranslate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#f2ede3" id="metaTheme" />
 
@@ -243,7 +244,7 @@
 
         <div class="about-layout">
           <figure class="about-photo reveal">
-          <img src="image/gabriel.webp" srcset="image/gabriel.webp 400w, image/gabriel.webp 800w" sizes="280px" alt="Gabriel Vidal Badia sonriendo, con americana azul y camisa blanca, sobre fondo gris claro" width="800" height="993" loading="lazy" />
+          <img src="image/gabriel.webp" srcset="image/gabriel-400.webp 400w, image/gabriel.webp 800w" sizes="280px" alt="Gabriel Vidal Badia sonriendo, con americana azul y camisa blanca, sobre fondo gris claro" width="800" height="993" loading="lazy" />
           </figure>
 
           <div class="about-text reveal">
@@ -438,7 +439,7 @@
         <div class="section-head reveal">
           <span class="section-tag">03 · Proyectos</span>
           <h2>Lo que estoy <span class="accent-text">construyendo</span> este curso</h2>
-          <p class="certs-counter">3 proyectos individuales en marcha · 1 en grupo por decidir</p>
+          <p class="certs-counter">1 proyecto terminado · 1 en grupo en curso · 2 en diseño</p>
         </div>
 
         <div class="projects-preview-grid">
@@ -446,7 +447,14 @@
             <div class="project-preview__icon">🧗</div>
             <h3>Portfolio personal</h3>
             <p>Esta web. HTML, CSS y JS puros, con temática de escalada.</p>
-            <span class="project-preview__tag">En curso · V4</span>
+            <span class="project-preview__tag">Terminado · V4</span>
+          </a>
+
+          <a href="proyectos.html" class="project-preview">
+            <div class="project-preview__icon">⚡</div>
+            <h3>Facturación para electricistas</h3>
+            <p>App móvil para facturar dictando por voz. Proyecto en equipo del curso.</p>
+            <span class="project-preview__tag">En grupo, en curso · V5</span>
           </a>
 
           <a href="proyectos.html" class="project-preview">
@@ -470,7 +478,7 @@
       </div>
     </section>
 
-    <section id="certs" class="section">
+        <section id="certs" class="section">
       <div class="container">
         <div class="section-head reveal">
           <span class="section-tag">04 · Certificaciones</span>
@@ -481,75 +489,80 @@
         </div>
 
         <div class="certs-group reveal">
-          <h3 class="certs-group__title">
+          <h3 class="certs-group__title" id="certs-titulos-title">
             <span class="certs-group__icon" aria-hidden="true">🎓</span>
             Títulos oficiales
           </h3>
-          <div class="certs-grid">
-            <article class="cert-card">
-              <div class="cert-card__icon" aria-hidden="true">💻</div>
-              <span class="cert-card__badge cert-card__badge--degree">Título</span>
-              <h4 class="cert-card__title">Técnico en Sistemas Microinformáticos y Redes</h4>
-              <p class="cert-card__issuer">IES Dr. Lluis Simarro Lacabra · CFGM</p>
-              <p class="cert-card__date">Curso 2024–2026</p>
-            </article>
+          
+          <div class="carousel" data-carousel>
+            <div class="certs-grid" data-carousel-track role="region" aria-labelledby="certs-titulos-title">
+              <article class="cert-card">
+                <div class="cert-card__icon" aria-hidden="true">💻</div>
+                <span class="cert-card__badge cert-card__badge--degree">Título</span>
+                <h4 class="cert-card__title">Técnico en Sistemas Microinformáticos y Redes</h4>
+                <p class="cert-card__issuer">IES Dr. Lluis Simarro Lacabra · CFGM</p>
+                <p class="cert-card__date">Curso 2024–2026</p>
+              </article>
 
-            <article class="cert-card cert-card--featured">
-              <div class="cert-card__icon" aria-hidden="true">🏅</div>
-              <span class="cert-card__badge cert-card__badge--award">Premio</span>
-              <h4 class="cert-card__title">Diploma de Excelencia Académica</h4>
-              <p class="cert-card__issuer">Mejor expediente · CFGM SMR</p>
-              <p class="cert-card__date">19 de junio de 2026</p>
-            </article>
+              <article class="cert-card cert-card--featured">
+                <div class="cert-card__icon" aria-hidden="true">🏅</div>
+                <span class="cert-card__badge cert-card__badge--award">Premio</span>
+                <h4 class="cert-card__title">Diploma de Excelencia Académica</h4>
+                <p class="cert-card__issuer">Mejor expediente · CFGM SMR</p>
+                <p class="cert-card__date">19 de junio de 2026</p>
+              </article>
+            </div>
           </div>
         </div>
 
         <div class="certs-group reveal">
-          <h3 class="certs-group__title">
+          <h3 class="certs-group__title" id="certs-cisco-title">
             <span class="certs-group__icon" aria-hidden="true">🌐</span>
             Cisco Networking Academy
           </h3>
-          <p class="certs-swipe-hint" aria-hidden="true">Desliza para ver más →</p>
-          <div class="certs-grid certs-grid--cisco">
-            <article class="cert-card cert-card--cisco cert-card--star">
-              <div class="cert-card__icon" aria-hidden="true">🏆</div>
-              <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
-              <h4 class="cert-card__title">Junior Cybersecurity Analyst Career Path</h4>
-              <p class="cert-card__issuer">Cisco Networking Academy</p>
-              <p class="cert-card__date">27 abr 2026</p>
-            </article>
+          
+          <div class="carousel" data-carousel>
+            <div class="certs-grid certs-grid--cisco" data-carousel-track role="region" aria-labelledby="certs-cisco-title">
+              <article class="cert-card cert-card--cisco cert-card--star">
+                <div class="cert-card__icon" aria-hidden="true">🏆</div>
+                <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
+                <h4 class="cert-card__title">Junior Cybersecurity Analyst Career Path</h4>
+                <p class="cert-card__issuer">Cisco Networking Academy</p>
+                <p class="cert-card__date">27 abr 2026</p>
+              </article>
 
-            <article class="cert-card cert-card--cisco">
-              <div class="cert-card__icon" aria-hidden="true">🌐</div>
-              <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
-              <h4 class="cert-card__title">CCNA: Introducción a las redes</h4>
-              <p class="cert-card__issuer">Cisco Networking Academy</p>
-              <p class="cert-card__date">18 jun 2025</p>
-            </article>
+              <article class="cert-card cert-card--cisco">
+                <div class="cert-card__icon" aria-hidden="true">🌐</div>
+                <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
+                <h4 class="cert-card__title">CCNA: Introducción a las redes</h4>
+                <p class="cert-card__issuer">Cisco Networking Academy</p>
+                <p class="cert-card__date">18 jun 2025</p>
+              </article>
 
-            <article class="cert-card cert-card--cisco">
-              <div class="cert-card__icon" aria-hidden="true">🛡️</div>
-              <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
-              <h4 class="cert-card__title">Seguridad de Terminales</h4>
-              <p class="cert-card__issuer">Cisco Networking Academy</p>
-              <p class="cert-card__date">08 mar 2025</p>
-            </article>
+              <article class="cert-card cert-card--cisco">
+                <div class="cert-card__icon" aria-hidden="true">🛡️</div>
+                <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
+                <h4 class="cert-card__title">Seguridad de Terminales</h4>
+                <p class="cert-card__issuer">Cisco Networking Academy</p>
+                <p class="cert-card__date">08 mar 2025</p>
+              </article>
 
-            <article class="cert-card cert-card--cisco">
-              <div class="cert-card__icon" aria-hidden="true">🧠</div>
-              <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
-              <h4 class="cert-card__title">Fundamentos de Ciberseguridad</h4>
-              <p class="cert-card__issuer">Cisco Networking Academy · IES Simarro</p>
-              <p class="cert-card__date">27 abr 2026</p>
-            </article>
+              <article class="cert-card cert-card--cisco">
+                <div class="cert-card__icon" aria-hidden="true">🧠</div>
+                <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
+                <h4 class="cert-card__title">Fundamentos de Ciberseguridad</h4>
+                <p class="cert-card__issuer">Cisco Networking Academy · IES Simarro</p>
+                <p class="cert-card__date">27 abr 2026</p>
+              </article>
 
-            <article class="cert-card cert-card--cisco">
-              <div class="cert-card__icon" aria-hidden="true">🔐</div>
-              <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
-              <h4 class="cert-card__title">Introducción a la Ciberseguridad</h4>
-              <p class="cert-card__issuer">Cisco Networking Academy</p>
-              <p class="cert-card__date">27 dic 2024</p>
-            </article>
+              <article class="cert-card cert-card--cisco">
+                <div class="cert-card__icon" aria-hidden="true">🔐</div>
+                <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
+                <h4 class="cert-card__title">Introducción a la Ciberseguridad</h4>
+                <p class="cert-card__issuer">Cisco Networking Academy</p>
+                <p class="cert-card__date">27 dic 2024</p>
+              </article>
+            </div>
           </div>
 
           <p class="certs-footer">
@@ -762,6 +775,7 @@
   <script src="easter-eggs.js" defer></script>
   <script src="escalador.js" defer></script>
   <script src="chatbot.js" defer></script>
+  <script src="carrusel.js" defer></script>
   
   <!-- Parche temporal: arregla el input del chat generado por chatbot.js
        (id/name) para silenciar el warning de Chrome sobre form fields -->

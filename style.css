@@ -1561,12 +1561,19 @@ html, body, a, button, .btn, .nav-link, .social-link, .to-top, .climb-hold, .car
 .tag--individual { background: #dbeafe; color: #1a1a1a; }
 .tag--grupo { background: #f0e0a0; color: #1a1a1a; }
 .tag--curso { background: #dcf0d1; color: #1a1a1a; }
+.tag--terminado { background: #c9e4d3; color: #1a1a1a; }
+
+/* Figura dentro del caso completo (prototipo en Figma) */
+.case-figure { margin: 1.25rem 0 0; text-align: center; }
+.case-figure img { display: block; margin: 0 auto; width: 100%; max-width: 260px; height: auto; }
+.case-figure figcaption { margin-top: 0.6rem; font-size: 0.8rem; line-height: 1.4; color: var(--muted); }
 .tag--idea { background: #ede6d6; color: #1a1a1a; }
 .tag--proximamente { background: var(--surface-2); color: var(--muted); }
 
 [data-theme="dark"] .tag--individual { background: #3a5a7a; color: #f2ede3; }
 [data-theme="dark"] .tag--grupo { background: #7a6a3a; color: #f2ede3; }
 [data-theme="dark"] .tag--curso { background: #3a5a40; color: #f2ede3; }
+[data-theme="dark"] .tag--terminado { background: #2f6b4a; color: #f2ede3; }
 [data-theme="dark"] .tag--idea { background: #4a4030; color: #f2ede3; }
 
 .project-card__desc {
@@ -5093,5 +5100,74 @@ a.news-source:hover { color: var(--accent); }
   .certs-grid--cisco > .cert-card {
     flex: 0 0 78%;
     scroll-snap-align: start;
+  }
+}
+/* ============================================================================
+   CARRUSEL 3D (COVERFLOW) - Solo para Certificaciones en Móvil
+   ============================================================================ */
+@media (max-width: 720px) {
+  /* Ocultamos los controles antiguos */
+  .carousel-controls, .carousel-dots, .carousel-status { 
+    display: none !important; 
+  }
+
+  .carousel {
+    position: relative;
+    width: 100%;
+    height: 320px; /* Altura fija para que el 3D se vea bien */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    perspective: 1200px; /* Da la sensación de profundidad */
+    margin: 1rem 0 2rem 0;
+  }
+
+  .carousel .certs-grid {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-style: preserve-3d;
+    cursor: grab;
+    touch-action: pan-y; /* Permite scroll vertical, pero captura el horizontal */
+  }
+
+  .carousel .certs-grid:active {
+    cursor: grabbing;
+  }
+
+  .carousel .cert-card {
+    position: absolute;
+    width: 260px; /* Ancho de la tarjeta en móvil */
+    min-height: 200px;
+    margin: 0;
+    /* La transición hace que cuando sueltas el dedo, las tarjetas se coloquen suavemente */
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                opacity 0.4s ease, 
+                box-shadow 0.4s ease;
+    will-change: transform, opacity;
+    backface-visibility: hidden; /* No se ve el texto del revés */
+    border-radius: 8px;
+  }
+}
+
+/* En PC (más de 720px) dejamos que se vea la cuadrícula normal */
+@media (min-width: 721px) {
+  .carousel {
+    display: block;
+    height: auto;
+  }
+  .carousel .certs-grid {
+    display: grid;
+    transform: none !important; /* Resetea cualquier transformación 3D */
+  }
+  .carousel .cert-card {
+    position: relative;
+    width: auto;
+    transform: none !important;
+    opacity: 1 !important;
   }
 }
