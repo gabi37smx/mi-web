@@ -801,12 +801,17 @@
     plats.push({ x: 0, y: SUELO_Y, ancho: ANCHO, alto: SUELO_ALTO, tipo: "suelo" });
 
     const esCiudad = !!tipo.esCiudad;
-    const TOTAL = esCiudad ? 20 : 30;
+
+    // La última plataforma debe quedar por encima de los 214 m (meta = METROS_FIN_PANTALLA),
+    // así desde ella se llega a la meta con un salto normal. Antes el nº de plataformas era fijo
+    // (20 en ciudades) y la última quedaba a ~164 m: imposible pasar de pantalla.
+    const Y_ULTIMA = Y_SUELO_JUGABLE + STEVE_ALTO - (METROS_FIN_PANTALLA - 6) * PX_POR_METRO;
+    const RECORRIDO = -180 - Y_ULTIMA;
 
     let y = -180;
     let xActual = 200;
-    for (let i = 0; i < TOTAL; i++) {
-      const progreso = i / TOTAL;
+    for (let i = 0; i < 200; i++) {            // 200 = tope de seguridad, nunca se alcanza
+      const progreso = Math.min(1, Math.max(0, (-180 - y) / RECORRIDO));
       let separacionY, ancho;
       if (esCiudad) {
         separacionY = 120 + Math.round(progreso * 100);
@@ -823,6 +828,7 @@
       else nuevoX = minX + Math.random() * 100;
       xActual = nuevoX;
       plats.push({ x: nuevoX, y, ancho, alto, tipo: "presa", tieneFragmento: false, esBandera: false });
+      if (y <= Y_ULTIMA) break;                // ya hemos llegado arriba del todo
       y -= separacionY;
     }
 
