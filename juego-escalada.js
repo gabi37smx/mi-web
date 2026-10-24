@@ -1230,14 +1230,34 @@
 
   function crearMurcielagos() {
     const tipo = tipoActual();
-    const cantidad = tipo.murcielagos || 0;
+    let cantidad = tipo.murcielagos || 0;
+    
+    // Las primeras pantallas (1 a 4) son más fáciles (50% de murciélagos)
+    if (estado.pantalla <= 4) {
+      cantidad = Math.floor(cantidad * 0.50); 
+    }
+    
     const bats = [];
+    // Calculamos la altura total jugable en píxeles (220m * 20px/m = 4400px)
+    const altoTotal = METROS_FIN_PANTALLA * PX_POR_METRO; 
+    
+    // Dividimos esa altura entre la cantidad de murciélagos para saber cada cuántos píxeles va uno
+    const separacion = altoTotal / (cantidad || 1);
+    
     for (let i = 0; i < cantidad; i++) {
-      bats.push({ x: 40 + Math.random() * (ANCHO - 80), y: -200 - i * 90 - Math.random() * 60, despierto: 0, mirandoDerecha: Math.random() > 0.5, tiempo: Math.random() * 10, vel: 0.3 + Math.random() * 0.4 });
+      bats.push({ 
+        x: 40 + Math.random() * (ANCHO - 80), 
+        // Los repartimos de abajo a arriba con un poco de aleatoriedad para que no parezcan una línea recta
+        y: -200 - (i * separacion) - (Math.random() * 50), 
+        despierto: 0, 
+        mirandoDerecha: Math.random() > 0.5, 
+        tiempo: Math.random() * 10, 
+        vel: 0.3 + Math.random() * 0.4 
+      });
     }
     estado.murcielagos = bats;
   }
-
+    
   // ============================================================================
   // RANKING DE RÉCORDS (Backend Node.js + MongoDB)
   // ============================================================================
@@ -1912,7 +1932,7 @@
       let daño = 0;
       if (d.tipo === "murcielago") { radio = 20; daño = DAÑO_MURCIELAGO; }
       else if (d.tipo === "gallo") { radio = 22; daño = DAÑO_GALLO; }
-      else if (d.tipo === "pajaro") { radio = 12; daño = DAÑO_PAJARO; }
+      //else if (d.tipo === "pajaro") { radio = 12; daño = DAÑO_PAJARO; }
       else if (d.tipo === "aguila") { radio = 24; daño = DAÑO_AGUILA; }
       else if (d.tipo === "oso-bipedo") { radio = 32; daño = DAÑO_OSO; }
       else if (d.tipo === "cuervo") { radio = 20; daño = DAÑO_PAJARO; }
