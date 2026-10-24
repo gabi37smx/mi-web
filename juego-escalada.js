@@ -1808,6 +1808,16 @@
     }
     if (estado.modo === "iniciales") { clickIniciales(mx, my); return; }
     if (estado.modo === "ranking") { cerrarRanking(); return; }
+        if (estado.modo === "instrucciones") { 
+      estado.modo = "menu"; 
+      estado.opcionActiva = 1; 
+      return; 
+    }
+    if (estado.modo === "creditos") { 
+      estado.modo = "menu"; 
+      estado.opcionActiva = 3; 
+      return; 
+    }
     if (estado.modo === "menu") {
       if (dentro(estado._btnEmpezar)) { estado.opcionActiva = 0; iniciarPartidaDesdeMenu(); }
       else if (dentro(estado._btnInstrucciones)) { estado.opcionActiva = 1; estado.modo = "instrucciones"; }
@@ -4726,9 +4736,11 @@
         ctx.fillText(linea, 60, yTexto);
         yTexto += 24;
       }
-      ctx.fillStyle = pal.textoSuave;
-      ctx.font = "14px monospace"; ctx.textAlign = "center";
-      ctx.fillText(tx("inst_volver"), ANCHO / 2, ALTO - 40);
+      const btnW = 220, btnH = 50;
+      const bx = ANCHO / 2 - btnW / 2;
+      const by = ALTO - 80;
+      dibujarBoton(bx, by, btnW, btnH, "⬅ VOLVER", true, pal.botonSecFondo, pal.botonSecBorde);
+      estado._btnVolverInstrucciones = { x: bx, y: by, w: btnW, h: btnH };
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
@@ -4760,8 +4772,11 @@
       ctx.fillStyle = pal.textoSuave; ctx.font = "13px monospace";
       ctx.fillText(tx("cred_version") + ": v:73.0", ANCHO / 2, py + 340);
       ctx.fillText("© 2026", ANCHO / 2, py + 365);
-      ctx.fillStyle = pal.textoSuave; ctx.font = "14px monospace";
-      ctx.fillText(tx("cred_volver"), ANCHO / 2, ALTO - 40);
+      const btnW = 220, btnH = 50;
+      const bx = ANCHO / 2 - btnW / 2;
+      const by = ALTO - 80;
+      dibujarBoton(bx, by, btnW, btnH, "⬅ VOLVER", true, pal.botonSecFondo, pal.botonSecBorde);
+      estado._btnVolverCreditos = { x: bx, y: by, w: btnW, h: btnH };
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
