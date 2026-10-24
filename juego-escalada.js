@@ -1,7 +1,11 @@
 /* ============================================================================
    juego-escalada.js · Juego de plataformas del escalador
    ----------------------------------------------------------------------------
-   · v74.0 — Fase 8.9: Sistema de Récords Retro (Top 5 + Iniciales)
+   · v73.0 — Fase 8.8 completada: Sídney, Marrakech y Machu Picchu
+   · 17 pantallas: 2 cueva + 2 grieta + 1 aire + 12 ciudades
+   · Fondos: una sola imagen vertical por ciudad (fondo-{ciudad}.webp)
+   · Teclas: no se interceptan si el foco está en un input/textarea/select
+   · Rendimiento: el bucle solo corre cuando #juego está en viewport
    ============================================================================ */
 
 (function juegoEscalada() {
@@ -35,6 +39,11 @@
         "PANTALLAS:", "· Cada 220 m cambias de pantalla", "· Viajas por el mundo entero",
       ],
       inst_volver: "Pulsa ENTER o ESC para volver",
+      menu_ranking: "▲  RANKING", menu_top: "Mejor",
+      rk_titulo: "RANKING", rk_mundial: "Los mejores jugadores de la web", rk_local: "Solo en este navegador",
+      rk_cargando: "Cargando…", rk_sin_conexion: "Sin conexión · solo este navegador", rk_volver: "ENTER, ESC o toca para volver",
+      ini_titulo: "¡ENTRAS EN EL RANKING!", ini_puesto: "Puesto", ini_pide: "Escribe tus iniciales (de 3 a 6)",
+      ini_min: "Mínimo 3 caracteres", ini_guardando: "Guardando…", ini_ayuda: "Teclado o toca las letras · ENTER guarda · ESC salta", ini_saltar: "SALTAR",
       cred_titulo: "CRÉDITOS", cred_juego: "VÍA AL CIELO", cred_subtitulo: "Un juego de escalada vertical",
       cred_creado: "Creado por", cred_autor: "Gabriel Vidal Badia",
       cred_hecho: "Hecho con HTML, CSS y JavaScript puros",
@@ -64,7 +73,16 @@
       subtitulo_sidney: "La Ópera de Sídney y el Harbour Bridge",
       subtitulo_marrakech: "La Koutoubia y la plaza Jemaa el-Fnaa",
       subtitulo_machupicchu: "La ciudadela inca en los Andes",
-      pie: "Vía al Cielo · v:74.0 · por Gabriel Vidal Badia",
+      pantalla_rusia: "Rusia", pantalla_grecia: "Grecia", pantalla_china: "China", pantalla_india: "India",
+      pantalla_mexico: "México", pantalla_canada: "Canadá", pantalla_turquia: "Turquía",
+      subtitulo_rusia: "La Plaza Roja y la Catedral de San Basilio", subtitulo_grecia: "La Acrópolis y el Partenón",
+      subtitulo_china: "La Gran Muralla y la Ciudad Prohibida", subtitulo_india: "El Taj Mahal al amanecer",
+      subtitulo_mexico: "La Pirámide de Kukulcán en Chichén Itzá", subtitulo_canada: "La Torre CN y los Grandes Lagos",
+      subtitulo_turquia: "Santa Sofía y el Bósforo",
+      pantalla_antartida: "Antártida", pantalla_alemania: "Alemania",
+      subtitulo_antartida: "El continente helado · Base científica y glaciares",
+      subtitulo_alemania: "La Puerta de Brandeburgo y la Fernsehturm de Berlín",
+      pie: "Vía al Cielo · v:73.0 · por Gabriel Vidal Badia",
     },
     val: {
       hud_altura: "Alçada", hud_fragmentos: "Fragments", hud_vida: "Vida", hud_record: "Rècord", hud_m: "m", hud_p: "P",
@@ -87,6 +105,11 @@
         "PANTALLES:", "· Cada 220 m canvies de pantalla", "· Viatges pel món sencer",
       ],
       inst_volver: "Prem ENTER o ESC per a tornar",
+      menu_ranking: "▲  RÀNQUING", menu_top: "Millor",
+      rk_titulo: "RÀNQUING", rk_mundial: "Els millors jugadors de la web", rk_local: "Només en este navegador",
+      rk_cargando: "Carregant…", rk_sin_conexion: "Sense connexió · només este navegador", rk_volver: "ENTER, ESC o toca per a tornar",
+      ini_titulo: "ENTRES AL RÀNQUING!", ini_puesto: "Lloc", ini_pide: "Escriu les teues inicials (de 3 a 6)",
+      ini_min: "Mínim 3 caràcters", ini_guardando: "Guardant…", ini_ayuda: "Teclat o toca les lletres · ENTER guarda · ESC ix", ini_saltar: "EIXIR",
       cred_titulo: "CRÈDITS", cred_juego: "VIA AL CEL", cred_subtitulo: "Un joc d'escalada vertical",
       cred_creado: "Creat per", cred_autor: "Gabriel Vidal Badia",
       cred_hecho: "Fet amb HTML, CSS i JavaScript purs",
@@ -116,7 +139,16 @@
       subtitulo_sidney: "L'Òpera de Sydney i el Harbour Bridge",
       subtitulo_marrakech: "La Koutoubia i la plaça Jemaa el-Fnaa",
       subtitulo_machupicchu: "La ciutadella inca als Andes",
-      pie: "Via al Cel · v:74.0 · per Gabriel Vidal Badia",
+      pantalla_rusia: "Rússia", pantalla_grecia: "Grècia", pantalla_china: "Xina", pantalla_india: "Índia",
+      pantalla_mexico: "Mèxic", pantalla_canada: "Canadà", pantalla_turquia: "Turquia",
+      subtitulo_rusia: "La Plaça Roja i la Catedral de Sant Basili", subtitulo_grecia: "L'Acròpoli i el Partenó",
+      subtitulo_china: "La Gran Muralla i la Ciutat Prohibida", subtitulo_india: "El Taj Mahal a l'alba",
+      subtitulo_mexico: "La Piràmide de Kukulcán a Chichén Itzá", subtitulo_canada: "La Torre CN i els Grans Llacs",
+      subtitulo_turquia: "Santa Sofia i el Bòsfor",
+      pantalla_antartida: "Antàrtida", pantalla_alemania: "Alemanya",
+      subtitulo_antartida: "El continent gelat · Base científica i glaceres",
+      subtitulo_alemania: "La Porta de Brandenburg i la Fernsehturm de Berlín",
+      pie: "Via al Cel · v:73.0 · per Gabriel Vidal Badia",
     },
     en: {
       hud_altura: "Height", hud_fragmentos: "Fragments", hud_vida: "Health", hud_record: "Record", hud_m: "m", hud_p: "P",
@@ -139,6 +171,11 @@
         "SCREENS:", "· Every 220 m you change screen", "· You travel the world",
       ],
       inst_volver: "Press ENTER or ESC to go back",
+      menu_ranking: "▲  LEADERBOARD", menu_top: "Best",
+      rk_titulo: "LEADERBOARD", rk_mundial: "The best players on the site", rk_local: "This browser only",
+      rk_cargando: "Loading…", rk_sin_conexion: "Offline · this browser only", rk_volver: "ENTER, ESC or tap to go back",
+      ini_titulo: "YOU MADE THE LEADERBOARD!", ini_puesto: "Rank", ini_pide: "Enter your initials (3 to 6)",
+      ini_min: "At least 3 characters", ini_guardando: "Saving…", ini_ayuda: "Keyboard or tap letters · ENTER saves · ESC skips", ini_saltar: "SKIP",
       cred_titulo: "CREDITS", cred_juego: "PATH TO THE SKY", cred_subtitulo: "A vertical climbing game",
       cred_creado: "Created by", cred_autor: "Gabriel Vidal Badia",
       cred_hecho: "Made with plain HTML, CSS and JavaScript",
@@ -168,7 +205,16 @@
       subtitulo_sidney: "The Sydney Opera House and the Harbour Bridge",
       subtitulo_marrakech: "The Koutoubia and Jemaa el-Fnaa square",
       subtitulo_machupicchu: "The Inca citadel in the Andes",
-      pie: "Path to the Sky · v:74.0 · by Gabriel Vidal Badia",
+      pantalla_rusia: "Russia", pantalla_grecia: "Greece", pantalla_china: "China", pantalla_india: "India",
+      pantalla_mexico: "Mexico", pantalla_canada: "Canada", pantalla_turquia: "Turkey",
+      subtitulo_rusia: "Red Square and Saint Basil's Cathedral", subtitulo_grecia: "The Acropolis and the Parthenon",
+      subtitulo_china: "The Great Wall and the Forbidden City", subtitulo_india: "The Taj Mahal at sunrise",
+      subtitulo_mexico: "The Pyramid of Kukulcan at Chichen Itza", subtitulo_canada: "The CN Tower and the Great Lakes",
+      subtitulo_turquia: "Hagia Sophia and the Bosphorus",
+      pantalla_antartida: "Antarctica", pantalla_alemania: "Germany",
+      subtitulo_antartida: "The frozen continent · Research station and glaciers",
+      subtitulo_alemania: "The Brandenburg Gate and Berlin's TV Tower",
+      pie: "Path to the Sky · v:73.0 · by Gabriel Vidal Badia",
     },
   };
 
@@ -243,10 +289,6 @@
   const LIMITE_PROGRESO_IMAGEN = 0.80;
   const ESCALA_IMAGEN_UNICA = 1.40;
 
-  // Configuración Récords Retro
-  const MAX_SCORES = 5;
-  const STORAGE_KEY_SCORES = "je-highscores";
-
   const mediaReduced = window.matchMedia
     ? window.matchMedia("(prefers-reduced-motion: reduce)")
     : { matches: false };
@@ -266,6 +308,8 @@
       document.msFullscreenEnabled
     )
   );
+  // Pantalla completa "simulada" (iPhone y navegadores sin Fullscreen API):
+  // el contenedor pasa a position:fixed cubriendo toda la ventana visible.
   let pseudoFS = false;
   const bloquearGestosFS = (e) => { if (e.cancelable) e.preventDefault(); };
 
@@ -298,6 +342,12 @@
   }
 
   // ---------- Carga de fondos ----------
+  // Cada ciudad usa UNA sola imagen vertical (1080x1920) recorrida de
+  // abajo a arriba. No hay versión "aérea" (2.webp).
+  // Nombres reales en /image:
+  //   · fondo-australia.webp  → Sídney
+  //   · fondo-marruecos.webp  → Marrakech
+  //   · fondo-peru.webp       → Machu Picchu
   const FONDOS = {
     valencia:    { img: null, cargada: false, ruta: "image/fondo-valencia.webp" },
     madrid:      { img: null, cargada: false, ruta: "image/fondo-madrid.webp" },
@@ -311,6 +361,15 @@
     sidney:      { img: null, cargada: false, ruta: "image/fondo-australia.webp" },
     marrakech:   { img: null, cargada: false, ruta: "image/fondo-marruecos.webp" },
     machupicchu: { img: null, cargada: false, ruta: "image/fondo-peru.webp" },
+    rusia:       { img: null, cargada: false, ruta: "image/fondo-rusia.webp" },
+    grecia:      { img: null, cargada: false, ruta: "image/fondo-grecia.webp" },
+    china:       { img: null, cargada: false, ruta: "image/fondo-china.webp" },
+    india:       { img: null, cargada: false, ruta: "image/fondo-india.webp" },
+    mexico:      { img: null, cargada: false, ruta: "image/fondo-mexico.webp" },
+    canada:      { img: null, cargada: false, ruta: "image/fondo-canada.webp" },
+    turquia:     { img: null, cargada: false, ruta: "image/fondo-turquia.webp" },
+    antartida:   { img: null, cargada: false, ruta: "image/fondo-antartida.webp" },
+    alemania:    { img: null, cargada: false, ruta: "image/fondo-alemania.webp" },
   };
   function cargarFondos() {
     Object.keys(FONDOS).forEach((k) => {
@@ -322,6 +381,8 @@
       f.img = img;
     });
   }
+  // Los 12 fondos (1080x1920) pesan ~3 MB: NO se piden al cargar la página,
+  // solo cuando el juego está cerca de verse (o al primer toque sobre él).
   let fondosPedidos = false;
   function pedirFondos() { if (fondosPedidos) return; fondosPedidos = true; cargarFondos(); }
 
@@ -400,40 +461,200 @@
     infinito: { id: 4, categoria: "cueva", fondo: "#1a1410", fondo2: "#2e2620", fondoAbajo: "#1a1410", suelo: "#4a3a30", sueloLuz: "#6a5545", presa: "#5a4a3e", presaLuz: "#8a7565", decoraciones: ["estalactita", "estalagmita", "musgo", "roca", "gota", "cofre", "esqueleto", "craneo", "moneda", "petroleo"], murcielagos: 25, vinyetaFuerte: true, degradado: false, murcielagosVoladores: true },
 
     valencia: {
-      id: 10, categoria: "ciudad", fondo: "#5db8e0", fondo2: "#a8d8e8", fondoAbajo: "#f0e8d0", suelo: "#ff8c00", sueloLuz: "#ffb347", presa: "#ff8c00", presaLuz: "#ffb347", coloresPropios: true, fondoImg: "valencia", esCiudad: true, bandera: ["senyera"], decoraciones: [], animalVolador: "murcielago", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#c92a4a", bannerColorB: "#e8b84a", bannerEmoji: "🦇",
+      id: 10, categoria: "ciudad",
+      fondo: "#5db8e0", fondo2: "#a8d8e8", fondoAbajo: "#f0e8d0",
+      suelo: "#ff8c00", sueloLuz: "#ffb347",
+      presa: "#ff8c00", presaLuz: "#ffb347",
+      coloresPropios: true, fondoImg: "valencia", esCiudad: true,
+      bandera: ["senyera"], decoraciones: [], animalVolador: "murcielago",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#c92a4a", bannerColorB: "#e8b84a", bannerEmoji: "🦇",
     },
     madrid: {
-      id: 11, categoria: "ciudad", fondo: "#9ec5e8", fondo2: "#d0d8dc", fondoAbajo: "#e8d8b8", suelo: "#473e3f", sueloLuz: "#473e3f", presa: "#473e3f", presaLuz: "#473e3f", coloresPropios: true, fondoImg: "madrid", esCiudad: true, bandera: ["espana"], decoraciones: [], animalCaminante: "oso-bipedo", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#c60b1e", bannerColorB: "#ffc400", bannerEmoji: "🐻",
+      id: 11, categoria: "ciudad",
+      fondo: "#9ec5e8", fondo2: "#d0d8dc", fondoAbajo: "#e8d8b8",
+      suelo: "#473e3f", sueloLuz: "#473e3f",
+      presa: "#473e3f", presaLuz: "#473e3f",
+      coloresPropios: true, fondoImg: "madrid", esCiudad: true,
+      bandera: ["espana"], decoraciones: [], animalCaminante: "oso-bipedo",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#c60b1e", bannerColorB: "#ffc400", bannerEmoji: "🐻",
     },
     paris: {
-      id: 12, categoria: "ciudad", fondo: "#0a0a2a", fondo2: "#1a2a5a", fondoAbajo: "#4a3a5a", suelo: "#796f6f1d", sueloLuz: "#796f6f1d", presa: "#d4a84a", presaLuz: "#f0c870", coloresPropios: true, fondoImg: "paris", esCiudad: true, bandera: ["francia"], decoraciones: [], animalVolador: "gallo", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#0055a4", bannerColorB: "#ef4135", bannerEmoji: "🐓",
+      id: 12, categoria: "ciudad",
+      fondo: "#0a0a2a", fondo2: "#1a2a5a", fondoAbajo: "#4a3a5a",
+      suelo: "#796f6f1d", sueloLuz: "#796f6f1d",
+      presa: "#d4a84a", presaLuz: "#f0c870",
+      coloresPropios: true, fondoImg: "paris", esCiudad: true,
+      bandera: ["francia"], decoraciones: [], animalVolador: "gallo",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#0055a4", bannerColorB: "#ef4135", bannerEmoji: "🐓",
     },
     londres: {
-      id: 13, categoria: "ciudad", fondo: "#5a6070", fondo2: "#8890a0", fondoAbajo: "#c8ccd4", suelo: "#c41e3a", sueloLuz: "#e04a5a", presa: "#c41e3a", presaLuz: "#e04a5a", coloresPropios: true, fondoImg: "londres", esCiudad: true, bandera: ["reino-unido"], decoraciones: [], animalVolador: "cuervo", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#012169", bannerColorB: "#C8102E", bannerEmoji: "🐦‍⬛",
+      id: 13, categoria: "ciudad",
+      fondo: "#5a6070", fondo2: "#8890a0", fondoAbajo: "#c8ccd4",
+      suelo: "#c41e3a", sueloLuz: "#e04a5a",
+      presa: "#c41e3a", presaLuz: "#e04a5a",
+      coloresPropios: true, fondoImg: "londres", esCiudad: true,
+      bandera: ["reino-unido"], decoraciones: [], animalVolador: "cuervo",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#012169", bannerColorB: "#C8102E", bannerEmoji: "🐦‍⬛",
     },
     nuevayork: {
-      id: 14, categoria: "ciudad", fondo: "#4a5a78", fondo2: "#8a7a8a", fondoAbajo: "#e8b880", suelo: "#f4c430", sueloLuz: "#f7d76a", presa: "#f4c430", presaLuz: "#f7d76a", coloresPropios: true, fondoImg: "nuevayork", esCiudad: true, bandera: ["eeuu"], decoraciones: [], animalCaminante: "rata", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#3C3B6E", bannerColorB: "#B22234", bannerEmoji: "🗽",
+      id: 14, categoria: "ciudad",
+      fondo: "#4a5a78", fondo2: "#8a7a8a", fondoAbajo: "#e8b880",
+      suelo: "#f4c430", sueloLuz: "#f7d76a",
+      presa: "#f4c430", presaLuz: "#f7d76a",
+      coloresPropios: true, fondoImg: "nuevayork", esCiudad: true,
+      bandera: ["eeuu"], decoraciones: [], animalCaminante: "rata",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#3C3B6E", bannerColorB: "#B22234", bannerEmoji: "🗽",
     },
     roma: {
-      id: 15, categoria: "ciudad", fondo: "#4a7a3a", fondo2: "#6a9a4a", fondoAbajo: "#a8c878", suelo: "#3a5a28", sueloLuz: "#5a7a40", presa: "#2a5a1a", presaLuz: "#4a8a2a", coloresPropios: true, fondoImg: "roma", esCiudad: true, bandera: ["italia"], decoraciones: [], animalCaminante: "gato-romano", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#009246", bannerColorB: "#CE2B37", bannerEmoji: "🏛",
+      id: 15, categoria: "ciudad",
+      fondo: "#4a7a3a", fondo2: "#6a9a4a", fondoAbajo: "#a8c878",
+      suelo: "#3a5a28", sueloLuz: "#5a7a40",
+      presa: "#2a5a1a", presaLuz: "#4a8a2a",
+      coloresPropios: true, fondoImg: "roma", esCiudad: true,
+      bandera: ["italia"], decoraciones: [], animalCaminante: "gato-romano",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#009246", bannerColorB: "#CE2B37", bannerEmoji: "🏛",
     },
     elcairo: {
-      id: 16, categoria: "ciudad", fondo: "#e8a850", fondo2: "#f0c878", fondoAbajo: "#f8e0a8", suelo: "#c89040", sueloLuz: "#e8b060", presa: "#c89040", presaLuz: "#e8b060", coloresPropios: true, fondoImg: "elcairo", esCiudad: true, bandera: ["egipto"], decoraciones: [], animalCaminante: "camello", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#C8102E", bannerColorB: "#000000", bannerEmoji: "🐪",
+      id: 16, categoria: "ciudad",
+      fondo: "#e8a850", fondo2: "#f0c878", fondoAbajo: "#f8e0a8",
+      suelo: "#c89040", sueloLuz: "#e8b060",
+      presa: "#c89040", presaLuz: "#e8b060",
+      coloresPropios: true, fondoImg: "elcairo", esCiudad: true,
+      bandera: ["egipto"], decoraciones: [], animalCaminante: "camello",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#C8102E", bannerColorB: "#000000", bannerEmoji: "🐪",
     },
     tokio: {
-      id: 17, categoria: "ciudad", fondo: "#f0b8c8", fondo2: "#d8a8c8", fondoAbajo: "#a888c8", suelo: "#6a4a7a", sueloLuz: "#8a6a9a", presa: "#d04868", presaLuz: "#f06888", coloresPropios: true, fondoImg: "tokio", esCiudad: true, bandera: ["japon"], decoraciones: [], animalVolador: "grulla", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#BC002D", bannerColorB: "#FFFFFF", bannerEmoji: "🗾",
+      id: 17, categoria: "ciudad",
+      fondo: "#f0b8c8", fondo2: "#d8a8c8", fondoAbajo: "#a888c8",
+      suelo: "#6a4a7a", sueloLuz: "#8a6a9a",
+      presa: "#d04868", presaLuz: "#f06888",
+      coloresPropios: true, fondoImg: "tokio", esCiudad: true,
+      bandera: ["japon"], decoraciones: [], animalVolador: "grulla",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#BC002D", bannerColorB: "#FFFFFF", bannerEmoji: "🗾",
     },
     rio: {
-      id: 18, categoria: "ciudad", fondo: "#4aa8d8", fondo2: "#7ac8e8", fondoAbajo: "#f0d8a8", suelo: "#2a5a2a", sueloLuz: "#4a8a4a", presa: "#2a8a4a", presaLuz: "#50c070", coloresPropios: true, fondoImg: "rio", esCiudad: true, bandera: ["brasil"], decoraciones: [], animalVolador: "tucan", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#009C3B", bannerColorB: "#FFDF00", bannerEmoji: "🏖",
+      id: 18, categoria: "ciudad",
+      fondo: "#4aa8d8", fondo2: "#7ac8e8", fondoAbajo: "#f0d8a8",
+      suelo: "#2a5a2a", sueloLuz: "#4a8a4a",
+      presa: "#2a8a4a", presaLuz: "#50c070",
+      coloresPropios: true, fondoImg: "rio", esCiudad: true,
+      bandera: ["brasil"], decoraciones: [], animalVolador: "tucan",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#009C3B", bannerColorB: "#FFDF00", bannerEmoji: "🏖",
     },
     sidney: {
-      id: 19, categoria: "ciudad", fondo: "#f0b878", fondo2: "#e89898", fondoAbajo: "#8888c8", suelo: "#f0c840", sueloLuz: "#f7e070", presa: "#f0c840", presaLuz: "#f7e070", coloresPropios: true, fondoImg: "sidney", esCiudad: true, bandera: ["australia"], decoraciones: [], animalCaminante: "canguro", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#00008B", bannerColorB: "#FFD700", bannerEmoji: "🦘",
+      id: 19, categoria: "ciudad",
+      fondo: "#f0b878", fondo2: "#e89898", fondoAbajo: "#8888c8",
+      suelo: "#f0c840", sueloLuz: "#f7e070",
+      presa: "#f0c840", presaLuz: "#f7e070",
+      coloresPropios: true, fondoImg: "sidney", esCiudad: true,
+      bandera: ["australia"], decoraciones: [], animalCaminante: "canguro",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#00008B", bannerColorB: "#FFD700", bannerEmoji: "🦘",
     },
     marrakech: {
-      id: 20, categoria: "ciudad", fondo: "#e8a858", fondo2: "#d88858", fondoAbajo: "#a84838", suelo: "#c84838", sueloLuz: "#e87058", presa: "#c84838", presaLuz: "#e87058", coloresPropios: true, fondoImg: "marrakech", esCiudad: true, bandera: ["marruecos"], decoraciones: [], animalCaminante: "mono", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#C1272D", bannerColorB: "#006233", bannerEmoji: "🐒",
+      id: 20, categoria: "ciudad",
+      fondo: "#e8a858", fondo2: "#d88858", fondoAbajo: "#a84838",
+      suelo: "#c84838", sueloLuz: "#e87058",
+      presa: "#c84838", presaLuz: "#e87058",
+      coloresPropios: true, fondoImg: "marrakech", esCiudad: true,
+      bandera: ["marruecos"], decoraciones: [], animalCaminante: "mono",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#C1272D", bannerColorB: "#006233", bannerEmoji: "🐒",
     },
     machupicchu: {
-      id: 21, categoria: "ciudad", fondo: "#88b8d8", fondo2: "#c8d8b8", fondoAbajo: "#7a9a58", suelo: "#6a8a48", sueloLuz: "#8aaa68", presa: "#8a6a3a", presaLuz: "#a88a5a", coloresPropios: true, fondoImg: "machupicchu", esCiudad: true, bandera: ["peru"], decoraciones: [], animalCaminante: "llama", murcielagos: 0, vinyetaFuerte: false, degradado: true, bannerColorA: "#D91023", bannerColorB: "#FFFFFF", bannerEmoji: "🦙",
+      id: 21, categoria: "ciudad",
+      fondo: "#88b8d8", fondo2: "#c8d8b8", fondoAbajo: "#7a9a58",
+      suelo: "#6a8a48", sueloLuz: "#8aaa68",
+      presa: "#8a6a3a", presaLuz: "#a88a5a",
+      coloresPropios: true, fondoImg: "machupicchu", esCiudad: true,
+      bandera: ["peru"], decoraciones: [], animalCaminante: "llama",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#D91023", bannerColorB: "#FFFFFF", bannerEmoji: "🦙",
+    },
+        rusia: {
+      id: 22, categoria: "ciudad", fondo: "#c8d8e8", fondo2: "#e8d8c8", fondoAbajo: "#ffffff",
+      suelo: "#8a8a9a", sueloLuz: "#b0b0c0", presa: "#c41e3a", presaLuz: "#e04a5a",
+      coloresPropios: true, fondoImg: "rusia", esCiudad: true,
+      bandera: ["rusia"], decoraciones: [], animalCaminante: "zorro",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#0039A6", bannerColorB: "#D52B1E", bannerEmoji: "🇷🇺",
+    },
+    grecia: {
+      id: 23, categoria: "ciudad", fondo: "#5db8e0", fondo2: "#a8d8e8", fondoAbajo: "#f0e8d0",
+      suelo: "#f0f0f0", sueloLuz: "#ffffff", presa: "#e8d8c8", presaLuz: "#ffffff",
+      coloresPropios: true, fondoImg: "grecia", esCiudad: true,
+      bandera: ["grecia"], decoraciones: [], animalVolador: "buho",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#0D5EAF", bannerColorB: "#FFFFFF", bannerEmoji: "🏛️",
+    },
+    china: {
+      id: 24, categoria: "ciudad", fondo: "#e8b880", fondo2: "#d88858", fondoAbajo: "#a84838",
+      suelo: "#6a4a2a", sueloLuz: "#8a6a4a", presa: "#c41e3a", presaLuz: "#e04a5a",
+      coloresPropios: true, fondoImg: "china", esCiudad: true,
+      bandera: ["china"], decoraciones: [], animalCaminante: "panda",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#DE2910", bannerColorB: "#FFDE00", bannerEmoji: "🐼",
+    },
+    india: {
+      id: 25, categoria: "ciudad", fondo: "#f0d8a8", fondo2: "#e8c898", fondoAbajo: "#d8b888",
+      suelo: "#a08060", sueloLuz: "#c8a880", presa: "#ffffff", presaLuz: "#f0f0f0",
+      coloresPropios: true, fondoImg: "india", esCiudad: true,
+      bandera: ["india"], decoraciones: [], animalCaminante: "tigre",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#FF9933", bannerColorB: "#138808", bannerEmoji: "🕌",
+    },
+    mexico: {
+      id: 26, categoria: "ciudad", fondo: "#c89060", fondo2: "#e8b880", fondoAbajo: "#f0d8a8",
+      suelo: "#5a4a2a", sueloLuz: "#8a7a4a", presa: "#a08060", presaLuz: "#c8a880",
+      coloresPropios: true, fondoImg: "mexico", esCiudad: true,
+      bandera: ["mexico"], decoraciones: [], animalCaminante: "jaguar",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#006847", bannerColorB: "#CE1126", bannerEmoji: "🛕",
+    },
+    canada: {
+      id: 27, categoria: "ciudad", fondo: "#4a7a3a", fondo2: "#6a9a4a", fondoAbajo: "#a8c878",
+      suelo: "#6a8a48", sueloLuz: "#8aaa68", presa: "#a0b0c0", presaLuz: "#c0d0e0",
+      coloresPropios: true, fondoImg: "canada", esCiudad: true,
+      bandera: ["canada"], decoraciones: [], animalCaminante: "alce",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#FF0000", bannerColorB: "#FFFFFF", bannerEmoji: "🇨🇦",
+    },
+    turquia: {
+      id: 28, categoria: "ciudad", fondo: "#6a7ac8", fondo2: "#a8b8e8", fondoAbajo: "#e8d8c8",
+      suelo: "#8a6a4a", sueloLuz: "#b09070", presa: "#c41e3a", presaLuz: "#e04a5a",
+      coloresPropios: true, fondoImg: "turquia", esCiudad: true,
+      bandera: ["turquia"], decoraciones: [], animalVolador: "gaviota",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#E30A17", bannerColorB: "#FFFFFF", bannerEmoji: "🕌",
+    },
+        antartida: {
+      id: 29, categoria: "ciudad",
+      fondo: "#a0d8e8", fondo2: "#d0e8f0", fondoAbajo: "#ffffff",
+      suelo: "#a0d8f0", sueloLuz: "#e0f0ff",
+      presa: "#a0d8f0", presaLuz: "#e8f4ff",
+      coloresPropios: true, fondoImg: "antartida", esCiudad: true,
+      bandera: null, decoraciones: [], animalCaminante: "pinguino",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#0a4a8a", bannerColorB: "#a0d8e8", bannerEmoji: "🐧",
+    },
+    alemania: {
+      id: 30, categoria: "ciudad",
+      fondo: "#e8b880", fondo2: "#d88858", fondoAbajo: "#a84838",
+      suelo: "#4a4a4a", sueloLuz: "#6a6a6a",
+      presa: "#c41e3a", presaLuz: "#e04a5a",
+      coloresPropios: true, fondoImg: "alemania", esCiudad: true,
+      bandera: ["alemania"], decoraciones: [], animalCaminante: "lobo",
+      murcielagos: 0, vinyetaFuerte: false, degradado: true,
+      bannerColorA: "#000000", bannerColorB: "#D52B1E", bannerEmoji: "🐺",
     },
   };
 
@@ -443,16 +664,29 @@
     { tipo: "londres" }, { tipo: "nuevayork" }, { tipo: "roma" },
     { tipo: "elcairo" }, { tipo: "tokio" }, { tipo: "rio" },
     { tipo: "sidney" }, { tipo: "marrakech" }, { tipo: "machupicchu" },
+    { tipo: "rusia" }, { tipo: "grecia" }, { tipo: "china" }, { tipo: "india" },
+    { tipo: "mexico" }, { tipo: "canada" }, { tipo: "turquia" },
+    { tipo: "antartida" }, { tipo: "alemania" },
   ];
 
+  const POOL_ALEATORIO = ["cueva", "grieta", "aire", "infinito", "valencia", "madrid", "paris", "londres", "nuevayork", "roma", "elcairo", "tokio", "rio", "sidney", "marrakech", "machupicchu", "rusia", "grecia", "china", "india", "mexico", "canada", "turquia", "antartida", "alemania"];
+  const tiposAleatorios = {};   // nº de pantalla (> catálogo) → tipo elegido en esta partida
   function tipoDePantalla(numero) {
     if (numero <= CATALOGO_PANTALLAS.length) {
       const tipo = CATALOGO_PANTALLAS[numero - 1].tipo;
       return TIPOS_PANTALLA[tipo] ? tipo : "cueva";
     }
-    const tipos = ["cueva", "grieta", "aire", "infinito", "valencia", "madrid", "paris", "londres", "nuevayork", "roma", "elcairo", "tokio", "rio", "sidney", "marrakech", "machupicchu"];
-    return tipos[Math.floor(Math.random() * tipos.length)];
+    // Pasado el catálogo: tipo aleatorio, pero se decide UNA sola vez por pantalla y por partida.
+    // (Antes se sorteaba en cada llamada: el letrero de transición cambiaba de nombre en cada
+    // fotograma y por eso "temblaba", y además no coincidía con el fondo que luego salía.)
+    if (tiposAleatorios[numero]) return tiposAleatorios[numero];
+    const previo = tipoDePantalla(numero - 1);
+    const opciones = POOL_ALEATORIO.filter((t) => t !== previo && TIPOS_PANTALLA[t]);
+    const elegido = opciones[Math.floor(Math.random() * opciones.length)] || "cueva";
+    tiposAleatorios[numero] = elegido;
+    return elegido;
   }
+  function olvidarTiposAleatorios() { for (const k in tiposAleatorios) delete tiposAleatorios[k]; }
   function nombreDePantalla(numero) {
     const tipo = (numero <= CATALOGO_PANTALLAS.length) ? CATALOGO_PANTALLAS[numero - 1].tipo : tipoDePantalla(numero);
     return tx("pantalla_" + tipo);
@@ -522,6 +756,42 @@
     { cuerpo: "#a87858", cuerpo2: "#8a5a3a", panza: "#c89878", patas: "#6a4a2a", orejas: "#a87858", nariz: "#2a1a10", ojos: "#1a1a1a" },
     { cuerpo: "#f0d8b8", cuerpo2: "#d8b898", panza: "#fff0d8", patas: "#c89878", orejas: "#e0c8a8", nariz: "#3a2a1a", ojos: "#1a1a1a" },
   ];
+  const PALETAS_ZORRO = [
+    { cuerpo: "#d35400", cuerpo2: "#e67e22", vientre: "#fdfefe", orejas: "#c0392b", patas: "#2c3e50", ojos: "#f1c40f" },
+    { cuerpo: "#e67e22", cuerpo2: "#f39c12", vientre: "#ffffff", orejas: "#d35400", patas: "#34495e", ojos: "#ff9f43" },
+    { cuerpo: "#95a5a6", cuerpo2: "#bdc3c7", vientre: "#ecf0f1", orejas: "#7f8c8d", patas: "#2c3e50", ojos: "#00cec9" }
+  ];
+  const PALETAS_BUHO = [
+    { cuerpo: "#8e6e53", cuerpo2: "#a88b73", ojos: "#ffd700", pico: "#e69a2d" },
+    { cuerpo: "#d8d0b8", cuerpo2: "#f0e8d8", ojos: "#ff8c00", pico: "#c89040" }
+  ];
+  const PALETAS_PANDA = [
+    { cuerpo: "#f8f8f8", cuerpo2: "#1a1a1a", ojos: "#1a1a1a", nariz: "#1a1a1a" }
+  ];
+  const PALETAS_TIGRE = [
+    { cuerpo: "#ff9800", rayas: "#1a1a1a", vientre: "#f8f8f8", ojos: "#a8e6cf" },
+    { cuerpo: "#f4c430", rayas: "#1a1a1a", vientre: "#ffffff", ojos: "#ffd700" }
+  ];
+  const PALETAS_JAGUAR = [
+    { cuerpo: "#f4c430", manchas: "#1a1a1a", vientre: "#f8f8f8", ojos: "#a8e6cf" },
+    { cuerpo: "#1a1a1a", manchas: "#0a0a0a", vientre: "#2a2a2a", ojos: "#ffd700" } // Pantera negra
+  ];
+  const PALETAS_ALCE = [
+    { cuerpo: "#6a4a2a", cuerpo2: "#8a6a48", astas: "#d8c8a8", hocico: "#4a3a2a", ojos: "#1a1a1a" }
+  ];
+  const PALETAS_GAVIOTA = [
+    { cuerpo: "#f8f8f8", cuerpo2: "#d8d8d8", pico: "#ffc400", patas: "#ff8c00", ojos: "#1a1a1a" }
+  ];
+  const PALETAS_PINGUINO = [
+    { cuerpo: "#1a1a2a", panza: "#ffffff", pico: "#ff8800", patas: "#ff8800", ojos: "#0a0a0a", amarillo: "#ffc400", aletas: "#0a0a1a" },
+    { cuerpo: "#2a2a3a", panza: "#f0f0f8", pico: "#ffaa22", patas: "#ffaa22", ojos: "#1a1a1a", amarillo: "#ffdd44", aletas: "#1a1a2a" },
+    { cuerpo: "#0a0a1a", panza: "#e8e8f0", pico: "#ee7700", patas: "#ee7700", ojos: "#000000", amarillo: "#ffbb00", aletas: "#000010" },
+  ];
+  const PALETAS_LOBO = [
+    { cuerpo: "#8a8a90", cuerpo2: "#6a6a70", vientre: "#c8c8d0", pelo: "#5a5a60", patas: "#3a3a40", orejas: "#c890a0", ojos: "#ffc400" },
+    { cuerpo: "#5a5a60", cuerpo2: "#3a3a40", vientre: "#9a9aa0", pelo: "#2a2a30", patas: "#1a1a20", orejas: "#a86070", ojos: "#ffdd44" },
+    { cuerpo: "#d0d0d8", cuerpo2: "#a8a8b0", vientre: "#f0f0f8", pelo: "#8a8a90", patas: "#6a6a70", orejas: "#e0b0c0", ojos: "#ffcc00" },
+  ];
 
   // ---------- Estrellas y nubes ----------
   const estrellas = [];
@@ -554,8 +824,6 @@
   // ---------- Estado ----------
   const estado = {
     modo: "menu", modoAnterior: null, opcionActiva: 0,
-    tiempoGameOver: 0,
-    highScores: [],
     personaje: {
       x: ANCHO / 2 - STEVE_ANCHO / 2, y: Y_SUELO_JUGABLE,
       ancho: STEVE_ANCHO, alto: STEVE_ALTO,
@@ -574,16 +842,18 @@
     pantalla: 1, tipoPantalla: "cueva",
     transicion: null, gameOver: false, bonusVidaDado: false,
     banner: null,
+    // Ranking
+    ini: null, rankingDesde: "menu", rankingGuardado: false, sinRanking: false, idGameOver: 0,
   };
 
   function opcionesMenuActual() {
     if (estado.modo === "menu") {
-      const op = ["empezar", "instrucciones", "creditos"];
+      const op = ["empezar", "instrucciones", "ranking", "creditos"];
       if (!estaEnFullscreen()) op.push("pantalla-completa");
       return op;
     }
     if (estado.modo === "gameover") {
-      const op = ["reintentar", "menu"];
+      const op = ["reintentar", "menu", "ranking"];
       if (!estaEnFullscreen()) op.push("pantalla-completa");
       return op;
     }
@@ -610,11 +880,13 @@
     if (estado.modo === "menu") {
       if (opcion === "empezar") iniciarPartidaDesdeMenu();
       else if (opcion === "instrucciones") estado.modo = "instrucciones";
+      else if (opcion === "ranking") abrirRanking("menu");
       else if (opcion === "creditos") estado.modo = "creditos";
       else if (opcion === "pantalla-completa") entrarPantallaCompleta();
     } else if (estado.modo === "gameover") {
       if (opcion === "reintentar") iniciarPartidaDesdeMenu();
       else if (opcion === "menu") { estado.modo = "menu"; estado.opcionActiva = 0; }
+      else if (opcion === "ranking") abrirRanking("gameover");
       else if (opcion === "pantalla-completa") entrarPantallaCompleta();
     } else if (estado.modo === "confirmar-salida") {
       if (opcion === "si") salirAlMenu();
@@ -639,6 +911,7 @@
     contenedor.addEventListener("touchmove", bloquearGestosFS, { passive: false });
     ajustarAlturaFullscreen();
     ajustarFocoTrasFullscreen();
+    // Safari reajusta la barra de direcciones un instante después
     setTimeout(ajustarAlturaFullscreen, 150);
     setTimeout(ajustarAlturaFullscreen, 400);
   }
@@ -708,12 +981,16 @@
     plats.push({ x: 0, y: SUELO_Y, ancho: ANCHO, alto: SUELO_ALTO, tipo: "suelo" });
 
     const esCiudad = !!tipo.esCiudad;
+
+    // La última plataforma debe quedar por encima de los 214 m (meta = METROS_FIN_PANTALLA),
+    // así desde ella se llega a la meta con un salto normal. Antes el nº de plataformas era fijo
+    // (20 en ciudades) y la última quedaba a ~164 m: imposible pasar de pantalla.
     const Y_ULTIMA = Y_SUELO_JUGABLE + STEVE_ALTO - (METROS_FIN_PANTALLA - 6) * PX_POR_METRO;
     const RECORRIDO = -180 - Y_ULTIMA;
 
     let y = -180;
     let xActual = 200;
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 200; i++) {            // 200 = tope de seguridad, nunca se alcanza
       const progreso = Math.min(1, Math.max(0, (-180 - y) / RECORRIDO));
       let separacionY, ancho;
       if (esCiudad) {
@@ -731,7 +1008,7 @@
       else nuevoX = minX + Math.random() * 100;
       xActual = nuevoX;
       plats.push({ x: nuevoX, y, ancho, alto, tipo: "presa", tieneFragmento: false, esBandera: false });
-      if (y <= Y_ULTIMA) break;
+      if (y <= Y_ULTIMA) break;                // ya hemos llegado arriba del todo
       y -= separacionY;
     }
 
@@ -745,16 +1022,20 @@
     }
 
     const candidatas = plats.filter((p) => p.tipo === "presa");
+    // NUEVO: Excluir las 3 últimas plataformas (las más altas) para evitar que caiga un
+    // fragmento donde no da tiempo a cogerlo antes de cambiar de pantalla.
+    const candidatasValidas = candidatas.slice(0, Math.max(1, candidatas.length - 3));
+    
     const indicesElegidos = [];
-    while (indicesElegidos.length < FRAGMENTOS_POR_PANTALLA && indicesElegidos.length < candidatas.length) {
-      const idx = Math.floor(Math.random() * candidatas.length);
+    while (indicesElegidos.length < FRAGMENTOS_POR_PANTALLA && indicesElegidos.length < candidatasValidas.length) {
+      const idx = Math.floor(Math.random() * candidatasValidas.length);
       if (!indicesElegidos.includes(idx)) indicesElegidos.push(idx);
     }
     estado.conjuntoActual = CONJUNTOS[Math.floor(Math.random() * CONJUNTOS.length)];
     indicesElegidos.forEach((idx, i) => {
-      candidatas[idx].tieneFragmento = true;
-      candidatas[idx].fraseCodigo = estado.conjuntoActual.trozos[i];
-      candidatas[idx].indiceTrozo = i;
+      candidatasValidas[idx].tieneFragmento = true;
+      candidatasValidas[idx].fraseCodigo = estado.conjuntoActual.trozos[i];
+      candidatasValidas[idx].indiceTrozo = i;
     });
 
     estado.plataformas = plats;
@@ -837,54 +1118,110 @@
         decor.push({ tipo: tipo.animalVolador, x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.6 + Math.random() * 0.7, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5 });
       }
     }
+
     if (tipo.animalCaminante === "oso-bipedo") {
       for (let i = 0; i < 8; i++) {
         decor.push({ tipo: "oso-bipedo", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.35, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 44, alto: 80, _atascado: 0, paleta: PALETAS_OSO[Math.floor(Math.random() * PALETAS_OSO.length)] });
       }
     }
+
     if (tipo.animalVolador === "cuervo") {
       for (let i = 0; i < 12; i++) {
         decor.push({ tipo: "cuervo", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.7 + Math.random() * 0.7, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, paleta: PALETAS_CUERVO[Math.floor(Math.random() * PALETAS_CUERVO.length)] });
       }
     }
+
     if (tipo.animalCaminante === "rata") {
       for (let i = 0; i < 10; i++) {
         decor.push({ tipo: "rata", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.5 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_RATA[Math.floor(Math.random() * PALETAS_RATA.length)] });
       }
     }
+
     if (tipo.animalCaminante === "gato-romano") {
       for (let i = 0; i < 10; i++) {
         decor.push({ tipo: "gato-romano", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.4 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_GATO[Math.floor(Math.random() * PALETAS_GATO.length)] });
       }
     }
+
     if (tipo.animalCaminante === "camello") {
       for (let i = 0; i < 6; i++) {
         decor.push({ tipo: "camello", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 56, alto: 90, _atascado: 0, paleta: PALETAS_CAMELLO[Math.floor(Math.random() * PALETAS_CAMELLO.length)] });
       }
     }
+
     if (tipo.animalVolador === "grulla") {
       for (let i = 0; i < 10; i++) {
         decor.push({ tipo: "grulla", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.7 + Math.random() * 0.6, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, tam: 32 + Math.random() * 8, paleta: PALETAS_GRULLA[Math.floor(Math.random() * PALETAS_GRULLA.length)] });
       }
     }
+
     if (tipo.animalVolador === "tucan") {
       for (let i = 0; i < 12; i++) {
         decor.push({ tipo: "tucan", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.6 + Math.random() * 0.7, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, paleta: PALETAS_TUCAN[Math.floor(Math.random() * PALETAS_TUCAN.length)] });
       }
     }
+
     if (tipo.animalCaminante === "canguro") {
       for (let i = 0; i < 6; i++) {
         decor.push({ tipo: "canguro", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.5 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 44, alto: 78, _atascado: 0, paleta: PALETAS_CANGURO[Math.floor(Math.random() * PALETAS_CANGURO.length)] });
       }
     }
+
     if (tipo.animalCaminante === "mono") {
       for (let i = 0; i < 8; i++) {
         decor.push({ tipo: "mono", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.5 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 30, alto: 44, _atascado: 0, paleta: PALETAS_MONO[Math.floor(Math.random() * PALETAS_MONO.length)] });
       }
     }
+
     if (tipo.animalCaminante === "llama") {
       for (let i = 0; i < 6; i++) {
         decor.push({ tipo: "llama", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.4 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 40, alto: 82, _atascado: 0, paleta: PALETAS_LLAMA[Math.floor(Math.random() * PALETAS_LLAMA.length)] });
+      }
+    }
+
+        if (tipo.animalCaminante === "zorro") {
+      for (let i = 0; i < 8; i++) {
+        decor.push({ tipo: "zorro", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.6 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_ZORRO[Math.floor(Math.random() * PALETAS_ZORRO.length)] });
+      }
+    }
+    if (tipo.animalVolador === "buho") {
+      for (let i = 0; i < 10; i++) {
+        decor.push({ tipo: "buho", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.5 + Math.random() * 0.5, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, paleta: PALETAS_BUHO[Math.floor(Math.random() * PALETAS_BUHO.length)] });
+      }
+    }
+    if (tipo.animalCaminante === "panda") {
+      for (let i = 0; i < 6; i++) {
+        decor.push({ tipo: "panda", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.4 + Math.random() * 0.2, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_PANDA[0] });
+      }
+    }
+    if (tipo.animalCaminante === "tigre") {
+      for (let i = 0; i < 6; i++) {
+        decor.push({ tipo: "tigre", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.8 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_TIGRE[Math.floor(Math.random() * PALETAS_TIGRE.length)] });
+      }
+    }
+    if (tipo.animalCaminante === "jaguar") {
+      for (let i = 0; i < 6; i++) {
+        decor.push({ tipo: "jaguar", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.7 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_JAGUAR[Math.floor(Math.random() * PALETAS_JAGUAR.length)] });
+      }
+    }
+    if (tipo.animalCaminante === "alce") {
+      for (let i = 0; i < 5; i++) {
+        decor.push({ tipo: "alce", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.3 + Math.random() * 0.2, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_ALCE[0] });
+      }
+    }
+    if (tipo.animalVolador === "gaviota") {
+      for (let i = 0; i < 12; i++) {
+        decor.push({ tipo: "gaviota", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.8 + Math.random() * 0.6, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, paleta: PALETAS_GAVIOTA[0] });
+      }
+    }
+        if (tipo.animalCaminante === "pinguino") {
+      for (let i = 0; i < 8; i++) {
+        decor.push({ tipo: "pinguino", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.4 + Math.random() * 0.2, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_PINGUINO[Math.floor(Math.random() * PALETAS_PINGUINO.length)] });
+      }
+    }
+    if (tipo.animalCaminante === "lobo") {
+      for (let i = 0; i < 6; i++) {
+        decor.push({ tipo: "lobo", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.7 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_LOBO[Math.floor(Math.random() * PALETAS_LOBO.length)] });
       }
     }
 
@@ -901,80 +1238,225 @@
     estado.murcielagos = bats;
   }
 
+  // ============================================================================
+  // RANKING DE RÉCORDS (Backend Node.js + MongoDB)
+  // ============================================================================
+  // Pon aquí la URL de tu backend en Render cuando lo tengas (ej: "https://mi-api.onrender.com/api")
+  const RANKING_API_URL = "https://api-via-al-cielo.onrender.com/api"; 
+  const RANKING_TAM = 10;            
+  const INI_MIN = 3, INI_MAX = 6;    
+  const TECLAS_INI = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split("").concat(["DEL", "OK"]);
+  const TECLAS_COLS = 10;
+  const ranking = { lista: [], origen: "local", cargando: false, error: false, ultimo: null, promesa: null, token: null };
+
+  function entradaValida(e) {
+    return !!e && typeof e.n === "string" && /^[A-Z0-9]{3,6}$/.test(e.n) &&
+      typeof e.p === "number" && isFinite(e.p) && e.p > 0 && e.p <= 100000;
+  }
+  function limpiarLista(arr) {
+    return arr.filter(entradaValida)
+      .map((e) => ({ n: e.n, p: Math.floor(e.p), s: Math.max(0, Math.floor(+e.s || 0)), t: +e.t || 0 }))
+      .sort((a, b) => (b.p - a.p) || (a.t - b.t))
+      .slice(0, RANKING_TAM);
+  }
+  function leerRankingLocal() {
+    try { const r = JSON.parse(localStorage.getItem("je-ranking-local") || "[]"); return Array.isArray(r) ? limpiarLista(r) : []; }
+    catch (e) { return []; }
+  }
+  function guardarRankingLocal(lista) { try { localStorage.setItem("je-ranking-local", JSON.stringify(lista)); } catch (e) {} }
+  function ultimasIniciales() {
+    try { const v = (localStorage.getItem("je-iniciales") || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, INI_MAX); return v; }
+    catch (e) { return ""; }
+  }
+  function guardarIniciales(v) { try { localStorage.setItem("je-iniciales", v); } catch (e) {} }
+
+  // Pide un token al backend al empezar a jugar (para validar que no hacemos trampas)
+  function pedirTokenPartida() {
+    if (!RANKING_API_URL || typeof fetch !== "function") return;
+    ranking.token = null;
+    fetch(RANKING_API_URL + "/inicio")
+      .then(r => r.json())
+      .then(data => { if (data.token) ranking.token = data.token; })
+      .catch(() => {});
+  }
+
+  function cargarRanking() {
+    if (ranking.promesa) return ranking.promesa;
+    ranking.cargando = true;
+    const usarLocal = () => { ranking.lista = leerRankingLocal(); ranking.origen = "local"; };
+    
+    let trabajo;
+    if (!RANKING_API_URL || typeof fetch !== "function") {
+      usarLocal(); ranking.error = false; trabajo = Promise.resolve();
+    } else {
+      trabajo = fetch(RANKING_API_URL + "/ranking", { cache: "no-store" })
+        .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(datos => {
+          ranking.lista = limpiarLista(datos); ranking.origen = "global"; ranking.error = false;
+        })
+        .catch(() => { usarLocal(); ranking.error = true; });
+    }
+    ranking.promesa = trabajo.then(() => { ranking.cargando = false; ranking.promesa = null; });
+    return ranking.promesa;
+  }
+
+  function calificaParaRanking(puntos) {
+    if (!(puntos > 0) || puntos > 100000) return false;
+    const l = ranking.lista;
+    return l.length < RANKING_TAM || puntos > l[l.length - 1].p;
+  }
+  function puestoPara(puntos) { return ranking.lista.filter((e) => e.p >= puntos).length + 1; }
+
+  function enviarPuntuacion(nombre, puntos, pantalla) {
+    // Guardado local de respaldo (si falla internet, no perdemos la partida)
+    const listaLocal = limpiarLista(leerRankingLocal().concat([{ n: nombre, p: puntos, s: pantalla, t: Date.now() }]));
+    guardarRankingLocal(listaLocal);
+    
+    // Si no hay API, o no hay token, usamos solo el local
+    if (!RANKING_API_URL || typeof fetch !== "function" || !ranking.token) {
+      ranking.lista = listaLocal; ranking.origen = "local"; ranking.error = false;
+      return Promise.resolve(true);
+    }
+    
+    // Enviamos al backend
+    return fetch(RANKING_API_URL + "/ranking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ n: nombre, p: puntos, s: pantalla, tk: ranking.token })
+    })
+    .then(r => {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(data => {
+      if (data.ranking) {
+        ranking.lista = limpiarLista(data.ranking);
+        ranking.origen = "global";
+      } else {
+        return cargarRanking();
+      }
+      ranking.error = false;
+      return true;
+    })
+    .catch(() => { 
+      // Si falla el backend, nos quedamos con la lista local
+      ranking.lista = listaLocal; 
+      ranking.origen = "local"; 
+      ranking.error = true; 
+      return false; 
+    });
+  }
+
+  // ---- Flujo: fin de partida → iniciales → ranking ----
+  function alEntrarGameOver() {
+    estado.rankingGuardado = false;
+    estado.ini = null;
+    const puntos = estado.camara.alturaMaxima;
+    if (estado.sinRanking || !(puntos > 0)) return;
+    const id = ++estado.idGameOver;
+    Promise.all([cargarRanking(), new Promise((ok) => setTimeout(ok, 900))]).then(() => {
+      if (estado.modo !== "gameover" || estado.idGameOver !== id || estado.rankingGuardado) return;
+      if (calificaParaRanking(puntos)) abrirIniciales(puntos);
+    });
+  }
+  function abrirIniciales(puntos) {
+    estado.teclas.izquierda = false; estado.teclas.derecha = false; estado.teclas.salto = false;
+    estado.ini = {
+      texto: ultimasIniciales(), cursor: 0, puntos: puntos, pantalla: estado.pantalla,
+      puesto: puestoPara(puntos), abierto: Date.now(), aviso: null, guardando: false,
+    };
+    estado.modo = "iniciales";
+  }
+  function iniciListo() { return !!estado.ini && Date.now() - estado.ini.abierto > 600; }
+  function iniciAnadir(c) {
+    const ini = estado.ini; if (!ini || ini.guardando) return;
+    if (ini.texto.length < INI_MAX) ini.texto += c;
+    ini.aviso = null;
+  }
+  function iniciBorrar() {
+    const ini = estado.ini; if (!ini || ini.guardando) return;
+    ini.texto = ini.texto.slice(0, -1); ini.aviso = null;
+  }
+  function iniciConfirmar() {
+    const ini = estado.ini; if (!ini || ini.guardando) return;
+    if (ini.texto.length < INI_MIN) { ini.aviso = "ini_min"; return; }
+    ini.guardando = true;
+    guardarIniciales(ini.texto);
+    ranking.ultimo = { n: ini.texto, p: ini.puntos };
+    enviarPuntuacion(ini.texto, ini.puntos, ini.pantalla).then(() => {
+      estado.rankingGuardado = true;
+      ini.guardando = false;
+      if (estado.modo === "iniciales") abrirRanking("gameover");
+    });
+  }
+  function iniciCancelar() {
+    estado.rankingGuardado = true;
+    estado.ini = null;
+    estado.modo = "gameover"; estado.opcionActiva = 0;
+  }
+  function seleccionarTecla(t) {
+    if (t === "DEL") iniciBorrar();
+    else if (t === "OK") iniciConfirmar();
+    else iniciAnadir(t);
+  }
+  function moverCursorIni(dx, dy) {
+    const ini = estado.ini; if (!ini) return;
+    const n = TECLAS_INI.length;
+    let i = ini.cursor;
+    if (dx) i = (i + dx + n) % n;
+    if (dy) {
+      const col = i % TECLAS_COLS, filas = Math.ceil(n / TECLAS_COLS);
+      const f = (Math.floor(i / TECLAS_COLS) + dy + filas) % filas;
+      i = Math.min(n - 1, f * TECLAS_COLS + col);
+    }
+    ini.cursor = i;
+  }
+  function manejarTeclaIniciales(e) {
+    const ini = estado.ini; if (!ini) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    if (k === "Escape") { e.preventDefault(); iniciCancelar(); return; }
+    if (k === "Tab" || k === " " || k.indexOf("Arrow") === 0 || k === "Enter" || k === "Backspace") e.preventDefault();
+    if (!iniciListo()) return;
+    if (k === "Backspace") iniciBorrar();
+    else if (k === "Enter") iniciConfirmar();
+    else if (k === "ArrowLeft") moverCursorIni(-1, 0);
+    else if (k === "ArrowRight") moverCursorIni(1, 0);
+    else if (k === "ArrowUp") moverCursorIni(0, -1);
+    else if (k === "ArrowDown") moverCursorIni(0, 1);
+    else if (k === " ") seleccionarTecla(TECLAS_INI[ini.cursor]);
+    else if (k.length === 1 && /[a-zA-Z0-9]/.test(k)) {
+      e.preventDefault();
+      const c = k.toUpperCase();
+      iniciAnadir(c);
+      ini.cursor = TECLAS_INI.indexOf(c);
+    }
+  }
+  function clickIniciales(mx, my) {
+    const ini = estado.ini; if (!ini || !iniciListo()) return;
+    const dentroR = (r) => !!r && mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h;
+    if (dentroR(estado._btnSaltarIni)) { iniciCancelar(); return; }
+    for (const c of (estado._celdasIni || [])) {
+      if (dentroR(c)) { ini.cursor = c.i; seleccionarTecla(TECLAS_INI[c.i]); return; }
+    }
+  }
+  function abrirRanking(desde) {
+    estado.rankingDesde = desde;
+    estado.modo = "ranking";
+    estado.opcionActiva = 0;
+    cargarRanking();
+  }
+  function cerrarRanking() {
+    ranking.ultimo = null;
+    if (estado.rankingDesde === "gameover") { estado.modo = "gameover"; estado.opcionActiva = 0; }
+    else { estado.modo = "menu"; estado.opcionActiva = 2; }
+  }
+
   function cargarRecord() {
     try { const g = localStorage.getItem("je-record"); if (g) estado.camara.record = parseInt(g, 10) || 0; } catch (e) {}
   }
   function guardarRecord() {
     try { localStorage.setItem("je-record", estado.camara.record); } catch (e) {}
-  }
-
-  // --- NUEVO: Lógica de HighScores ---
-  function cargarHighScores() {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY_SCORES);
-      if (data) {
-        estado.highScores = JSON.parse(data);
-      } else {
-        estado.highScores = [
-          { nombre: "GAB", puntos: 3000 },
-          { nombre: "VIA", puntos: 2500 },
-          { nombre: "CIE", puntos: 2000 },
-          { nombre: "SKY", puntos: 1500 },
-          { nombre: "RUN", puntos: 1000 }
-        ];
-        guardarHighScores();
-      }
-    } catch (e) {
-      estado.highScores = [];
-    }
-  }
-
-  function guardarHighScores() {
-    try {
-      localStorage.setItem(STORAGE_KEY_SCORES, JSON.stringify(estado.highScores));
-    } catch (e) {}
-  }
-
-  function comprobarNuevoRecord() {
-    const puntosActuales = estado.camara.alturaMaxima;
-    if (puntosActuales <= 0) return false;
-
-    const ultimoRecord = estado.highScores.length >= MAX_SCORES
-      ? estado.highScores[estado.highScores.length - 1].puntos
-      : 0;
-
-    return estado.highScores.length < MAX_SCORES || puntosActuales > ultimoRecord;
-  }
-
-  function mostrarModalIniciales() {
-    if (!modalIniciales || !inputIniciales) return;
-    modalIniciales.style.display = "flex";
-    inputIniciales.value = "";
-    // Pequeño delay para asegurar que el foco funcione en móviles y abra el teclado
-    setTimeout(() => inputIniciales.focus(), 150);
-  }
-
-  function ocultarModalIniciales() {
-    if (!modalIniciales || !inputIniciales) return;
-    modalIniciales.style.display = "none";
-    inputIniciales.blur();
-  }
-
-  function guardarRecordActual() {
-    let nombre = inputIniciales.value.trim().toUpperCase();
-    if (nombre.length < 3) nombre = "AAA"; 
-    if (nombre.length > 6) nombre = nombre.slice(0, 6);
-
-    estado.highScores.push({ nombre: nombre, puntos: estado.camara.alturaMaxima });
-    estado.highScores.sort((a, b) => b.puntos - a.puntos);
-    if (estado.highScores.length > MAX_SCORES) {
-      estado.highScores = estado.highScores.slice(0, MAX_SCORES);
-    }
-    guardarHighScores();
-    ocultarModalIniciales();
-    estado.modo = "gameover";
-    actualizarClaseJugando();
-    actualizarBloqueoScroll();
   }
 
   const contenedor = document.createElement("div");
@@ -1007,13 +1489,6 @@
     <div class="juego-escalada__footer notranslate" translate="no">
       <span id="je-footer"></span>
     </div>
-    <!-- Modal Iniciales Retro -->
-    <div class="juego-escalada__modal-iniciales notranslate" id="je-modal-iniciales" translate="no">
-      <h3>¡NUEVO RÉCORD!</h3>
-      <p style="font-family:var(--mono);font-size:0.9rem;margin:0;">Introduce tus iniciales:</p>
-      <input type="text" id="je-input-iniciales" maxlength="6" minlength="3" placeholder="AAA">
-      <button type="button" id="je-btn-guardar">GUARDAR</button>
-    </div>
   `;
 
   const raizJuego = document.getElementById("juego-root");
@@ -1025,6 +1500,7 @@
     contenedor.style.display = "flex";
   }
 
+  // Disparador de la carga diferida de fondos (600 px antes de que el juego entre en pantalla)
   if ("IntersectionObserver" in window) {
     const ioFondos = new IntersectionObserver((entradas) => {
       if (entradas.some((e) => e.isIntersecting)) { pedirFondos(); ioFondos.disconnect(); }
@@ -1046,29 +1522,18 @@
   const elFooter = contenedor.querySelector("#je-footer");
   const btnSalirFullscreen = contenedor.querySelector(".juego-escalada__salir-fullscreen");
   const btnMenuFlotante = contenedor.querySelector(".juego-escalada__menu-flotante");
-  
-  const modalIniciales = contenedor.querySelector("#je-modal-iniciales");
-  const inputIniciales = contenedor.querySelector("#je-input-iniciales");
-  const btnGuardarIniciales = contenedor.querySelector("#je-btn-guardar");
-
-  btnGuardarIniciales.addEventListener("click", guardarRecordActual);
-  inputIniciales.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      e.stopPropagation();
-      guardarRecordActual();
-    }
-  });
 
   btnSalirFullscreen.addEventListener("click", () => salirPantallaCompleta());
   btnMenuFlotante.addEventListener("click", () => pedirConfirmacionSalida());
 
+  // Los botones flotantes (☰ y ✕) se anclan a las esquinas del CANVAS, no del
+  // contenedor: así quedan dentro de la pantalla del juego y no tapan el HUD.
   function posicionarBotonesFlotantes() {
     if (!contenedor || !canvas) return;
     const c = canvas.getBoundingClientRect();
     const p = contenedor.getBoundingClientRect();
     if (!c.width || !p.width) return;
-    const MARGEN = 6;
+    const MARGEN = 6;  // separación respecto al borde del canvas
     const bordeCanvas = canvas.clientLeft || 2;
     const izqPadre = p.left + contenedor.clientLeft;
     const arrPadre = p.top + contenedor.clientTop;
@@ -1135,6 +1600,9 @@
   window.addEventListener("resize", ajustarAlturaFullscreen);
   window.addEventListener("orientationchange", () => { setTimeout(ajustarAlturaFullscreen, 150); });
 
+  // ---------------------------------------------------------------------------
+  // Detección de foco en campo de texto
+  // ---------------------------------------------------------------------------
   function focoEnCampoDeTexto() {
     const el = document.activeElement;
     if (!el) return false;
@@ -1147,6 +1615,12 @@
   document.addEventListener("keydown", (e) => {
     if (focoEnCampoDeTexto()) return;
 
+    if (estado.modo === "iniciales") { manejarTeclaIniciales(e); return; }
+    if (estado.modo === "ranking") {
+      if (e.key === "Enter" || e.key === " " || e.key === "Escape") { e.preventDefault(); cerrarRanking(); }
+      return;
+    }
+
     const enMenu = estado.modo === "menu" || estado.modo === "gameover" || estado.modo === "confirmar-salida";
     if (enMenu) {
       if (e.key === "ArrowDown" || e.key === "Tab") { e.preventDefault(); moverFoco(e.shiftKey ? -1 : 1); return; }
@@ -1156,6 +1630,7 @@
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activarOpcionActiva(); }
       else if (e.key === "i" || e.key === "I") { e.preventDefault(); estado.modo = "instrucciones"; }
       else if (e.key === "c" || e.key === "C") { e.preventDefault(); estado.modo = "creditos"; }
+      else if (e.key === "r" || e.key === "R") { e.preventDefault(); abrirRanking("menu"); }
       else if (e.key === "f" || e.key === "F") { e.preventDefault(); entrarPantallaCompleta(); }
       return;
     }
@@ -1164,8 +1639,6 @@
       return;
     }
     if (estado.modo === "gameover") {
-      if (estado.tiempoGameOver < 60) return; // <-- AÑADIR: Bloquear los primeros 60 frames (~1 segundo)
-
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activarOpcionActiva(); }
       else if (e.key === "Escape") { e.preventDefault(); estado.modo = "menu"; estado.opcionActiva = 0; }
       else if (e.key === "f" || e.key === "F") { e.preventDefault(); entrarPantallaCompleta(); }
@@ -1202,6 +1675,7 @@
     }
   });
 
+  // Botón de salto (táctil)
   contenedor.querySelectorAll(".juego-escalada__btn").forEach((btn) => {
     const accion = btn.dataset.accion;
     const activar = (e) => {
@@ -1218,12 +1692,15 @@
     btn.addEventListener("pointercancel", desactivar);
   });
 
+  // Joystick (táctil): mantén el dedo y desliza a izquierda/derecha sin levantarlo.
+  // Usa Pointer Events + setPointerCapture, así sigue al dedo aunque se salga del pad,
+  // y funciona a la vez que el botón de salto (multitáctil) en Android e iOS.
   (function iniciarJoystick() {
     const pad = contenedor.querySelector(".juego-escalada__joystick");
     const knob = pad && pad.querySelector(".juego-escalada__joystick-knob");
     if (!pad || !knob) return;
 
-    const ZONA_MUERTA = 0.2;
+    const ZONA_MUERTA = 0.2;   // 20% central = quieto
     let punteroId = null;
 
     function mover(clientX, clientY) {
@@ -1249,7 +1726,7 @@
       if (punteroId !== null) return;
       e.preventDefault();
       punteroId = e.pointerId;
-      try { pad.setPointerCapture(e.pointerId); } catch (err) { }
+      try { pad.setPointerCapture(e.pointerId); } catch (err) { /* sin captura: sigue funcionando dentro del pad */ }
       pad.classList.add("activo");
       mover(e.clientX, e.clientY);
     });
@@ -1267,7 +1744,6 @@
   })();
 
   canvas.addEventListener("click", (e) => {
-    if (focoEnCampoDeTexto()) return; // Evitar clicks si el teclado está abierto
     const rect = canvas.getBoundingClientRect();
     const escalaX = ANCHO / rect.width;
     const escalaY = ALTO / rect.height;
@@ -1277,15 +1753,18 @@
       if (!btn) return false;
       return mx >= btn.x && mx <= btn.x + btn.w && my >= btn.y && my <= btn.y + btn.h;
     }
+    if (estado.modo === "iniciales") { clickIniciales(mx, my); return; }
+    if (estado.modo === "ranking") { cerrarRanking(); return; }
     if (estado.modo === "menu") {
-      if (estado.tiempoGameOver < 60) return; // <-- AÑADIR: No permitir clics durante el primer segundo      
       if (dentro(estado._btnEmpezar)) { estado.opcionActiva = 0; iniciarPartidaDesdeMenu(); }
       else if (dentro(estado._btnInstrucciones)) { estado.opcionActiva = 1; estado.modo = "instrucciones"; }
-      else if (dentro(estado._btnCreditos)) { estado.opcionActiva = 2; estado.modo = "creditos"; }
+      else if (dentro(estado._btnRankingMenu)) { abrirRanking("menu"); }
+      else if (dentro(estado._btnCreditos)) { estado.opcionActiva = 3; estado.modo = "creditos"; }
       else if (dentro(estado._btnPantallaCompleta)) entrarPantallaCompleta();
     } else if (estado.modo === "gameover") {
       if (dentro(estado._btnReintentar)) { estado.opcionActiva = 0; iniciarPartidaDesdeMenu(); }
       else if (dentro(estado._btnMenu)) { estado.opcionActiva = 1; estado.modo = "menu"; estado.opcionActiva = 0; }
+      else if (dentro(estado._btnRankingGo)) abrirRanking("gameover");
       else if (dentro(estado._btnPantallaCompleta)) entrarPantallaCompleta();
     } else if (estado.modo === "confirmar-salida") {
       if (dentro(estado._btnSiSalir)) { estado.opcionActiva = 0; salirAlMenu(); }
@@ -1312,8 +1791,6 @@
     actualizarBloqueoScroll();
   }
   function salirAlMenu() {
-    ocultarModalIniciales();
-    estado.tiempoGameOver = 0; // <-- AÑADIR
     estado.modo = "menu";
     estado.modoAnterior = null;
     estado.gameOver = false;
@@ -1347,19 +1824,9 @@
       estado.gameOver = true;
       estado.modo = "gameover";
       estado.opcionActiva = 0;
-      estado.tiempoGameOver = 0;
-
-       // Limpiar las teclas para que no haya rebote
-      estado.teclas.izquierda = false;
-      estado.teclas.derecha = false;
-      estado.teclas.salto = false;
-
       actualizarClaseJugando();
       actualizarBloqueoScroll();
-      
-      if (comprobarNuevoRecord()) {
-        mostrarModalIniciales();
-      }
+      alEntrarGameOver();
     }
   }
 
@@ -1394,6 +1861,15 @@
       else if (d.tipo === "canguro") { radio = 30; daño = DAÑO_CANGURO; }
       else if (d.tipo === "mono") { radio = 22; daño = DAÑO_MONO; }
       else if (d.tipo === "llama") { radio = 32; daño = DAÑO_LLAMA; }
+      else if (d.tipo === "zorro") { radio = 22; daño = 15; }
+      else if (d.tipo === "buho") { radio = 24; daño = 15; }
+      else if (d.tipo === "panda") { radio = 30; daño = 20; }
+      else if (d.tipo === "tigre") { radio = 32; daño = 20; }
+      else if (d.tipo === "jaguar") { radio = 30; daño = 20; }
+      else if (d.tipo === "alce") { radio = 36; daño = 25; }
+      else if (d.tipo === "gaviota") { radio = 20; daño = 10; }
+      else if (d.tipo === "pinguino") { radio = 22; daño = 15; }
+      else if (d.tipo === "lobo") { radio = 30; daño = 25; }
       if (radio === 0) continue;
       const dist = Math.hypot(dx - pcx, dy - pcy);
       if (dist < radio) { aplicarDaño(daño); return; }
@@ -1517,18 +1993,92 @@
       } else if (d.tipo === "nube") {
         d.x += d.vel * 0.3;
         if (d.x > ANCHO + 100) d.x = -100;
-      } else if (d.tipo === "pajaro") { }
+      } else if (d.tipo === "pajaro") {
+        // decoración pura
+      } else if (d.tipo === "zorro") {
+        d.tiempo += 0.15;
+        const vel = d.vel * 0.9;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+        if (nx > ANCHO - 25) { nx = ANCHO - 25; d.mirandoDerecha = false; }
+        if (nx < 25) { nx = 25; d.mirandoDerecha = true; }
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 20, 15);
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 50; d._atascado = 0; } }
+      } else if (d.tipo === "buho") {
+        d.tiempo += 0.05;
+        const vel = d.vel * 1.2;
+        d.x += (d.mirandoDerecha ? 1 : -1) * vel;
+        if (d.x > ANCHO + 60) { d.x = ANCHO + 60; d.mirandoDerecha = false; }
+        if (d.x < -60) { d.x = -60; d.mirandoDerecha = true; }
+        d.y += Math.sin(d.tiempo * 2) * 0.4;
+      } else if (d.tipo === "panda") {
+        d.tiempo += 0.10;
+        const vel = d.vel * 0.8;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+        if (nx > ANCHO - 30) { nx = ANCHO - 30; d.mirandoDerecha = false; }
+        if (nx < 30) { nx = 30; d.mirandoDerecha = true; }
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 25, 20);
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 60; d._atascado = 0; } }
+      } else if (d.tipo === "tigre") {
+        d.tiempo += 0.18;
+        const vel = d.vel * 1.1;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+        if (nx > ANCHO - 30) { nx = ANCHO - 30; d.mirandoDerecha = false; }
+        if (nx < 30) { nx = 30; d.mirandoDerecha = true; }
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 25, 20);
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 60; d._atascado = 0; } }
+      } else if (d.tipo === "jaguar") {
+        d.tiempo += 0.16;
+        const vel = d.vel * 1.0;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+        if (nx > ANCHO - 28) { nx = ANCHO - 28; d.mirandoDerecha = false; }
+        if (nx < 28) { nx = 28; d.mirandoDerecha = true; }
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 22, 18);
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 50; d._atascado = 0; } }
+      } else if (d.tipo === "alce") {
+        d.tiempo += 0.10;
+        const vel = d.vel * 0.6;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+        if (nx > ANCHO - 35) { nx = ANCHO - 35; d.mirandoDerecha = false; }
+        if (nx < 35) { nx = 35; d.mirandoDerecha = true; }
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 30, 25);
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 70; d._atascado = 0; } }
+      } else if (d.tipo === "gaviota") {
+        d.tiempo += 0.05;
+        const vel = d.vel * 1.5;
+        d.x += (d.mirandoDerecha ? 1 : -1) * vel;
+        if (d.x > ANCHO + 60) { d.x = ANCHO + 60; d.mirandoDerecha = false; }
+        if (d.x < -60) { d.x = -60; d.mirandoDerecha = true; }
+        d.y += Math.sin(d.tiempo * 3) * 0.6;
+      } else if (d.tipo === "pinguino") {
+        d.tiempo += 0.12;
+        const vel = d.vel * 0.6;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+        if (nx > ANCHO - 25) { nx = ANCHO - 25; d.mirandoDerecha = false; }
+        if (nx < 25) { nx = 25; d.mirandoDerecha = true; }
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 25, 18);
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 50; d._atascado = 0; } }
+      } else if (d.tipo === "lobo") {
+        d.tiempo += 0.15;
+        const vel = d.vel * 1.0;
+        let nx = d.x + (d.mirandoDerecha ? 1 : -1) * vel;
+        if (nx > ANCHO - 35) { nx = ANCHO - 35; d.mirandoDerecha = false; }
+        if (nx < 35) { nx = 35; d.mirandoDerecha = true; }
+        const choca = colisionaEntidadConPlataformas(nx, d.y + 22, 20);
+        if (!choca) { d.x = nx; d._atascado = 0; }
+        else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 60; d._atascado = 0; } }
     }
   }
+}
 
   function respawn() {
     const p = estado.personaje;
-    if (p.vida <= 0) { 
-      estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0; 
-      actualizarClaseJugando(); actualizarBloqueoScroll(); 
-      if (comprobarNuevoRecord()) mostrarModalIniciales();
-      return; 
-    }
+    if (p.vida <= 0) { estado.gameOver = true; estado.modo = "gameover"; estado.opcionActiva = 0; actualizarClaseJugando(); actualizarBloqueoScroll(); alEntrarGameOver(); return; }
     let respawnPlat = null;
     let mejorDist = Infinity;
     for (const plat of estado.plataformas) {
@@ -1642,23 +2192,25 @@
   }
 
   function iniciarPartidaDesdeMenu() {
-    ocultarModalIniciales();
-    estado.tiempoGameOver = 0; // <-- AÑADIR
     estado.modo = "jugando";
     estado.opcionActiva = 0;
+    pedirTokenPartida(); // <-- AÑADIR ESTA LÍNEA
     reiniciarPartida();
     actualizarClaseJugando();
     actualizarBloqueoScroll();
   }
   function reiniciarPartida() {
-    ocultarModalIniciales();
     estado.modo = "jugando";
     estado.fragmentosRecogidos = 0;
     estado.gameOver = false;
     estado.bonusVidaDado = false;
+    estado.sinRanking = false;
+    estado.rankingGuardado = false;
+    estado.ini = null;
     estado.camara.y = CAMARA_INICIAL;
     estado.camara.alturaMaxima = 0;
     estado.pantalla = 1;
+    olvidarTiposAleatorios();
     estado.tipoPantalla = tipoDePantalla(1);
     estado.transicion = null;
     estado.popups = [];
@@ -2873,6 +3425,446 @@
     ctx.restore();
   }
 
+  function dibujarZorro(d, dy) {
+    const dir = d.mirandoDerecha ? 1 : -1;
+    const p = d.paleta || PALETAS_ZORRO[0];
+    const trote = Math.sin(d.tiempo * 10) * 2;
+    ctx.save();
+    ctx.translate(d.x, 0);
+    if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath(); ctx.moveTo(-15, dy + 5); ctx.quadraticCurveTo(-30, dy - 5 + trote, -35, dy + 15 + trote); ctx.quadraticCurveTo(-20, dy + 15, -10, dy + 10); ctx.fill();
+    ctx.fillStyle = p.vientre; ctx.beginPath(); ctx.arc(-35, dy + 15 + trote, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.patas;
+    ctx.fillRect(-10, dy + 20, 4, 10 + trote); ctx.fillRect(5, dy + 20, 4, 10 - trote); ctx.fillRect(-5, dy + 20, 4, 10 - trote); ctx.fillRect(10, dy + 20, 4, 10 + trote);
+    ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.ellipse(0, dy + 12, 16, 10, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.vientre; ctx.beginPath(); ctx.ellipse(8, dy + 15, 8, 6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.cuerpo2; ctx.beginPath(); ctx.ellipse(15, dy + 2, 8, 7, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.vientre; ctx.beginPath(); ctx.moveTo(15, dy); ctx.lineTo(25, dy + 4); ctx.lineTo(15, dy + 6); ctx.fill();
+    ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.moveTo(10, dy - 4); ctx.lineTo(8, dy - 15); ctx.lineTo(16, dy - 6); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(18, dy - 4); ctx.lineTo(22, dy - 14); ctx.lineTo(22, dy - 4); ctx.fill();
+    ctx.fillStyle = p.ojos; ctx.beginPath(); ctx.arc(16, dy, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(25, dy + 4, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  function dibujarBuho(d, dy) {
+    const p = d.paleta || PALETAS_BUHO[0];
+    const aleteo = Math.sin(d.tiempo * 5) * 8;
+    ctx.save(); ctx.translate(d.x, dy);
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath(); ctx.moveTo(-10, 0); ctx.quadraticCurveTo(-25, 5 + aleteo, -20, 15); ctx.lineTo(-5, 5); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(10, 0); ctx.quadraticCurveTo(25, 5 - aleteo, 20, 15); ctx.lineTo(5, 5); ctx.fill();
+    ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.ellipse(0, 5, 12, 14, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.ojos; ctx.beginPath(); ctx.arc(-5, 0, 4, 0, Math.PI * 2); ctx.arc(5, 0, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(-5, 0, 2, 0, Math.PI * 2); ctx.arc(5, 0, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.pico; ctx.beginPath(); ctx.moveTo(-2, 5); ctx.lineTo(0, 10); ctx.lineTo(2, 5); ctx.fill();
+    ctx.restore();
+  }
+
+  // ============================================================================
+  // 🐼 PANDA v2 — con orejas, manchas de ojos y bracitos negros
+  // ============================================================================
+  function dibujarPanda(d, dy) {
+    const p = d.paleta || PALETAS_PANDA[0];
+    const trote = Math.sin(d.tiempo * 10) * 1.5;
+    ctx.save(); ctx.translate(d.x, 0); if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    // Patas negras
+    ctx.fillStyle = p.cuerpo2;
+    ctx.fillRect(-10, dy + 20, 8, 12 + trote); ctx.fillRect(4, dy + 20, 8, 12 - trote);
+    // Cuerpo blanco
+    ctx.beginPath(); ctx.ellipse(0, dy + 14, 16, 12, 0, 0, Math.PI * 2); ctx.fillStyle = p.cuerpo; ctx.fill();
+    // Manchas negras de los hombros
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath(); ctx.ellipse(-12, dy + 10, 6, 8, -0.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(12, dy + 10, 6, 8, 0.5, 0, Math.PI * 2); ctx.fill();
+    // Cabeza
+    ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.arc(14, dy, 11, 0, Math.PI * 2); ctx.fill();
+    // Orejas negras
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath(); ctx.arc(7, dy - 10, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(21, dy - 10, 4, 0, Math.PI * 2); ctx.fill();
+    // Manchas negras de los ojos
+    ctx.beginPath(); ctx.ellipse(10, dy - 2, 3, 4, -0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(18, dy - 2, 3, 4, 0.3, 0, Math.PI * 2); ctx.fill();
+    // Ojos (puntitos blancos dentro)
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath(); ctx.arc(10, dy - 2, 1, 0, Math.PI * 2); ctx.arc(18, dy - 2, 1, 0, Math.PI * 2); ctx.fill();
+    // Nariz y boca
+    ctx.fillStyle = p.nariz; ctx.beginPath(); ctx.arc(14, dy + 4, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = p.nariz; ctx.lineWidth = 0.8;
+    ctx.beginPath(); ctx.moveTo(14, dy + 4); ctx.lineTo(14, dy + 6); ctx.lineTo(12, dy + 7); ctx.stroke();
+    ctx.restore();
+  }
+
+  // ============================================================================
+  // 🐯 TIGRE v2 — con cola larga a rayas y carita más felina
+  // ============================================================================
+  function dibujarTigre(d, dy) {
+    const p = d.paleta || PALETAS_TIGRE[0];
+    const trote = Math.sin(d.tiempo * 12) * 2;
+    ctx.save(); ctx.translate(d.x, 0); if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    // Cola larga
+    ctx.strokeStyle = p.cuerpo; ctx.lineWidth = 4; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(-16, dy + 8); ctx.quadraticCurveTo(-30, dy - 5, -28, dy - 15); ctx.stroke();
+    // Anillos cola
+    ctx.strokeStyle = p.rayas; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(-26, dy - 8); ctx.lineTo(-28, dy - 10); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-22, dy - 2); ctx.lineTo(-24, dy - 3); ctx.stroke();
+    // Patas
+    ctx.fillStyle = p.cuerpo;
+    ctx.fillRect(-12, dy + 20, 6, 12 + trote); ctx.fillRect(6, dy + 20, 6, 12 - trote);
+    ctx.fillRect(-4, dy + 20, 6, 12 - trote); ctx.fillRect(14, dy + 20, 6, 12 + trote);
+    // Cuerpo
+    ctx.beginPath(); ctx.ellipse(0, dy + 12, 20, 12, 0, 0, Math.PI * 2); ctx.fill();
+    // Vientre
+    ctx.fillStyle = p.vientre; ctx.beginPath(); ctx.ellipse(4, dy + 16, 12, 5, 0, 0, Math.PI * 2); ctx.fill();
+    // Rayas del cuerpo
+    ctx.fillStyle = p.rayas;
+    for (let i = -10; i < 15; i += 6) { ctx.fillRect(i, dy + 2, 2, 14); }
+    // Cabeza
+    ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.arc(18, dy - 2, 11, 0, Math.PI * 2); ctx.fill();
+    // Orejas redondas
+    ctx.beginPath(); ctx.arc(12, dy - 12, 3.5, 0, Math.PI * 2); ctx.arc(24, dy - 12, 3.5, 0, Math.PI * 2); ctx.fill();
+    // Mejillas blancas
+    ctx.fillStyle = p.vientre;
+    ctx.beginPath(); ctx.ellipse(22, dy + 3, 6, 4, 0, 0, Math.PI * 2); ctx.fill();
+    // Rayas cara
+    ctx.strokeStyle = p.rayas; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(18, dy - 12); ctx.lineTo(18, dy - 6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(14, dy - 10); ctx.lineTo(16, dy - 6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(22, dy - 10); ctx.lineTo(20, dy - 6); ctx.stroke();
+    // Ojos
+    ctx.fillStyle = p.ojos; ctx.beginPath(); ctx.arc(16, dy - 3, 2, 0, Math.PI * 2); ctx.arc(22, dy - 3, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(16, dy - 3, 1, 0, Math.PI * 2); ctx.arc(22, dy - 3, 1, 0, Math.PI * 2); ctx.fill();
+    // Nariz
+    ctx.fillStyle = "#ff9999"; ctx.beginPath(); ctx.moveTo(19, dy + 2); ctx.lineTo(21, dy + 2); ctx.lineTo(20, dy + 4); ctx.fill();
+    ctx.restore();
+  }
+
+  // ============================================================================
+  // 🐆 JAGUAR v2 — con manchas de roseta y cuerpo macizo
+  // ============================================================================
+  function dibujarJaguar(d, dy) {
+    const p = d.paleta || PALETAS_JAGUAR[0];
+    const trote = Math.sin(d.tiempo * 10) * 2;
+    ctx.save(); ctx.translate(d.x, 0); if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    // Cola gruesa
+    ctx.strokeStyle = p.cuerpo; ctx.lineWidth = 5; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(-18, dy + 8); ctx.quadraticCurveTo(-32, dy + 5, -30, dy - 8); ctx.stroke();
+    // Patas robustas
+    ctx.fillStyle = p.cuerpo;
+    ctx.fillRect(-14, dy + 20, 8, 12 + trote); ctx.fillRect(6, dy + 20, 8, 12 - trote);
+    ctx.fillRect(-4, dy + 20, 8, 12 - trote); ctx.fillRect(16, dy + 20, 8, 12 + trote);
+    // Cuerpo macizo
+    ctx.beginPath(); ctx.ellipse(0, dy + 12, 22, 14, 0, 0, Math.PI * 2); ctx.fill();
+    // Manchas (Rosetas)
+    const dibujarRoseta = (x, y) => {
+      ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = p.manchas;
+    };
+    ctx.fillStyle = p.manchas;
+    dibujarRoseta(-12, dy + 8); dibujarRoseta(-4, dy + 6); dibujarRoseta(4, dy + 8); dibujarRoseta(12, dy + 6);
+    dibujarRoseta(-8, dy + 16); dibujarRoseta(0, dy + 18); dibujarRoseta(8, dy + 16);
+    // Cabeza
+    ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.arc(20, dy, 12, 0, Math.PI * 2); ctx.fill();
+    // Orejas redondas
+    ctx.beginPath(); ctx.arc(12, dy - 10, 4, 0, Math.PI * 2); ctx.arc(26, dy - 10, 4, 0, Math.PI * 2); ctx.fill();
+    // Hocico
+    ctx.fillStyle = p.vientre; ctx.beginPath(); ctx.ellipse(26, dy + 4, 6, 5, 0, 0, Math.PI * 2); ctx.fill();
+    // Ojos
+    ctx.fillStyle = p.ojos; ctx.beginPath(); ctx.arc(17, dy - 2, 2, 0, Math.PI * 2); ctx.arc(24, dy - 2, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(17, dy - 2, 1, 0, Math.PI * 2); ctx.arc(24, dy - 2, 1, 0, Math.PI * 2); ctx.fill();
+    // Nariz
+    ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(30, dy + 4, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  // ============================================================================
+  // 🫎 ALCE v2 — con cuernos grandes, joroba y hocico largo
+  // ============================================================================
+  function dibujarAlce(d, dy) {
+    const p = d.paleta || PALETAS_ALCE[0];
+    const trote = Math.sin(d.tiempo * 8) * 2;
+    ctx.save(); ctx.translate(d.x, 0); if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    // Patas largas
+    ctx.fillStyle = p.cuerpo2;
+    ctx.fillRect(-15, dy + 25, 5, 20 + trote); ctx.fillRect(8, dy + 25, 5, 20 - trote);
+    ctx.fillRect(-5, dy + 25, 5, 20 - trote); ctx.fillRect(18, dy + 25, 5, 20 + trote);
+    // Cuerpo (con joroba)
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath(); ctx.ellipse(0, dy + 15, 22, 14, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, dy + 8, 10, 0, Math.PI); ctx.fill(); // Joroba
+    // Cuello
+    ctx.beginPath(); ctx.moveTo(10, dy + 10); ctx.lineTo(20, dy - 15); ctx.lineTo(28, dy - 15); ctx.lineTo(20, dy + 15); ctx.fill();
+    // Cabeza
+    ctx.beginPath(); ctx.ellipse(24, dy - 18, 8, 6, 0, 0, Math.PI * 2); ctx.fill();
+    // Hocico colgante (muy típico del alce)
+    ctx.beginPath(); ctx.ellipse(30, dy - 12, 5, 8, 0.2, 0, Math.PI * 2); ctx.fill(); 
+    // Cuernos (Palmeados)
+    ctx.fillStyle = p.astas;
+    ctx.beginPath(); ctx.moveTo(18, dy - 22); ctx.quadraticCurveTo(5, dy - 35, -5, dy - 25); ctx.quadraticCurveTo(5, dy - 25, 15, dy - 20); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(26, dy - 22); ctx.quadraticCurveTo(40, dy - 35, 50, dy - 25); ctx.quadraticCurveTo(40, dy - 25, 30, dy - 20); ctx.fill();
+    // Ojos
+    ctx.fillStyle = p.ojos; ctx.beginPath(); ctx.arc(22, dy - 20, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  // ============================================================================
+  // 🕊 GAVIOTA v2 — con pico amarillo y alas bicolor
+  // ============================================================================
+  function dibujarGaviota(d, dy) {
+    const p = d.paleta || PALETAS_GAVIOTA[0];
+    const aleteo = Math.sin(d.tiempo * 6) * 8;
+    ctx.save(); ctx.translate(d.x, dy); if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    // Alas (con puntas grises)
+    ctx.fillStyle = p.cuerpo2; 
+    ctx.beginPath(); ctx.moveTo(-2, 2); ctx.quadraticCurveTo(-15, -5 + aleteo, -25, 2 + aleteo); ctx.lineTo(-15, 6 + aleteo); ctx.lineTo(-2, 6); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(2, 2); ctx.quadraticCurveTo(15, -5 - aleteo, 25, 2 - aleteo); ctx.lineTo(15, 6 - aleteo); ctx.lineTo(2, 6); ctx.fill();
+    // Cuerpo blanco
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath(); ctx.ellipse(0, 5, 10, 6, 0, 0, Math.PI * 2); ctx.fill();
+    // Cola
+    ctx.beginPath(); ctx.moveTo(-8, 6); ctx.lineTo(-14, 8); ctx.lineTo(-8, 9); ctx.fill();
+    // Cabeza
+    ctx.beginPath(); ctx.arc(9, 2, 4, 0, Math.PI * 2); ctx.fill();
+    // Pico amarillo
+    ctx.fillStyle = p.pico; ctx.beginPath(); ctx.moveTo(13, 1); ctx.lineTo(18, 3); ctx.lineTo(13, 4); ctx.fill();
+    // Ojo
+    ctx.fillStyle = p.ojos; ctx.beginPath(); ctx.arc(11, 1, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+    // ============================================================================
+  // 🐧 PINGÜINO — emperador estilizado, andar balanceado, panza blanca
+  // ============================================================================
+  function dibujarPinguino(d, dy) {
+    const p = d.paleta || PALETAS_PINGUINO[0];
+    const balanceo = Math.sin(d.tiempo * 6) * 2.5;
+    const aleteo = Math.sin(d.tiempo * 5) * 2;
+    ctx.save();
+    ctx.translate(d.x, 0);
+    if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    const x = 0;
+    const y = dy;
+
+    // Patas naranjas (con balanceo de andar)
+    ctx.fillStyle = p.patas;
+    ctx.beginPath();
+    ctx.ellipse(x - 6, y + 42 + balanceo, 7, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x + 6, y + 42 - balanceo, 7, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Colita negra
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.moveTo(x - 8, y + 32);
+    ctx.lineTo(x - 15, y + 40);
+    ctx.lineTo(x - 5, y + 38);
+    ctx.closePath();
+    ctx.fill();
+
+    // Cuerpo negro (ovalado y gordito)
+    ctx.beginPath();
+    ctx.ellipse(x, y + 20, 14, 24, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Panza blanca (contraste)
+    ctx.fillStyle = p.panza;
+    ctx.beginPath();
+    ctx.ellipse(x + 1, y + 22, 9, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cabeza negra
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.arc(x + 2, y - 2, 12, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cara blanca (máscara)
+    ctx.fillStyle = p.panza;
+    ctx.beginPath();
+    ctx.ellipse(x + 2, y - 1, 8, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mancha amarilla del emperador (a los lados del cuello)
+    ctx.fillStyle = p.amarillo;
+    ctx.beginPath();
+    ctx.ellipse(x + 9, y + 4, 4, 6, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x - 5, y + 4, 3, 5, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ojos negros con brillo
+    ctx.fillStyle = p.ojos;
+    ctx.beginPath();
+    ctx.arc(x + 5, y - 4, 1.8, 0, Math.PI * 2);
+    ctx.arc(x - 1, y - 4, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(x + 5.5, y - 4.5, 0.6, 0, Math.PI * 2);
+    ctx.arc(x - 0.5, y - 4.5, 0.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Pico naranja triangular
+    ctx.fillStyle = p.pico;
+    ctx.beginPath();
+    ctx.moveTo(x + 10, y - 2);
+    ctx.lineTo(x + 18, y);
+    ctx.lineTo(x + 10, y + 2);
+    ctx.closePath();
+    ctx.fill();
+
+    // Aletas laterales (negras, se menean al andar)
+    ctx.fillStyle = p.aletas;
+    ctx.beginPath();
+    ctx.moveTo(x - 10, y + 8);
+    ctx.quadraticCurveTo(x - 18, y + 14 + aleteo, x - 14, y + 24);
+    ctx.lineTo(x - 8, y + 22);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(x + 10, y + 8);
+    ctx.quadraticCurveTo(x + 18, y + 14 - aleteo, x + 14, y + 24);
+    ctx.lineTo(x + 8, y + 22);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  }
+    // ============================================================================
+  // 🐺 LOBO — gris, peludo, 4 patas caminando, cola meciéndose
+  // ============================================================================
+  function dibujarLobo(d, dy) {
+    const p = d.paleta || PALETAS_LOBO[0];
+    const trote = Math.sin(d.tiempo * 10) * 3;
+    const cola = Math.sin(d.tiempo * 4) * 4;
+    ctx.save();
+    ctx.translate(d.x, 0);
+    if (!d.mirandoDerecha) ctx.scale(-1, 1);
+    const x = 0;
+    const y = dy;
+
+    // Cola peluda con punta oscura
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath();
+    ctx.moveTo(x - 18, y + 6);
+    ctx.quadraticCurveTo(x - 32, y + 2 + cola, x - 36, y - 8 + cola);
+    ctx.quadraticCurveTo(x - 30, y - 2 + cola, x - 20, y + 10);
+    ctx.closePath();
+    ctx.fill();
+    // Punta de la cola más oscura
+    ctx.fillStyle = p.patas;
+    ctx.beginPath();
+    ctx.arc(x - 35, y - 6 + cola, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Patas (con trote alterno)
+    ctx.fillStyle = p.cuerpo;
+    ctx.fillRect(x - 14, y + 20, 5, 16 + trote);
+    ctx.fillRect(x - 6, y + 20, 5, 16 - trote);
+    ctx.fillRect(x + 8, y + 20, 5, 16 - trote);
+    ctx.fillRect(x + 16, y + 20, 5, 16 + trote);
+
+    // Zarpas oscuras
+    ctx.fillStyle = p.patas;
+    ctx.fillRect(x - 14, y + 34 + trote, 5, 3);
+    ctx.fillRect(x - 6, y + 34 - trote, 5, 3);
+    ctx.fillRect(x + 8, y + 34 - trote, 5, 3);
+    ctx.fillRect(x + 16, y + 34 + trote, 5, 3);
+
+    // Cuerpo
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 12, 20, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Vientre más claro
+    ctx.fillStyle = p.vientre;
+    ctx.beginPath();
+    ctx.ellipse(x + 4, y + 16, 14, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cabeza
+    ctx.fillStyle = p.cuerpo;
+    ctx.beginPath();
+    ctx.arc(x + 18, y - 2, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Orejas puntiagudas (triángulos)
+    ctx.beginPath();
+    ctx.moveTo(x + 10, y - 8);
+    ctx.lineTo(x + 6, y - 20);
+    ctx.lineTo(x + 14, y - 10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + 22, y - 8);
+    ctx.lineTo(x + 26, y - 20);
+    ctx.lineTo(x + 26, y - 8);
+    ctx.closePath();
+    ctx.fill();
+
+    // Interior de las orejas
+    ctx.fillStyle = p.orejas;
+    ctx.beginPath();
+    ctx.moveTo(x + 11, y - 10);
+    ctx.lineTo(x + 9, y - 17);
+    ctx.lineTo(x + 13, y - 11);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + 23, y - 10);
+    ctx.lineTo(x + 25, y - 17);
+    ctx.lineTo(x + 25, y - 10);
+    ctx.closePath();
+    ctx.fill();
+
+    // Hocico alargado
+    ctx.fillStyle = p.cuerpo2;
+    ctx.beginPath();
+    ctx.moveTo(x + 22, y - 4);
+    ctx.quadraticCurveTo(x + 32, y - 2, x + 32, y + 2);
+    ctx.quadraticCurveTo(x + 28, y + 4, x + 22, y + 2);
+    ctx.closePath();
+    ctx.fill();
+
+    // Nariz negra
+    ctx.fillStyle = "#1a1a1a";
+    ctx.beginPath();
+    ctx.arc(x + 31, y + 1, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ojos amarillos con pupila
+    ctx.fillStyle = p.ojos;
+    ctx.beginPath();
+    ctx.arc(x + 16, y - 4, 2, 0, Math.PI * 2);
+    ctx.arc(x + 22, y - 4, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#1a1a1a";
+    ctx.beginPath();
+    ctx.arc(x + 16, y - 4, 1, 0, Math.PI * 2);
+    ctx.arc(x + 22, y - 4, 1, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Pelaje del lomo (rayitas)
+    ctx.strokeStyle = p.pelo;
+    ctx.lineWidth = 1.5;
+    for (let i = -8; i < 12; i += 5) {
+      ctx.beginPath();
+      ctx.moveTo(x + i, y + 4);
+      ctx.lineTo(x + i + 2, y + 8);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
   function dibujarCieloDeFondo(tipo) {
     const grad = ctx.createLinearGradient(0, 0, 0, ALTO);
     grad.addColorStop(0, tipo.fondo);
@@ -3190,8 +4182,26 @@
         dibujarMono(d, dy);
       } else if (d.tipo === "llama") {
         dibujarLlama(d, dy);
-      }
+      } else if (d.tipo === "zorro") {
+        dibujarZorro(d, dy);
+      } else if (d.tipo === "buho") {
+        dibujarBuho(d, dy);
+      } else if (d.tipo === "panda") {
+        dibujarPanda(d, dy);
+      } else if (d.tipo === "tigre") {
+        dibujarTigre(d, dy);
+      } else if (d.tipo === "jaguar") {
+        dibujarJaguar(d, dy);
+      } else if (d.tipo === "alce") {
+        dibujarAlce(d, dy);
+      } else if (d.tipo === "gaviota") {
+        dibujarGaviota(d, dy);
+      } else if (d.tipo === "pinguino") {
+        dibujarPinguino(d, dy);
+      } else if (d.tipo === "lobo") {
+        dibujarLobo(d, dy);
     }
+  }
 
     if (tipo.vinyetaFuerte || pal.lluviaMatrix) {
       const grad = ctx.createRadialGradient(ANCHO / 2, ALTO / 2, 150, ANCHO / 2, ALTO / 2, ANCHO);
@@ -3318,6 +4328,58 @@
           ctx.fillStyle = "#D91023"; ctx.fillRect(plat.x, py, w, plat.alto);
           ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x + w, py, w, plat.alto);
           ctx.fillStyle = "#D91023"; ctx.fillRect(plat.x + w * 2, py, w, plat.alto);
+        } else if (tipoBandera === "rusia") {
+          const h = plat.alto / 3;
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x, py, plat.ancho, h);
+          ctx.fillStyle = "#0039A6"; ctx.fillRect(plat.x, py + h, plat.ancho, h);
+          ctx.fillStyle = "#D52B1E"; ctx.fillRect(plat.x, py + h * 2, plat.ancho, h);
+        } else if (tipoBandera === "grecia") {
+          const h = plat.alto / 9;
+          for (let i = 0; i < 9; i++) {
+            ctx.fillStyle = i % 2 === 0 ? "#0D5EAF" : "#ffffff";
+            ctx.fillRect(plat.x, py + i * h, plat.ancho, h);
+          }
+          ctx.fillStyle = "#0D5EAF"; ctx.fillRect(plat.x, py, plat.ancho * 0.4, h * 5);
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x + plat.ancho * 0.15, py, plat.ancho * 0.1, h * 5);
+          ctx.fillRect(plat.x, py + h * 2, plat.ancho * 0.4, h);
+        } else if (tipoBandera === "china") {
+          ctx.fillStyle = "#DE2910"; ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
+          ctx.fillStyle = "#FFDE00";
+          ctx.beginPath(); ctx.arc(plat.x + 10, py + 10, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(plat.x + 20, py + 6, 1.5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(plat.x + 24, py + 12, 1.5, 0, Math.PI * 2); ctx.fill();
+        } else if (tipoBandera === "india") {
+          const h = plat.alto / 3;
+          ctx.fillStyle = "#FF9933"; ctx.fillRect(plat.x, py, plat.ancho, h);
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x, py + h, plat.ancho, h);
+          ctx.fillStyle = "#138808"; ctx.fillRect(plat.x, py + h * 2, plat.ancho, h);
+          ctx.fillStyle = "#000080";
+          ctx.beginPath(); ctx.arc(plat.x + plat.ancho / 2, py + plat.alto / 2, h * 0.3, 0, Math.PI * 2); ctx.fill();
+        } else if (tipoBandera === "mexico") {
+          const w = plat.ancho / 3;
+          ctx.fillStyle = "#006847"; ctx.fillRect(plat.x, py, w, plat.alto);
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x + w, py, w, plat.alto);
+          ctx.fillStyle = "#CE1126"; ctx.fillRect(plat.x + w * 2, py, w, plat.alto);
+        } else if (tipoBandera === "canada") {
+          const w = plat.ancho / 4;
+          ctx.fillStyle = "#FF0000"; ctx.fillRect(plat.x, py, w, plat.alto);
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(plat.x + w, py, w * 2, plat.alto);
+          ctx.fillStyle = "#FF0000"; ctx.fillRect(plat.x + w * 3, py, w, plat.alto);
+          ctx.fillStyle = "#FF0000";
+          ctx.beginPath(); ctx.moveTo(plat.x + plat.ancho / 2, py + 4); ctx.lineTo(plat.x + plat.ancho / 2 + 4, py + 10); ctx.lineTo(plat.x + plat.ancho / 2, py + plat.alto - 4); ctx.lineTo(plat.x + plat.ancho / 2 - 4, py + 10); ctx.fill();
+        } else if (tipoBandera === "turquia") {
+          ctx.fillStyle = "#E30A17"; ctx.fillRect(plat.x, py, plat.ancho, plat.alto);
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath(); ctx.arc(plat.x + plat.ancho * 0.4, py + plat.alto / 2, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = "#E30A17";
+          ctx.beginPath(); ctx.arc(plat.x + plat.ancho * 0.45, py + plat.alto / 2, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath(); ctx.arc(plat.x + plat.ancho * 0.6, py + plat.alto / 2, 2, 0, Math.PI * 2); ctx.fill();
+        } else if (tipoBandera === "alemania") {
+          const h = plat.alto / 3;
+          ctx.fillStyle = "#000000"; ctx.fillRect(plat.x, py, plat.ancho, h);
+          ctx.fillStyle = "#D52B1E"; ctx.fillRect(plat.x, py + h, plat.ancho, h);
+          ctx.fillStyle = "#FFCE00"; ctx.fillRect(plat.x, py + h * 2, plat.ancho, h);
         }
         ctx.strokeStyle = "#1a1a1a";
         ctx.lineWidth = 2;
@@ -3391,6 +4453,104 @@
       ctx.fillText("▶", x - 26, y + h / 2);
       ctx.textAlign = "center";
     }
+  }
+
+  function dibujarIniciales(pal) {
+    const ini = estado.ini; if (!ini) return;
+    ctx.fillStyle = pal.menuFondo; ctx.fillRect(0, 0, ANCHO, ALTO);
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = pal.acento; ctx.font = "bold 32px monospace";
+    ctx.fillText(tx("ini_titulo"), ANCHO / 2, 70);
+    ctx.fillStyle = "#ffd54a"; ctx.font = "bold 24px monospace";
+    ctx.fillText(ini.puntos + " " + tx("hud_m") + "   ·   " + tx("ini_puesto") + " " + ini.puesto, ANCHO / 2, 120);
+    ctx.fillStyle = pal.textoSuave; ctx.font = "16px monospace";
+    ctx.fillText(tx("ini_pide"), ANCHO / 2, 168);
+
+    // Casillas de las iniciales (las 3 primeras obligatorias, las otras 3 opcionales)
+    const cw = 56, ch = 72, gap = 10;
+    const x0 = (ANCHO - (INI_MAX * cw + (INI_MAX - 1) * gap)) / 2, y0 = 200;
+    const parpadeo = Math.floor(Date.now() / 400) % 2 === 0;
+    for (let i = 0; i < INI_MAX; i++) {
+      const x = x0 + i * (cw + gap);
+      const lleno = i < ini.texto.length;
+      const actual = i === ini.texto.length;
+      ctx.fillStyle = "rgba(" + pal.botonSecFondo + ", 0.35)"; ctx.fillRect(x, y0, cw, ch);
+      ctx.strokeStyle = lleno || (actual && parpadeo) ? pal.acento : "rgba(" + pal.botonBorde + ", " + (i < INI_MIN ? 0.7 : 0.35) + ")";
+      ctx.lineWidth = actual ? 4 : 2; ctx.strokeRect(x, y0, cw, ch);
+      if (lleno) { ctx.fillStyle = pal.texto; ctx.font = "bold 44px monospace"; ctx.fillText(ini.texto[i], x + cw / 2, y0 + ch / 2 + 2); }
+      else if (actual && parpadeo && !ini.guardando) { ctx.fillStyle = pal.acento; ctx.font = "bold 44px monospace"; ctx.fillText("_", x + cw / 2, y0 + ch / 2 + 2); }
+    }
+
+    // Teclado en pantalla (sirve con el dedo, el ratón o las flechas + espacio)
+    const kw = 52, kh = 52, kg = 4;
+    const kx0 = (ANCHO - (TECLAS_COLS * kw + (TECLAS_COLS - 1) * kg)) / 2, ky0 = 320;
+    estado._celdasIni = [];
+    for (let i = 0; i < TECLAS_INI.length; i++) {
+      const t = TECLAS_INI[i];
+      const x = kx0 + (i % TECLAS_COLS) * (kw + kg), y = ky0 + Math.floor(i / TECLAS_COLS) * (kh + kg);
+      const foco = i === ini.cursor;
+      const apagada = t === "OK" && ini.texto.length < INI_MIN;
+      ctx.fillStyle = foco ? "rgba(" + pal.botonFondo + ", 0.85)" : "rgba(" + pal.botonSecFondo + ", " + (apagada ? 0.15 : 0.4) + ")";
+      ctx.fillRect(x, y, kw, kh);
+      ctx.strokeStyle = foco ? "rgba(" + pal.botonBorde + ", 1)" : "rgba(" + pal.botonBorde + ", 0.55)";
+      ctx.lineWidth = foco ? 3 : 1.5; ctx.strokeRect(x, y, kw, kh);
+      ctx.fillStyle = apagada ? "rgba(230, 240, 250, 0.35)" : (foco ? "#ffffff" : "rgba(230, 240, 250, 0.9)");
+      ctx.font = "bold " + (t.length > 1 ? 18 : 24) + "px monospace";
+      ctx.fillText(t === "DEL" ? "⌫" : t, x + kw / 2, y + kh / 2 + 1);
+      estado._celdasIni.push({ x: x, y: y, w: kw, h: kh, i: i });
+    }
+
+    // Mensajes
+    ctx.font = "bold 16px monospace";
+    if (ini.guardando) { ctx.fillStyle = pal.acento; ctx.fillText(tx("ini_guardando"), ANCHO / 2, 590); }
+    else if (ini.aviso) { ctx.fillStyle = "#ff8a80"; ctx.fillText(tx(ini.aviso), ANCHO / 2, 590); }
+    ctx.fillStyle = pal.textoSuave; ctx.font = "13px monospace";
+    ctx.fillText(tx("ini_ayuda"), ANCHO / 2, 640);
+
+    const bw = 200, bh = 46, bx = ANCHO / 2 - bw / 2, by = 680;
+    dibujarBoton(bx, by, bw, bh, tx("ini_saltar"), false, pal.botonSecFondo, pal.botonSecBorde);
+    estado._btnSaltarIni = { x: bx, y: by, w: bw, h: bh };
+    ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
+  }
+
+  function dibujarRanking(pal) {
+    ctx.fillStyle = pal.menuFondo; ctx.fillRect(0, 0, ANCHO, ALTO);
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = pal.acento; ctx.font = "bold 44px monospace";
+    ctx.fillText(tx("rk_titulo"), ANCHO / 2, 64);
+    ctx.fillStyle = pal.textoSuave; ctx.font = "15px monospace";
+    let sub = ranking.origen === "global" ? tx("rk_mundial") : tx("rk_local");
+    if (ranking.cargando) sub = tx("rk_cargando");
+    else if (ranking.error) sub = tx("rk_sin_conexion");
+    ctx.fillText(sub, ANCHO / 2, 108);
+
+    const colores = ["#ffd54a", "#cfd8dc", "#d7a06b"];
+    const y0 = 150, fh = 54;
+    const parpadeo = 0.55 + Math.sin(Date.now() / 200) * 0.25;
+    let propiaMarcada = false;
+    for (let i = 0; i < RANKING_TAM; i++) {
+      const e = ranking.lista[i];
+      const cy = y0 + i * fh + fh / 2;
+      const color = colores[i] || pal.texto;
+      const esPropia = !!(e && ranking.ultimo && !propiaMarcada && e.n === ranking.ultimo.n && e.p === ranking.ultimo.p);
+      if (esPropia) {
+        propiaMarcada = true;
+        ctx.fillStyle = "rgba(" + pal.botonFondo + ", " + parpadeo + ")";
+        ctx.fillRect(40, cy - fh / 2 + 3, ANCHO - 80, fh - 6);
+      }
+      ctx.textAlign = "left"; ctx.font = "bold 28px monospace";
+      ctx.fillStyle = e ? color : "rgba(230, 240, 250, 0.25)";
+      ctx.fillText((i + 1 < 10 ? "0" : "") + (i + 1), 60, cy);
+      ctx.fillText(e ? e.n : "------", 140, cy);
+      if (e && e.s > 0) { ctx.font = "16px monospace"; ctx.fillStyle = pal.textoSuave; ctx.fillText(tx("hud_p") + e.s, 340, cy); }
+      ctx.textAlign = "right"; ctx.font = "bold 28px monospace";
+      ctx.fillStyle = e ? color : "rgba(230, 240, 250, 0.25)";
+      ctx.fillText(e ? e.p + " " + tx("hud_m") : "--", 540, cy);
+    }
+    ctx.textAlign = "center";
+    ctx.fillStyle = pal.textoSuave; ctx.font = "14px monospace";
+    ctx.fillText(tx("rk_volver"), ANCHO / 2, ALTO - 36);
+    ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
   }
 
   function render() {
@@ -3468,6 +4628,11 @@
       ctx.fillStyle = pal.acento;
       ctx.font = "16px monospace";
       ctx.fillText(tx("menu_record") + ": " + estado.camara.record + " " + tx("hud_m"), ANCHO / 2, ALTO / 2 - 110);
+      const mejor = ranking.lista[0];
+      if (mejor) {
+        ctx.fillStyle = "#ffd54a"; ctx.font = "bold 16px monospace";
+        ctx.fillText("★ " + tx("menu_top") + ": " + mejor.n + " · " + mejor.p + " " + tx("hud_m"), ANCHO / 2, ALTO / 2 - 82);
+      }
       const btnW = 280, btnH = 50, sep = 12;
       let by = ALTO / 2 - 50;
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_empezar"), enfocada("empezar"), pal.botonFondo, pal.botonBorde);
@@ -3475,6 +4640,9 @@
       by += btnH + sep;
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_instrucciones"), enfocada("instrucciones"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnInstrucciones = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
+      by += btnH + sep;
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_ranking"), enfocada("ranking"), pal.botonSecFondo, pal.botonSecBorde);
+      estado._btnRankingMenu = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_creditos"), enfocada("creditos"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnCreditos = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
@@ -3486,7 +4654,7 @@
       ctx.fillStyle = pal.textoSuave;
       ctx.font = "13px monospace";
       ctx.textAlign = "center";
-      ctx.fillText(tx("menu_ayuda"), ANCHO / 2, ALTO / 2 + 260);
+      ctx.fillText(tx("menu_ayuda"), ANCHO / 2, ALTO / 2 + 272);
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
@@ -3537,79 +4705,53 @@
       ctx.fillStyle = pal.acento; ctx.font = "bold 20px monospace";
       ctx.fillText(tx("cred_gracias"), ANCHO / 2, py + 300);
       ctx.fillStyle = pal.textoSuave; ctx.font = "13px monospace";
-      ctx.fillText(tx("cred_version") + ": v:74.0", ANCHO / 2, py + 340);
+      ctx.fillText(tx("cred_version") + ": v:73.0", ANCHO / 2, py + 340);
       ctx.fillText("© 2026", ANCHO / 2, py + 365);
       ctx.fillStyle = pal.textoSuave; ctx.font = "14px monospace";
       ctx.fillText(tx("cred_volver"), ANCHO / 2, ALTO - 40);
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
 
-    // --- RENDER GAME OVER ACTUALIZADO CON TABLA DE RÉCORDS ---
     if (estado.modo === "gameover") {
-      ctx.fillStyle = pal.menuFondo; 
-      ctx.fillRect(0, 0, ANCHO, ALTO);
-      
+      ctx.fillStyle = pal.menuFondo; ctx.fillRect(0, 0, ANCHO, ALTO);
       ctx.fillStyle = pal.acento;
-      ctx.font = "bold 44px monospace";
+      ctx.font = "bold 52px monospace";
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillText(tx("go_titulo"), ANCHO / 2, 70);
-
-      // Panel resumen
-      const px = ANCHO / 2 - 200, py = 110, pw = 400, ph = 150;
+      ctx.fillText(tx("go_titulo"), ANCHO / 2, 160);
+      const px = ANCHO / 2 - 200, py = 230, pw = 400, ph = 220;
       ctx.fillStyle = pal.panelFondo; ctx.fillRect(px, py, pw, ph);
       ctx.strokeStyle = "rgba(" + pal.panelBorde + ", 0.8)"; ctx.lineWidth = 3;
       ctx.strokeRect(px, py, pw, ph);
-      
-      ctx.fillStyle = pal.texto; ctx.font = "bold 18px monospace";
-      ctx.fillText(tx("go_resumen"), ANCHO / 2, py + 25);
-      ctx.font = "16px monospace"; ctx.fillStyle = pal.textoSuave;
-      ctx.fillText(tx("go_altura_max") + ":  " + estado.camara.alturaMaxima + " " + tx("hud_m"), ANCHO / 2, py + 60);
-      ctx.fillText(tx("go_fragmentos") + ":  " + estado.fragmentosRecogidos + "/" + estado.fragmentosTotales, ANCHO / 2, py + 85);
-      ctx.fillText(tx("go_pantalla") + ":  " + tx("hud_p") + estado.pantalla, ANCHO / 2, py + 110);
-
+      ctx.fillStyle = pal.texto; ctx.font = "bold 22px monospace";
+      ctx.fillText(tx("go_resumen"), ANCHO / 2, py + 30);
+      ctx.font = "18px monospace"; ctx.fillStyle = pal.textoSuave;
+      ctx.fillText(tx("go_altura_max") + ":  " + estado.camara.alturaMaxima + " " + tx("hud_m"), ANCHO / 2, py + 80);
+      ctx.fillText(tx("go_fragmentos") + ":  " + estado.fragmentosRecogidos + "/" + estado.fragmentosTotales, ANCHO / 2, py + 115);
+      ctx.fillText(tx("go_pantalla") + ":  " + tx("hud_p") + estado.pantalla, ANCHO / 2, py + 150);
+      ctx.fillStyle = pal.acento; ctx.font = "bold 18px monospace";
       const nuevoRecord = estado.camara.alturaMaxima >= estado.camara.record && estado.camara.alturaMaxima > 0;
-      if (nuevoRecord) {
-        ctx.fillStyle = pal.acento; ctx.font = "bold 16px monospace";
-        ctx.fillText("¡NUEVO RÉCORD!", ANCHO / 2, py + 135);
-      }
-
-      // Tabla de Récords (Top 5)
-      ctx.fillStyle = pal.texto; 
-      ctx.font = "bold 20px monospace";
-      ctx.fillText("TOP 5 RÉCORDS", ANCHO / 2, 300);
-      
-      ctx.font = "16px monospace";
-      let yScore = 340;
-      for (let i = 0; i < estado.highScores.length; i++) {
-        const score = estado.highScores[i];
-        // Resaltar si es el jugador actual (mismo nombre y puntos)
-        const esElJugador = (score.puntos === estado.camara.alturaMaxima && score.nombre === inputIniciales.value.trim().toUpperCase() && !modalIniciales.style.display.includes("flex"));
-        
-        if (esElJugador) ctx.fillStyle = pal.acentoSuave;
-        else ctx.fillStyle = pal.textoSuave;
-        
-        const posText = (i + 1) + ". " + score.nombre;
-        const scoreText = score.puntos + " m";
-        
-        ctx.textAlign = "left";
-        ctx.fillText(posText, ANCHO / 2 - 120, yScore);
-        ctx.textAlign = "right";
-        ctx.fillText(scoreText, ANCHO / 2 + 120, yScore);
-        yScore += 30;
-      }
-      ctx.textAlign = "center"; // Restaurar alineación
-
-      // Botones
+      if (nuevoRecord) ctx.fillText(tx("go_nuevo_record"), ANCHO / 2, py + 185);
+      else ctx.fillText(tx("go_record") + ":  " + estado.camara.record + " " + tx("hud_m"), ANCHO / 2, py + 185);
       const btnW = 280, btnH = 50, sep = 12;
-      let by = 540;
+      let by = py + ph + 30;
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_reintentar"), enfocada("reintentar"), pal.botonFondo, pal.botonBorde);
       estado._btnReintentar = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
       by += btnH + sep;
       dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_menu"), enfocada("menu"), pal.botonSecFondo, pal.botonSecBorde);
       estado._btnMenu = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
-      
+      by += btnH + sep;
+      dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("menu_ranking"), enfocada("ranking"), pal.botonSecFondo, pal.botonSecBorde);
+      estado._btnRankingGo = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
+      by += btnH + sep;
+      if (!estaEnFullscreen()) {
+        dibujarBoton(ANCHO / 2 - btnW / 2, by, btnW, btnH, tx("go_fullscreen"), enfocada("pantalla-completa"), pal.botonSecFondo, pal.botonSecBorde);
+        estado._btnPantallaCompleta = { x: ANCHO / 2 - btnW / 2, y: by, w: btnW, h: btnH };
+      } else { estado._btnPantallaCompleta = null; }
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
     }
+
+    if (estado.modo === "iniciales") dibujarIniciales(pal);
+    if (estado.modo === "ranking") dibujarRanking(pal);
 
     if (estado.modo === "confirmar-salida") {
       ctx.fillStyle = "rgba(0, 0, 0, 0.75)"; ctx.fillRect(0, 0, ANCHO, ALTO);
@@ -3644,9 +4786,13 @@
     }
   }
 
+  // ============================================================================
+  // Bucle principal + IntersectionObserver
+  // El juego solo consume CPU cuando la sección #juego está en viewport.
+  // ============================================================================
   let ultimoTiempo = 0;
-  let rafId = null;
-  let juegoVisible = false;
+  let rafId = null;           // id del requestAnimationFrame en curso
+  let juegoVisible = false;   // ¿está la sección #juego en pantalla?
 
   function loop(tiempo) {
     if (!juegoVisible) { rafId = null; return; }
@@ -3655,12 +4801,6 @@
       return;
     }
     ultimoTiempo = tiempo;
-
-    // NUEVO: Contar el tiempo que llevamos en Game Over
-    if (estado.modo === "gameover") {
-      estado.tiempoGameOver++;
-    }
-
     actualizarFisica();
     render();
     rafId = requestAnimationFrame(loop);
@@ -3679,8 +4819,9 @@
     }
   }
 
+  // Preparar estado inicial (esto NO arranca el bucle)
   cargarRecord();
-  cargarHighScores();
+  cargarRanking();
   crearPlataformas();
   crearDecoraciones();
   crearMurcielagos();
@@ -3690,15 +4831,19 @@
   estado.opcionActiva = 0;
   actualizarClaseJugando();
 
+  // Primer frame estático para que el canvas no esté en blanco cuando
+  // el usuario llegue a la sección. Esto NO es el bucle.
   try { render(); } catch (e) {}
 
   function conectarVisibilidadJuego() {
     const seccion = document.getElementById("juego") || contenedor;
+
     if (typeof IntersectionObserver === "undefined") {
       juegoVisible = true;
       arrancarLoop();
       return;
     }
+
     const obs = new IntersectionObserver((entradas) => {
       for (const e of entradas) {
         juegoVisible = e.isIntersecting;
@@ -3710,6 +4855,7 @@
       rootMargin: "200px 0px",
       threshold: 0.01,
     });
+
     obs.observe(seccion);
   }
 
@@ -3724,9 +4870,12 @@
     estado, contenedor,
     saltarA(numero, tipoForzado) {
       estado.pantalla = numero;
+      olvidarTiposAleatorios();
+      if (tipoForzado && numero > CATALOGO_PANTALLAS.length) tiposAleatorios[numero] = tipoForzado;
       estado.tipoPantalla = tipoForzado || tipoDePantalla(numero);
       estado.modo = "jugando";
       estado.gameOver = false;
+      estado.sinRanking = true;      // partidas con salto de depuración no puntúan en el ranking
       estado.fragmentosRecogidos = 0;
       estado.camara.y = CAMARA_INICIAL;
       estado.camara.alturaMaxima = (numero - 1) * METROS_FIN_PANTALLA;
@@ -3766,6 +4915,7 @@
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     },
+    // Rendimiento
     arrancarLoop,
     pararLoop,
     estaArrancado() { return rafId !== null; },
