@@ -1247,8 +1247,8 @@
   const INI_MIN = 3, INI_MAX = 6;    
   const TECLAS_INI = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split("").concat(["DEL", "OK"]);
   const TECLAS_COLS = 10;
-  const ranking = { lista: [], origen: "local", cargando: false, error: false, ultimo: null, promesa: null, token: null };
-
+  const ranking = { lista: [], origen: "local", cargando: false, error: false, ultimo: null, promesa: null, token: null, tokenTime: 0 };
+  
   function entradaValida(e) {
     return !!e && typeof e.n === "string" && /^[A-Z0-9]{3,6}$/.test(e.n) &&
       typeof e.p === "number" && isFinite(e.p) && e.p > 0 && e.p <= 100000;
@@ -1270,14 +1270,34 @@
   }
   function guardarIniciales(v) { try { localStorage.setItem("je-iniciales", v); } catch (e) {} }
 
-  // Pide un token al backend al empezar a jugar (para validar que no hacemos trampas)
+  // Pide un token al backend al empezar a jugar (para validar que no hacemos trampas).
+  // Render free tier duerme: damos 3 intentos con espera si el servidor está arrancando.
   function pedirTokenPartida() {
-    if (!RANKING_API_URL || typeof fetch !== "function") return;
+    if (!RANKING_API_URL || typeof fetch !== "function") return Promise.resolve(null);
+    // Reusamos el token si es reciente (< 30 min)
+    if (ranking.token && ranking.tokenTime && (Date.now() - ranking.tokenTime) < 30 * 60 * 1000) {
+      return Promise.resolve(ranking.token);
+    }
     ranking.token = null;
-    fetch(RANKING_API_URL + "/inicio")
-      .then(r => r.json())
-      .then(data => { if (data.token) ranking.token = data.token; })
-      .catch(() => {});
+    const pedir = (intentos) => {
+      return fetch(RANKING_API_URL + "/inicio", { cache: "no-store" })
+        .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(data => {
+          if (data && data.token) {
+            ranking.token = data.token;
+            ranking.tokenTime = Date.now();
+            return ranking.token;
+          }
+          throw new Error("sin token");
+        })
+        .catch(() => {
+          if (intentos > 1) {
+            return new Promise(ok => setTimeout(ok, 3000)).then(() => pedir(intentos - 1));
+          }
+          return null;
+        });
+    };
+    return pedir(3);   // 3 intentos × 3 s entre ellos = cubre el cold-start de Render
   }
 
   function cargarRanking() {
@@ -1307,43 +1327,74 @@
   }
   function puestoPara(puntos) { return ranking.lista.filter((e) => e.p >= puntos).length + 1; }
 
-  function enviarPuntuacion(nombre, puntos, pantalla) {
-    // Guardado local de respaldo (si falla internet, no perdemos la partida)
+    function enviarPuntuacion(nombre, puntos, pantalla) {
+    // 1) Guardado local de respaldo (siempre)
     const listaLocal = limpiarLista(leerRankingLocal().concat([{ n: nombre, p: puntos, s: pantalla, t: Date.now() }]));
     guardarRankingLocal(listaLocal);
-    
-    // Si no hay API, o no hay token, usamos solo el local
-    if (!RANKING_API_URL || typeof fetch !== "function" || !ranking.token) {
-      ranking.lista = listaLocal; ranking.origen = "local"; ranking.error = false;
-      return Promise.resolve(true);
-    }
-    
-    // Enviamos al backend
-    return fetch(RANKING_API_URL + "/ranking", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ n: nombre, p: puntos, s: pantalla, tk: ranking.token })
-    })
-    .then(r => {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
-    })
-    .then(data => {
-      if (data.ranking) {
-        ranking.lista = limpiarLista(data.ranking);
-        ranking.origen = "global";
-      } else {
-        return cargarRanking();
+    ranking.lista = listaLocal;
+    ranking.origen = "local";
+    ranking.error = false;
+
+    if (!RANKING_API_URL || typeof fetch !== "function") return Promise.resolve(true);
+
+    // 2) Si no hay token (falló al empezar o expiró), lo pedimos AHORA
+    const asegurarToken = () => {
+      if (ranking.token && ranking.tokenTime && (Date.now() - ranking.tokenTime) < 30 * 60 * 1000) {
+        return Promise.resolve(ranking.token);
       }
-      ranking.error = false;
-      return true;
-    })
-    .catch(() => { 
-      // Si falla el backend, nos quedamos con la lista local
-      ranking.lista = listaLocal; 
-      ranking.origen = "local"; 
-      ranking.error = true; 
-      return false; 
+      return fetch(RANKING_API_URL + "/inicio", { cache: "no-store" })
+        .then(r => r.json())
+        .then(data => {
+          if (data && data.token) {
+            ranking.token = data.token;
+            ranking.tokenTime = Date.now();
+          }
+          return ranking.token;
+        })
+        .catch(() => null);
+    };
+
+    // 3) POST con 3 reintentos
+    const postear = (tk, intentos) => {
+      return fetch(RANKING_API_URL + "/ranking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ n: nombre, p: puntos, s: pantalla, tk: tk }),
+        cache: "no-store"
+      })
+        .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .catch(() => {
+          if (intentos > 1) {
+            return new Promise(ok => setTimeout(ok, 2500)).then(() => postear(tk, intentos - 1));
+          }
+          throw new Error("post-fallido");
+        });
+    };
+
+    return asegurarToken().then(tk => {
+      if (!tk) {
+        console.warn("[ranking] sin token: guardado solo en local");
+        ranking.error = true;
+        return false;
+      }
+      return postear(tk, 3).then(data => {
+        if (data && data.ranking) {
+          ranking.lista = limpiarLista(data.ranking);
+          ranking.origen = "global";
+          ranking.error = false;
+        } else {
+          ranking.lista = listaLocal;
+          ranking.origen = "local";
+          ranking.error = true;
+        }
+        return true;
+      }).catch(err => {
+        console.warn("[ranking] POST falló:", err.message);
+        ranking.lista = listaLocal;
+        ranking.origen = "local";
+        ranking.error = true;
+        return false;
+      });
     });
   }
 
@@ -1354,9 +1405,11 @@
     const puntos = estado.camara.alturaMaxima;
     if (estado.sinRanking || !(puntos > 0)) return;
     const id = ++estado.idGameOver;
-    Promise.all([cargarRanking(), new Promise((ok) => setTimeout(ok, 900))]).then(() => {
+    const timeout = new Promise(ok => setTimeout(ok, 4000));   // 4 s máximo
+    Promise.race([cargarRanking(), timeout]).then(() => {
       if (estado.modo !== "gameover" || estado.idGameOver !== id || estado.rankingGuardado) return;
-      if (calificaParaRanking(puntos)) abrirIniciales(puntos);
+      // Aunque el ranking no haya cargado, dejamos entrar en el Top si vamos sobrados
+      if (calificaParaRanking(puntos) || ranking.lista.length === 0) abrirIniciales(puntos);
     });
   }
   function abrirIniciales(puntos) {
@@ -4866,8 +4919,20 @@
 
   conectarVisibilidadJuego();
 
-  window.__juegoEscalada = {
-    estado, contenedor,
+    window.__juegoEscalada = {
+    estado, 
+    contenedor,
+    ranking,             // <--- NUEVO
+    debugRanking() {     // <--- NUEVO
+      return {
+        token: !!ranking.token,
+        tokenEdadSeg: ranking.tokenTime ? Math.round((Date.now() - ranking.tokenTime) / 1000) : null,
+        origen: ranking.origen,
+        error: ranking.error,
+        top: ranking.lista.slice(0, 3),
+      };
+    },                   // <--- NUEVO
+    
     saltarA(numero, tipoForzado) {
       estado.pantalla = numero;
       olvidarTiposAleatorios();
