@@ -342,12 +342,6 @@
   }
 
   // ---------- Carga de fondos ----------
-  // Cada ciudad usa UNA sola imagen vertical (1080x1920) recorrida de
-  // abajo a arriba. No hay versión "aérea" (2.webp).
-  // Nombres reales en /image:
-  //   · fondo-australia.webp  → Sídney
-  //   · fondo-marruecos.webp  → Marrakech
-  //   · fondo-peru.webp       → Machu Picchu
   const FONDOS = {
     valencia:    { img: null, cargada: false, ruta: "image/fondo-valencia.webp" },
     madrid:      { img: null, cargada: false, ruta: "image/fondo-madrid.webp" },
@@ -381,8 +375,6 @@
       f.img = img;
     });
   }
-  // Los 12 fondos (1080x1920) pesan ~3 MB: NO se piden al cargar la página,
-  // solo cuando el juego está cerca de verse (o al primer toque sobre él).
   let fondosPedidos = false;
   function pedirFondos() { if (fondosPedidos) return; fondosPedidos = true; cargarFondos(); }
 
@@ -676,9 +668,6 @@
       const tipo = CATALOGO_PANTALLAS[numero - 1].tipo;
       return TIPOS_PANTALLA[tipo] ? tipo : "cueva";
     }
-    // Pasado el catálogo: tipo aleatorio, pero se decide UNA sola vez por pantalla y por partida.
-    // (Antes se sorteaba en cada llamada: el letrero de transición cambiaba de nombre en cada
-    // fotograma y por eso "temblaba", y además no coincidía con el fondo que luego salía.)
     if (tiposAleatorios[numero]) return tiposAleatorios[numero];
     const previo = tipoDePantalla(numero - 1);
     const opciones = POOL_ALEATORIO.filter((t) => t !== previo && TIPOS_PANTALLA[t]);
@@ -774,7 +763,7 @@
   ];
   const PALETAS_JAGUAR = [
     { cuerpo: "#f4c430", manchas: "#1a1a1a", vientre: "#f8f8f8", ojos: "#a8e6cf" },
-    { cuerpo: "#1a1a1a", manchas: "#0a0a0a", vientre: "#2a2a2a", ojos: "#ffd700" } // Pantera negra
+    { cuerpo: "#1a1a1a", manchas: "#0a0a0a", vientre: "#2a2a2a", ojos: "#ffd700" }
   ];
   const PALETAS_ALCE = [
     { cuerpo: "#6a4a2a", cuerpo2: "#8a6a48", astas: "#d8c8a8", hocico: "#4a3a2a", ojos: "#1a1a1a" }
@@ -842,6 +831,7 @@
     pantalla: 1, tipoPantalla: "cueva",
     transicion: null, gameOver: false, bonusVidaDado: false,
     banner: null,
+    jefe: null, // <--- JEFE
     // Ranking
     ini: null, rankingDesde: "menu", rankingGuardado: false, sinRanking: false, idGameOver: 0,
   };
@@ -911,7 +901,6 @@
     contenedor.addEventListener("touchmove", bloquearGestosFS, { passive: false });
     ajustarAlturaFullscreen();
     ajustarFocoTrasFullscreen();
-    // Safari reajusta la barra de direcciones un instante después
     setTimeout(ajustarAlturaFullscreen, 150);
     setTimeout(ajustarAlturaFullscreen, 400);
   }
@@ -981,16 +970,12 @@
     plats.push({ x: 0, y: SUELO_Y, ancho: ANCHO, alto: SUELO_ALTO, tipo: "suelo" });
 
     const esCiudad = !!tipo.esCiudad;
-
-    // La última plataforma debe quedar por encima de los 214 m (meta = METROS_FIN_PANTALLA),
-    // así desde ella se llega a la meta con un salto normal. Antes el nº de plataformas era fijo
-    // (20 en ciudades) y la última quedaba a ~164 m: imposible pasar de pantalla.
     const Y_ULTIMA = Y_SUELO_JUGABLE + STEVE_ALTO - (METROS_FIN_PANTALLA - 6) * PX_POR_METRO;
     const RECORRIDO = -180 - Y_ULTIMA;
 
     let y = -180;
     let xActual = 200;
-    for (let i = 0; i < 200; i++) {            // 200 = tope de seguridad, nunca se alcanza
+    for (let i = 0; i < 200; i++) {
       const progreso = Math.min(1, Math.max(0, (-180 - y) / RECORRIDO));
       let separacionY, ancho;
       if (esCiudad) {
@@ -1008,7 +993,7 @@
       else nuevoX = minX + Math.random() * 100;
       xActual = nuevoX;
       plats.push({ x: nuevoX, y, ancho, alto, tipo: "presa", tieneFragmento: false, esBandera: false });
-      if (y <= Y_ULTIMA) break;                // ya hemos llegado arriba del todo
+      if (y <= Y_ULTIMA) break;
       y -= separacionY;
     }
 
@@ -1022,8 +1007,6 @@
     }
 
     const candidatas = plats.filter((p) => p.tipo === "presa");
-    // NUEVO: Excluir las 3 últimas plataformas (las más altas) para evitar que caiga un
-    // fragmento donde no da tiempo a cogerlo antes de cambiar de pantalla.
     const candidatasValidas = candidatas.slice(0, Math.max(1, candidatas.length - 3));
     
     const indicesElegidos = [];
@@ -1118,68 +1101,57 @@
         decor.push({ tipo: tipo.animalVolador, x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.6 + Math.random() * 0.7, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5 });
       }
     }
-
     if (tipo.animalCaminante === "oso-bipedo") {
       for (let i = 0; i < 8; i++) {
         decor.push({ tipo: "oso-bipedo", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.35, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 44, alto: 80, _atascado: 0, paleta: PALETAS_OSO[Math.floor(Math.random() * PALETAS_OSO.length)] });
       }
     }
-
     if (tipo.animalVolador === "cuervo") {
       for (let i = 0; i < 12; i++) {
         decor.push({ tipo: "cuervo", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.7 + Math.random() * 0.7, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, paleta: PALETAS_CUERVO[Math.floor(Math.random() * PALETAS_CUERVO.length)] });
       }
     }
-
     if (tipo.animalCaminante === "rata") {
       for (let i = 0; i < 10; i++) {
         decor.push({ tipo: "rata", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.5 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_RATA[Math.floor(Math.random() * PALETAS_RATA.length)] });
       }
     }
-
     if (tipo.animalCaminante === "gato-romano") {
       for (let i = 0; i < 10; i++) {
         decor.push({ tipo: "gato-romano", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.4 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_GATO[Math.floor(Math.random() * PALETAS_GATO.length)] });
       }
     }
-
     if (tipo.animalCaminante === "camello") {
       for (let i = 0; i < 6; i++) {
         decor.push({ tipo: "camello", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 56, alto: 90, _atascado: 0, paleta: PALETAS_CAMELLO[Math.floor(Math.random() * PALETAS_CAMELLO.length)] });
       }
     }
-
     if (tipo.animalVolador === "grulla") {
       for (let i = 0; i < 10; i++) {
         decor.push({ tipo: "grulla", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.7 + Math.random() * 0.6, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, tam: 32 + Math.random() * 8, paleta: PALETAS_GRULLA[Math.floor(Math.random() * PALETAS_GRULLA.length)] });
       }
     }
-
     if (tipo.animalVolador === "tucan") {
       for (let i = 0; i < 12; i++) {
         decor.push({ tipo: "tucan", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.6 + Math.random() * 0.7, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, paleta: PALETAS_TUCAN[Math.floor(Math.random() * PALETAS_TUCAN.length)] });
       }
     }
-
     if (tipo.animalCaminante === "canguro") {
       for (let i = 0; i < 6; i++) {
         decor.push({ tipo: "canguro", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.5 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 44, alto: 78, _atascado: 0, paleta: PALETAS_CANGURO[Math.floor(Math.random() * PALETAS_CANGURO.length)] });
       }
     }
-
     if (tipo.animalCaminante === "mono") {
       for (let i = 0; i < 8; i++) {
         decor.push({ tipo: "mono", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.5 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 30, alto: 44, _atascado: 0, paleta: PALETAS_MONO[Math.floor(Math.random() * PALETAS_MONO.length)] });
       }
     }
-
     if (tipo.animalCaminante === "llama") {
       for (let i = 0; i < 6; i++) {
         decor.push({ tipo: "llama", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.4 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, ancho: 40, alto: 82, _atascado: 0, paleta: PALETAS_LLAMA[Math.floor(Math.random() * PALETAS_LLAMA.length)] });
       }
     }
-
-        if (tipo.animalCaminante === "zorro") {
+    if (tipo.animalCaminante === "zorro") {
       for (let i = 0; i < 8; i++) {
         decor.push({ tipo: "zorro", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.6 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_ZORRO[Math.floor(Math.random() * PALETAS_ZORRO.length)] });
       }
@@ -1214,7 +1186,7 @@
         decor.push({ tipo: "gaviota", x: Math.random() * ANCHO, y: -Math.random() * DECO_RANGO - 100, vel: 0.8 + Math.random() * 0.6, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, paleta: PALETAS_GAVIOTA[0] });
       }
     }
-        if (tipo.animalCaminante === "pinguino") {
+    if (tipo.animalCaminante === "pinguino") {
       for (let i = 0; i < 8; i++) {
         decor.push({ tipo: "pinguino", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.4 + Math.random() * 0.2, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_PINGUINO[Math.floor(Math.random() * PALETAS_PINGUINO.length)] });
       }
@@ -1224,6 +1196,31 @@
         decor.push({ tipo: "lobo", x: 40 + Math.random() * (ANCHO - 80), y: -Math.random() * DECO_RANGO - 100, vel: 0.7 + Math.random() * 0.3, tiempo: Math.random() * 10, mirandoDerecha: Math.random() > 0.5, _atascado: 0, paleta: PALETAS_LOBO[Math.floor(Math.random() * PALETAS_LOBO.length)] });
       }
     }
+
+    // --- NUEVO: MINI-JEFE A PARTIR DE LA PANTALLA 27 ---
+    estado.jefe = null;
+      if (estado.pantalla > CATALOGO_PANTALLAS.length) {
+      // Elegimos qué animal toca según el tipo de pantalla
+      let animalJefe = "murcielago";
+      if (tipo.animalCaminante) animalJefe = tipo.animalCaminante;
+      else if (tipo.animalVolador) animalJefe = tipo.animalVolador;
+      else if (tipo.categoria === "aire") animalJefe = "aguila";
+      
+      // Altura aleatoria entre los 75m y los 125m
+      const yBoss = -1500 - Math.random() * 1000; 
+      
+      estado.jefe = {
+        tipo: animalJefe,
+        x: ANCHO / 2,
+        y: yBoss,
+        inicioY: yBoss,
+        estado: "esperando", // Puede ser "esperando" o "persiguiendo"
+        mirandoDerecha: true,
+        tiempo: Math.random() * 10,
+        paleta: null // Usará la paleta por defecto del animal
+      };
+    }
+    // --- FIN MINI-JEFE ---
 
     estado.decoraciones = decor;
   }
@@ -1261,7 +1258,6 @@
   // ============================================================================
   // RANKING DE RÉCORDS (Backend Node.js + MongoDB)
   // ============================================================================
-  // Pon aquí la URL de tu backend en Render cuando lo tengas (ej: "https://mi-api.onrender.com/api")
   const RANKING_API_URL = "https://api-via-al-cielo.onrender.com/api"; 
   const RANKING_TAM = 10;            
   const INI_MIN = 3, INI_MAX = 6;    
@@ -1290,11 +1286,8 @@
   }
   function guardarIniciales(v) { try { localStorage.setItem("je-iniciales", v); } catch (e) {} }
 
-  // Pide un token al backend al empezar a jugar (para validar que no hacemos trampas).
-  // Render free tier duerme: damos 3 intentos con espera si el servidor está arrancando.
   function pedirTokenPartida() {
     if (!RANKING_API_URL || typeof fetch !== "function") return Promise.resolve(null);
-    // Reusamos el token si es reciente (< 30 min)
     if (ranking.token && ranking.tokenTime && (Date.now() - ranking.tokenTime) < 30 * 60 * 1000) {
       return Promise.resolve(ranking.token);
     }
@@ -1317,7 +1310,7 @@
           return null;
         });
     };
-    return pedir(3);   // 3 intentos × 3 s entre ellos = cubre el cold-start de Render
+    return pedir(3);
   }
 
   function cargarRanking() {
@@ -1347,8 +1340,7 @@
   }
   function puestoPara(puntos) { return ranking.lista.filter((e) => e.p >= puntos).length + 1; }
 
-    function enviarPuntuacion(nombre, puntos, pantalla) {
-    // 1) Guardado local de respaldo (siempre)
+  function enviarPuntuacion(nombre, puntos, pantalla) {
     const listaLocal = limpiarLista(leerRankingLocal().concat([{ n: nombre, p: puntos, s: pantalla, t: Date.now() }]));
     guardarRankingLocal(listaLocal);
     ranking.lista = listaLocal;
@@ -1357,7 +1349,6 @@
 
     if (!RANKING_API_URL || typeof fetch !== "function") return Promise.resolve(true);
 
-    // 2) Si no hay token (falló al empezar o expiró), lo pedimos AHORA
     const asegurarToken = () => {
       if (ranking.token && ranking.tokenTime && (Date.now() - ranking.tokenTime) < 30 * 60 * 1000) {
         return Promise.resolve(ranking.token);
@@ -1374,7 +1365,6 @@
         .catch(() => null);
     };
 
-    // 3) POST con 3 reintentos
     const postear = (tk, intentos) => {
       return fetch(RANKING_API_URL + "/ranking", {
         method: "POST",
@@ -1418,17 +1408,15 @@
     });
   }
 
-  // ---- Flujo: fin de partida → iniciales → ranking ----
   function alEntrarGameOver() {
     estado.rankingGuardado = false;
     estado.ini = null;
     const puntos = estado.camara.alturaMaxima;
     if (estado.sinRanking || !(puntos > 0)) return;
     const id = ++estado.idGameOver;
-    const timeout = new Promise(ok => setTimeout(ok, 4000));   // 4 s máximo
+    const timeout = new Promise(ok => setTimeout(ok, 4000));
     Promise.race([cargarRanking(), timeout]).then(() => {
       if (estado.modo !== "gameover" || estado.idGameOver !== id || estado.rankingGuardado) return;
-      // Aunque el ranking no haya cargado, dejamos entrar en el Top si vamos sobrados
       if (calificaParaRanking(puntos) || ranking.lista.length === 0) abrirIniciales(puntos);
     });
   }
@@ -1573,7 +1561,6 @@
     contenedor.style.display = "flex";
   }
 
-  // Disparador de la carga diferida de fondos (600 px antes de que el juego entre en pantalla)
   if ("IntersectionObserver" in window) {
     const ioFondos = new IntersectionObserver((entradas) => {
       if (entradas.some((e) => e.isIntersecting)) { pedirFondos(); ioFondos.disconnect(); }
@@ -1599,14 +1586,12 @@
   btnSalirFullscreen.addEventListener("click", () => salirPantallaCompleta());
   btnMenuFlotante.addEventListener("click", () => pedirConfirmacionSalida());
 
-  // Los botones flotantes (☰ y ✕) se anclan a las esquinas del CANVAS, no del
-  // contenedor: así quedan dentro de la pantalla del juego y no tapan el HUD.
   function posicionarBotonesFlotantes() {
     if (!contenedor || !canvas) return;
     const c = canvas.getBoundingClientRect();
     const p = contenedor.getBoundingClientRect();
     if (!c.width || !p.width) return;
-    const MARGEN = 6;  // separación respecto al borde del canvas
+    const MARGEN = 6;  
     const bordeCanvas = canvas.clientLeft || 2;
     const izqPadre = p.left + contenedor.clientLeft;
     const arrPadre = p.top + contenedor.clientTop;
@@ -1673,9 +1658,6 @@
   window.addEventListener("resize", ajustarAlturaFullscreen);
   window.addEventListener("orientationchange", () => { setTimeout(ajustarAlturaFullscreen, 150); });
 
-  // ---------------------------------------------------------------------------
-  // Detección de foco en campo de texto
-  // ---------------------------------------------------------------------------
   function focoEnCampoDeTexto() {
     const el = document.activeElement;
     if (!el) return false;
@@ -1748,7 +1730,6 @@
     }
   });
 
-  // Botón de salto (táctil)
   contenedor.querySelectorAll(".juego-escalada__btn").forEach((btn) => {
     const accion = btn.dataset.accion;
     const activar = (e) => {
@@ -1765,15 +1746,12 @@
     btn.addEventListener("pointercancel", desactivar);
   });
 
-  // Joystick (táctil): mantén el dedo y desliza a izquierda/derecha sin levantarlo.
-  // Usa Pointer Events + setPointerCapture, así sigue al dedo aunque se salga del pad,
-  // y funciona a la vez que el botón de salto (multitáctil) en Android e iOS.
   (function iniciarJoystick() {
     const pad = contenedor.querySelector(".juego-escalada__joystick");
     const knob = pad && pad.querySelector(".juego-escalada__joystick-knob");
     if (!pad || !knob) return;
 
-    const ZONA_MUERTA = 0.2;   // 20% central = quieto
+    const ZONA_MUERTA = 0.2;
     let punteroId = null;
 
     function mover(clientX, clientY) {
@@ -1799,7 +1777,7 @@
       if (punteroId !== null) return;
       e.preventDefault();
       punteroId = e.pointerId;
-      try { pad.setPointerCapture(e.pointerId); } catch (err) { /* sin captura: sigue funcionando dentro del pad */ }
+      try { pad.setPointerCapture(e.pointerId); } catch (err) {}
       pad.classList.add("activo");
       mover(e.clientX, e.clientY);
     });
@@ -1828,16 +1806,9 @@
     }
     if (estado.modo === "iniciales") { clickIniciales(mx, my); return; }
     if (estado.modo === "ranking") { cerrarRanking(); return; }
-        if (estado.modo === "instrucciones") { 
-      estado.modo = "menu"; 
-      estado.opcionActiva = 1; 
-      return; 
-    }
-    if (estado.modo === "creditos") { 
-      estado.modo = "menu"; 
-      estado.opcionActiva = 3; 
-      return; 
-    }
+    if (estado.modo === "instrucciones") { estado.modo = "menu"; estado.opcionActiva = 1; return; }
+    if (estado.modo === "creditos") { estado.modo = "menu"; estado.opcionActiva = 3; return; }
+    
     if (estado.modo === "menu") {
       if (dentro(estado._btnEmpezar)) { estado.opcionActiva = 0; iniciarPartidaDesdeMenu(); }
       else if (dentro(estado._btnInstrucciones)) { estado.opcionActiva = 1; estado.modo = "instrucciones"; }
@@ -1891,6 +1862,7 @@
     p.invulnerable = 0;
     estado.camara.y = CAMARA_INICIAL;
     estado.banner = null;
+    estado.jefe = null;
     actualizarClaseJugando();
     actualizarBloqueoScroll();
   }
@@ -1918,6 +1890,16 @@
     const pcx = p.x + p.ancho / 2;
     const pcy = p.y + p.alto / 2;
 
+    // 1. COLISIÓN DEL MINI-JEFE
+    if (estado.jefe) {
+      const j = estado.jefe;
+      const dist = Math.hypot(j.x - pcx, j.y - pcy);
+      if (dist < 45) {
+        aplicarDaño(35);
+      }
+    }
+
+    // 2. MURCIÉLAGOS
     for (const bat of estado.murcielagos) {
       const bx = bat.x + 13;
       const by = bat.y + 12;
@@ -1925,6 +1907,7 @@
       if (d < 22) { aplicarDaño(DAÑO_MURCIELAGO); return; }
     }
 
+    // 3. ANIMALES DECORATIVOS
     for (const d of estado.decoraciones) {
       const dx = d.x;
       const dy = d.y + 12;
@@ -1932,7 +1915,6 @@
       let daño = 0;
       if (d.tipo === "murcielago") { radio = 20; daño = DAÑO_MURCIELAGO; }
       else if (d.tipo === "gallo") { radio = 22; daño = DAÑO_GALLO; }
-      //else if (d.tipo === "pajaro") { radio = 12; daño = DAÑO_PAJARO; }
       else if (d.tipo === "aguila") { radio = 24; daño = DAÑO_AGUILA; }
       else if (d.tipo === "oso-bipedo") { radio = 32; daño = DAÑO_OSO; }
       else if (d.tipo === "cuervo") { radio = 20; daño = DAÑO_PAJARO; }
@@ -1953,6 +1935,7 @@
       else if (d.tipo === "gaviota") { radio = 20; daño = 10; }
       else if (d.tipo === "pinguino") { radio = 22; daño = 15; }
       else if (d.tipo === "lobo") { radio = 30; daño = 25; }
+      
       if (radio === 0) continue;
       const dist = Math.hypot(dx - pcx, dy - pcy);
       if (dist < radio) { aplicarDaño(daño); return; }
@@ -1973,6 +1956,38 @@
 
   function actualizarAnimales() {
     const p = estado.personaje;
+    
+    // --- ACTUALIZAR MINI-JEFE ---
+    if (estado.jefe) {
+      const j = estado.jefe;
+      j.tiempo += 0.1;
+      
+      if (j.estado === "esperando") {
+        j.x = (ANCHO / 2) + Math.sin(j.tiempo) * 80;
+        j.y = j.inicioY + Math.sin(j.tiempo * 2) * 20;
+        
+        const dist = Math.hypot(j.x - (p.x + p.ancho/2), j.y - (p.y + p.alto/2));
+        if (dist < 300) { 
+          j.estado = "persiguiendo";
+        }
+      } else if (j.estado === "persiguiendo") {
+        const dx = (p.x + p.ancho/2) - j.x;
+        const dy = (p.y + p.alto/2) - j.y;
+        const dist = Math.hypot(dx, dy);
+        
+        if (dist > 1) {
+          const vel = 2.5;
+          j.x += (dx / dist) * vel;
+          j.y += (dy / dist) * vel;
+        }
+        j.mirandoDerecha = dx > 0;
+        
+        if (Math.abs(j.y - j.inicioY) > 600 || p.y < j.inicioY - 300) {
+          estado.jefe = null;
+        }
+      }
+    }
+    // --- FIN MINI-JEFE ---
 
     for (const bat of estado.murcielagos) {
       const dist = Math.abs(bat.y - p.y) + Math.abs(bat.x - p.x) * 0.5;
@@ -2155,9 +2170,9 @@
         const choca = colisionaEntidadConPlataformas(nx, d.y + 22, 20);
         if (!choca) { d.x = nx; d._atascado = 0; }
         else { d._atascado = (d._atascado || 0) + 1; d.mirandoDerecha = !d.mirandoDerecha; if (d._atascado > 5) { d.y -= 60; d._atascado = 0; } }
+      }
     }
   }
-}
 
   function respawn() {
     const p = estado.personaje;
@@ -2193,6 +2208,7 @@
     p.enSuelo = false; p.saltando = false;
     p.dobleSaltoDisponible = true; p.saltoSuelto = true;
     estado.camara.y = CAMARA_INICIAL;
+    //estado.jefe = null;
   }
   function actualizarTransicion() {
     if (estado.modo !== "jugando") return false;
@@ -2277,7 +2293,7 @@
   function iniciarPartidaDesdeMenu() {
     estado.modo = "jugando";
     estado.opcionActiva = 0;
-    pedirTokenPartida(); // <-- AÑADIR ESTA LÍNEA
+    pedirTokenPartida();
     reiniciarPartida();
     actualizarClaseJugando();
     actualizarBloqueoScroll();
@@ -2299,6 +2315,7 @@
     estado.popups = [];
     estado.popupGrande = null;
     estado.banner = null;
+    estado.jefe = null;
     const p = estado.personaje;
     p.x = ANCHO / 2 - STEVE_ANCHO / 2;
     p.y = Y_SUELO_JUGABLE;
@@ -3545,103 +3562,70 @@
     ctx.restore();
   }
 
-  // ============================================================================
-  // 🐼 PANDA v2 — con orejas, manchas de ojos y bracitos negros
-  // ============================================================================
   function dibujarPanda(d, dy) {
     const p = d.paleta || PALETAS_PANDA[0];
     const trote = Math.sin(d.tiempo * 10) * 1.5;
     ctx.save(); ctx.translate(d.x, 0); if (!d.mirandoDerecha) ctx.scale(-1, 1);
-    // Patas negras
     ctx.fillStyle = p.cuerpo2;
     ctx.fillRect(-10, dy + 20, 8, 12 + trote); ctx.fillRect(4, dy + 20, 8, 12 - trote);
-    // Cuerpo blanco
     ctx.beginPath(); ctx.ellipse(0, dy + 14, 16, 12, 0, 0, Math.PI * 2); ctx.fillStyle = p.cuerpo; ctx.fill();
-    // Manchas negras de los hombros
     ctx.fillStyle = p.cuerpo2;
     ctx.beginPath(); ctx.ellipse(-12, dy + 10, 6, 8, -0.5, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.ellipse(12, dy + 10, 6, 8, 0.5, 0, Math.PI * 2); ctx.fill();
-    // Cabeza
     ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.arc(14, dy, 11, 0, Math.PI * 2); ctx.fill();
-    // Orejas negras
     ctx.fillStyle = p.cuerpo2;
     ctx.beginPath(); ctx.arc(7, dy - 10, 4, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.arc(21, dy - 10, 4, 0, Math.PI * 2); ctx.fill();
-    // Manchas negras de los ojos
     ctx.beginPath(); ctx.ellipse(10, dy - 2, 3, 4, -0.3, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.ellipse(18, dy - 2, 3, 4, 0.3, 0, Math.PI * 2); ctx.fill();
-    // Ojos (puntitos blancos dentro)
     ctx.fillStyle = "#ffffff";
     ctx.beginPath(); ctx.arc(10, dy - 2, 1, 0, Math.PI * 2); ctx.arc(18, dy - 2, 1, 0, Math.PI * 2); ctx.fill();
-    // Nariz y boca
     ctx.fillStyle = p.nariz; ctx.beginPath(); ctx.arc(14, dy + 4, 1.5, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = p.nariz; ctx.lineWidth = 0.8;
     ctx.beginPath(); ctx.moveTo(14, dy + 4); ctx.lineTo(14, dy + 6); ctx.lineTo(12, dy + 7); ctx.stroke();
     ctx.restore();
   }
 
-  // ============================================================================
-  // 🐯 TIGRE v2 — con cola larga a rayas y carita más felina
-  // ============================================================================
   function dibujarTigre(d, dy) {
     const p = d.paleta || PALETAS_TIGRE[0];
     const trote = Math.sin(d.tiempo * 12) * 2;
     ctx.save(); ctx.translate(d.x, 0); if (!d.mirandoDerecha) ctx.scale(-1, 1);
-    // Cola larga
     ctx.strokeStyle = p.cuerpo; ctx.lineWidth = 4; ctx.lineCap = "round";
     ctx.beginPath(); ctx.moveTo(-16, dy + 8); ctx.quadraticCurveTo(-30, dy - 5, -28, dy - 15); ctx.stroke();
-    // Anillos cola
     ctx.strokeStyle = p.rayas; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.moveTo(-26, dy - 8); ctx.lineTo(-28, dy - 10); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(-22, dy - 2); ctx.lineTo(-24, dy - 3); ctx.stroke();
-    // Patas
     ctx.fillStyle = p.cuerpo;
     ctx.fillRect(-12, dy + 20, 6, 12 + trote); ctx.fillRect(6, dy + 20, 6, 12 - trote);
     ctx.fillRect(-4, dy + 20, 6, 12 - trote); ctx.fillRect(14, dy + 20, 6, 12 + trote);
-    // Cuerpo
     ctx.beginPath(); ctx.ellipse(0, dy + 12, 20, 12, 0, 0, Math.PI * 2); ctx.fill();
-    // Vientre
     ctx.fillStyle = p.vientre; ctx.beginPath(); ctx.ellipse(4, dy + 16, 12, 5, 0, 0, Math.PI * 2); ctx.fill();
-    // Rayas del cuerpo
     ctx.fillStyle = p.rayas;
     for (let i = -10; i < 15; i += 6) { ctx.fillRect(i, dy + 2, 2, 14); }
-    // Cabeza
     ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.arc(18, dy - 2, 11, 0, Math.PI * 2); ctx.fill();
-    // Orejas redondas
     ctx.beginPath(); ctx.arc(12, dy - 12, 3.5, 0, Math.PI * 2); ctx.arc(24, dy - 12, 3.5, 0, Math.PI * 2); ctx.fill();
-    // Mejillas blancas
     ctx.fillStyle = p.vientre;
     ctx.beginPath(); ctx.ellipse(22, dy + 3, 6, 4, 0, 0, Math.PI * 2); ctx.fill();
-    // Rayas cara
     ctx.strokeStyle = p.rayas; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.moveTo(18, dy - 12); ctx.lineTo(18, dy - 6); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(14, dy - 10); ctx.lineTo(16, dy - 6); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(22, dy - 10); ctx.lineTo(20, dy - 6); ctx.stroke();
-    // Ojos
     ctx.fillStyle = p.ojos; ctx.beginPath(); ctx.arc(16, dy - 3, 2, 0, Math.PI * 2); ctx.arc(22, dy - 3, 2, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(16, dy - 3, 1, 0, Math.PI * 2); ctx.arc(22, dy - 3, 1, 0, Math.PI * 2); ctx.fill();
-    // Nariz
     ctx.fillStyle = "#ff9999"; ctx.beginPath(); ctx.moveTo(19, dy + 2); ctx.lineTo(21, dy + 2); ctx.lineTo(20, dy + 4); ctx.fill();
     ctx.restore();
   }
 
-  // ============================================================================
-  // 🐆 JAGUAR v2 — con manchas de roseta y cuerpo macizo
-  // ============================================================================
   function dibujarJaguar(d, dy) {
     const p = d.paleta || PALETAS_JAGUAR[0];
     const trote = Math.sin(d.tiempo * 10) * 2;
     ctx.save(); ctx.translate(d.x, 0); if (!d.mirandoDerecha) ctx.scale(-1, 1);
-    // Cola gruesa
     ctx.strokeStyle = p.cuerpo; ctx.lineWidth = 5; ctx.lineCap = "round";
     ctx.beginPath(); ctx.moveTo(-18, dy + 8); ctx.quadraticCurveTo(-32, dy + 5, -30, dy - 8); ctx.stroke();
-    // Patas robustas
     ctx.fillStyle = p.cuerpo;
     ctx.fillRect(-14, dy + 20, 8, 12 + trote); ctx.fillRect(6, dy + 20, 8, 12 - trote);
     ctx.fillRect(-4, dy + 20, 8, 12 - trote); ctx.fillRect(16, dy + 20, 8, 12 + trote);
-    // Cuerpo macizo
     ctx.beginPath(); ctx.ellipse(0, dy + 12, 22, 14, 0, 0, Math.PI * 2); ctx.fill();
-    // Manchas (Rosetas)
     const dibujarRoseta = (x, y) => {
       ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI * 2); ctx.fill();
@@ -3650,77 +3634,51 @@
     ctx.fillStyle = p.manchas;
     dibujarRoseta(-12, dy + 8); dibujarRoseta(-4, dy + 6); dibujarRoseta(4, dy + 8); dibujarRoseta(12, dy + 6);
     dibujarRoseta(-8, dy + 16); dibujarRoseta(0, dy + 18); dibujarRoseta(8, dy + 16);
-    // Cabeza
     ctx.fillStyle = p.cuerpo; ctx.beginPath(); ctx.arc(20, dy, 12, 0, Math.PI * 2); ctx.fill();
-    // Orejas redondas
     ctx.beginPath(); ctx.arc(12, dy - 10, 4, 0, Math.PI * 2); ctx.arc(26, dy - 10, 4, 0, Math.PI * 2); ctx.fill();
-    // Hocico
     ctx.fillStyle = p.vientre; ctx.beginPath(); ctx.ellipse(26, dy + 4, 6, 5, 0, 0, Math.PI * 2); ctx.fill();
-    // Ojos
     ctx.fillStyle = p.ojos; ctx.beginPath(); ctx.arc(17, dy - 2, 2, 0, Math.PI * 2); ctx.arc(24, dy - 2, 2, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(17, dy - 2, 1, 0, Math.PI * 2); ctx.arc(24, dy - 2, 1, 0, Math.PI * 2); ctx.fill();
-    // Nariz
     ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(30, dy + 4, 1.5, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
   }
 
-  // ============================================================================
-  // 🫎 ALCE v2 — con cuernos grandes, joroba y hocico largo
-  // ============================================================================
   function dibujarAlce(d, dy) {
     const p = d.paleta || PALETAS_ALCE[0];
     const trote = Math.sin(d.tiempo * 8) * 2;
     ctx.save(); ctx.translate(d.x, 0); if (!d.mirandoDerecha) ctx.scale(-1, 1);
-    // Patas largas
     ctx.fillStyle = p.cuerpo2;
     ctx.fillRect(-15, dy + 25, 5, 20 + trote); ctx.fillRect(8, dy + 25, 5, 20 - trote);
     ctx.fillRect(-5, dy + 25, 5, 20 - trote); ctx.fillRect(18, dy + 25, 5, 20 + trote);
-    // Cuerpo (con joroba)
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath(); ctx.ellipse(0, dy + 15, 22, 14, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(0, dy + 8, 10, 0, Math.PI); ctx.fill(); // Joroba
-    // Cuello
+    ctx.beginPath(); ctx.arc(0, dy + 8, 10, 0, Math.PI); ctx.fill();
     ctx.beginPath(); ctx.moveTo(10, dy + 10); ctx.lineTo(20, dy - 15); ctx.lineTo(28, dy - 15); ctx.lineTo(20, dy + 15); ctx.fill();
-    // Cabeza
     ctx.beginPath(); ctx.ellipse(24, dy - 18, 8, 6, 0, 0, Math.PI * 2); ctx.fill();
-    // Hocico colgante (muy típico del alce)
     ctx.beginPath(); ctx.ellipse(30, dy - 12, 5, 8, 0.2, 0, Math.PI * 2); ctx.fill(); 
-    // Cuernos (Palmeados)
     ctx.fillStyle = p.astas;
     ctx.beginPath(); ctx.moveTo(18, dy - 22); ctx.quadraticCurveTo(5, dy - 35, -5, dy - 25); ctx.quadraticCurveTo(5, dy - 25, 15, dy - 20); ctx.fill();
     ctx.beginPath(); ctx.moveTo(26, dy - 22); ctx.quadraticCurveTo(40, dy - 35, 50, dy - 25); ctx.quadraticCurveTo(40, dy - 25, 30, dy - 20); ctx.fill();
-    // Ojos
     ctx.fillStyle = p.ojos; ctx.beginPath(); ctx.arc(22, dy - 20, 1.5, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
   }
 
-  // ============================================================================
-  // 🕊 GAVIOTA v2 — con pico amarillo y alas bicolor
-  // ============================================================================
   function dibujarGaviota(d, dy) {
     const p = d.paleta || PALETAS_GAVIOTA[0];
     const aleteo = Math.sin(d.tiempo * 6) * 8;
     ctx.save(); ctx.translate(d.x, dy); if (!d.mirandoDerecha) ctx.scale(-1, 1);
-    // Alas (con puntas grises)
     ctx.fillStyle = p.cuerpo2; 
     ctx.beginPath(); ctx.moveTo(-2, 2); ctx.quadraticCurveTo(-15, -5 + aleteo, -25, 2 + aleteo); ctx.lineTo(-15, 6 + aleteo); ctx.lineTo(-2, 6); ctx.fill();
     ctx.beginPath(); ctx.moveTo(2, 2); ctx.quadraticCurveTo(15, -5 - aleteo, 25, 2 - aleteo); ctx.lineTo(15, 6 - aleteo); ctx.lineTo(2, 6); ctx.fill();
-    // Cuerpo blanco
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath(); ctx.ellipse(0, 5, 10, 6, 0, 0, Math.PI * 2); ctx.fill();
-    // Cola
     ctx.beginPath(); ctx.moveTo(-8, 6); ctx.lineTo(-14, 8); ctx.lineTo(-8, 9); ctx.fill();
-    // Cabeza
     ctx.beginPath(); ctx.arc(9, 2, 4, 0, Math.PI * 2); ctx.fill();
-    // Pico amarillo
     ctx.fillStyle = p.pico; ctx.beginPath(); ctx.moveTo(13, 1); ctx.lineTo(18, 3); ctx.lineTo(13, 4); ctx.fill();
-    // Ojo
     ctx.fillStyle = p.ojos; ctx.beginPath(); ctx.arc(11, 1, 1, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
   }
-    // ============================================================================
-  // 🐧 PINGÜINO — emperador estilizado, andar balanceado, panza blanca
-  // ============================================================================
+
   function dibujarPinguino(d, dy) {
     const p = d.paleta || PALETAS_PINGUINO[0];
     const balanceo = Math.sin(d.tiempo * 6) * 2.5;
@@ -3731,7 +3689,6 @@
     const x = 0;
     const y = dy;
 
-    // Patas naranjas (con balanceo de andar)
     ctx.fillStyle = p.patas;
     ctx.beginPath();
     ctx.ellipse(x - 6, y + 42 + balanceo, 7, 3, 0, 0, Math.PI * 2);
@@ -3740,7 +3697,6 @@
     ctx.ellipse(x + 6, y + 42 - balanceo, 7, 3, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Colita negra
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.moveTo(x - 8, y + 32);
@@ -3749,30 +3705,25 @@
     ctx.closePath();
     ctx.fill();
 
-    // Cuerpo negro (ovalado y gordito)
     ctx.beginPath();
     ctx.ellipse(x, y + 20, 14, 24, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Panza blanca (contraste)
     ctx.fillStyle = p.panza;
     ctx.beginPath();
     ctx.ellipse(x + 1, y + 22, 9, 18, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Cabeza negra
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.arc(x + 2, y - 2, 12, 0, Math.PI * 2);
     ctx.fill();
 
-    // Cara blanca (máscara)
     ctx.fillStyle = p.panza;
     ctx.beginPath();
     ctx.ellipse(x + 2, y - 1, 8, 9, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Mancha amarilla del emperador (a los lados del cuello)
     ctx.fillStyle = p.amarillo;
     ctx.beginPath();
     ctx.ellipse(x + 9, y + 4, 4, 6, 0.3, 0, Math.PI * 2);
@@ -3781,7 +3732,6 @@
     ctx.ellipse(x - 5, y + 4, 3, 5, -0.3, 0, Math.PI * 2);
     ctx.fill();
 
-    // Ojos negros con brillo
     ctx.fillStyle = p.ojos;
     ctx.beginPath();
     ctx.arc(x + 5, y - 4, 1.8, 0, Math.PI * 2);
@@ -3793,7 +3743,6 @@
     ctx.arc(x - 0.5, y - 4.5, 0.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Pico naranja triangular
     ctx.fillStyle = p.pico;
     ctx.beginPath();
     ctx.moveTo(x + 10, y - 2);
@@ -3802,7 +3751,6 @@
     ctx.closePath();
     ctx.fill();
 
-    // Aletas laterales (negras, se menean al andar)
     ctx.fillStyle = p.aletas;
     ctx.beginPath();
     ctx.moveTo(x - 10, y + 8);
@@ -3820,9 +3768,7 @@
 
     ctx.restore();
   }
-    // ============================================================================
-  // 🐺 LOBO — gris, peludo, 4 patas caminando, cola meciéndose
-  // ============================================================================
+
   function dibujarLobo(d, dy) {
     const p = d.paleta || PALETAS_LOBO[0];
     const trote = Math.sin(d.tiempo * 10) * 3;
@@ -3833,7 +3779,6 @@
     const x = 0;
     const y = dy;
 
-    // Cola peluda con punta oscura
     ctx.fillStyle = p.cuerpo2;
     ctx.beginPath();
     ctx.moveTo(x - 18, y + 6);
@@ -3841,45 +3786,38 @@
     ctx.quadraticCurveTo(x - 30, y - 2 + cola, x - 20, y + 10);
     ctx.closePath();
     ctx.fill();
-    // Punta de la cola más oscura
     ctx.fillStyle = p.patas;
     ctx.beginPath();
     ctx.arc(x - 35, y - 6 + cola, 3, 0, Math.PI * 2);
     ctx.fill();
 
-    // Patas (con trote alterno)
     ctx.fillStyle = p.cuerpo;
     ctx.fillRect(x - 14, y + 20, 5, 16 + trote);
     ctx.fillRect(x - 6, y + 20, 5, 16 - trote);
     ctx.fillRect(x + 8, y + 20, 5, 16 - trote);
     ctx.fillRect(x + 16, y + 20, 5, 16 + trote);
 
-    // Zarpas oscuras
     ctx.fillStyle = p.patas;
     ctx.fillRect(x - 14, y + 34 + trote, 5, 3);
     ctx.fillRect(x - 6, y + 34 - trote, 5, 3);
     ctx.fillRect(x + 8, y + 34 - trote, 5, 3);
     ctx.fillRect(x + 16, y + 34 + trote, 5, 3);
 
-    // Cuerpo
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.ellipse(x, y + 12, 20, 12, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Vientre más claro
     ctx.fillStyle = p.vientre;
     ctx.beginPath();
     ctx.ellipse(x + 4, y + 16, 14, 5, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Cabeza
     ctx.fillStyle = p.cuerpo;
     ctx.beginPath();
     ctx.arc(x + 18, y - 2, 10, 0, Math.PI * 2);
     ctx.fill();
 
-    // Orejas puntiagudas (triángulos)
     ctx.beginPath();
     ctx.moveTo(x + 10, y - 8);
     ctx.lineTo(x + 6, y - 20);
@@ -3893,7 +3831,6 @@
     ctx.closePath();
     ctx.fill();
 
-    // Interior de las orejas
     ctx.fillStyle = p.orejas;
     ctx.beginPath();
     ctx.moveTo(x + 11, y - 10);
@@ -3908,7 +3845,6 @@
     ctx.closePath();
     ctx.fill();
 
-    // Hocico alargado
     ctx.fillStyle = p.cuerpo2;
     ctx.beginPath();
     ctx.moveTo(x + 22, y - 4);
@@ -3917,13 +3853,11 @@
     ctx.closePath();
     ctx.fill();
 
-    // Nariz negra
     ctx.fillStyle = "#1a1a1a";
     ctx.beginPath();
     ctx.arc(x + 31, y + 1, 1.8, 0, Math.PI * 2);
     ctx.fill();
 
-    // Ojos amarillos con pupila
     ctx.fillStyle = p.ojos;
     ctx.beginPath();
     ctx.arc(x + 16, y - 4, 2, 0, Math.PI * 2);
@@ -3935,7 +3869,6 @@
     ctx.arc(x + 22, y - 4, 1, 0, Math.PI * 2);
     ctx.fill();
 
-    // Pelaje del lomo (rayitas)
     ctx.strokeStyle = p.pelo;
     ctx.lineWidth = 1.5;
     for (let i = -8; i < 12; i += 5) {
@@ -4283,8 +4216,56 @@
         dibujarPinguino(d, dy);
       } else if (d.tipo === "lobo") {
         dibujarLobo(d, dy);
+      }
     }
-  }
+
+    // --- DIBUJAR EL MINI-JEFE ---
+    if (estado.jefe) {
+      const j = estado.jefe;
+      const jy = j.y - camY;
+      
+      if (jy + 250 > 0 && jy - 250 < ALTO) {
+        if (j.estado === "persiguiendo") {
+          ctx.fillStyle = "rgba(255, 50, 50, 0.25)";
+          ctx.beginPath();
+          ctx.arc(j.x, jy, 50 + Math.sin(Date.now() / 100) * 10, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.save();
+        ctx.translate(j.x, jy);
+        ctx.scale(1.8, 1.8);
+        
+        const oldX = j.x;
+        j.x = 0;
+        
+        if (j.tipo === "murcielago") dibujarMurcielagoValencia(j, 0);
+        else if (j.tipo === "gallo") dibujarGalloParis(j, 0);
+        else if (j.tipo === "cuervo") dibujarCuervo(j, 0);
+        else if (j.tipo === "rata") dibujarRata(j, 0);
+        else if (j.tipo === "gato-romano") dibujarGatoRomano(j, 0);
+        else if (j.tipo === "oso-bipedo") dibujarOsoBipedo(j, 0);
+        else if (j.tipo === "camello") dibujarCamello(j, 0);
+        else if (j.tipo === "grulla") dibujarGrulla(j, 0);
+        else if (j.tipo === "tucan") dibujarTucan(j, 0);
+        else if (j.tipo === "canguro") dibujarCanguro(j, 0);
+        else if (j.tipo === "mono") dibujarMono(j, 0);
+        else if (j.tipo === "llama") dibujarLlama(j, 0);
+        else if (j.tipo === "zorro") dibujarZorro(j, 0);
+        else if (j.tipo === "buho") dibujarBuho(j, 0);
+        else if (j.tipo === "panda") dibujarPanda(j, 0);
+        else if (j.tipo === "tigre") dibujarTigre(j, 0);
+        else if (j.tipo === "jaguar") dibujarJaguar(j, 0);
+        else if (j.tipo === "alce") dibujarAlce(j, 0);
+        else if (j.tipo === "gaviota") dibujarGaviota(j, 0);
+        else if (j.tipo === "pinguino") dibujarPinguino(j, 0);
+        else if (j.tipo === "lobo") dibujarLobo(j, 0);
+        
+        j.x = oldX;
+        ctx.restore();
+      }
+    }
+    // --- FIN DIBUJAR MINI-JEFE ---
 
     if (tipo.vinyetaFuerte || pal.lluviaMatrix) {
       const grad = ctx.createRadialGradient(ANCHO / 2, ALTO / 2, 150, ANCHO / 2, ALTO / 2, ANCHO);
@@ -4549,7 +4530,6 @@
     ctx.fillStyle = pal.textoSuave; ctx.font = "16px monospace";
     ctx.fillText(tx("ini_pide"), ANCHO / 2, 168);
 
-    // Casillas de las iniciales (las 3 primeras obligatorias, las otras 3 opcionales)
     const cw = 56, ch = 72, gap = 10;
     const x0 = (ANCHO - (INI_MAX * cw + (INI_MAX - 1) * gap)) / 2, y0 = 200;
     const parpadeo = Math.floor(Date.now() / 400) % 2 === 0;
@@ -4564,7 +4544,6 @@
       else if (actual && parpadeo && !ini.guardando) { ctx.fillStyle = pal.acento; ctx.font = "bold 44px monospace"; ctx.fillText("_", x + cw / 2, y0 + ch / 2 + 2); }
     }
 
-    // Teclado en pantalla (sirve con el dedo, el ratón o las flechas + espacio)
     const kw = 52, kh = 52, kg = 4;
     const kx0 = (ANCHO - (TECLAS_COLS * kw + (TECLAS_COLS - 1) * kg)) / 2, ky0 = 320;
     estado._celdasIni = [];
@@ -4583,7 +4562,6 @@
       estado._celdasIni.push({ x: x, y: y, w: kw, h: kh, i: i });
     }
 
-    // Mensajes
     ctx.font = "bold 16px monospace";
     if (ini.guardando) { ctx.fillStyle = pal.acento; ctx.fillText(tx("ini_guardando"), ANCHO / 2, 590); }
     else if (ini.aviso) { ctx.fillStyle = "#ff8a80"; ctx.fillText(tx(ini.aviso), ANCHO / 2, 590); }
@@ -4876,11 +4854,10 @@
 
   // ============================================================================
   // Bucle principal + IntersectionObserver
-  // El juego solo consume CPU cuando la sección #juego está en viewport.
   // ============================================================================
   let ultimoTiempo = 0;
-  let rafId = null;           // id del requestAnimationFrame en curso
-  let juegoVisible = false;   // ¿está la sección #juego en pantalla?
+  let rafId = null;
+  let juegoVisible = false;
 
   function loop(tiempo) {
     if (!juegoVisible) { rafId = null; return; }
@@ -4907,7 +4884,6 @@
     }
   }
 
-  // Preparar estado inicial (esto NO arranca el bucle)
   cargarRecord();
   cargarRanking();
   crearPlataformas();
@@ -4919,8 +4895,6 @@
   estado.opcionActiva = 0;
   actualizarClaseJugando();
 
-  // Primer frame estático para que el canvas no esté en blanco cuando
-  // el usuario llegue a la sección. Esto NO es el bucle.
   try { render(); } catch (e) {}
 
   function conectarVisibilidadJuego() {
@@ -4954,11 +4928,11 @@
 
   conectarVisibilidadJuego();
 
-    window.__juegoEscalada = {
+  window.__juegoEscalada = {
     estado, 
     contenedor,
-    ranking,             // <--- NUEVO
-    debugRanking() {     // <--- NUEVO
+    ranking,
+    debugRanking() {
       return {
         token: !!ranking.token,
         tokenEdadSeg: ranking.tokenTime ? Math.round((Date.now() - ranking.tokenTime) / 1000) : null,
@@ -4966,7 +4940,7 @@
         error: ranking.error,
         top: ranking.lista.slice(0, 3),
       };
-    },                   // <--- NUEVO
+    },
     
     saltarA(numero, tipoForzado) {
       estado.pantalla = numero;
@@ -4975,7 +4949,7 @@
       estado.tipoPantalla = tipoForzado || tipoDePantalla(numero);
       estado.modo = "jugando";
       estado.gameOver = false;
-      estado.sinRanking = true;      // partidas con salto de depuración no puntúan en el ranking
+      estado.sinRanking = true;
       estado.fragmentosRecogidos = 0;
       estado.camara.y = CAMARA_INICIAL;
       estado.camara.alturaMaxima = (numero - 1) * METROS_FIN_PANTALLA;
@@ -4983,6 +4957,7 @@
       estado.popupGrande = null;
       estado.transicion = null;
       estado.banner = null;
+      estado.jefe = null;
       const p = estado.personaje;
       p.x = ANCHO / 2 - STEVE_ANCHO / 2;
       p.y = Y_SUELO_JUGABLE;
@@ -5015,7 +4990,6 @@
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
     },
-    // Rendimiento
     arrancarLoop,
     pararLoop,
     estaArrancado() { return rafId !== null; },
