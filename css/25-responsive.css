@@ -1,0 +1,23 @@
+/* ---- Responsive general ---- */
+@media (max-width: 900px) {
+  .about-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+  .about-photo { max-width: 280px; margin: 0 auto; }
+  .kv--grid > div { grid-template-columns: 120px 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .hero-stats { grid-template-columns: 1fr; max-width: 320px; }
+}
+
+@media (max-width: 720px) {
+  .nav-toggle { display: block; }
+  .main-nav {
+    position: fixed; inset: 64px 1rem auto 1rem; z-index: 40;
+    background: var(--surface); border: 2px solid var(--text);
+    box-shadow: 4px 4px 0 var(--text);
+    padding: .75rem; transform: translateY(-10px); opacity: 0; pointer-events: none;
+    transition: opacity .25s var(--ease), transform .25s var(--ease);
+  }
+  .main-nav.is-open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .nav-list { flex-direction: column; align-items: stretch; }
+  .nav-link { display: block; padding: .8rem 1rem; }
+  .section { padding: 4rem 0; }
+}

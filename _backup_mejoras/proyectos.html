@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es" translate="no" data-theme="light" data-skin="topo">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="google" content="notranslate" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f2ede3" id="metaTheme" />
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+  <script>
+    /* Skin (estilo visual): se aplica antes de pintar para evitar parpadeos, igual que el tema claro/oscuro */
+    (function () {
+      var d = document.documentElement, s = "topo";
+      try { var v = localStorage.getItem("skin"); if (v === "omarchy" || v === "minecraft" || v === "matrix") s = v; } catch (e) {}
+      d.setAttribute("data-skin", s);
+      try { var ot = localStorage.getItem("omarchy-theme"); if (ot && /^[a-z-]+$/.test(ot)) d.setAttribute("data-omarchy-theme", ot); } catch (e) {}
+      var f = { minecraft: "family=Press+Start+2P&family=VT323" }[s];
+      if (f) {
+        var l = document.createElement("link");
+        l.rel = "stylesheet";
+        l.href = "https://fonts.googleapis.com/css2?" + f + "&display=swap";
+        document.head.appendChild(l);
+      }
+    })();
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <title>Proyectos · Gabriel Vidal Badia</title>
+  <meta name="description" content="Proyectos en curso de Gabriel Vidal Badia: portfolio personal, app de gestión de cementerio, app de aprendizaje de valenciano con IA y facturación para electricistas." />
+  <meta name="author" content="Gabriel Vidal Badia" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://gabi37smx.github.io/mi-web/proyectos.html" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Fuentes: se piden en paralelo y se aplican al llegar, sin bloquear el primer pintado (display=swap ya evita texto invisible) -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" /></noscript>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <aside class="climb-rail" aria-label="Progreso de la vía">
+    <svg class="climb-rope" viewBox="0 0 24 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+            vector-effect="non-scaling-stroke" opacity="0.4" />
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-dasharray="3 4" vector-effect="non-scaling-stroke" opacity="1" />
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-dasharray="3 4" stroke-dashoffset="3.5"
+            vector-effect="non-scaling-stroke" opacity="0.6" />
+    </svg>
+
+    <div class="climb-climber" id="climber"></div>
+
+    <ul class="climb-holds">
+      <li><a href="index.html#sobre-mi" class="climb-hold" data-section="sobre-mi" aria-label="Ir a Sobre mí"><span class="climb-hold__label">Sobre mí</span></a></li>
+      <li><a href="index.html#hecho"    class="climb-hold" data-section="hecho"    aria-label="Ir a Experiencia"><span class="climb-hold__label">Experiencia</span></a></li>
+      <li><a href="proyectos.html"      class="climb-hold is-active" data-section="proyectos" aria-label="Proyectos"><span class="climb-hold__label">Proyectos</span></a></li>
+      <li><a href="index.html#certs"    class="climb-hold" data-section="certs"    aria-label="Ir a Certificaciones"><span class="climb-hold__label">Certificaciones</span></a></li>
+      <li><a href="index.html#gusta"    class="climb-hold" data-section="gusta"    aria-label="Ir a Me gusta"><span class="climb-hold__label">Me gusta</span></a></li>
+      <li><a href="juego.html" class="climb-hold" data-section="juego" aria-label="Ir a Juego"><span class="climb-hold__label">Juego</span></a></li>
+      <li><a href="contacto.html"       class="climb-hold" data-section="contacto" aria-label="Contacto"><span class="climb-hold__label">Contacto</span></a></li>
+    </ul>
+  </aside>
+
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="site-header" id="inicio">
+    <div class="container header-inner">
+      <a href="index.html" class="logo" aria-label="Inicio">
+        <span class="logo-mark"><svg class="logo-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M33.7 23 A14 14 0 1 0 37 32 H27"/><path d="M41 24 L48.5 42 L56 24"/></svg></span>
+        <span class="logo-text">Gabriel Vidal</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <ul class="nav-list">
+          <li><a href="index.html#sobre-mi" class="nav-link">Sobre mí</a></li>
+          <li><a href="index.html#hecho" class="nav-link">Experiencia</a></li>
+          <li><a href="proyectos.html" class="nav-link" aria-current="page">Proyectos</a></li>
+          <li><a href="index.html#certs" class="nav-link">Certificaciones</a></li>
+          <li><a href="index.html#gusta" class="nav-link">Me gusta</a></li>
+          <li><a href="juego.html" class="nav-link">Juego</a></li>
+          <li><a href="presentacion.html" class="nav-link">Presentación</a></li>
+          <li><a href="noticias.html" class="nav-link">Noticias IA</a></li>
+          <li><a href="contacto.html" class="nav-link nav-cta">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <div class="skin-picker" id="skinPicker">
+          <button type="button" class="skin-picker__btn" id="skinPickerBtn" aria-label="Cambiar estilo visual" title="Cambiar estilo visual" aria-haspopup="true" aria-expanded="false" aria-controls="skinWheel">
+            <svg class="skin-ico skin-ico--topo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12c1.4-1.2 2.6 1.2 4 0s2-.6 2.4-.2M9 16c1.4-1.2 2.6 1.2 4 0"/></svg>
+            <svg class="skin-ico skin-ico--omarchy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="7" rx="1.5"/><rect x="13" y="13" width="8" height="7" rx="1.5"/></svg>
+            <svg class="skin-ico skin-ico--minecraft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9"/></svg>
+            <svg class="skin-ico skin-ico--matrix" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 7l5 5-5 5"/><path d="M13 17h6"/></svg>
+          </button>
+          <div class="skin-picker__wheel" id="skinWheel" role="radiogroup" aria-label="Estilo visual"></div>
+        </div>
+        <select id="languageSelect" class="language-select" aria-label="Idioma">
+          <option value="es">ES</option>
+          <option value="val">VA</option>
+          <option value="en">EN</option>
+        </select>
+        <button class="sound-toggle" id="soundToggle" type="button"
+                aria-label="Activar sonidos" aria-pressed="false" hidden>
+          <svg class="icon icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4z"/>
+            <line x1="22" y1="9" x2="16" y2="15"/>
+            <line x1="16" y1="9" x2="22" y2="15"/>
+          </svg>
+          <svg class="icon icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4z"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
+        <button id="themeToggle" class="theme-toggle" aria-label="Cambiar a modo oscuro" aria-pressed="false" title="Cambiar tema">
+          <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-list">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+
+    <section class="projects-hero">
+      <div class="container">
+        <p class="hero-eyebrow"><span class="dot"></span> En construcción</p>
+        <h1 class="projects-title">
+          Proyectos del <span class="accent-text">curso</span>
+        </h1>
+        <p class="projects-subtitle">
+          Lo que estoy construyendo durante 1º DAM. Cada proyecto es una vía: unos son individuales, otros en grupo,
+          algunos ya en marcha y otros aún por montar. Aquí va todo, con su grado de dificultad.
+        </p>
+        <p class="certs-counter">
+          <strong>1</strong> proyecto terminado · <strong>1</strong> proyecto en curso · <strong>2</strong> proyectos en diseño
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+
+        <!-- Filtros -->
+        <div class="projects-filters" role="group" aria-label="Filtrar proyectos">
+          <button class="filter-btn is-active" data-filter="all">Todos</button>
+          <button class="filter-btn" data-filter="individual">Individual</button>
+          <button class="filter-btn" data-filter="grupo">En grupo</button>
+          <button class="filter-btn" data-filter="terminado">Terminado</button>
+          <button class="filter-btn" data-filter="curso">En curso</button>
+          <button class="filter-btn" data-filter="idea">En diseño</button>
+        </div>
+
+        <!-- Grid de proyectos -->
+        <div class="projects-grid" id="projectsGrid">
+
+          <!-- Portfolio -->
+          <article class="project-card" data-type="individual terminado">
+            <div class="project-card__head">
+              <div class="project-card__icon" aria-hidden="true">🧗</div>
+              <span class="project-card__grade">V4</span>
+            </div>
+            <h2 class="project-card__title">Portfolio personal</h2>
+            <div class="project-card__meta">
+              <span class="tag tag--individual">Individual</span>
+              <span class="tag tag--terminado">Terminado · en mejora continua</span>
+            </div>
+            <p class="project-card__desc">
+              Web personal con temática de escalada. HTML, CSS y JS puros, sin frameworks.
+              La vía como metáfora: cada sección es un movimiento, cada presa un logro.
+            </p>
+            <ul class="project-card__stack">
+              <li>HTML5</li>
+              <li>CSS3</li>
+              <li>JavaScript</li>
+              <li>Node.js</li>
+              <li>MongoDB</li>
+              <li>Git</li>
+            </ul>
+            <div class="project-card__actions">
+              <a href="https://github.com/gabi37smx/mi-web" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Ver código →</a>
+              <button type="button" class="btn btn-ghost btn-sm js-toggle-case" aria-expanded="false" aria-controls="case-portfolio">
+                Ver caso completo <span class="js-toggle-icon" aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div class="project-card__case" id="case-portfolio" hidden>
+              <div class="case-block">
+                <h3 class="case-block__title">Problema</h3>
+                <p>Necesitaba una marca personal para darme a conocer, una ventana a quién soy y, a la vez, un proyecto donde aplicar todo lo aprendido durante 1º DAM.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Solución</h3>
+                <p>Web construida con HTML, CSS y JavaScript puros, sin frameworks. Backend propio con Node.js y Express, base de datos MongoDB y envío de emails con Resend. Frontend desplegado en GitHub Pages y backend en Render.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Resultado</h3>
+                <p>Web online accesible desde cualquier dispositivo, con formulario real que envía emails, panel de administración, tres idiomas, widget del tiempo en directo y certificaciones. Todo versionado con Git a lo largo de más de 25 commits.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- App Cementerio -->
+          <article class="project-card" data-type="individual idea">
+            <div class="project-card__head">
+              <div class="project-card__icon" aria-hidden="true">🗂️</div>
+              <span class="project-card__grade">V5</span>
+            </div>
+            <h2 class="project-card__title">App de gestión de cementerio</h2>
+            <div class="project-card__meta">
+              <span class="tag tag--individual">Individual</span>
+              <span class="tag tag--idea">En diseño</span>
+            </div>
+            <p class="project-card__desc">
+              Aplicación multiplataforma para llevar el registro de difuntos, pabellones, zonas y
+              toda la información asociada a un cementerio municipal. Nace de mi trabajo actual
+              como oficial de mantenimiento: conozco el problema desde dentro.
+            </p>
+            <ul class="project-card__stack">
+              <li>A definir</li>
+              <li>Base de datos</li>
+              <li>Multiplataforma</li>
+            </ul>
+            <div class="project-card__actions">
+              <a href="#" class="btn btn-ghost btn-sm">Ver código →</a>
+              <button type="button" class="btn btn-ghost btn-sm js-toggle-case" aria-expanded="false" aria-controls="case-cementerio">
+                Ver caso completo <span class="js-toggle-icon" aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div class="project-card__case" id="case-cementerio" hidden>
+              <div class="case-block">
+                <h3 class="case-block__title">Problema</h3>
+                <p>En el Ayuntamiento de Ollería, donde trabajo como oficial de mantenimiento, la gestión del cementerio se hace hoy con papel y hojas de cálculo. Encontrar dónde está enterrada una persona, consultar qué pabellones están libres o cuadrar los entierros es lento y propenso a errores.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Solución</h3>
+                <p>App multiplataforma con una base de datos real, diseñada desde dentro. Conozco el cementerio, a los compañeros que la van a usar y la información que necesitan en cada momento del día a día.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Resultado</h3>
+                <p>En fase de diseño. El objetivo es digitalizar el proceso para que cualquier compañero del ayuntamiento consulte la información sin depender de mí y se reduzcan los errores humanos.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- App Valenciano IA -->
+          <article class="project-card" data-type="individual idea">
+            <div class="project-card__head">
+              <div class="project-card__icon" aria-hidden="true">🗣️</div>
+              <span class="project-card__grade">V5</span>
+            </div>
+            <h2 class="project-card__title">Aprender valenciano con IA</h2>
+            <div class="project-card__meta">
+              <span class="tag tag--individual">Individual</span>
+              <span class="tag tag--idea">En diseño</span>
+            </div>
+            <p class="project-card__desc">
+              App para aprender valenciano con un agente de IA entrenado: corrige textos, propone
+              ejercicios y prepara para los niveles oficiales B1, B2, C1 y C2. La idea nace porque
+              las herramientas actuales para aprender valenciano son muy limitadas.
+            </p>
+            <ul class="project-card__stack">
+              <li>IA</li>
+              <li>Agentes</li>
+              <li>NLP</li>
+              <li>A definir</li>
+            </ul>
+            <div class="project-card__actions">
+              <a href="#" class="btn btn-ghost btn-sm">Ver código →</a>
+              <button type="button" class="btn btn-ghost btn-sm js-toggle-case" aria-expanded="false" aria-controls="case-valenciano">
+                Ver caso completo <span class="js-toggle-icon" aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div class="project-card__case" id="case-valenciano" hidden>
+              <div class="case-block">
+                <h3 class="case-block__title">Problema</h3>
+                <p>Quiero aprender bien mi idioma materno, el valenciano, y preparar los exámenes oficiales (B1, B2, C1 y C2). Las apps actuales no cubren todas las destrezas de estos exámenes ni permiten entrenar de forma personalizada con corrección real de textos.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Solución</h3>
+                <p>App con un agente de IA que corrige textos, propone ejercicios, adapta el nivel y prepara cada destreza del examen oficial. La idea es ofrecer un entrenador personal de valenciano disponible 24/7 y familiarizado con el formato exacto de las pruebas.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Resultado</h3>
+                <p>En fase de diseño. El proyecto responde a la falta de herramientas para aprender bien el idioma, más allá de ejercicios básicos o aplicaciones genéricas que no conocen los exámenes oficiales.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- App Facturación Electricistas -->
+          <article class="project-card" data-type="grupo curso">
+            <div class="project-card__head">
+              <div class="project-card__icon" aria-hidden="true">⚡</div>
+              <span class="project-card__grade">V5</span>
+            </div>
+            <h2 class="project-card__title">Facturación para electricistas</h2>
+            <div class="project-card__meta">
+              <span class="tag tag--grupo">En grupo</span>
+              <span class="tag tag--curso">En curso</span>
+            </div>
+            <p class="project-card__desc">
+              App web móvil para electricistas autónomos, hecha en equipo: el profesional dicta por voz lo que ha hecho, la voz se pasa a texto, una IA extrae materiales y horas y un programa calcula el importe. Él revisa el borrador y envía la factura en PDF al cliente. Parto de mi formación en instalaciones eléctricas para entender el oficio.
+            </p>
+            <ul class="project-card__stack">
+              <li>Python · FastAPI</li>
+              <li>Voz (Whisper)</li>
+              <li>IA / LLM</li>
+              <li>Facturación</li>
+              <li>Docker</li>
+            </ul>
+            <div class="project-card__actions">
+              <a href="#" class="btn btn-ghost btn-sm">Ver código →</a>
+              <button type="button" class="btn btn-ghost btn-sm js-toggle-case" aria-expanded="false" aria-controls="case-facturacion">
+                Ver caso completo <span class="js-toggle-icon" aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div class="project-card__case" id="case-facturacion" hidden>
+              <div class="case-block">
+                <h3 class="case-block__title">Problema</h3>
+                <p>Partimos de que los electricistas autónomos pierden tiempo pasando a mano, o a una hoja de cálculo, las notas de materiales y horas para facturar, y lo estamos comprobando con entrevistas. Además, la factura electrónica (Veri*factu) será obligatoria para los autónomos a partir del 1 de julio de 2027.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Solución</h3>
+                <p>Web móvil con un botón de grabar: el electricista dicta al acabar el trabajo, el audio se transcribe con Whisper, una IA extrae materiales y horas, y un programa calcula la base, el IVA y el IRPF con código (la IA nunca hace las cuentas). Él revisa el borrador, lo corrige si hace falta y envía la factura en PDF al cliente. El canal de WhatsApp Business queda para una segunda fase.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Resultado</h3>
+                <p>En desarrollo. Proyecto en equipo (404: Brain not Found) del curso de DAM, con el objetivo de tener un MVP en seis semanas. Ya hemos empezado: repositorio, documentación, un motor de cálculo fiscal con tests y un primer prototipo en Figma. Ahora toca validar con electricistas y probar la voz con frases reales de obra. Mi rol: producto.</p>
+              </div>
+              <figure class="case-figure">
+                <img src="image/prototipo-figma.webp" alt="Diseño en Figma de la pantalla de acceso de la app: título «Del trabajo hecho a la factura lista», campos de correo y contraseña y botón Entrar." width="437" height="901" loading="lazy" decoding="async" />
+                <figcaption>Prototipo en Figma de la pantalla de acceso. Es un diseño: la app todavía está en desarrollo.</figcaption>
+              </figure>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Nota al pie -->
+        <p class="projects-note">
+          Los proyectos individuales se irán moviendo a <strong>En curso</strong> o <strong>Terminado</strong>
+          a medida que avance el curso. Esta página es un documento vivo.
+        </p>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="container cta-inner reveal">
+        <h2>¿Quieres ver mi <span class="accent-text">perfil completo</span>?</h2>
+        <p>Vuelve al portfolio para ver formación, experiencia y certificaciones.</p>
+        <a href="index.html" class="btn btn-primary btn-lg btn-swap">
+          <span class="btn-swap__a">Volver al inicio</span>
+          <span class="btn-swap__b">Ir al portfolio</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p><small>© <span id="year"></span> Gabriel Vidal Badia · Web personal con HTML, CSS y JS puros.</small></p>
+      <button id="toTop" class="to-top" aria-label="Volver arriba">↑</button>
+    </div>
+  </footer>
+
+  <script src="language.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="skin-picker.js" defer></script>
+  <script src="matrix-effects.js" defer></script>
+  <script src="omarchy-effects.js" defer></script>
+  <script src="easter-eggs.js" defer></script>
+  <script src="escalador.js" defer></script>
+  <script src="chatbot.js" defer></script>
+  <script>
+    /* Los filtros son botones de alternar: aria-pressed dice a los lectores de pantalla cuál está activo */
+    (function () {
+      var botones = document.querySelectorAll(".filter-btn");
+      botones.forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b.classList.contains("is-active")));
+        b.addEventListener("click", function () {
+          botones.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

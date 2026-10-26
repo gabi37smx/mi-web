@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="es" translate="no" data-theme="light" data-skin="topo">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="google" content="notranslate" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f2ede3" id="metaTheme" />
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+  <script>
+    /* Skin (estilo visual): se aplica antes de pintar para evitar parpadeos, igual que el tema claro/oscuro */
+    (function () {
+      var d = document.documentElement, s = "topo";
+      try { var v = localStorage.getItem("skin"); if (v === "omarchy" || v === "minecraft" || v === "matrix") s = v; } catch (e) {}
+      d.setAttribute("data-skin", s);
+      try { var ot = localStorage.getItem("omarchy-theme"); if (ot && /^[a-z-]+$/.test(ot)) d.setAttribute("data-omarchy-theme", ot); } catch (e) {}
+      var f = { minecraft: "family=Press+Start+2P&family=VT323" }[s];
+      if (f) {
+        var l = document.createElement("link");
+        l.rel = "stylesheet";
+        l.href = "https://fonts.googleapis.com/css2?" + f + "&display=swap";
+        document.head.appendChild(l);
+      }
+    })();
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <title>Gabriel Vidal Badia · Desarrollador | 1º DAM · IES Simarro</title>
+  <meta name="description" content="Portfolio de Gabriel Vidal Badia, estudiante de 1º DAM en el IES Simarro. Técnico Superior en Sistemas de Telecomunicación, CFGM en Sistemas Microinformáticos y Redes, y certificaciones Cisco en redes y ciberseguridad." />
+  <meta name="keywords" content="programador, desarrollador, DAM, IES Simarro, Xàtiva, Valencia, Java, Python, JavaScript, HTML, CSS, Ciberseguridad, Redes, Cisco, CCNA, portfolio, Gabriel Vidal Badia, escalada" />
+  <meta name="author" content="Gabriel Vidal Badia" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://gabi37smx.github.io/mi-web/" />
+
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="Gabriel Vidal Badia · Desarrollador" />
+  <meta property="og:description" content="Estudiante de 1º DAM. Técnico Superior en Sistemas de Telecomunicación, CFGM SMR y certificaciones Cisco." />
+  <meta property="og:url" content="https://gabi37smx.github.io/mi-web/" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:image" content="https://gabi37smx.github.io/mi-web/image/gabriel.webp" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Gabriel Vidal Badia · Desarrollador" />
+  <meta name="twitter:description" content="Estudiante de 1º DAM. Técnico Superior en Sistemas de Telecomunicación. Certificaciones Cisco." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Gabriel Vidal Badia",
+    "jobTitle": "Desarrollador en formación",
+    "description": "Estudiante de 1º DAM en el IES Simarro. Técnico Superior en Sistemas de Telecomunicación e Informáticos, CFGM en Sistemas Microinformáticos y Redes, con certificaciones Cisco en redes y ciberseguridad.",
+    "url": "https://gabi37smx.github.io/mi-web/",
+    "image": "https://gabi37smx.github.io/mi-web/image/gabriel.webp",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Xàtiva",
+      "addressRegion": "Valencia",
+      "addressCountry": "ES"
+    },
+    "alumniOf": [
+      {
+        "@type": "EducationalOrganization",
+        "name": "IES Dr. Lluis Simarro Lacabra",
+        "address": { "@type": "PostalAddress", "addressLocality": "Xàtiva", "addressRegion": "Valencia", "addressCountry": "ES" }
+      }
+    ],
+    "knowsAbout": ["Java", "Python", "JavaScript", "HTML", "CSS", "Ciberseguridad", "Redes", "Cisco", "Programación orientada a objetos", "Inteligencia artificial", "Agentes", "Desarrollo web"],
+    "hasCredential": [
+      { "@type": "EducationalOccupationalCredential", "name": "Junior Cybersecurity Analyst Career Path", "credentialCategory": "certificate", "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" }, "dateCreated": "2026-04-27" },
+      { "@type": "EducationalOccupationalCredential", "name": "CCNA: Introducción a las redes", "credentialCategory": "certificate", "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" }, "dateCreated": "2025-06-18" },
+      { "@type": "EducationalOccupationalCredential", "name": "Seguridad de Terminales", "credentialCategory": "certificate", "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" }, "dateCreated": "2025-03-08" },
+      { "@type": "EducationalOccupationalCredential", "name": "Introducción a la Ciberseguridad", "credentialCategory": "certificate", "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" }, "dateCreated": "2024-12-27" },
+      { "@type": "EducationalOccupationalCredential", "name": "Fundamentos de Ciberseguridad", "credentialCategory": "certificate", "recognizedBy": { "@type": "Organization", "name": "Cisco Networking Academy" }, "dateCreated": "2026-04-27" },
+      { "@type": "EducationalOccupationalCredential", "name": "Técnico Superior en Sistemas de Telecomunicación e Informáticos", "credentialCategory": "degree", "recognizedBy": { "@type": "Organization", "name": "Generalitat Valenciana" } },
+      { "@type": "EducationalOccupationalCredential", "name": "Técnico en Sistemas Microinformáticos y Redes (CFGM)", "credentialCategory": "degree", "recognizedBy": { "@type": "Organization", "name": "IES Dr. Lluis Simarro Lacabra" } },
+      { "@type": "EducationalOccupationalCredential", "name": "Técnico en Instalaciones Eléctricas y Automáticas", "credentialCategory": "degree", "recognizedBy": { "@type": "Organization", "name": "Generalitat Valenciana" } },
+      { "@type": "EducationalOccupationalCredential", "name": "Técnico Superior en Procesos Textiles de Hilatura y Tejeduría de Calada", "credentialCategory": "degree", "recognizedBy": { "@type": "Organization", "name": "Generalitat Valenciana" } },
+      { "@type": "EducationalOccupationalCredential", "name": "Diploma de Excelencia Académica · Mejor expediente CFGM", "credentialCategory": "award", "recognizedBy": { "@type": "Organization", "name": "IES Dr. Lluis Simarro Lacabra" }, "dateCreated": "2026-06-19" }
+    ],
+    "sameAs": [
+      "https://github.com/gabi37smx",
+      "https://www.linkedin.com/in/gabriel-vidal-badia-19122a43b"
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Fuentes: se piden en paralelo y se aplican al llegar, sin bloquear el primer pintado (display=swap evita texto invisible) -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" /></noscript>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <aside class="climb-rail" aria-label="Progreso de la vía">
+    <svg class="climb-rope" viewBox="0 0 24 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+            vector-effect="non-scaling-stroke" opacity="0.4" />
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-dasharray="3 4" vector-effect="non-scaling-stroke" opacity="1" />
+      <path d="M12 0 C 12 20, 6 30, 12 50 C 18 70, 12 80, 12 100"
+            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-dasharray="3 4" stroke-dashoffset="3.5"
+            vector-effect="non-scaling-stroke" opacity="0.6" />
+    </svg>
+
+    <div class="climb-climber" id="climber"></div>
+
+    <ul class="climb-holds">
+      <li><a href="#sobre-mi" class="climb-hold" data-section="sobre-mi" aria-label="Ir a Sobre mí"><span class="climb-hold__label">Sobre mí</span></a></li>
+      <li><a href="#hecho"    class="climb-hold" data-section="hecho"    aria-label="Ir a Experiencia"><span class="climb-hold__label">Experiencia</span></a></li>
+      <li><a href="proyectos.html" class="climb-hold" data-section="proyectos" aria-label="Ir a Proyectos"><span class="climb-hold__label">Proyectos</span></a></li>
+      <li><a href="#certs"    class="climb-hold" data-section="certs"    aria-label="Ir a Certificaciones"><span class="climb-hold__label">Certificaciones</span></a></li>
+      <li><a href="#gusta"    class="climb-hold" data-section="gusta"    aria-label="Ir a Me gusta"><span class="climb-hold__label">Me gusta</span></a></li>
+      <li><a href="juego.html"    class="climb-hold" data-section="juego"    aria-label="Ir a Juego"><span class="climb-hold__label">Juego</span></a></li>
+      <li><a href="contacto.html" class="climb-hold" data-section="contacto" aria-label="Ir a Contacto"><span class="climb-hold__label">Contacto</span></a></li>
+    </ul>
+  </aside>
+
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="site-header" id="inicio">
+    <div class="container header-inner">
+      <a href="#inicio" class="logo" aria-label="Inicio">
+        <span class="logo-mark"><svg class="logo-svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M33.7 23 A14 14 0 1 0 37 32 H27"/><path d="M41 24 L48.5 42 L56 24"/></svg></span>
+        <span class="logo-text">Gabriel Vidal</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <ul class="nav-list" id="nav-list">
+          <li><a href="#sobre-mi" class="nav-link">Sobre mí</a></li>
+          <li><a href="#hecho" class="nav-link">Experiencia</a></li>
+          <li><a href="proyectos.html" class="nav-link">Proyectos</a></li>
+          <li><a href="#certs" class="nav-link">Certificaciones</a></li>
+          <li><a href="#gusta" class="nav-link">Me gusta</a></li>
+          <li><a href="juego.html" class="nav-link">Juego</a></li>
+          <li><a href="presentacion.html" class="nav-link">Presentación</a></li>
+          <li><a href="noticias.html" class="nav-link">Noticias IA</a></li>
+          <li><a href="contacto.html" class="nav-link nav-cta">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <div class="skin-picker" id="skinPicker">
+          <button type="button" class="skin-picker__btn" id="skinPickerBtn" aria-label="Cambiar estilo visual" title="Cambiar estilo visual" aria-haspopup="true" aria-expanded="false" aria-controls="skinWheel">
+            <svg class="skin-ico skin-ico--topo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12c1.4-1.2 2.6 1.2 4 0s2-.6 2.4-.2M9 16c1.4-1.2 2.6 1.2 4 0"/></svg>
+            <svg class="skin-ico skin-ico--omarchy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="7" rx="1.5"/><rect x="13" y="13" width="8" height="7" rx="1.5"/></svg>
+            <svg class="skin-ico skin-ico--minecraft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9"/></svg>
+            <svg class="skin-ico skin-ico--matrix" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 7l5 5-5 5"/><path d="M13 17h6"/></svg>
+          </button>
+          <div class="skin-picker__wheel" id="skinWheel" role="radiogroup" aria-label="Estilo visual"></div>
+        </div>
+        <select id="languageSelect" class="language-select" aria-label="Idioma">
+          <option value="es">ES</option>
+          <option value="val">VA</option>
+          <option value="en">EN</option>
+        </select>
+                <button class="sound-toggle" id="soundToggle" type="button"
+                aria-label="Activar sonidos" aria-pressed="false" hidden>
+          <svg class="icon icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4z"/>
+            <line x1="22" y1="9" x2="16" y2="15"/>
+            <line x1="16" y1="9" x2="22" y2="15"/>
+          </svg>
+          <svg class="icon icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4z"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
+        <button id="themeToggle" class="theme-toggle" aria-label="Cambiar a modo oscuro" aria-pressed="false" title="Cambiar tema">
+          <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-list">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+
+    <section class="hero" aria-label="Presentación">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <div class="hero-id">
+          <img class="hero-photo" src="image/gabriel.webp" alt="Retrato de Gabriel Vidal Badia" width="84" height="84" decoding="async" />
+          <p class="hero-eyebrow"><span class="dot"></span> Disponible para oportunidades</p>
+        </div>
+        <h1 class="hero-title">
+          Hola, soy <span class="accent-text">Gabriel Vidal Badia</span>
+        </h1>
+        <p class="hero-subtitle">
+          <span class="typing" data-words="Desarrollador en formación,Estudiante de 1º DAM,Técnico Superior en Telecomunicaciones,Cisco Certified" data-delay="2400"></span>
+        </p>
+        <p class="hero-desc">
+          Técnico Superior en Sistemas de Telecomunicación e Informáticos, con certificaciones Cisco en redes
+          y ciberseguridad y experiencia previa como mecánico y oficial de mantenimiento. Ahora estudio 1º DAM
+          en el IES Simarro para dar el salto a la programación, la inteligencia artificial y los agentes.
+        </p>
+        <div class="hero-actions">
+          <a href="contacto.html" class="btn btn-primary btn-swap">
+            <span class="btn-swap__a">Contactar</span>
+            <span class="btn-swap__b">Hablemos</span>
+          </a>
+          <a href="#hecho" class="btn btn-ghost">Ver experiencia</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><strong>10</strong><span>títulos y certificaciones</span></div>
+          <div class="stat"><strong>5</strong><span>títulos técnicos oficiales</span></div>
+          <div class="stat"><strong>Cursando</strong><span>1º DAM en IES Simarro</span></div>
+        </div>
+      </div>
+      <a href="#sobre-mi" class="scroll-hint" aria-label="Bajar a la siguiente sección">
+        <span class="mouse"><span class="wheel"></span></span>
+      </a>
+    </section>
+
+    <section id="sobre-mi" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">01 · Sobre mí</span>
+          <h2>Perfil técnico con vocación de <span class="accent-text">programador</span></h2>
+        </div>
+
+        <div class="about-layout">
+          <figure class="about-photo reveal">
+          <img src="image/gabriel.webp" srcset="image/gabriel.webp 400w, image/gabriel.webp 800w" sizes="280px" alt="Gabriel Vidal Badia sonriendo, con americana azul y camisa blanca, sobre fondo gris claro" width="800" height="993" loading="lazy" />
+          </figure>
+
+          <div class="about-text reveal">
+            <p>
+              Soy <strong>Gabriel Vidal Badia</strong>, del ciclo de <strong>1º DAM</strong> del <strong>IES Simarro</strong>.
+              Tengo una formación técnica amplia y una trayectoria basada en el mantenimiento, la resolución
+              de problemas y el aprendizaje continuo.
+            </p>
+            <p>
+              He trabajado como mecánico en una hilatura durante 11 años y, actualmente, como oficial de
+              mantenimiento en el Ayuntamiento de Ollería, con tareas de jardinería, obra, electricidad,
+              grúa y cementerio. Ahora quiero orientar mi carrera hacia la <strong>programación</strong>,
+              la <strong>inteligencia artificial</strong> y los <strong>agentes</strong>, porque me interesa
+              el futuro del software y busco un trabajo con más reto técnico.
+            </p>
+
+            <pre class="terminal terminal--typing" id="typingTerminal" role="img" aria-label="Bucle de aprendizaje"></pre>
+
+            <div class="about-cta">
+              <a href="contacto.html" class="btn btn-primary">Contactar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ▼ NUEVO: Vídeo demo "Así trabajo" (Tutorial 4 · Paso 5) -->
+        <figure class="work-demo reveal">
+          <video
+            src="media/demo.mp4"
+            poster="media/poster.webp"
+            controls
+            preload="none"
+            width="1280"
+            height="720"
+            playsinline
+            aria-label="Vídeo de 35 segundos sin sonido: recorrido por el portfolio con el asistente Cordada, noticias de IA, proyectos, experiencia y el juego Vía al Cielo">
+            <track kind="captions" src="media/demo.vtt" srclang="es" label="Español" default>
+            Tu navegador no soporta el elemento de vídeo. Puedes <a href="media/demo.mp4">descargar el vídeo</a>.
+          </video>
+          <figcaption>
+            Así trabajo: recorrido de 35 segundos por mi portfolio con el asistente Cordada, las noticias de IA, los proyectos, la experiencia y el juego «Vía al Cielo».
+          </figcaption>
+        </figure>
+        <!-- ▲ FIN VÍDEO -->
+
+        <ul class="skill-icons reveal" aria-label="Áreas de trabajo">
+          <li class="skill-icon">
+            <svg class="skill-icon__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 20 L10 7 L14 13.5 L16.5 10 L21 20 Z"/><path d="M9 20 L12 16 L9 13 L10 7"/></svg>
+            <span class="skill-icon__label">Escalada</span>
+          </li>
+          <li class="skill-icon">
+            <svg class="skill-icon__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 8 L4 12 L8 16"/><path d="M16 8 L20 12 L16 16"/><path d="M12 8.5 L13 11 L15 12 L13 13 L12 15.5 L11 13 L9 12 L11 11 Z"/></svg>
+            <span class="skill-icon__label">Programación e IA</span>
+          </li>
+          <li class="skill-icon">
+            <svg class="skill-icon__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="6"/><path d="M18 12 H20.5 M12 18 V20.5 M6 12 H3.5 M12 6 V3.5 M16.2 16.2 L18 18 M7.8 16.2 L6 18 M7.8 7.8 L6 6 M16.2 7.8 L18 6"/><path d="M12.8 8.5 L10 12.5 H14 L11.2 16.5"/></svg>
+            <span class="skill-icon__label">Mantenimiento</span>
+          </li>
+          <li class="skill-icon">
+            <svg class="skill-icon__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 L19.5 6 V11.5 C19.5 16 16.5 19.5 12 21 C7.5 19.5 4.5 16 4.5 11.5 V6 Z"/><circle cx="12" cy="9.5" r="1"/><circle cx="9.3" cy="14" r="1"/><circle cx="14.7" cy="14" r="1"/><path d="M11.4 10.4 L9.9 13.1 M12.6 10.4 L14.1 13.1 M10.5 14 H13.5"/></svg>
+            <span class="skill-icon__label">Redes y ciberseguridad</span>
+          </li>
+        </ul>
+
+        <aside class="about-card about-card--wide reveal" aria-label="Datos clave">
+          <h3>Datos clave</h3>
+          <dl class="kv kv--grid">
+            <div><dt>Nombre</dt><dd>Gabriel Vidal Badia</dd></div>
+            <div><dt>Estudios</dt><dd>1º DAM · IES Simarro (en curso)</dd></div>
+            <div><dt>Formación</dt><dd>Telecomunicaciones · SMR · Instalaciones Eléctricas · Textil</dd></div>
+            <div><dt>Experiencia</dt><dd>Mecánico (11 años) · Oficial de mantenimiento</dd></div>
+            <div><dt>Enfoque</dt><dd>Programación, IA y agentes</dd></div>
+            <div><dt>Ubicación</dt><dd>Valencia (España)</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <section id="hecho" class="section section-alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">02 · Lo que he hecho</span>
+          <h2>Formación, experiencia y <span class="accent-text">proyectos</span></h2>
+        </div>
+
+        <div class="cards-grid">
+          <article class="card reveal">
+            <span class="card-grade" data-grade="V4" data-tip="Dificultad · Escala V4 (5.11)">V4</span>
+            <div class="card-icon" aria-hidden="true">🎓</div>
+            <h3>Formación</h3>
+
+            <p class="card-list__label">Ciclos superiores</p>
+            <ul class="card-list">
+              <li class="highlight">Técnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM) · en curso</li>
+              <li>Técnico Superior en Sistemas de Telecomunicación e Informáticos</li>
+              <li>Técnico Superior en Procesos Textiles de Hilatura y Tejeduría de Calada</li>
+            </ul>
+
+            <p class="card-list__label">Ciclos medios</p>
+            <ul class="card-list">
+              <li class="highlight">Técnico en Sistemas Microinformáticos y Redes (CFGM)</li>
+              <li>Técnico en Instalaciones Eléctricas y Automáticas</li>
+            </ul>
+          </article>
+
+          <article class="card reveal">
+            <span class="card-grade" data-grade="V5" data-tip="Dificultad · Escala V5 (5.12)">V5</span>
+            <div class="card-icon" aria-hidden="true">🔧</div>
+            <h3>Experiencia</h3>
+            <ul class="card-list">
+              <li>Mecánico en una hilatura durante 11 años</li>
+              <li>Oficial de mantenimiento en el Ayuntamiento de Ollería</li>
+              <li>Jardinería, obra, electricidad, grúa y cementerio</li>
+              <li class="highlight">Mantenimiento preventivo y correctivo</li>
+            </ul>
+          </article>
+
+          <article class="card reveal">
+            <span class="card-grade" data-grade="V3" data-tip="Dificultad · Escala V3 (5.10)">V3</span>
+            <div class="card-icon" aria-hidden="true">🛠️</div>
+            <h3>Proyectos y aficiones técnicas</h3>
+            <ul class="card-list">
+              <li>Alta montaña, senderismo y BTT</li>
+              <li>Escalada (principal pasión)</li>
+              <li>Desmontar, reparar y entender aparatos</li>
+              <li class="highlight">Aprendiendo Java, Python y JavaScript</li>
+            </ul>
+          </article>
+        </div>
+
+        <p class="grades-legend reveal">
+          <span class="grades-legend__title">Grados de dificultad</span>
+          Escala <strong>V</strong> (boulder, EE.&nbsp;UU.): cuanto más alto, más difícil.
+          <span class="grades-legend__scale">
+            <span class="chip v0">V0</span>
+            <span class="chip v1">V1</span>
+            <span class="chip v2">V2</span>
+            <span class="chip v3">V3</span>
+            <span class="chip v4">V4</span>
+            <span class="chip v5">V5</span>
+            <span class="chip v6">V6</span>
+          </span>
+        </p>
+
+        <div class="timeline reveal" aria-label="Movimientos de la vía">
+          <h3 class="timeline-title">La vía · movimientos clave</h3>
+          <ol class="timeline-list">
+            <li class="timeline-item">
+              <span class="timeline-year">Movimiento 01 · Reposo</span>
+              <h4>Mecánico en hilatura</h4>
+              <p>11 años de mantenimiento industrial. Aprendí a leer una máquina como se lee una vía: por donde va a romper.</p>
+            </li>
+            <li class="timeline-item">
+              <span class="timeline-year">Movimiento 02 · Travesía</span>
+              <h4>Oficial de mantenimiento · Ayuntamiento de Ollería</h4>
+              <p>Jardinería, obra, electricidad, grúa y cementerio. Cambio de terreno sin perder el ritmo.</p>
+            </li>
+            <li class="timeline-item">
+              <span class="timeline-year">Movimiento 03 · Crux</span>
+              <h4>1º DAM · IES Simarro</h4>
+              <p>El paso duro. Programación, bases de datos, entornos y lenguajes de marcado. Aquí es donde aprieto.</p>
+            </li>
+            <li class="timeline-item">
+              <span class="timeline-year">Movimiento 04 · Reunión</span>
+              <h4>Programador con IA y agentes</h4>
+              <p>Busco prácticas y primeras oportunidades. La cima aún no se ve, pero la vía está montada.</p>
+            </li>
+          </ol>
+        </div>
+
+        <div class="stack reveal" aria-label="Tecnologías">
+            <h3 class="stack-title">Stack en aprendizaje</h3>
+            <ul class="stack-list">
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">☕</span><span class="stack-slot__name">Java</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🐍</span><span class="stack-slot__name">Python</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🟨</span><span class="stack-slot__name">JavaScript</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🧱</span><span class="stack-slot__name">HTML5</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🎨</span><span class="stack-slot__name">CSS3</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🗄️</span><span class="stack-slot__name">SQL</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🐙</span><span class="stack-slot__name">Git</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🌐</span><span class="stack-slot__name">Redes</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🔒</span><span class="stack-slot__name">Ciberseguridad</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🤖</span><span class="stack-slot__name">IA</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🧠</span><span class="stack-slot__name">Agentes</span></li>
+              <li class="stack-slot"><span class="stack-slot__icon" aria-hidden="true">🐧</span><span class="stack-slot__name">Linux</span></li>
+            </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="proyectos" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">03 · Proyectos</span>
+          <h2>Lo que estoy <span class="accent-text">construyendo</span> este curso</h2>
+          <p class="certs-counter">1 proyecto terminado · 1 en grupo en curso · 2 en diseño</p>
+        </div>
+
+        <div class="projects-preview-grid">
+          <a href="proyectos.html" class="project-preview">
+            <div class="project-preview__icon">🧗</div>
+            <h3>Portfolio personal</h3>
+            <p>Esta web. HTML, CSS y JS puros, con temática de escalada.</p>
+            <span class="project-preview__tag">Terminado · V4</span>
+          </a>
+
+          <a href="proyectos.html" class="project-preview">
+            <div class="project-preview__icon">⚡</div>
+            <h3>Facturación para electricistas</h3>
+            <p>App móvil para facturar dictando por voz. Proyecto en equipo del curso.</p>
+            <span class="project-preview__tag">En grupo, en curso · V5</span>
+          </a>
+
+          <a href="proyectos.html" class="project-preview">
+            <div class="project-preview__icon">🗂️</div>
+            <h3>Gestión de cementerio</h3>
+            <p>App multiplataforma para registros de difuntos, pabellones y zonas.</p>
+            <span class="project-preview__tag">En diseño · V5</span>
+          </a>
+
+          <a href="proyectos.html" class="project-preview">
+            <div class="project-preview__icon">🗣️</div>
+            <h3>Aprender valenciano con IA</h3>
+            <p>Agente entrenado para corregir textos y preparar B1–C2.</p>
+            <span class="project-preview__tag">En diseño · V5</span>
+          </a>
+        </div>
+
+        <p class="projects-preview-cta">
+          <a href="proyectos.html" class="btn btn-primary btn-lg">Ver todos los proyectos →</a>
+        </p>
+      </div>
+    </section>
+
+        <section id="certs" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">04 · Certificaciones</span>
+          <h2>Títulos y <span class="accent-text">certificaciones</span> que me respaldan</h2>
+          <p class="certs-counter">
+            <strong>5</strong> títulos oficiales · <strong>5</strong> certificaciones Cisco Networking Academy
+          </p>
+        </div>
+
+        <div class="certs-group reveal">
+          <h3 class="certs-group__title" id="certs-titulos-title">
+            <span class="certs-group__icon" aria-hidden="true">🎓</span>
+            Títulos oficiales
+          </h3>
+          
+          <div class="carousel" data-carousel>
+            <div class="certs-grid" data-carousel-track role="region" aria-labelledby="certs-titulos-title">
+              <article class="cert-card">
+                <div class="cert-card__icon" aria-hidden="true">💻</div>
+                <span class="cert-card__badge cert-card__badge--degree">Título</span>
+                <h4 class="cert-card__title">Técnico en Sistemas Microinformáticos y Redes</h4>
+                <p class="cert-card__issuer">IES Dr. Lluis Simarro Lacabra · CFGM</p>
+                <p class="cert-card__date">Curso 2024–2026</p>
+              </article>
+
+              <article class="cert-card cert-card--featured">
+                <div class="cert-card__icon" aria-hidden="true">🏅</div>
+                <span class="cert-card__badge cert-card__badge--award">Premio</span>
+                <h4 class="cert-card__title">Diploma de Excelencia Académica</h4>
+                <p class="cert-card__issuer">Mejor expediente · CFGM SMR</p>
+                <p class="cert-card__date">19 de junio de 2026</p>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="certs-group reveal">
+          <h3 class="certs-group__title" id="certs-cisco-title">
+            <span class="certs-group__icon" aria-hidden="true">🌐</span>
+            Cisco Networking Academy
+          </h3>
+          
+          <div class="carousel" data-carousel>
+            <div class="certs-grid certs-grid--cisco" data-carousel-track role="region" aria-labelledby="certs-cisco-title">
+              <article class="cert-card cert-card--cisco cert-card--star">
+                <div class="cert-card__icon" aria-hidden="true">🏆</div>
+                <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
+                <h4 class="cert-card__title">Junior Cybersecurity Analyst Career Path</h4>
+                <p class="cert-card__issuer">Cisco Networking Academy</p>
+                <p class="cert-card__date">27 abr 2026</p>
+              </article>
+
+              <article class="cert-card cert-card--cisco">
+                <div class="cert-card__icon" aria-hidden="true">🌐</div>
+                <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
+                <h4 class="cert-card__title">CCNA: Introducción a las redes</h4>
+                <p class="cert-card__issuer">Cisco Networking Academy</p>
+                <p class="cert-card__date">18 jun 2025</p>
+              </article>
+
+              <article class="cert-card cert-card--cisco">
+                <div class="cert-card__icon" aria-hidden="true">🛡️</div>
+                <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
+                <h4 class="cert-card__title">Seguridad de Terminales</h4>
+                <p class="cert-card__issuer">Cisco Networking Academy</p>
+                <p class="cert-card__date">08 mar 2025</p>
+              </article>
+
+              <article class="cert-card cert-card--cisco">
+                <div class="cert-card__icon" aria-hidden="true">🧠</div>
+                <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
+                <h4 class="cert-card__title">Fundamentos de Ciberseguridad</h4>
+                <p class="cert-card__issuer">Cisco Networking Academy · IES Simarro</p>
+                <p class="cert-card__date">27 abr 2026</p>
+              </article>
+
+              <article class="cert-card cert-card--cisco">
+                <div class="cert-card__icon" aria-hidden="true">🔐</div>
+                <span class="cert-card__badge cert-card__badge--cisco">Cisco · Verificado</span>
+                <h4 class="cert-card__title">Introducción a la Ciberseguridad</h4>
+                <p class="cert-card__issuer">Cisco Networking Academy</p>
+                <p class="cert-card__date">27 dic 2024</p>
+              </article>
+            </div>
+          </div>
+
+          <p class="certs-footer">
+            <a href="https://www.netacad.com/es/profile?tab=badges" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">
+              Ver mi perfil en Cisco NetAcad →
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gusta" class="section section-alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-tag">05 · Me gusta</span>
+          <h2>Lo que me <span class="accent-text">motiva</span></h2>
+        </div>
+
+        <div class="likes-grid">
+          <article class="like-card reveal">
+            <div class="like-icon" aria-hidden="true">⛰️</div>
+            <h3>Montaña</h3>
+            <p>Alta montaña, senderismo y algo de ciclismo de montaña.</p>
+          </article>
+          <article class="like-card reveal">
+            <div class="like-icon" aria-hidden="true">🧗</div>
+            <h3>Escalada</h3>
+            <p>Mi principal pasión: resolver problemas con el cuerpo, igual que con el código.</p>
+          </article>
+          <article class="like-card reveal">
+            <div class="like-icon" aria-hidden="true">💻</div>
+            <h3>Tecnología</h3>
+            <p>Desmontar aparatos, repararlos y entender cómo funcionan por dentro.</p>
+          </article>
+          <article class="like-card reveal">
+            <div class="like-icon" aria-hidden="true">🤖</div>
+            <h3>IA y agentes</h3>
+            <p>Me interesa el futuro del software: modelos, automatización y agentes.</p>
+          </article>
+          <article class="like-card reveal">
+            <div class="like-icon" aria-hidden="true">🎵</div>
+            <h3>Música</h3>
+            <p>Pop inglés y Remember como banda sonora de estudio.</p>
+          </article>
+        </div>
+
+        <figure class="climb-photo reveal">
+          <img src="image/escalada-roca.webp" alt="Gabriel escalando una vía en roca caliza, con el arnés cargado de cintas exprés y el cielo azul de fondo" width="700" height="1051" loading="lazy" />
+          <figcaption>Escalando en roca: la afición que me enseñó a resolver problemas paso a paso.</figcaption>
+        </figure>
+
+        <div class="weather-widget reveal" id="weatherWidget" data-lat="38.9886" data-lon="-0.5183" data-city="Xàtiva">
+          <form class="weather-widget__search" id="weatherSearch" role="search">
+            <label for="weatherCityInput">Ciudad</label>
+            <div class="weather-widget__search-row">
+              <input id="weatherCityInput" name="city" type="search" list="weatherCities" placeholder="Busca una ciudad" autocomplete="off" required />
+              <button type="submit" class="weather-widget__search-button" aria-label="Buscar ciudad" title="Buscar ciudad">↗</button>
+            </div>
+            <datalist id="weatherCities">
+              <option value="Xàtiva"></option>
+              <option value="Valencia"></option>
+              <option value="Barcelona"></option>
+              <option value="Madrid"></option>
+              <option value="Londres"></option>
+              <option value="París"></option>
+            </datalist>
+            <p class="weather-widget__search-status" id="weatherSearchStatus" role="status" aria-live="polite"></p>
+          </form>
+          <div class="weather-widget__head">
+            <span class="weather-widget__icon" id="weatherIcon" aria-hidden="true">🌤</span>
+            <div>
+              <h3 class="weather-widget__title">¿Buen día para escalar?</h3>
+              <p class="weather-widget__city" id="weatherCity">Cargando…</p>
+            </div>
+          </div>
+          <div class="weather-widget__body">
+            <div class="weather-widget__main">
+              <span class="weather-widget__temp" id="weatherTemp">—°</span>
+              <span class="weather-widget__desc" id="weatherDesc">—</span>
+            </div>
+            <ul class="weather-widget__meta">
+              <li><span>Viento</span><strong id="weatherWind">—</strong></li>
+              <li><span>Humedad</span><strong id="weatherHumidity">—</strong></li>
+            </ul>
+          </div>
+          <p class="weather-widget__verdict" id="weatherVerdict" role="status" aria-live="polite">Cargando datos del tiempo…</p>
+          <div class="climbing-links" id="climbingLinks" hidden>
+            <h4 class="climbing-links__title">🧗 Zonas de escalada</h4>
+            <p class="climbing-links__status" id="climbingLinksStatus" role="status" aria-live="polite"></p>
+            <ul class="climbing-links__list" id="climbingLinksList"></ul>
+            <div class="climbing-links__fallback" id="climbingLinksFallback" hidden>
+              <p class="climbing-links__fallback-title">Busca más zonas en:</p>
+              <div class="climbing-links__grid" id="climbingLinksGrid"></div>
+            </div>
+          </div>
+        </div>
+        <div class="github-activity reveal" id="githubActivity" hidden>
+          <h3 class="github-activity__title">🐙 Mi actividad en GitHub</h3>
+          <p class="github-activity__subtitle" id="githubActivitySubtitle"></p>
+          <div class="github-activity__grid" id="githubActivityGrid"></div>
+          <p class="github-activity__cta">
+            <a href="https://github.com/gabi37smx" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Ver mi perfil completo →</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▼ SECCIÓN JUEGO: Vía al Cielo -->
+      <section id="juego" class="section" role="region" aria-labelledby="juego-title">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="section-tag">06 · Laboratorio</span>
+            <h2 id="juego-title">Laboratorio de <span class="accent-text">pruebas</span></h2>
+            <p class="certs-counter">Un experimento técnico aparte del portfolio, por si tienes curiosidad.</p>
+          </div>
+
+          <div class="projects-preview-grid projects-preview-grid--single">
+            <a href="juego.html" class="project-preview">
+              <div class="project-preview__icon">🧪</div>
+              <h3>Vía al Cielo</h3>
+              <p>Juego de plataformas de escalada vertical: 17 pantallas, Canvas 2D, joystick táctil y sin librerías.</p>
+              <span class="project-preview__tag">Laboratorio · Canvas 2D</span>
+            </a>
+          </div>
+
+          <p class="projects-preview-cta">
+            <a href="juego.html" class="btn btn-primary btn-lg">Entrar al laboratorio →</a>
+          </p>
+        </div>
+      </section>
+    <!-- ▲ FIN SECCIÓN JUEGO -->
+
+    <section class="cta-band">
+      <div class="container cta-inner reveal">
+        <h2>¿Buscas un <span class="accent-text">programador</span> con base técnica sólida?</h2>
+        <p>Soy Gabriel, estudio 1º DAM en el IES Simarro. Vengo del mantenimiento industrial, tengo CFGM en Sistemas Microinformáticos y Redes y certificaciones Cisco en redes y ciberseguridad.</p>
+        <a href="contacto.html" class="btn btn-primary btn-lg btn-swap">
+          <span class="btn-swap__a">Asegúrame</span>
+          <span class="btn-swap__b">Escríbeme</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col reveal">
+        <h2>Contacto</h2>
+        <p>Disponible para aprender, colaborar y dar el salto al desarrollo de software. Escríbeme para temas de programación, redes, ciberseguridad, montaña o aprendizaje.</p>
+        <div class="social">
+          <a href="mailto:gabvidbad@alu.edu.gva.es" aria-label="Email" class="social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+          </a>
+          <a href="https://github.com/gabi37smx" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-1.8c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.7.2 2.9.1 3.2.7.9 1.2 1.9 1.2 3.2 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/gabriel-vidal-badia-19122a43b" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8.02h4.56V24H.22zM8.02 8.02h4.37v2.18h.06c.61-1.16 2.1-2.38 4.32-2.38 4.62 0 5.47 3.04 5.47 7v8.18h-4.56v-7.25c0-1.73-.03-3.96-2.41-3.96-2.41 0-2.78 1.88-2.78 3.83v7.38H8.02z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col reveal">
+        <h3>Enlaces rápidos</h3>
+        <ul class="footer-links">
+          <li><a href="#sobre-mi">Sobre mí</a></li>
+          <li><a href="#hecho">Lo que he hecho</a></li>
+          <li><a href="#certs">Certificaciones</a></li>
+          <li><a href="#gusta">Me gusta</a></li>
+          <li><a href="juego.html">Juego</a></li>
+          <li><a href="presentacion.html">Presentación</a></li>
+          <li><a href="#inicio">Volver arriba</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col reveal">
+        <h3>Directo</h3>
+        <ul class="footer-links">
+          <li><a href="mailto:gabvidbad@alu.edu.gva.es">gabvidbad@alu.edu.gva.es</a></li>
+          <li><a href="https://github.com/gabi37smx" target="_blank" rel="noopener noreferrer">github.com/gabi37smx</a></li>
+          <li><a href="https://www.linkedin.com/in/gabriel-vidal-badia-19122a43b" target="_blank" rel="noopener noreferrer">linkedin.com/in/gabriel-vidal-badia</a></li>
+          <li><a href="contacto.html">Formulario de contacto</a></li>
+        </ul>
+
+        <div class="footer-qr">
+          <p class="footer-qr__label">📱 Llévate la web al móvil</p>
+          <img src="image/qr-web.webp" alt="Código QR que lleva a este portfolio" width="120" height="120" loading="lazy" />
+        </div>
+      </div>
+    </div>
+
+        <div class="container footer-bottom">
+      <div class="footer-bottom__left">
+        <p><small>© <span id="year"></span> Gabriel Vidal Badia · Web personal con HTML, CSS y JS puros.</small></p>
+        <p class="footer-secreto" title="Los clásicos nunca mueren">
+          <span class="footer-secreto__icono" aria-hidden="true">⛏</span>
+          <span class="footer-secreto__texto">Pista:</span>
+          <span class="footer-secreto__teclas" aria-label="Arriba arriba abajo abajo izquierda derecha izquierda derecha B A">↑ ↑ ↓ ↓ ← → ← → B A</span>
+        </p>
+      </div>
+      <button id="toTop" class="to-top" aria-label="Volver arriba">↑</button>
+    </div>
+  </footer>
+
+  <script src="language.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="skin-picker.js" defer></script>
+  <script src="matrix-effects.js" defer></script>
+  <script src="omarchy-effects.js" defer></script>
+  <script src="easter-eggs.js" defer></script>
+  <script src="escalador.js" defer></script>
+  <script src="chatbot.js" defer></script>
+  <script src="carrusel.js" defer></script>
+  
+  <!-- Parche temporal: arregla el input del chat generado por chatbot.js
+       (id/name) para silenciar el warning de Chrome sobre form fields -->
+  <script>
+    (function () {
+      function arreglarInputChat() {
+        var input = document.querySelector(".cordada-campo");
+        if (!input) return false;
+        if (!input.id) input.id = "cordadaCampo";
+        if (!input.name) input.name = "pregunta";
+        return true;
+      }
+      if (!arreglarInputChat()) {
+        var obs = new MutationObserver(function () {
+          if (arreglarInputChat()) obs.disconnect();
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
+      }
+    })();
+  </script>
+</body>
+</html>

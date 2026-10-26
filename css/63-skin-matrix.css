@@ -1,0 +1,538 @@
+/* ============================================================================
+   SKIN · MATRIX
+   ----------------------------------------------------------------------------
+   Estética: la película Matrix (1999). Verde fósforo, terminal, monocromo,
+   monoespaciado, efecto CRT. Sin imágenes externas.
+   Todo va bajo :root[data-skin="matrix"]. Topo, Omarchy y Minecraft intactos.
+   Solo tema oscuro: el conmutador claro/oscuro se oculta en este skin.
+   ============================================================================ */
+
+/* ---------- Variables · Matrix dark (único tema) ---------- */
+:root[data-skin="matrix"],
+:root[data-skin="matrix"][data-theme="dark"],
+:root[data-skin="matrix"][data-theme="light"] {
+  --radius: 0;
+  --radius-sm: 0;
+
+  --font: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+  --display: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+  --mono: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+
+  /* Fondos: negros con matiz verde muy sutil */
+  --bg:        #0a0f0a;
+  --bg-soft:   #0d140d;
+  --surface:   #0f180f;
+  --surface-2: #12201a;
+  --panel-soft: rgba(0, 255, 65, .04);
+
+  /* Texto: verde fósforo con distintos niveles */
+  --text:      #00FF41;
+  --muted:     #00c434;
+  --muted-2:   #00a02d;   /* antes #008a26 (contraste 4.3:1); ahora ≥5.5:1 sobre --bg */
+
+  /* Líneas */
+  --line:      #00a82d;
+
+  /* Acentos */
+  --accent:    #00FF41;
+  --accent-2:  #7CFFA8;
+  --accent-3:  #4A8A4A;
+  --accent-rgb: 0, 255, 65;
+  --accent-2-rgb: 124, 255, 168;
+  --on-accent: #0a0f0a;
+
+  /* Grid y header */
+  --grid-line: rgba(0, 255, 65, .06);
+  --header-bg: rgba(10, 15, 10, .88);
+  --header-bg-scrolled: rgba(10, 15, 10, .98);
+
+  /* Sombras: glow verde en vez de sombra dura */
+  --shadow-sm: 0 0 6px rgba(0, 255, 65, .18);
+  --shadow:    0 0 16px rgba(0, 255, 65, .25);
+  --logo-shadow: 0 0 8px rgba(0, 255, 65, .45);
+  --btn-primary-shadow: 0 0 12px rgba(0, 255, 65, .35);
+  --btn-primary-shadow-hover: 0 0 20px rgba(0, 255, 65, .55);
+  --card-glow: 0 0 0 1px rgba(0, 255, 65, .35), 0 0 20px rgba(0, 255, 65, .08);
+  --timeline-dot-ring: rgba(0, 255, 65, .3);
+
+  --color-scheme: dark;
+}
+
+/* ---------- Reset dentro de Matrix ----------
+   Igual que Minecraft: esquinas rectas en todo MENOS en el conmutador de skins
+   (que tiene que seguir siendo circular). Sin !important para poder excluirlo. */
+:root[data-skin="matrix"] *:not(.skin-picker *) { border-radius: 0; }
+
+/* Skin solo oscuro: el botón sol/luna no hace nada aquí, se oculta */
+:root[data-skin="matrix"] .theme-toggle { display: none; }
+
+/* ---------- Tipografía y espaciado ---------- */
+:root[data-skin="matrix"] body {
+  font-family: var(--font);
+  letter-spacing: .02em;
+  text-rendering: optimizeLegibility;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(0, 255, 65, .05), transparent 60%),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 65, .04) 0px,
+      rgba(0, 255, 65, .04) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+}
+:root[data-skin="matrix"] :is(h1, h2, h3, h4) {
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+:root[data-skin="matrix"] h1 {
+  font-size: clamp(1.8rem, 4.2vw, 3.2rem);
+  text-shadow: 0 0 12px rgba(0, 255, 65, .55), 0 0 2px rgba(0, 255, 65, .9);
+}
+:root[data-skin="matrix"] h2 {
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  text-shadow: 0 0 8px rgba(0, 255, 65, .4);
+}
+:root[data-skin="matrix"] h3 {
+  font-size: 1.1rem;
+  text-shadow: 0 0 4px rgba(0, 255, 65, .3);
+}
+:root[data-skin="matrix"] h4 { font-size: .95rem; }
+
+/* ---------- Header ---------- */
+:root[data-skin="matrix"] .site-header {
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 65, .06) 0px,
+      rgba(0, 255, 65, .06) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+}
+
+/* ---------- Nav ---------- */
+:root[data-skin="matrix"] .nav-link {
+  color: var(--muted);
+  border: 1px solid transparent;
+  padding: .45rem .75rem;
+  font-size: .82rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  transition: color .15s var(--ease), border-color .15s var(--ease), background .15s var(--ease);
+}
+:root[data-skin="matrix"] .nav-link:hover {
+  color: var(--text);
+  border-color: var(--line);
+  background: var(--panel-soft);
+  text-shadow: 0 0 6px rgba(0, 255, 65, .55);
+}
+:root[data-skin="matrix"] .nav-link[aria-current="true"],
+:root[data-skin="matrix"] .nav-link[aria-current="page"]:not(.nav-cta) {
+  color: var(--bg);
+  background: var(--accent);
+  text-shadow: none;
+  font-weight: 700;
+}
+:root[data-skin="matrix"] .nav-link[aria-current="true"]::after,
+:root[data-skin="matrix"] .nav-link[aria-current="page"]:not(.nav-cta)::after {
+  content: none;
+}
+:root[data-skin="matrix"] .nav-cta {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 12px rgba(0, 255, 65, .3), inset 0 0 6px rgba(0, 255, 65, .15);
+}
+:root[data-skin="matrix"] .nav-cta:hover {
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 0 0 20px rgba(0, 255, 65, .6);
+}
+
+/* ---------- Logo ---------- */
+:root[data-skin="matrix"] .logo-mark {
+  background: var(--bg);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 10px rgba(0, 255, 65, .5), inset 0 0 6px rgba(0, 255, 65, .25);
+  font-family: var(--display);
+}
+:root[data-skin="matrix"] .logo-text {
+  color: var(--text);
+  text-shadow: 0 0 6px rgba(0, 255, 65, .5);
+  font-family: var(--display);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* ---------- Botones generales ---------- */
+:root[data-skin="matrix"] .btn {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: .75rem 1.35rem;
+  font-family: var(--display);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  box-shadow: 0 0 12px rgba(0, 255, 65, .2), inset 0 0 6px rgba(0, 255, 65, .08);
+  transition: background .15s var(--ease), color .15s var(--ease), box-shadow .2s var(--ease);
+}
+:root[data-skin="matrix"] .btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 0 0 22px rgba(0, 255, 65, .7);
+  transform: none;
+}
+:root[data-skin="matrix"] .btn-primary { background: var(--accent); color: var(--bg); }
+:root[data-skin="matrix"] .btn-primary:hover {
+  background: var(--accent-2);
+  color: var(--bg);
+}
+:root[data-skin="matrix"] .btn-ghost { background: transparent; }
+
+/* ---------- Tarjetas y paneles ---------- */
+:root[data-skin="matrix"] :is(
+  .card, .project-card, .cert-card, .like-card, .about-card,
+  .contact-form-wrap, .contact-aside, .news-item, .project-preview,
+  .weather-widget, .stat, .github-activity__card, .arcade__stat,
+  .cordada-panel, .terminal, .hero-eyebrow
+) {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow:
+    var(--card-glow),
+    inset 0 0 0 1px rgba(0, 255, 65, .05);
+}
+/* position: relative SOLO donde no hay ya un position propio.
+   .contact-aside es sticky y .cordada-panel (chatbot) es fixed: ambos ya sirven
+   de referencia para las esquinas, y forzarles relative los rompería. */
+:root[data-skin="matrix"] :is(
+  .card, .project-card, .cert-card, .like-card, .about-card,
+  .contact-form-wrap, .news-item, .project-preview,
+  .weather-widget, .stat, .github-activity__card
+) {
+  position: relative;
+}
+/* Esquinas decorativas tipo terminal */
+:root[data-skin="matrix"] :is(
+  .card, .project-card, .cert-card, .like-card, .about-card,
+  .contact-form-wrap, .contact-aside, .news-item, .project-preview,
+  .weather-widget, .stat, .github-activity__card, .cordada-panel
+)::before {
+  content: "┌";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  color: var(--accent);
+  font-size: 1rem;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 0 6px rgba(0, 255, 65, .6);
+}
+:root[data-skin="matrix"] :is(
+  .card, .project-card, .cert-card, .like-card, .about-card,
+  .contact-form-wrap, .contact-aside, .news-item, .project-preview,
+  .weather-widget, .stat, .github-activity__card, .cordada-panel
+)::after {
+  content: "┘";
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  color: var(--accent);
+  font-size: 1rem;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 0 6px rgba(0, 255, 65, .6);
+}
+
+/* ---------- Inputs ---------- */
+:root[data-skin="matrix"] :is(
+  .contact-form input, .contact-form select, .contact-form textarea,
+  .weather-widget__search input, .cordada-campo, .language-select
+) {
+  background: #000;
+  color: var(--text);
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  box-shadow: inset 0 0 8px rgba(0, 255, 65, .15);
+  caret-color: var(--accent);
+}
+:root[data-skin="matrix"] :is(
+  .contact-form input, .contact-form select, .contact-form textarea,
+  .weather-widget__search input, .cordada-campo, .language-select
+):focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 0 12px rgba(0, 255, 65, .45), inset 0 0 10px rgba(0, 255, 65, .2);
+}
+:root[data-skin="matrix"] :is(.contact-form input, .contact-form textarea)::placeholder {
+  color: var(--muted-2);
+  opacity: 1;
+}
+
+/* ---------- Slots de Stack ---------- */
+:root[data-skin="matrix"] .stack-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .6rem;
+  margin-top: 1.25rem;
+}
+:root[data-skin="matrix"] .stack-slot {
+  background: #000;
+  border: 1px solid var(--line);
+  padding: 1rem .5rem;
+  min-height: 96px;
+  color: var(--text);
+  font-family: var(--mono);
+  text-align: center;
+  box-shadow: inset 0 0 10px rgba(0, 255, 65, .12);
+  transition: border-color .15s var(--ease), box-shadow .2s var(--ease);
+}
+:root[data-skin="matrix"] .stack-slot:hover {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 12px rgba(0, 255, 65, .25), 0 0 18px rgba(0, 255, 65, .35);
+}
+:root[data-skin="matrix"] .stack-slot__icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 0 4px rgba(0, 255, 65, .35));
+  margin-bottom: .35rem;
+}
+:root[data-skin="matrix"] .stack-slot__name {
+  font-family: var(--mono);
+  font-size: .78rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Badges V0-V6 (monocromo a propósito) ---------- */
+:root[data-skin="matrix"] :is(.card-grade, .grades-legend .chip) {
+  background: #000;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 8px rgba(0, 255, 65, .35);
+  font-family: var(--mono);
+  font-weight: 700;
+}
+
+/* ---------- Footer ---------- */
+:root[data-skin="matrix"] .site-footer {
+  border-top: 1px solid var(--line);
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 65, .04) 0px,
+      rgba(0, 255, 65, .04) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+}
+:root[data-skin="matrix"] .site-footer h3 {
+  color: var(--accent);
+  font-family: var(--display);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 6px rgba(0, 255, 65, .4);
+}
+:root[data-skin="matrix"] .social-link {
+  border: 1px solid var(--line);
+  color: var(--text);
+  box-shadow: 0 0 8px rgba(0, 255, 65, .15);
+}
+:root[data-skin="matrix"] .social-link:hover {
+  color: var(--bg);
+  background: var(--accent);
+  box-shadow: 0 0 16px rgba(0, 255, 65, .6);
+}
+:root[data-skin="matrix"] .footer-qr img {
+  border: 1px solid var(--accent);
+  padding: .35rem;
+  background: #000;
+  box-shadow: 0 0 16px rgba(0, 255, 65, .35);
+  image-rendering: pixelated;
+}
+
+/* ---------- Barra de escalada ---------- */
+:root[data-skin="matrix"] .climb-rope { color: var(--accent-2); opacity: .5; }
+:root[data-skin="matrix"] .climb-hold {
+  border: 1px solid var(--line);
+  background: #000;
+  box-shadow: 0 0 8px rgba(0, 255, 65, .25);
+}
+:root[data-skin="matrix"] .climb-hold::before {
+  background: var(--accent);
+  opacity: .35;
+}
+:root[data-skin="matrix"] .climb-hold:hover::before,
+:root[data-skin="matrix"] .climb-hold.is-active::before {
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(0, 255, 65, .8);
+}
+:root[data-skin="matrix"] .climb-hold.is-active {
+  background: rgba(0, 255, 65, .15);
+  border-color: var(--accent);
+}
+:root[data-skin="matrix"] .climb-hold__label {
+  background: #000;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  box-shadow: 0 0 10px rgba(0, 255, 65, .45);
+}
+
+/* Escalador (muñeco de líneas) en Matrix */
+:root[data-skin="matrix"] .climb-climber {
+  filter:
+    drop-shadow(0 0 4px rgba(0, 255, 65, .8))
+    drop-shadow(0 0 8px rgba(0, 255, 65, .45));
+  color: var(--accent);
+}
+:root[data-skin="matrix"] .climb-climber .relleno {
+  fill: var(--accent);
+}
+
+/* ---------- Cursor ---------- */
+:root[data-skin="matrix"] .cursor__hand {
+  color: var(--accent);
+  filter:
+    drop-shadow(0 0 4px rgba(0, 255, 65, .9))
+    drop-shadow(0 0 8px rgba(0, 255, 65, .5));
+}
+:root[data-skin="matrix"] .cursor.is-hovering .cursor__hand {
+  color: var(--accent-2);
+}
+
+/* ---------- Terminal ---------- */
+:root[data-skin="matrix"] .terminal {
+  background: #000;
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 20px rgba(0, 255, 65, .25), inset 0 0 12px rgba(0, 255, 65, .1);
+}
+:root[data-skin="matrix"] .terminal code,
+:root[data-skin="matrix"] .terminal--typing {
+  color: var(--text);
+}
+:root[data-skin="matrix"] .term-prompt { color: var(--accent-2); }
+:root[data-skin="matrix"] .term-var    { color: var(--accent-2); font-weight: 700; }
+:root[data-skin="matrix"] .term-fn,
+:root[data-skin="matrix"] .term-ok     { color: var(--accent); font-weight: 700; }
+:root[data-skin="matrix"] .term-cursor { color: var(--accent); }
+
+/* ---------- CTA band ---------- */
+:root[data-skin="matrix"] .cta-band {
+  background: #000;
+  color: var(--text);
+  border-top: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+}
+:root[data-skin="matrix"] .cta-inner h2 { color: var(--accent); }
+:root[data-skin="matrix"] .cta-inner p { color: var(--muted); }
+:root[data-skin="matrix"] .cta-inner .btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(0, 255, 65, .5);
+}
+
+/* ---------- Skin picker (conmutador) ---------- */
+:root[data-skin="matrix"] .skin-picker__btn,
+:root[data-skin="matrix"] .skin-picker__opt {
+  background: #000;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 8px rgba(0, 255, 65, .35);
+}
+:root[data-skin="matrix"] .skin-picker__btn:hover,
+:root[data-skin="matrix"] .skin-picker__opt:hover {
+  color: var(--accent-2);
+  box-shadow: 0 0 14px rgba(0, 255, 65, .6);
+}
+/* Opción activa: el anillo de la base lo pisaba la regla de arriba (debe ir DESPUÉS del hover) */
+:root[data-skin="matrix"] .skin-picker__opt[aria-checked="true"] {
+  box-shadow: 0 0 0 2px var(--accent), 0 0 14px rgba(0, 255, 65, .6);
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-skin="matrix"] *,
+  :root[data-skin="matrix"] *::before,
+  :root[data-skin="matrix"] *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+  :root[data-skin="matrix"] .nav-link:hover,
+  :root[data-skin="matrix"] .btn:hover,
+  :root[data-skin="matrix"] .social-link:hover,
+  :root[data-skin="matrix"] .stack-slot:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   MATRIX · EXTRAS (CSS puro)
+   Cursor de bloque de terminal, glitch al hover y huecos para la lluvia de código.
+   La lluvia, el botón y la secuencia "Wake up, Neo" están en matrix-effects.js.
+   ============================================================================ */
+
+/* ---------- Cursor: bloque de terminal parpadeante ----------
+   script.js sigue pintando su mano SVG; aquí se oculta y se dibuja un bloque con ::before.
+   Hover = bloque hueco (como una terminal sin foco). Clic = bloque relleno claro. */
+:root[data-skin="matrix"] .cursor__hand {
+  width: 11px;
+  height: 20px;
+  margin: -10px 0 0 -5px;
+}
+:root[data-skin="matrix"] .cursor__hand svg { display: none; }
+:root[data-skin="matrix"] .cursor__hand::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  animation: matrix-caret 1.06s step-end infinite;
+}
+:root[data-skin="matrix"] .cursor.is-hovering .cursor__hand::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--accent-2);
+  animation: none;
+}
+:root[data-skin="matrix"] .cursor.is-clicking .cursor__hand::before {
+  background: var(--accent-2);
+  box-shadow: none;
+  animation: none;
+}
+@keyframes matrix-caret {
+  0%   { opacity: 1; }
+  50%  { opacity: .1; }
+}
+
+/* ---------- Glitch al hover (solo títulos y logo, solo con movimiento permitido) ----------
+   Usa la propiedad `translate` (independiente de `transform`) para no chocar con el efecto
+   magnético del título del hero, que mueve el elemento con transform desde JS. */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-skin="matrix"] :is(.logo-text, .hero-title, .section-head h2, .projects-title, .cta-inner h2):hover {
+    animation: matrix-glitch .45s steps(1, end) 1;
+  }
+}
+@keyframes matrix-glitch {
+  15% { translate: -2px 0;  text-shadow:  3px 0 0 rgba(124, 255, 168, .85), -3px 0 0 rgba(0, 255, 65, .45); }
+  30% { translate: 2px 1px; text-shadow: -3px 0 0 rgba(124, 255, 168, .85),  3px 0 0 rgba(0, 160, 45, .6); }
+  45% { translate: -1px -1px; text-shadow: 2px 0 0 rgba(0, 255, 65, .7), -2px 0 0 rgba(124, 255, 168, .6); }
+  60% { translate: 3px 0;   text-shadow: -4px 0 0 rgba(124, 255, 168, .8), 4px 0 0 rgba(0, 255, 65, .4); }
+  75% { translate: 0 0;     text-shadow:  1px 0 0 rgba(124, 255, 168, .7); }
+}
+
+/* ---------- Dejar ver la lluvia de código (canvas con z-index: -1) ----------
+   El fondo del hero y de las secciones alternas era opaco y la tapaba. */
+:root[data-skin="matrix"] .hero-bg { background: transparent; }
+:root[data-skin="matrix"] .section-alt { background: rgba(13, 20, 13, .78); }

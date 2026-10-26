@@ -1,0 +1,59 @@
+/* ============================================================================
+   SKINS · sistema de estilos visuales conmutables (data-skin en <html>)
+   ----------------------------------------------------------------------------
+   · topo (por defecto): es el CSS de arriba, SIN tocar. Si no hay data-skin o vale
+     "topo", no se aplica nada de lo que hay debajo.
+   · omarchy y minecraft solo SOBRESCRIBEN las mismas variables que ya usa topo
+     (--bg, --surface, --accent...) y añaden una capa de formas (radios, bordes, sombras).
+   · Cada skin tiene su versión clara y oscura: claro = :root[data-skin],
+     oscuro = :root[data-skin][data-theme="dark"].
+   · Los colores fijos de chips y etiquetas (grados V0-V6, tags, avisos del tiempo) se
+     dejan como están a propósito: son colores semánticos con su propio texto y
+     funcionan igual en cualquier skin.
+   ============================================================================ */
+
+/* ---------- Conmutador de skins (botón circular + rueda) ---------- */
+.skin-picker { position: relative; width: 44px; height: 44px; flex: none; z-index: 60; }
+.skin-picker__btn {
+  position: relative; width: 44px; height: 44px; padding: 0; display: grid; place-items: center;
+  border: 2px solid var(--text); border-radius: 50%;
+  background: var(--surface); color: var(--text); cursor: pointer;
+  box-shadow: 2px 2px 0 var(--text);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease), color .25s var(--ease);
+}
+.skin-picker__btn:hover { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--text); color: var(--accent); }
+.skin-picker__btn[aria-expanded="true"] { color: var(--accent); }
+.skin-picker svg { width: 22px; height: 22px; display: block; pointer-events: none; }
+/* En el botón solo se ve el icono del skin activo (sin JS y sin parpadeo) */
+.skin-picker__btn .skin-ico { display: none; }
+:root:not([data-skin="omarchy"]):not([data-skin="minecraft"]):not([data-skin="matrix"]) .skin-picker__btn .skin-ico--topo,
+:root[data-skin="omarchy"] .skin-picker__btn .skin-ico--omarchy,
+:root[data-skin="minecraft"] .skin-picker__btn .skin-ico--minecraft { display: block; }
+:root[data-skin="matrix"] .skin-picker__btn .skin-ico--matrix { display: block; }
+
+.skin-picker__wheel {
+  position: absolute; top: 0; left: 0; width: 44px; height: 44px; z-index: 5;
+  visibility: hidden; pointer-events: none; transition: visibility 0s linear .22s;
+}
+.skin-picker__wheel.is-open { visibility: visible; pointer-events: auto; transition-delay: 0s; }
+.skin-picker__opt {
+  position: absolute; top: 0; left: 0; width: 44px; height: 44px; padding: 0; display: grid; place-items: center;
+  border: 2px solid var(--text); border-radius: 50%;
+  background: var(--surface); color: var(--text); cursor: pointer;
+  box-shadow: 2px 2px 0 var(--text);
+  opacity: 0; transform: translate(0, 0) scale(.4);
+  transition: transform .22s cubic-bezier(.4,0,.2,1), opacity .22s cubic-bezier(.4,0,.2,1), color .2s;
+}
+.skin-picker__wheel.is-open .skin-picker__opt { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1); }
+.skin-picker__opt:hover { color: var(--accent); }
+/* Indicador del skin activo: anillo + punto */
+.skin-picker__opt[aria-checked="true"] { color: var(--accent); box-shadow: 0 0 0 3px var(--accent); }
+.skin-picker__opt[aria-checked="true"]::after {
+  content: ""; position: absolute; left: 50%; bottom: -11px; width: 6px; height: 6px; margin-left: -3px;
+  border-radius: 50%; background: var(--accent);
+}
+.skin-picker__btn:focus-visible, .skin-picker__opt:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.skin-picker__live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) {
+  .skin-picker__btn, .skin-picker__opt, .skin-picker__wheel { transition: none; }
+}

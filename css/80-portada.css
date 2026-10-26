@@ -1,0 +1,60 @@
+/* ============================================================================
+   Portada: foto en el hero, tarjeta del laboratorio y carrusel de certificaciones
+   ============================================================================ */
+
+/* Foto en la primera pantalla (en móvil, encima de la etiqueta; en escritorio, a su lado) */
+.hero-id {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .9rem;
+  margin-bottom: 1.25rem;
+}
+.hero-id .hero-eyebrow { margin: 0; }
+.hero-photo {
+  flex: none;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 50% 15%;
+  border: 2px solid var(--text);
+  box-shadow: 3px 3px 0 var(--text);
+  background: var(--surface);
+}
+@media (min-width: 721px) {
+  .hero-id { flex-direction: row; align-items: center; gap: 1rem; }
+}
+
+/* Tarjeta única del laboratorio (misma estética que las tarjetas de proyectos) */
+.projects-preview-grid--single { grid-template-columns: minmax(0, 420px); }
+@media (max-width: 720px) {
+  .projects-preview-grid--single { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Certificaciones Cisco: en móvil se deslizan en horizontal en vez de ocupar 5 pantallas */
+.certs-swipe-hint { display: none; }
+@media (max-width: 720px) {
+  .certs-swipe-hint {
+    display: block;
+    margin: 0 0 .6rem;
+    font-family: var(--mono);
+    font-size: .72rem;
+    color: var(--muted);
+  }
+  .certs-grid--cisco {
+    display: flex;
+    gap: .9rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 .5rem .9rem 0;
+    margin-right: -1rem;
+    scrollbar-width: thin;
+  }
+  .certs-grid--cisco > .cert-card {
+    flex: 0 0 78%;
+    scroll-snap-align: start;
+  }
+}

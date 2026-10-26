@@ -1,0 +1,63 @@
+/* ============================================================================
+   CARRUSEL 3D (COVERFLOW) · v2 - Certificaciones en móvil
+   Estas reglas solo se aplican cuando carrusel.js añade la clase .is-coverflow
+   (pantalla <= 720px). En escritorio, o si el JavaScript falla, se ve la
+   cuadrícula normal y nada de esto afecta.
+   ============================================================================ */
+@media (max-width: 720px) {
+  .carousel-controls, .carousel-dots, .carousel-status { display: none !important; }
+}
+
+.carousel.is-coverflow {
+  position: relative;
+  width: 100%;
+  height: var(--cf-alto, 300px);   /* carrusel.js lo ajusta a la tarjeta más alta */
+  overflow: hidden;
+  margin: 1rem 0 1.5rem;
+  touch-action: pan-y;             /* el scroll vertical es del navegador, el horizontal es del carrusel */
+}
+
+/* La pista es quien da la perspectiva a las tarjetas (hijas directas).
+   Además anulamos el scroll horizontal antiguo de las Cisco, que provocaba
+   que el carrusel se quedara "enganchado" hacia un lado. */
+.carousel.is-coverflow .certs-grid {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  scroll-snap-type: none;
+  overscroll-behavior: auto;
+  scrollbar-width: none;
+  perspective: 1000px;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-y;
+}
+.carousel.is-coverflow.is-arrastrando .certs-grid { cursor: grabbing; }
+.carousel.is-coverflow .certs-grid:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+
+/* El movimiento lo calcula carrusel.js; aquí no hay transiciones */
+.carousel.is-coverflow .cert-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(260px, 72vw);
+  min-height: 200px;
+  margin: 0;
+  transition: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+}
+@media (prefers-reduced-motion: reduce) {
+  .carousel.is-coverflow .cert-card { will-change: auto; }
+}

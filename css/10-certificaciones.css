@@ -1,0 +1,135 @@
+/* ============================================================
+   Certificaciones
+   ============================================================ */
+
+.certs-counter {
+  display: inline-block;
+  margin: .75rem 0 0;
+  padding: .45rem .9rem;
+  background: var(--surface);
+  border: 2px solid var(--text);
+  border-radius: 4px;
+  font-size: .85rem;
+  color: var(--muted);
+  font-family: var(--mono);
+  box-shadow: 2px 2px 0 var(--text);
+}
+.certs-counter strong { color: var(--accent); font-weight: 700; }
+
+.certs-group { margin-top: 2.5rem; }
+.certs-group:first-of-type { margin-top: 2rem; }
+
+.certs-group__title {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: 1.15rem;
+  font-family: var(--mono);
+  letter-spacing: .04em;
+  color: var(--text);
+  margin: 0 0 1.25rem;
+  padding-bottom: .5rem;
+  border-bottom: 2px solid var(--text);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.certs-group__icon { font-size: 1.25rem; }
+
+.certs-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.certs-grid--cisco { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+.cert-card {
+  position: relative;
+  background: var(--surface);
+  border: 2px solid var(--text);
+  box-shadow: 4px 4px 0 var(--text);
+  padding: 1.4rem 1.25rem 1.25rem;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+}
+.cert-card:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--text); }
+
+.cert-card__icon { font-size: 1.75rem; margin-bottom: .6rem; }
+
+.cert-card__badge {
+  position: absolute;
+  top: .9rem;
+  right: .9rem;
+  font-family: var(--mono);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: .2rem .5rem;
+  border: 2px solid var(--text);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--muted);
+}
+.cert-card__badge--cisco { background: #dbeafe; color: #1a1a1a; }
+.cert-card__badge--degree { background: #dcf0d1; color: #1a1a1a; }
+.cert-card__badge--award { background: #f0e0a0; color: #1a1a1a; }
+
+.cert-card__title {
+  font-size: 1.05rem;
+  line-height: 1.25;
+  margin: 0 0 .5rem;
+  color: var(--text);
+  padding-right: 4.5rem;
+  font-weight: 700;
+}
+.cert-card__issuer { font-size: .82rem; color: var(--muted); margin: 0 0 .35rem; }
+.cert-card__date {
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--accent);
+  margin: 0;
+  letter-spacing: .02em;
+  font-weight: 700;
+}
+
+/* --- Destacadas: ahora usan el rojo óxido del acento --- */
+.cert-card--featured {
+  background: var(--surface);
+  border-color: var(--text);
+  color: var(--text);
+}
+.cert-card--featured .cert-card__title,
+.cert-card--featured .cert-card__issuer,
+.cert-card--featured .cert-card__date { color: var(--text); }
+.cert-card--featured .cert-card__date { color: var(--accent); }
+.cert-card--featured .cert-card__icon { filter: none; }
+
+[data-theme="dark"] .cert-card--featured,
+[data-theme="dark"] .cert-card--star {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--text);
+}
+[data-theme="dark"] .cert-card--featured .cert-card__title,
+[data-theme="dark"] .cert-card--featured .cert-card__issuer,
+[data-theme="dark"] .cert-card--star .cert-card__title,
+[data-theme="dark"] .cert-card--star .cert-card__issuer {
+  color: var(--on-accent);
+}
+[data-theme="dark"] .cert-card--featured .cert-card__date,
+[data-theme="dark"] .cert-card--star .cert-card__date {
+  color: var(--on-accent);
+  opacity: .85;
+}
+[data-theme="dark"] .cert-card--featured .cert-card__badge,
+[data-theme="dark"] .cert-card--star .cert-card__badge {
+  background: var(--on-accent);
+  color: var(--accent);
+}
+
+.certs-footer { margin: 1.5rem 0 0; text-align: center; }
+
+@media (max-width: 720px) {
+  .certs-grid { grid-template-columns: 1fr; }
+  .cert-card { padding: 1.25rem 1rem 1rem; }
+  .cert-card__title { padding-right: 0; padding-top: .35rem; }
+  .cert-card__badge { position: static; display: inline-block; margin-bottom: .6rem; }
+}

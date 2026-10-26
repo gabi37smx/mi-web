@@ -1,0 +1,98 @@
+/* ============================================================================
+   PERSONALIDAD DE CADA TEMA · efectos más allá del color
+   (las variables --radius, --win-bw, --tt, fuentes… están en cada bloque de tema)
+   ============================================================================ */
+
+/* Synthwave '84: suelo de rejilla en perspectiva al fondo */
+:root[data-skin="omarchy"][data-omarchy-theme="synthwave"] body::after {
+  content: ""; position: fixed; left: -50%; right: -50%; bottom: 0; height: 44vh;
+  z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(to bottom, transparent 0%, rgba(255, 126, 219, .16) 100%),
+    repeating-linear-gradient(90deg, rgba(54, 249, 246, .55) 0 1px, transparent 1px 60px),
+    repeating-linear-gradient(0deg, rgba(54, 249, 246, .55) 0 1px, transparent 1px 44px);
+  transform: perspective(420px) rotateX(63deg); transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 8%, transparent 85%);
+          mask-image: linear-gradient(to top, #000 8%, transparent 85%);
+}
+
+/* Retro 82: monitor CRT ámbar (scanlines + viñeta por encima, brillo en el texto) */
+:root[data-skin="omarchy"][data-omarchy-theme="retro"] body { text-shadow: 0 0 3px rgba(255, 176, 0, .4); }
+:root[data-skin="omarchy"][data-omarchy-theme="retro"] body::after {
+  content: ""; position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, .18) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, .45) 100%);
+}
+:root[data-skin="omarchy"][data-omarchy-theme="retro"] :is(h1, h2, h3, h4, .logo-text) { font-weight: 400; }
+
+/* C64: marco grueso de color alrededor de toda la pantalla y todo en mayúsculas */
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] body { text-transform: uppercase; }
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] body::before {
+  content: ""; position: fixed; inset: 0; z-index: 44; pointer-events: none;
+  border: var(--frame) solid #9d92e6;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] .site-header { top: var(--frame); left: var(--frame); right: var(--frame); }
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] .main-nav { top: calc(62px + var(--frame)); }
+:root[data-skin="omarchy"][data-omarchy-theme="commodore"] :is(h1, h2, h3, h4, .logo-text) { font-weight: 400; }
+
+/* Vantablack: el panel con foco se INVIERTE (blanco sobre negro). Se redefinen las variables
+   dentro del panel para que todo lo que contiene se invierta con él. */
+:root[data-skin="omarchy"][data-omarchy-theme="vantablack"] :is(.about-card, .card, .cert-card, .contact-aside, .contact-form-wrap, .github-activity__card, .like-card, .news-item, .project-card, .project-preview, .projects-note, .terminal, .weather-widget, .form-success):is(:hover, :focus-within) {
+  --win-bg: #ffffff;
+  --text: #000000; --muted: #262626; --muted-2: #404040; --line: #000000;
+  --accent: #000000; --accent-2: #222222; --accent-rgb: 0, 0, 0; --on-accent: #ffffff;
+  --surface: #ffffff; --surface-2: #ececec; --bg-soft: #f2f2f2; --panel-soft: rgba(0, 0, 0, .06);
+  color: #000000; text-shadow: none;
+}
+
+/* Kurenai: sello rojo (hanko) en los títulos, barra superior carmesí, logo relleno */
+:root[data-skin="omarchy"][data-omarchy-theme="kurenai"] .section-head h2::before {
+  content: ""; display: inline-block; width: .5em; height: .5em; margin-right: .55em;
+  background: var(--accent); vertical-align: .05em;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="kurenai"] .site-header { border-bottom: 2px solid var(--accent); }
+:root[data-skin="omarchy"][data-omarchy-theme="kurenai"] .logo-mark { background: var(--accent); color: var(--on-accent); }
+
+/* Konbini: fondo de lunares, títulos gruesos y paneles "pegatina" que se levantan al pasar el ratón */
+:root[data-skin="omarchy"][data-omarchy-theme="konbini"] body {
+  background-image:
+    radial-gradient(rgba(194, 37, 92, .13) 2px, transparent 2.6px),
+    radial-gradient(ellipse 70% 45% at 12% -5%, rgba(var(--accent-rgb), .13), transparent 70%),
+    radial-gradient(ellipse 55% 40% at 96% 0%, rgba(var(--accent-2-rgb), .10), transparent 70%);
+  background-size: 24px 24px, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="konbini"] :is(h1, h2, h3, h4) { font-weight: 800; }
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-skin="omarchy"][data-omarchy-theme="konbini"] :is(.about-card, .card, .cert-card, .contact-aside, .contact-form-wrap, .github-activity__card, .like-card, .news-item, .project-card, .project-preview, .projects-note, .terminal, .weather-widget, .form-success):is(:hover, :focus-within) {
+    --win-shadow: 8px 8px 0 #2b2140; transform: translate(-2px, -2px);
+  }
+}
+
+/* Lumon: papel cuadriculado, banda azul en la cabecera, mayúsculas espaciadas */
+:root[data-skin="omarchy"][data-omarchy-theme="lumon"] body {
+  background-image:
+    linear-gradient(rgba(11, 95, 165, .07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 95, 165, .07) 1px, transparent 1px);
+  background-size: 32px 32px; background-repeat: repeat;
+}
+:root[data-skin="omarchy"][data-omarchy-theme="lumon"] .site-header { box-shadow: inset 0 3px 0 var(--accent); }
+
+/* Temas de navegación ancha: el menú se colapsa hasta 1399px */
+@media (max-width: 1399px) {
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .nav-toggle { display: block; }
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .main-nav {
+    position: fixed; inset: 62px 1rem auto 1rem; z-index: 40;
+    background: var(--surface); border: var(--win-bw) solid var(--accent); border-radius: var(--radius);
+    box-shadow: var(--win-shadow); padding: .6rem;
+    transform: translateY(-10px); opacity: 0; pointer-events: none;
+    transition: opacity .2s var(--ease), transform .2s var(--ease);
+  }
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .main-nav.is-open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .nav-list { flex-direction: column; align-items: stretch; }
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .nav-link { display: flex; padding: .65rem .8rem; font-size: .85rem; }
+}
+@media (min-width: 721px) and (max-width: 1399px) {
+  :root[data-skin="omarchy"]:is([data-omarchy-theme="vantablack"], [data-omarchy-theme="lumon"], [data-omarchy-theme="konbini"]) .main-nav { left: auto; width: min(340px, calc(100% - 2rem)); }
+}
