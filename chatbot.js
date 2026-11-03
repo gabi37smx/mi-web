@@ -55,7 +55,9 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
      de Ollería (electricidad, jardinería, fontanería, obra, grúa,
      cementerio).
    - Está construyendo esta web personal con APIs integradas y backend
-     propio, y está madurando tres ideas de app con su profesor:
+     propio, y dam, su comando de terminal en Python (ordena ficheros y
+     sincroniza sus apuntes con git: github.com/gabi37smx/Terminal_CLI).
+     Además, está madurando tres ideas de app con su profesor:
      gestión de cementerio, aprender valenciano con IA y facturación
      para electricistas.
    - Está aprendiendo Java, Python, JavaScript, HTML, CSS, SQL, Git,
@@ -114,9 +116,9 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       en: "He comes from industrial maintenance: 11 years as a mechanic in a textile mill. He now works as a maintenance officer at Ollería Town Council, handling a wide range of tasks: electrical work, gardening, plumbing, construction, cranes and cemetery duties.",
     },
     proyectos: {
-      es: "Está construyendo esta web personal, muy completa, con APIs integradas y un backend propio con panel de administración. Y está madurando tres ideas de app con su profesor: gestión de cementerio, aprender valenciano con IA y facturación para electricistas.",
-      val: "Està construint esta web personal, molt completa, amb APIs integrades i un backend propi amb panell d'administració. I està madurant tres idees d'app amb el seu professor: gestió de cementeri, aprendre valencià amb IA i facturació per a electricistes.",
-      en: "He's building this personal website, quite complete, with integrated APIs and his own backend with an admin panel. He's also refining three app ideas with his teacher: cemetery management, learning Valencian with AI, and invoicing for electricians.",
+      es: "Está construyendo esta web personal, muy completa, con APIs integradas y un backend propio con panel de administración, y dam, su propio comando de terminal en Python para ordenar ficheros y sincronizar sus apuntes con git. Y está madurando tres ideas de app con su profesor: gestión de cementerio, aprender valenciano con IA y facturación para electricistas.",
+      val: "Està construint esta web personal, molt completa, amb APIs integrades i un backend propi amb panell d'administració, i dam, la seua pròpia ordre de terminal en Python per a ordenar fitxers i sincronitzar els seus apunts amb git. I està madurant tres idees d'app amb el seu professor: gestió de cementeri, aprendre valencià amb IA i facturació per a electricistes.",
+      en: "He's building this personal website, quite complete, with integrated APIs and his own backend with an admin panel, and dam, his own terminal command in Python to sort files and sync his notes with git. He's also refining three app ideas with his teacher: cemetery management, learning Valencian with AI, and invoicing for electricians.",
     },
     tecnologias: {
       es: "Está aprendiendo Java, Python, JavaScript, HTML, CSS, SQL, Git, redes, ciberseguridad, IA y agentes.",
@@ -173,6 +175,7 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
     experiencia: ["trabajo", "trabajas", "experiencia", "mecanico", "hilatura", "ollería", "olleria", "ayuntamiento", "oficial", "mantenimiento", "fontanero", "electricista",
       "treball", "experience", "mechanic", "maintenance", "job", "manteniment"],
     proyectos: ["proyecto", "proyectos", "app", "aplicacion", "web", "cementerio", "valenciano", "facturacion", "electricistas",
+      "cli", "terminal", "comando", "consola",
       "projecte", "project", "cementeri", "website", "facturacio"],
     tecnologias: ["tecnologia", "tecnologias", "lenguaje", "lenguajes", "programa", "programar", "sabes", "aprendiendo", "java", "python", "javascript", "html", "css", "sql", "git",
       "technolog", "language", "languages", "learning", "programming", "llenguatge", "aprenent"],

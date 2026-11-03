@@ -35,7 +35,7 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 
   <title>Proyectos · Gabriel Vidal Badia</title>
-  <meta name="description" content="Proyectos en curso de Gabriel Vidal Badia: portfolio personal, app de gestión de cementerio, app de aprendizaje de valenciano con IA y facturación para electricistas." />
+  <meta name="description" content="Proyectos en curso de Gabriel Vidal Badia: portfolio personal, dam (CLI para la terminal), app de gestión de cementerio, app de aprendizaje de valenciano con IA y facturación para electricistas." />
   <meta name="author" content="Gabriel Vidal Badia" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://gabi37smx.github.io/mi-web/proyectos.html" />
@@ -43,14 +43,14 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Gabriel Vidal Badia" />
   <meta property="og:title" content="Proyectos · Gabriel Vidal Badia" />
-  <meta property="og:description" content="Proyectos en curso de Gabriel Vidal Badia: portfolio personal, app de gestión de cementerio, app de aprendizaje de valenciano con IA y facturación para electricistas." />
+  <meta property="og:description" content="Proyectos en curso de Gabriel Vidal Badia: portfolio personal, dam (CLI para la terminal), app de gestión de cementerio, app de aprendizaje de valenciano con IA y facturación para electricistas." />
   <meta property="og:url" content="https://gabi37smx.github.io/mi-web/proyectos.html" />
   <meta property="og:locale" content="es_ES" />
   <meta property="og:image" content="https://gabi37smx.github.io/mi-web/image/gabriel.webp" />
   <meta property="og:image:alt" content="Gabriel Vidal Badia, desarrollador en formación" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Proyectos · Gabriel Vidal Badia" />
-  <meta name="twitter:description" content="Proyectos en curso de Gabriel Vidal Badia: portfolio personal, app de gestión de cementerio, app de aprendizaje de valenciano con IA y facturación para electricistas." />
+  <meta name="twitter:description" content="Proyectos en curso de Gabriel Vidal Badia: portfolio personal, dam (CLI para la terminal), app de gestión de cementerio, app de aprendizaje de valenciano con IA y facturación para electricistas." />
   <meta name="twitter:image" content="https://gabi37smx.github.io/mi-web/image/gabriel.webp" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -186,7 +186,7 @@
           algunos ya en marcha y otros aún por montar. Aquí va todo, con su grado de dificultad.
         </p>
         <p class="certs-counter">
-          <strong>1</strong> proyecto terminado · <strong>1</strong> proyecto en curso · <strong>2</strong> proyectos en diseño
+          <strong>1</strong> proyecto terminado · <strong>2</strong> proyectos en curso · <strong>2</strong> proyectos en diseño
         </p>
       </div>
     </section>
@@ -248,6 +248,51 @@
               <div class="case-block">
                 <h3 class="case-block__title">Resultado</h3>
                 <p>Web online accesible desde cualquier dispositivo, con formulario real que envía emails, panel de administración, tres idiomas, widget del tiempo en directo y certificaciones. Todo versionado con Git a lo largo de más de 25 commits.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- CLI dam -->
+          <article class="project-card" data-type="individual curso">
+            <div class="project-card__head">
+              <div class="project-card__icon" aria-hidden="true">⌨️</div>
+              <span class="project-card__grade">V5</span>
+            </div>
+            <h2 class="project-card__title">dam · CLI para la terminal</h2>
+            <div class="project-card__meta">
+              <span class="tag tag--individual">Individual</span>
+              <span class="tag tag--curso">En curso</span>
+            </div>
+            <p class="project-card__desc">
+              Herramienta de línea de órdenes hecha en Python para automatizar tareas repetitivas con ficheros
+              y mantener mis apuntes sincronizados entre el PC de clase, el de casa y el USB.
+              Funciona igual en Linux, Windows y macOS.
+            </p>
+            <ul class="project-card__stack">
+              <li>Python 3.12</li>
+              <li>Typer · Rich</li>
+              <li>uv</li>
+              <li>Git</li>
+              <li>pytest</li>
+            </ul>
+            <div class="project-card__actions">
+              <a href="https://github.com/gabi37smx/Terminal_CLI" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Ver código →</a>
+              <button type="button" class="btn btn-ghost btn-sm js-toggle-case" aria-expanded="false" aria-controls="case-dam">
+                Ver caso completo <span class="js-toggle-icon" aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div class="project-card__case" id="case-dam" hidden>
+              <div class="case-block">
+                <h3 class="case-block__title">Problema</h3>
+                <p>Cada semana perdía tiempo ordenando Descargas a mano, borrando temporales y convirtiendo fotos para que pesaran menos. Además, tenía los apuntes repartidos entre el PC de clase, el de casa y el USB, con el riesgo de perder o pisar algo.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Solución</h3>
+                <p>Un comando, dam, hecho en Python con Typer. Las acciones se describen en un acciones.json que se valida entero antes de tocar un solo fichero: ordenar los apuntes por asignatura (mirando el nombre, la extensión y hasta el texto de los PDF), limpiar temporales, convertir imágenes a WebP, renombrar capturas, copiar entregas y mover los zip. dam sync sincroniza con git un repositorio de apuntes sin pisar nada, y scan-secrets, test-links y check-headers buscan claves expuestas, enlaces rotos y cabeceras de seguridad que faltan.</p>
+              </div>
+              <div class="case-block">
+                <h3 class="case-block__title">Resultado</h3>
+                <p>Funciona en Linux, Windows y macOS, con un modo --simular que enseña qué haría sin tocar nada, ayuda en español, autocompletado con TAB y un instalador que deja todo listo en un equipo nuevo. Tiene 173 tests automáticos y cero claves en el repositorio y su historial. Con check-headers subí el backend de esta web de 0 a 6 cabeceras de seguridad. Siguiente paso: una capa de IA y la versión 1.0.</p>
               </div>
             </div>
           </article>
