@@ -107,6 +107,8 @@
   max-width: 600px;
   justify-content: space-between;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .juego-escalada__btn {
@@ -408,7 +410,16 @@
 }
 
 /* El botón de salto ocupa el tercio derecho */
-.juego-escalada__controles .juego-escalada__btn { flex: 1 1 0; }
+.juego-escalada__controles .juego-escalada__btn {
+  flex: 1 1 0;
+  border-radius: 22px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+/* Sin anillo de foco al tocar (sí se mantiene con teclado) */
+.juego-escalada__controles .juego-escalada__btn:focus:not(:focus-visible) { outline: none; }
 
 .juego-escalada:fullscreen .juego-escalada__joystick,
 .juego-escalada.pseudo-fs .juego-escalada__joystick,

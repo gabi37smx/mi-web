@@ -1740,12 +1740,21 @@
       e.preventDefault();
       if (accion === "salto") { estado.teclas.salto = false; estado.personaje.saltoSuelto = true; }
     };
-    btn.addEventListener("pointerdown", activar);
+    btn.addEventListener("pointerdown", (e) => {
+      // Captura: si el dedo se desliza un poco fuera del botón, el salto sigue pulsado
+      try { btn.setPointerCapture(e.pointerId); } catch (err) {}
+      activar(e);
+    });
     btn.addEventListener("pointerup", desactivar);
     btn.addEventListener("pointerleave", desactivar);
     btn.addEventListener("pointercancel", desactivar);
+    btn.addEventListener("lostpointercapture", desactivar);
+    // Mantener pulsado no debe abrir el menú de copiar / seleccionar (iOS)
+    btn.addEventListener("contextmenu", (e) => e.preventDefault());
+    btn.addEventListener("selectstart", (e) => e.preventDefault());
   });
 
+  let soltarJoystick = () => {};
   (function iniciarJoystick() {
     const pad = contenedor.querySelector(".juego-escalada__joystick");
     const knob = pad && pad.querySelector(".juego-escalada__joystick-knob");
@@ -1774,7 +1783,7 @@
     }
 
     pad.addEventListener("pointerdown", (e) => {
-      if (punteroId !== null) return;
+      // Si quedó un dedo "fantasma" (iOS perdió el pointerup), el toque nuevo toma el control
       e.preventDefault();
       punteroId = e.pointerId;
       try { pad.setPointerCapture(e.pointerId); } catch (err) {}
@@ -1789,7 +1798,23 @@
     ["pointerup", "pointercancel", "lostpointercapture"].forEach((ev) => {
       pad.addEventListener(ev, (e) => { if (e.pointerId === punteroId) soltar(); });
     });
+    // Red de seguridad: si el pointerup no llega al pad (captura fallida en iOS)
+    ["pointerup", "pointercancel"].forEach((ev) => {
+      window.addEventListener(ev, (e) => { if (e.pointerId === punteroId) soltar(); });
+    });
+    // Red de seguridad iOS: al levantar dedos, si ninguno sigue sobre el joystick, se suelta
+    const revisarToques = (e) => {
+      if (punteroId === null) return;
+      for (let i = 0; i < e.touches.length; i++) {
+        if (pad.contains(e.touches[i].target)) return;
+      }
+      soltar();
+    };
+    document.addEventListener("touchend", revisarToques, { passive: true });
+    document.addEventListener("touchcancel", revisarToques, { passive: true });
     pad.addEventListener("contextmenu", (e) => e.preventDefault());
+    pad.addEventListener("selectstart", (e) => e.preventDefault());
+    soltarJoystick = soltar;
     window.addEventListener("blur", soltar);
     document.addEventListener("visibilitychange", () => { if (document.hidden) soltar(); });
   })();
@@ -1835,6 +1860,7 @@
     estado.teclas.izquierda = false;
     estado.teclas.derecha = false;
     estado.teclas.salto = false;
+    soltarJoystick();
     actualizarClaseJugando();
     actualizarBloqueoScroll();
   }
