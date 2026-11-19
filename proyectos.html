@@ -252,21 +252,21 @@
             </div>
           </article>
 
-          <!-- CLI dam -->
+          <!-- CLI mochila (antes dam) -->
           <article class="project-card" data-type="individual curso">
             <div class="project-card__head">
               <div class="project-card__icon" aria-hidden="true">⌨️</div>
               <span class="project-card__grade">V5</span>
             </div>
-            <h2 class="project-card__title">dam · CLI para la terminal</h2>
+            <h2 class="project-card__title">mochila · CLI para la terminal</h2>
             <div class="project-card__meta">
               <span class="tag tag--individual">Individual</span>
               <span class="tag tag--curso">En curso</span>
             </div>
             <p class="project-card__desc">
-              Herramienta de línea de órdenes hecha en Python para automatizar tareas repetitivas con ficheros
-              y mantener mis apuntes sincronizados entre el PC de clase, el de casa y el USB.
-              Funciona igual en Linux, Windows y macOS.
+              Herramienta de línea de órdenes hecha en Python para ordenar mis apuntes y ficheros, resumirlos con IA
+              y tenerlos sincronizados con git entre el PC de clase, el de casa y el USB.
+              Sirve para alumnos de cualquier ciclo y funciona igual en Linux, Windows y macOS.
             </p>
             <ul class="project-card__stack">
               <li>Python 3.12</li>
@@ -274,6 +274,7 @@
               <li>uv</li>
               <li>Git</li>
               <li>pytest</li>
+              <li>IA · OpenCode</li>
             </ul>
             <div class="project-card__actions">
               <a href="https://github.com/gabi37smx/Terminal_CLI" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Ver código →</a>
@@ -288,11 +289,11 @@
               </div>
               <div class="case-block">
                 <h3 class="case-block__title">Solución</h3>
-                <p>Un comando, dam, hecho en Python con Typer. Las acciones se describen en un acciones.json que se valida entero antes de tocar un solo fichero: ordenar los apuntes por asignatura (mirando el nombre, la extensión y hasta el texto de los PDF), limpiar temporales, convertir imágenes a WebP, renombrar capturas, copiar entregas y mover los zip. dam sync sincroniza con git un repositorio de apuntes sin pisar nada, y scan-secrets, test-links y check-headers buscan claves expuestas, enlaces rotos y cabeceras de seguridad que faltan.</p>
+                <p>Un comando, mochila (al principio se llamaba dam), hecho en Python con Typer. Las acciones se describen en un acciones.json que se valida entero antes de tocar un solo fichero: ordenar los apuntes por asignatura y unidad (mirando el nombre, la extensión y hasta el texto de los PDF), limpiar temporales, convertir imágenes a WebP, renombrar capturas, copiar entregas y mover los zip. Con IA, usando el servidor del instituto o OpenCode, resume un tema, pone nombre a las descargas y adivina de qué asignatura es cada fichero. mochila crear-almacen prepara un repositorio privado de apuntes para tu ciclo y mochila sync lo sincroniza con git sin pisar nada. scan-secrets, test-links y check-headers buscan claves expuestas, enlaces rotos y cabeceras de seguridad que faltan.</p>
               </div>
               <div class="case-block">
                 <h3 class="case-block__title">Resultado</h3>
-                <p>Funciona en Linux, Windows y macOS, con un modo --simular que enseña qué haría sin tocar nada, ayuda en español, autocompletado con TAB y un instalador que deja todo listo en un equipo nuevo. Tiene 173 tests automáticos y cero claves en el repositorio y su historial. Con check-headers subí el backend de esta web de 0 a 6 cabeceras de seguridad. Siguiente paso: una capa de IA y la versión 1.0.</p>
+                <p>Versión 1.1.0 publicada. Funciona en Linux, Windows y macOS (las pruebas pasan en los tres en cada cambio), con un modo --simular que enseña qué haría sin tocar nada, ayuda en español con ejemplos, autocompletado con TAB y un instalador que deja todo listo en un equipo nuevo. Tiene 672 pruebas automáticas y cero claves en el repositorio y su historial. Lo he instalado desde cero en equipos limpios y un estudiante de DAW lo instaló siguiendo solo el README; lo que falló acabó en issues y arreglos. Con check-headers subí el backend de esta web de 0 a 6 cabeceras de seguridad. Siguiente paso: la versión 1.2.0.</p>
               </div>
             </div>
           </article>
@@ -384,29 +385,30 @@
             </div>
           </article>
 
-          <!-- App Facturación Electricistas -->
+          <!-- Faktovoz: facturación por voz para electricistas -->
           <article class="project-card" data-type="grupo curso">
             <div class="project-card__head">
               <div class="project-card__icon" aria-hidden="true">⚡</div>
               <span class="project-card__grade">V5</span>
             </div>
-            <h2 class="project-card__title">Facturación para electricistas</h2>
+            <h2 class="project-card__title">Faktovoz · facturación por voz</h2>
             <div class="project-card__meta">
               <span class="tag tag--grupo">En grupo</span>
               <span class="tag tag--curso">En curso</span>
             </div>
             <p class="project-card__desc">
-              App web móvil para electricistas autónomos, hecha en equipo: el profesional dicta por voz lo que ha hecho, la voz se pasa a texto, una IA extrae materiales y horas y un programa calcula el importe. Él revisa el borrador y envía la factura en PDF al cliente. Parto de mi formación en instalaciones eléctricas para entender el oficio.
+              App web móvil para electricistas autónomos, hecha en equipo: el profesional dicta lo que ha hecho, la voz se pasa a texto, el programa saca el cliente, los materiales y las horas y calcula el importe. Él revisa el borrador y envía la factura en PDF al cliente. Ya tiene una beta publicada. Parto de mi formación en instalaciones eléctricas para entender el oficio.
             </p>
             <ul class="project-card__stack">
               <li>Python · FastAPI</li>
               <li>Voz (Whisper)</li>
               <li>IA / LLM</li>
-              <li>Facturación</li>
+              <li>PDF (WeasyPrint)</li>
+              <li>PWA</li>
               <li>Docker</li>
             </ul>
             <div class="project-card__actions">
-              <a href="#" class="btn btn-ghost btn-sm">Ver código →</a>
+              <a href="https://faktovoz.eu" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Ver la web →</a>
               <button type="button" class="btn btn-ghost btn-sm js-toggle-case" aria-expanded="false" aria-controls="case-facturacion">
                 Ver caso completo <span class="js-toggle-icon" aria-hidden="true">→</span>
               </button>
@@ -414,19 +416,19 @@
             <div class="project-card__case" id="case-facturacion" hidden>
               <div class="case-block">
                 <h3 class="case-block__title">Problema</h3>
-                <p>Partimos de que los electricistas autónomos pierden tiempo pasando a mano, o a una hoja de cálculo, las notas de materiales y horas para facturar, y lo estamos comprobando con entrevistas. Además, la factura electrónica (Veri*factu) será obligatoria para los autónomos a partir del 1 de julio de 2027.</p>
+                <p>Los electricistas autónomos pierden tiempo pasando a mano, o a un programa de facturación, las notas de materiales y horas que apuntan durante la jornada. Lo hemos comprobado con cinco entrevistas a electricistas: cuatro ya facturan con un programa, pero tienen que escribirlo todo, y el otro apunta en un cuaderno y necesita a un familiar para pasarlo al ordenador. Además, la factura electrónica (Veri*factu) será obligatoria para los autónomos a partir del 1 de julio de 2027.</p>
               </div>
               <div class="case-block">
                 <h3 class="case-block__title">Solución</h3>
-                <p>Web móvil con un botón de grabar: el electricista dicta al acabar el trabajo, el audio se transcribe con Whisper, una IA extrae materiales y horas, y un programa calcula la base, el IVA y el IRPF con código (la IA nunca hace las cuentas). Él revisa el borrador, lo corrige si hace falta y envía la factura en PDF al cliente. El canal de WhatsApp Business queda para una segunda fase.</p>
+                <p>Web móvil que se instala como una app: el electricista dicta al acabar el trabajo, la voz se pasa a texto (con el dictado del móvil o con Whisper), el programa saca el cliente, los materiales y las horas, y calcula la base, el IVA y el IRPF con código (la IA nunca hace las cuentas). La mano de obra se cobra por cuartos de hora. Él revisa el borrador, lo corrige si hace falta y envía la factura en PDF al cliente. El canal de WhatsApp Business queda para una segunda fase.</p>
               </div>
               <div class="case-block">
                 <h3 class="case-block__title">Resultado</h3>
-                <p>En desarrollo. Proyecto en equipo (404: Brain not Found) del curso de DAM, con el objetivo de tener un MVP en seis semanas. Ya hemos empezado: repositorio, documentación, un motor de cálculo fiscal con tests y un primer prototipo en Figma. Ahora toca validar con electricistas y probar la voz con frases reales de obra. Mi rol: producto.</p>
+                <p>Beta publicada en faktovoz.eu, de momento solo con datos inventados: se entra con un código que llega por correo, se dicta, se revisa el borrador y sale la factura en PDF. La hemos probado en iPhone y Android y en Chrome, Edge y Safari, y tiene 193 pruebas automáticas. Proyecto en equipo (404: Brain not Found) del curso de DAM. Siguiente paso: que entienda mejor el valenciano y los materiales sueltos, y que la prueben electricistas de verdad. Mi rol: producto.</p>
               </div>
               <figure class="case-figure">
                 <img src="image/prototipo-figma.webp" alt="Diseño en Figma de la pantalla de acceso de la app: título «Del trabajo hecho a la factura lista», campos de correo y contraseña y botón Entrar." width="437" height="901" loading="lazy" decoding="async" />
-                <figcaption>Prototipo en Figma de la pantalla de acceso. Es un diseño: la app todavía está en desarrollo.</figcaption>
+                <figcaption>Primer prototipo en Figma de la pantalla de acceso. La beta ya está publicada en faktovoz.eu.</figcaption>
               </figure>
             </div>
           </article>
