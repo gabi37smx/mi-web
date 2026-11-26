@@ -55,9 +55,9 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
      de Ollería (electricidad, jardinería, fontanería, obra, grúa,
      cementerio).
    - Está construyendo esta web personal con APIs integradas y backend
-     propio, y mochila, su comando de terminal en Python (antes se
+     propio, y ha terminado mochila, su comando de terminal en Python (antes se
      llamaba dam: ordena sus apuntes, los resume con IA y los sincroniza
-     con git; versión 1.1.0 en github.com/gabi37smx/Terminal_CLI).
+     con git; terminado, versión 1.3.1 en github.com/gabi37smx/Terminal_CLI).
      En equipo hace Faktovoz, facturación por voz para electricistas,
      con una beta publicada en faktovoz.eu (solo datos inventados).
      Además, está madurando dos ideas de app con su profesor:
@@ -118,9 +118,9 @@ alumno de 1º DAM del IES Simarro de Xàtiva (Valencia).
       en: "He comes from industrial maintenance: 11 years as a mechanic in a textile mill. He now works as a maintenance officer at Ollería Town Council, handling a wide range of tasks: electrical work, gardening, plumbing, construction, cranes and cemetery duties.",
     },
     proyectos: {
-      es: "Está construyendo esta web personal, muy completa, con APIs integradas y un backend propio con panel de administración, y mochila, su propio comando de terminal en Python para ordenar sus apuntes, resumirlos con IA y sincronizarlos con git. En equipo hace Faktovoz, una app para que los electricistas facturen dictando por voz, que ya tiene una beta publicada en faktovoz.eu. Y está madurando dos ideas de app con su profesor: gestión de cementerio y aprender valenciano con IA.",
-      val: "Està construint esta web personal, molt completa, amb APIs integrades i un backend propi amb panell d'administració, i mochila, la seua pròpia ordre de terminal en Python per a ordenar els seus apunts, resumir-los amb IA i sincronitzar-los amb git. En equip fa Faktovoz, una aplicació perquè els electricistes facturen dictant per veu, que ja té una beta publicada a faktovoz.eu. I està madurant dos idees d'app amb el seu professor: gestió de cementeri i aprendre valencià amb IA.",
-      en: "He's building this personal website, quite complete, with integrated APIs and his own backend with an admin panel, and mochila, his own terminal command in Python to sort his notes, summarise them with AI and sync them with git. As part of a team he's building Faktovoz, an app that lets electricians invoice by voice, with a beta already live at faktovoz.eu. He's also refining two app ideas with his teacher: cemetery management and learning Valencian with AI.",
+      es: "Está construyendo esta web personal, muy completa, con APIs integradas y un backend propio con panel de administración, y ha terminado mochila, su propio comando de terminal en Python para ordenar sus apuntes, resumirlos con IA y sincronizarlos con git. En equipo hace Faktovoz, una app para que los electricistas facturen dictando por voz, que ya tiene una beta publicada en faktovoz.eu. Y está madurando dos ideas de app con su profesor: gestión de cementerio y aprender valenciano con IA.",
+      val: "Està construint esta web personal, molt completa, amb APIs integrades i un backend propi amb panell d'administració, i ha acabat mochila, la seua pròpia ordre de terminal en Python per a ordenar els seus apunts, resumir-los amb IA i sincronitzar-los amb git. En equip fa Faktovoz, una aplicació perquè els electricistes facturen dictant per veu, que ja té una beta publicada a faktovoz.eu. I està madurant dos idees d'app amb el seu professor: gestió de cementeri i aprendre valencià amb IA.",
+      en: "He's building this personal website, quite complete, with integrated APIs and his own backend with an admin panel, and he has finished mochila, his own terminal command in Python to sort his notes, summarise them with AI and sync them with git. As part of a team he's building Faktovoz, an app that lets electricians invoice by voice, with a beta already live at faktovoz.eu. He's also refining two app ideas with his teacher: cemetery management and learning Valencian with AI.",
     },
     tecnologias: {
       es: "Está aprendiendo Java, Python, JavaScript, HTML, CSS, SQL, Git, redes, ciberseguridad, IA y agentes.",

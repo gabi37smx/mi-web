@@ -186,7 +186,7 @@
           algunos ya en marcha y otros aún por montar. Aquí va todo, con su grado de dificultad.
         </p>
         <p class="certs-counter">
-          <strong>1</strong> proyecto terminado · <strong>2</strong> proyectos en curso · <strong>2</strong> proyectos en diseño
+          <strong>2</strong> proyectos terminados · <strong>1</strong> proyecto en curso · <strong>2</strong> proyectos en diseño
         </p>
       </div>
     </section>
@@ -253,7 +253,7 @@
           </article>
 
           <!-- CLI mochila (antes dam) -->
-          <article class="project-card" data-type="individual curso">
+          <article class="project-card" data-type="individual terminado">
             <div class="project-card__head">
               <div class="project-card__icon" aria-hidden="true">⌨️</div>
               <span class="project-card__grade">V5</span>
@@ -261,7 +261,7 @@
             <h2 class="project-card__title">mochila · CLI para la terminal</h2>
             <div class="project-card__meta">
               <span class="tag tag--individual">Individual</span>
-              <span class="tag tag--curso">En curso</span>
+              <span class="tag tag--terminado">Terminado</span>
             </div>
             <p class="project-card__desc">
               Herramienta de línea de órdenes hecha en Python para ordenar mis apuntes y ficheros, resumirlos con IA
@@ -292,8 +292,19 @@
                 <p>Un comando, mochila (al principio se llamaba dam), hecho en Python con Typer. Las acciones se describen en un acciones.json que se valida entero antes de tocar un solo fichero: ordenar los apuntes por asignatura y unidad (mirando el nombre, la extensión y hasta el texto de los PDF), limpiar temporales, convertir imágenes a WebP, renombrar capturas, copiar entregas y mover los zip. Con IA, usando el servidor del instituto o OpenCode, resume un tema, pone nombre a las descargas y adivina de qué asignatura es cada fichero. mochila crear-almacen prepara un repositorio privado de apuntes para tu ciclo y mochila sync lo sincroniza con git sin pisar nada. scan-secrets, test-links y check-headers buscan claves expuestas, enlaces rotos y cabeceras de seguridad que faltan.</p>
               </div>
               <div class="case-block">
+                <h3 class="case-block__title">Ejemplos</h3>
+                <ul class="case-examples">
+                  <li><code>mochila ejecutar ordenar ~/Descargas --simular</code><span>Enseña adónde iría cada apunte, sin tocar nada.</span></li>
+                  <li><code>mochila ejecutar repasar-carpeta .</code><span>Varias acciones seguidas: borra temporales, renombra capturas, las pasa a WebP y guarda los zip.</span></li>
+                  <li><code>mochila ejecutar resumir-tema tema-3.pdf</code><span>Resume un tema con IA en un .md al lado del apunte.</span></li>
+                  <li><code>mochila ejecutar nombrar-descargas</code><span>Pone nombre a «documento (3).pdf» según lo que dice dentro.</span></li>
+                  <li><code>mochila sync</code><span>Sube y baja los apuntes con git: en clase, en casa y en el USB, lo mismo.</span></li>
+                  <li><code>mochila scan-secrets --historial</code><span>Busca claves expuestas en todo el historial de git.</span></li>
+                </ul>
+              </div>
+              <div class="case-block">
                 <h3 class="case-block__title">Resultado</h3>
-                <p>Versión 1.1.0 publicada. Funciona en Linux, Windows y macOS (las pruebas pasan en los tres en cada cambio), con un modo --simular que enseña qué haría sin tocar nada, ayuda en español con ejemplos, autocompletado con TAB y un instalador que deja todo listo en un equipo nuevo. Tiene 672 pruebas automáticas y cero claves en el repositorio y su historial. Lo he instalado desde cero en equipos limpios y un estudiante de DAW lo instaló siguiendo solo el README; lo que falló acabó en issues y arreglos. Con check-headers subí el backend de esta web de 0 a 6 cabeceras de seguridad. Siguiente paso: la versión 1.2.0.</p>
+                <p>Terminado y publicado: versión 1.3.1. Funciona en Linux, Windows y macOS (718 pruebas automáticas que pasan en los tres en cada cambio) y no hay ni una clave en el repositorio ni en su historial. Las acciones se pueden combinar sin tocar código, todas tienen un modo --simular que enseña qué harían sin tocar nada, y la ayuda va en español con ejemplos. Un amigo lo instaló desde cero con su propia cuenta de GitHub siguiendo solo el README, y lo que falló acabó en issues y arreglos. Antes de entregarlo intenté romperlo con más de 30 entradas mal hechas a propósito: ninguna da un error feo, solo mensajes claros. Con check-headers subí el backend de esta web de 0 a 6 cabeceras de seguridad.</p>
               </div>
             </div>
           </article>
